@@ -1,0 +1,41 @@
+{
+  "name": "docspress",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Sync Markdown docs to WordPress Pages as Gutenberg content from GitHub Actions.",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "ncc build src/index.js -o dist --source-map --license licenses.txt",
+    "lint": "eslint .",
+    "package": "npm run lint && npm test && npm run build",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "github-action",
+    "wordpress",
+    "markdown",
+    "gutenberg",
+    "docs"
+  ],
+  "author": "Fatih Kadir Akin",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^3.0.1",
+    "fast-glob": "^3.3.3",
+    "gray-matter": "^4.0.3",
+    "mdast-util-to-string": "^4.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.5"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.4",
+    "@wordpress/block-serialization-default-parser": "^5.35.0",
+    "eslint": "^9.31.0",
+    "vitest": "^3.2.4"
+  },
+  "overrides": {
+    "undici": "^6.27.0"
+  }
+}

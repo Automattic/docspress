@@ -1,0 +1,57 @@
+name: Docspress
+description: Sync nested Markdown docs to WordPress Pages as Gutenberg block content.
+author: Fatih Kadir Akin
+
+inputs:
+  wordpress-url:
+    description: WordPress API base URL. Use https://public-api.wordpress.com for WordPress.com.
+    required: false
+    default: https://public-api.wordpress.com
+  wordpress-site:
+    description: WordPress.com site ID or domain. Required for WordPress.com API mode.
+    required: true
+  wordpress-access-token:
+    description: OAuth bearer token with permission to edit pages on the target WordPress site.
+    required: true
+  docs-dir:
+    description: Directory containing Markdown docs.
+    required: false
+    default: docs
+  root-slug:
+    description: Slug for the managed root page.
+    required: false
+    default: docs
+  root-title:
+    description: Title for the managed root page when no root index document supplies one.
+    required: false
+    default: Docs
+  status:
+    description: WordPress status for created or updated pages.
+    required: false
+    default: publish
+  delete-mode:
+    description: Use trash to move removed docs to Trash, or force to permanently delete them.
+    required: false
+    default: trash
+  dry-run:
+    description: Plan create/update/delete operations without writing to WordPress.
+    required: false
+    default: "false"
+
+outputs:
+  created:
+    description: Count of pages created or planned for creation.
+  updated:
+    description: Count of pages updated or planned for update.
+  deleted:
+    description: Count of pages deleted or planned for deletion.
+  unchanged:
+    description: Count of managed pages already in sync.
+  conflicts:
+    description: Count of unmanaged WordPress page conflicts.
+  summary-json:
+    description: JSON summary of the sync result.
+
+runs:
+  using: node20
+  main: dist/index.js
