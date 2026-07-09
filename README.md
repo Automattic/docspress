@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.png" alt="Docspress logo" width="420">
+  <img src="assets/logo.png" alt="Docspress logo and wordmark" width="680">
 </p>
 
 # Docspress
