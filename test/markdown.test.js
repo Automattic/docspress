@@ -124,4 +124,36 @@ console.log("hi");
     expect(blockNames).toContain("core/quote");
     expect(blockNames).toContain("core/separator");
   });
+
+  it("rewrites links through a supplied resolver", () => {
+    const result = markdownToBlocks("[Guide](guides/start.md) and [external](https://example.com).", {
+      fallbackTitle: "Fallback",
+      resolveLink(url) {
+        return url === "guides/start.md" ? "/docs/guides/start/" : url;
+      }
+    });
+
+    expect(result.blocks).toContain('href="/docs/guides/start/"');
+    expect(result.blocks).toContain('href="https://example.com"');
+  });
+
+  it("renders Gutenberg-compatible code tabs", () => {
+    const result = markdownToBlocks(`{% codetabs %}
+{% JSX %}
+\`\`\`jsx
+<Button variant="primary" />
+\`\`\`
+{% Plain %}
+\`\`\`js
+wp.element.createElement(Button);
+\`\`\`
+{% end %}
+`, { fallbackTitle: "Fallback" });
+
+    expect(result.blocks).toContain("<!-- wp:html -->");
+    expect(result.blocks).toContain("code-tabs");
+    expect(result.blocks).toContain('data-language="JSX"');
+    expect(result.blocks).toContain('class="language-jsx"');
+    expect(result.blocks).toContain("wp.element.createElement");
+  });
 });

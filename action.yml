@@ -17,6 +17,14 @@ inputs:
     description: Directory containing Markdown docs.
     required: false
     default: docs
+  manifest-file:
+    description: Optional JSON manifest that defines page order, slugs, parents, titles, and Markdown sources.
+    required: false
+    default: ""
+  redirects-file:
+    description: Optional JSON map of old docs paths to new docs paths or external URLs. Creates managed moved-page placeholders.
+    required: false
+    default: ""
   root-slug:
     description: Slug for the managed root page.
     required: false
@@ -29,6 +37,30 @@ inputs:
     description: Add the page title as an H1 block at the top of generated WordPress content.
     required: false
     default: "false"
+  rewrite-links:
+    description: Rewrite local Markdown links to the generated WordPress page URLs.
+    required: false
+    default: "true"
+  edit-link:
+    description: Append an Edit this page on GitHub link to synced Markdown-backed pages.
+    required: false
+    default: "false"
+  edit-link-text:
+    description: Link text for appended source links when edit-link is enabled.
+    required: false
+    default: Edit this page on GitHub
+  github-repository:
+    description: GitHub repository for edit links, such as owner/repo. Defaults to GITHUB_REPOSITORY.
+    required: false
+    default: ""
+  github-ref:
+    description: GitHub branch or ref for edit links. Defaults to GITHUB_REF_NAME.
+    required: false
+    default: ""
+  github-server-url:
+    description: GitHub server URL for edit links. Defaults to GITHUB_SERVER_URL.
+    required: false
+    default: ""
   status:
     description: WordPress status for created or updated pages, such as draft or publish.
     required: false

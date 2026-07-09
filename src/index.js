@@ -10,9 +10,17 @@ async function main() {
     site: core.getInput("wordpress-site", { required: true }),
     token: core.getInput("wordpress-access-token", { required: true }),
     docsDir: core.getInput("docs-dir") || "docs",
+    manifestFile: core.getInput("manifest-file") || "",
+    redirectsFile: core.getInput("redirects-file") || "",
     rootSlug: core.getInput("root-slug") || "docs",
     rootTitle: core.getInput("root-title") || "Docs",
     createH1: normalizeBoolean(core.getInput("create-h1") || "false"),
+    rewriteLinks: normalizeBoolean(core.getInput("rewrite-links") || "true"),
+    editLink: normalizeBoolean(core.getInput("edit-link") || "false"),
+    editLinkText: core.getInput("edit-link-text") || "Edit this page on GitHub",
+    githubRepository: core.getInput("github-repository") || process.env.GITHUB_REPOSITORY || "",
+    githubRef: core.getInput("github-ref") || process.env.GITHUB_REF_NAME || "main",
+    githubServerUrl: core.getInput("github-server-url") || process.env.GITHUB_SERVER_URL || "https://github.com",
     status: core.getInput("status") || "publish",
     deleteMode: core.getInput("delete-mode") || "trash",
     dryRun: normalizeBoolean(core.getInput("dry-run") || "false")
@@ -21,9 +29,17 @@ async function main() {
   const desiredPages = await collectDesiredPages({
     cwd: process.cwd(),
     docsDir: config.docsDir,
+    manifestFile: config.manifestFile,
+    redirectsFile: config.redirectsFile,
     rootSlug: config.rootSlug,
     rootTitle: config.rootTitle,
     createH1: config.createH1,
+    rewriteLinks: config.rewriteLinks,
+    editLink: config.editLink,
+    editLinkText: config.editLinkText,
+    githubRepository: config.githubRepository,
+    githubRef: config.githubRef,
+    githubServerUrl: config.githubServerUrl,
     status: config.status
   });
 

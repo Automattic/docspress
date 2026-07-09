@@ -37,6 +37,22 @@ export function codeBlock(value, lang) {
   return serializeBlock("core/code", null, `<pre class="wp-block-code"><code${className}>${escapeHtml(value)}</code></pre>`);
 }
 
+export function codetabsBlock(tabs) {
+  const html = (tabs || []).map((tab, index) => {
+    const label = escapeHtml(tab.label || `Tab ${index + 1}`);
+    const language = escapeAttribute(tab.language || "");
+    const activeClass = index === 0 ? " is-active" : "";
+    const codeClass = language ? ` class="language-${language}"` : "";
+
+    return [
+      `<button type="button" data-language="${escapeAttribute(tab.label || "")}" class="code-tab${activeClass}">${label}</button>`,
+      `<div class="code-tab-block${activeClass}"><pre><code${codeClass}>${escapeHtml(tab.code || "")}</code></pre></div>`
+    ].join("");
+  }).join("");
+
+  return htmlBlock(`<div class="code-tabs">${html}</div>`);
+}
+
 export function preformattedBlock(value) {
   return serializeBlock("core/preformatted", null, `<pre class="wp-block-preformatted">${escapeHtml(value)}</pre>`);
 }
@@ -64,4 +80,12 @@ export function imageBlock(node) {
 
 export function tableBlock(html) {
   return serializeBlock("core/table", null, `<figure class="wp-block-table"><table>${html}</table></figure>`);
+}
+
+export function sourceLinkBlock(url, label = "Edit this page on GitHub") {
+  return serializeBlock(
+    "core/paragraph",
+    { className: "docspress-source-link" },
+    `<p class="docspress-source-link"><a href="${escapeAttribute(url)}">${escapeHtml(label)}</a></p>`
+  );
 }

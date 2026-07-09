@@ -5,6 +5,7 @@ import remarkParse from "remark-parse";
 import { unified } from "unified";
 import {
   codeBlock,
+  codetabsBlock,
   headingBlock,
   htmlBlock,
   imageBlock,
@@ -21,12 +22,13 @@ const parser = unified().use(remarkParse).use(remarkGfm);
 
 export function parseMarkdown(markdown) {
   const parsed = matter(markdown);
-  const tree = parser.parse(parsed.content);
+  const content = transformCodetabs(parsed.content);
+  const tree = parser.parse(content);
 
   return {
     data: parsed.data || {},
     tree,
-    content: parsed.content
+    content
   };
 }
 
@@ -64,12 +66,15 @@ export function markdownToBlocks(markdown, options = {}) {
   const fallbackTitle = options.fallbackTitle || "Docs";
   const createH1 = normalizeBoolean(options.createH1);
   const parsed = titleFromMarkdown(markdown, fallbackTitle);
+  const renderContext = {
+    resolveLink: typeof options.resolveLink === "function" ? options.resolveLink : null
+  };
   const children = createH1
     ? removeFirstMatchingHeading(parsed.tree.children, parsed.title)
     : parsed.removeFirstHeading
       ? removeFirstHeading(parsed.tree.children)
       : parsed.tree.children;
-  const blocks = renderBlocks(children);
+  const blocks = renderBlocks(children, renderContext);
 
   if (createH1) {
     blocks.unshift(headingBlock(1, escapeHtml(parsed.title)));
@@ -112,7 +117,29 @@ function normalizeHeadingText(value) {
   return String(value || "").trim().replace(/\s+/g, " ").toLowerCase();
 }
 
-function renderBlocks(nodes) {
+function transformCodetabs(content) {
+  return String(content || "").replace(/{%\s*codetabs\s*%}([\s\S]*?){%\s*end\s*%}/g, (_match, body) => codetabsBlock(parseCodetabs(body)));
+}
+
+function parseCodetabs(body) {
+  const parts = String(body || "").trim().split(/^\s*{%\s+([\w-]+)\s+%}\s*$/gm).filter((part) => part !== "");
+  const tabs = [];
+
+  for (let index = 0; index < parts.length - 1; index += 2) {
+    const label = parts[index].trim();
+    const rawContent = parts[index + 1].trim();
+    const codeMatch = rawContent.match(/^```([\w-]+)?\n([\s\S]*?)\n?```$/);
+    tabs.push({
+      label,
+      language: codeMatch?.[1] || label.toLowerCase(),
+      code: codeMatch?.[2] ?? rawContent
+    });
+  }
+
+  return tabs;
+}
+
+function renderBlocks(nodes, context = {}) {
   const blocks = [];
 
   for (let index = 0; index < nodes.length; index += 1) {
@@ -125,7 +152,7 @@ function renderBlocks(nodes) {
       continue;
     }
 
-    const rendered = renderBlock(node);
+    const rendered = renderBlock(node, context);
     if (rendered) {
       blocks.push(rendered);
     }
@@ -171,16 +198,16 @@ function hasGutenbergClose(value) {
   return /<!--\s*\/wp:[\w/-]+\s*-->/.test(String(value || ""));
 }
 
-function renderBlock(node) {
+function renderBlock(node, context = {}) {
   switch (node.type) {
     case "heading":
-      return headingBlock(node.depth, renderInline(node.children || []));
+      return headingBlock(node.depth, renderInline(node.children || [], context));
     case "paragraph":
-      return renderParagraph(node);
+      return renderParagraph(node, context);
     case "list":
-      return listBlock(renderListItems(node.children || []), Boolean(node.ordered));
+      return listBlock(renderListItems(node.children || [], context), Boolean(node.ordered));
     case "blockquote":
-      return quoteBlock(renderQuoteChildren(node.children || []));
+      return quoteBlock(renderQuoteChildren(node.children || [], context));
     case "code":
       return node.lang ? codeBlock(node.value || "", node.lang) : codeBlock(node.value || "", "");
     case "html":
@@ -188,7 +215,7 @@ function renderBlock(node) {
     case "thematicBreak":
       return separatorBlock();
     case "table":
-      return tableBlock(renderTable(node));
+      return tableBlock(renderTable(node, context));
     case "image":
       return imageBlock(node);
     case "break":
@@ -202,42 +229,43 @@ function renderBlock(node) {
         return preformattedBlock(node.value);
       }
       if (node.children) {
-        return renderBlocks(node.children).join("\n\n");
+        return renderBlocks(node.children, context).join("\n\n");
       }
       return "";
   }
 }
 
-function renderParagraph(node) {
+function renderParagraph(node, context = {}) {
   const children = node.children || [];
   const onlyImage = children.length === 1 && children[0].type === "image";
   if (onlyImage) {
     return imageBlock(children[0]);
   }
 
-  const html = renderInline(children).trim();
+  const html = renderInline(children, context).trim();
   return html ? paragraphBlock(html) : "";
 }
 
-function renderInline(nodes) {
-  return (nodes || []).map(renderInlineNode).join("");
+function renderInline(nodes, context = {}) {
+  return (nodes || []).map((node) => renderInlineNode(node, context)).join("");
 }
 
-function renderInlineNode(node) {
+function renderInlineNode(node, context = {}) {
   switch (node.type) {
     case "text":
       return escapeHtml(node.value || "");
     case "emphasis":
-      return `<em>${renderInline(node.children || [])}</em>`;
+      return `<em>${renderInline(node.children || [], context)}</em>`;
     case "strong":
-      return `<strong>${renderInline(node.children || [])}</strong>`;
+      return `<strong>${renderInline(node.children || [], context)}</strong>`;
     case "delete":
-      return `<s>${renderInline(node.children || [])}</s>`;
+      return `<s>${renderInline(node.children || [], context)}</s>`;
     case "inlineCode":
       return `<code>${escapeHtml(node.value || "")}</code>`;
     case "link": {
       const title = node.title ? ` title="${escapeAttribute(node.title)}"` : "";
-      return `<a href="${escapeAttribute(node.url || "")}"${title}>${renderInline(node.children || [])}</a>`;
+      const url = context.resolveLink ? context.resolveLink(node.url || "") : node.url || "";
+      return `<a href="${escapeAttribute(url)}"${title}>${renderInline(node.children || [], context)}</a>`;
     }
     case "image": {
       const title = node.title ? ` title="${escapeAttribute(node.title)}"` : "";
@@ -251,50 +279,50 @@ function renderInlineNode(node) {
       return `<sup>${escapeHtml(node.identifier || node.label || "")}</sup>`;
     default:
       if (node.children) {
-        return renderInline(node.children);
+        return renderInline(node.children, context);
       }
       return escapeHtml(node.value || "");
   }
 }
 
-function renderListItems(items) {
-  return items.map((item) => `<li>${renderListItem(item)}</li>`).join("");
+function renderListItems(items, context = {}) {
+  return items.map((item) => `<li>${renderListItem(item, context)}</li>`).join("");
 }
 
-function renderListItem(item) {
+function renderListItem(item, context = {}) {
   const checkbox = typeof item.checked === "boolean"
     ? `<input class="task-list-item-checkbox" type="checkbox"${item.checked ? " checked" : ""} disabled/> `
     : "";
 
   return `${checkbox}${(item.children || []).map((child) => {
     if (child.type === "paragraph") {
-      return renderInline(child.children || []);
+      return renderInline(child.children || [], context);
     }
     if (child.type === "list") {
       const tag = child.ordered ? "ol" : "ul";
-      return `<${tag}>${renderListItems(child.children || [])}</${tag}>`;
+      return `<${tag}>${renderListItems(child.children || [], context)}</${tag}>`;
     }
     if (child.type === "code") {
       return `<pre><code>${escapeHtml(child.value || "")}</code></pre>`;
     }
-    return renderBlock(child);
+    return renderBlock(child, context);
   }).join("")}`;
 }
 
-function renderQuoteChildren(children) {
+function renderQuoteChildren(children, context = {}) {
   return children.map((child) => {
     if (child.type === "paragraph") {
-      return `<p>${renderInline(child.children || [])}</p>`;
+      return `<p>${renderInline(child.children || [], context)}</p>`;
     }
     if (child.type === "heading") {
       const depth = Math.min(Math.max(child.depth || 2, 1), 6);
-      return `<h${depth}>${renderInline(child.children || [])}</h${depth}>`;
+      return `<h${depth}>${renderInline(child.children || [], context)}</h${depth}>`;
     }
-    return renderBlock(child);
+    return renderBlock(child, context);
   }).join("");
 }
 
-function renderTable(table) {
+function renderTable(table, context = {}) {
   const rows = table.children || [];
   if (rows.length === 0) {
     return "";
@@ -302,14 +330,14 @@ function renderTable(table) {
 
   const [header, ...body] = rows;
   const align = table.align || [];
-  const headerHtml = `<thead>${renderTableRow(header, "th", align)}</thead>`;
-  const bodyHtml = body.length > 0 ? `<tbody>${body.map((row) => renderTableRow(row, "td", align)).join("")}</tbody>` : "";
+  const headerHtml = `<thead>${renderTableRow(header, "th", align, context)}</thead>`;
+  const bodyHtml = body.length > 0 ? `<tbody>${body.map((row) => renderTableRow(row, "td", align, context)).join("")}</tbody>` : "";
   return `${headerHtml}${bodyHtml}`;
 }
 
-function renderTableRow(row, cellTag, align) {
+function renderTableRow(row, cellTag, align, context = {}) {
   return `<tr>${(row.children || []).map((cell, index) => {
     const alignment = align[index] ? ` style="text-align:${escapeAttribute(align[index])}"` : "";
-    return `<${cellTag}${alignment}>${renderInline(cell.children || [])}</${cellTag}>`;
+    return `<${cellTag}${alignment}>${renderInline(cell.children || [], context)}</${cellTag}>`;
   }).join("")}</tr>`;
 }

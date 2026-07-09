@@ -44099,6 +44099,22 @@ function codeBlock(value, lang) {
   return serializeBlock("core/code", null, `<pre class="wp-block-code"><code${className}>${escapeHtml(value)}</code></pre>`);
 }
 
+function codetabsBlock(tabs) {
+  const html = (tabs || []).map((tab, index) => {
+    const label = escapeHtml(tab.label || `Tab ${index + 1}`);
+    const language = escapeAttribute(tab.language || "");
+    const activeClass = index === 0 ? " is-active" : "";
+    const codeClass = language ? ` class="language-${language}"` : "";
+
+    return [
+      `<button type="button" data-language="${escapeAttribute(tab.label || "")}" class="code-tab${activeClass}">${label}</button>`,
+      `<div class="code-tab-block${activeClass}"><pre><code${codeClass}>${escapeHtml(tab.code || "")}</code></pre></div>`
+    ].join("");
+  }).join("");
+
+  return htmlBlock(`<div class="code-tabs">${html}</div>`);
+}
+
 function preformattedBlock(value) {
   return serializeBlock("core/preformatted", null, `<pre class="wp-block-preformatted">${escapeHtml(value)}</pre>`);
 }
@@ -44126,6 +44142,14 @@ function imageBlock(node) {
 
 function tableBlock(html) {
   return serializeBlock("core/table", null, `<figure class="wp-block-table"><table>${html}</table></figure>`);
+}
+
+function sourceLinkBlock(url, label = "Edit this page on GitHub") {
+  return serializeBlock(
+    "core/paragraph",
+    { className: "docspress-source-link" },
+    `<p class="docspress-source-link"><a href="${escapeAttribute(url)}">${escapeHtml(label)}</a></p>`
+  );
 }
 
 // EXTERNAL MODULE: ./node_modules/gray-matter/index.js
@@ -66417,12 +66441,13 @@ const parser = unified().use(remarkParse).use(remarkGfm);
 
 function parseMarkdown(markdown) {
   const parsed = gray_matter(markdown);
-  const tree = parser.parse(parsed.content);
+  const content = transformCodetabs(parsed.content);
+  const tree = parser.parse(content);
 
   return {
     data: parsed.data || {},
     tree,
-    content: parsed.content
+    content
   };
 }
 
@@ -66460,12 +66485,15 @@ function markdownToBlocks(markdown, options = {}) {
   const fallbackTitle = options.fallbackTitle || "Docs";
   const createH1 = normalizeBoolean(options.createH1);
   const parsed = titleFromMarkdown(markdown, fallbackTitle);
+  const renderContext = {
+    resolveLink: typeof options.resolveLink === "function" ? options.resolveLink : null
+  };
   const children = createH1
     ? removeFirstMatchingHeading(parsed.tree.children, parsed.title)
     : parsed.removeFirstHeading
       ? removeFirstHeading(parsed.tree.children)
       : parsed.tree.children;
-  const blocks = renderBlocks(children);
+  const blocks = renderBlocks(children, renderContext);
 
   if (createH1) {
     blocks.unshift(headingBlock(1, escapeHtml(parsed.title)));
@@ -66508,7 +66536,29 @@ function normalizeHeadingText(value) {
   return String(value || "").trim().replace(/\s+/g, " ").toLowerCase();
 }
 
-function renderBlocks(nodes) {
+function transformCodetabs(content) {
+  return String(content || "").replace(/{%\s*codetabs\s*%}([\s\S]*?){%\s*end\s*%}/g, (_match, body) => codetabsBlock(parseCodetabs(body)));
+}
+
+function parseCodetabs(body) {
+  const parts = String(body || "").trim().split(/^\s*{%\s+([\w-]+)\s+%}\s*$/gm).filter((part) => part !== "");
+  const tabs = [];
+
+  for (let index = 0; index < parts.length - 1; index += 2) {
+    const label = parts[index].trim();
+    const rawContent = parts[index + 1].trim();
+    const codeMatch = rawContent.match(/^```([\w-]+)?\n([\s\S]*?)\n?```$/);
+    tabs.push({
+      label,
+      language: codeMatch?.[1] || label.toLowerCase(),
+      code: codeMatch?.[2] ?? rawContent
+    });
+  }
+
+  return tabs;
+}
+
+function renderBlocks(nodes, context = {}) {
   const blocks = [];
 
   for (let index = 0; index < nodes.length; index += 1) {
@@ -66521,7 +66571,7 @@ function renderBlocks(nodes) {
       continue;
     }
 
-    const rendered = renderBlock(node);
+    const rendered = renderBlock(node, context);
     if (rendered) {
       blocks.push(rendered);
     }
@@ -66567,16 +66617,16 @@ function hasGutenbergClose(value) {
   return /<!--\s*\/wp:[\w/-]+\s*-->/.test(String(value || ""));
 }
 
-function renderBlock(node) {
+function renderBlock(node, context = {}) {
   switch (node.type) {
     case "heading":
-      return headingBlock(node.depth, renderInline(node.children || []));
+      return headingBlock(node.depth, renderInline(node.children || [], context));
     case "paragraph":
-      return renderParagraph(node);
+      return renderParagraph(node, context);
     case "list":
-      return listBlock(renderListItems(node.children || []), Boolean(node.ordered));
+      return listBlock(renderListItems(node.children || [], context), Boolean(node.ordered));
     case "blockquote":
-      return quoteBlock(renderQuoteChildren(node.children || []));
+      return quoteBlock(renderQuoteChildren(node.children || [], context));
     case "code":
       return node.lang ? codeBlock(node.value || "", node.lang) : codeBlock(node.value || "", "");
     case "html":
@@ -66584,7 +66634,7 @@ function renderBlock(node) {
     case "thematicBreak":
       return separatorBlock();
     case "table":
-      return tableBlock(renderTable(node));
+      return tableBlock(renderTable(node, context));
     case "image":
       return imageBlock(node);
     case "break":
@@ -66598,42 +66648,43 @@ function renderBlock(node) {
         return preformattedBlock(node.value);
       }
       if (node.children) {
-        return renderBlocks(node.children).join("\n\n");
+        return renderBlocks(node.children, context).join("\n\n");
       }
       return "";
   }
 }
 
-function renderParagraph(node) {
+function renderParagraph(node, context = {}) {
   const children = node.children || [];
   const onlyImage = children.length === 1 && children[0].type === "image";
   if (onlyImage) {
     return imageBlock(children[0]);
   }
 
-  const html = renderInline(children).trim();
+  const html = renderInline(children, context).trim();
   return html ? paragraphBlock(html) : "";
 }
 
-function renderInline(nodes) {
-  return (nodes || []).map(renderInlineNode).join("");
+function renderInline(nodes, context = {}) {
+  return (nodes || []).map((node) => renderInlineNode(node, context)).join("");
 }
 
-function renderInlineNode(node) {
+function renderInlineNode(node, context = {}) {
   switch (node.type) {
     case "text":
       return escapeHtml(node.value || "");
     case "emphasis":
-      return `<em>${renderInline(node.children || [])}</em>`;
+      return `<em>${renderInline(node.children || [], context)}</em>`;
     case "strong":
-      return `<strong>${renderInline(node.children || [])}</strong>`;
+      return `<strong>${renderInline(node.children || [], context)}</strong>`;
     case "delete":
-      return `<s>${renderInline(node.children || [])}</s>`;
+      return `<s>${renderInline(node.children || [], context)}</s>`;
     case "inlineCode":
       return `<code>${escapeHtml(node.value || "")}</code>`;
     case "link": {
       const title = node.title ? ` title="${escapeAttribute(node.title)}"` : "";
-      return `<a href="${escapeAttribute(node.url || "")}"${title}>${renderInline(node.children || [])}</a>`;
+      const url = context.resolveLink ? context.resolveLink(node.url || "") : node.url || "";
+      return `<a href="${escapeAttribute(url)}"${title}>${renderInline(node.children || [], context)}</a>`;
     }
     case "image": {
       const title = node.title ? ` title="${escapeAttribute(node.title)}"` : "";
@@ -66647,50 +66698,50 @@ function renderInlineNode(node) {
       return `<sup>${escapeHtml(node.identifier || node.label || "")}</sup>`;
     default:
       if (node.children) {
-        return renderInline(node.children);
+        return renderInline(node.children, context);
       }
       return escapeHtml(node.value || "");
   }
 }
 
-function renderListItems(items) {
-  return items.map((item) => `<li>${renderListItem(item)}</li>`).join("");
+function renderListItems(items, context = {}) {
+  return items.map((item) => `<li>${renderListItem(item, context)}</li>`).join("");
 }
 
-function renderListItem(item) {
+function renderListItem(item, context = {}) {
   const checkbox = typeof item.checked === "boolean"
     ? `<input class="task-list-item-checkbox" type="checkbox"${item.checked ? " checked" : ""} disabled/> `
     : "";
 
   return `${checkbox}${(item.children || []).map((child) => {
     if (child.type === "paragraph") {
-      return renderInline(child.children || []);
+      return renderInline(child.children || [], context);
     }
     if (child.type === "list") {
       const tag = child.ordered ? "ol" : "ul";
-      return `<${tag}>${renderListItems(child.children || [])}</${tag}>`;
+      return `<${tag}>${renderListItems(child.children || [], context)}</${tag}>`;
     }
     if (child.type === "code") {
       return `<pre><code>${escapeHtml(child.value || "")}</code></pre>`;
     }
-    return renderBlock(child);
+    return renderBlock(child, context);
   }).join("")}`;
 }
 
-function renderQuoteChildren(children) {
+function renderQuoteChildren(children, context = {}) {
   return children.map((child) => {
     if (child.type === "paragraph") {
-      return `<p>${renderInline(child.children || [])}</p>`;
+      return `<p>${renderInline(child.children || [], context)}</p>`;
     }
     if (child.type === "heading") {
       const depth = Math.min(Math.max(child.depth || 2, 1), 6);
-      return `<h${depth}>${renderInline(child.children || [])}</h${depth}>`;
+      return `<h${depth}>${renderInline(child.children || [], context)}</h${depth}>`;
     }
-    return renderBlock(child);
+    return renderBlock(child, context);
   }).join("");
 }
 
-function renderTable(table) {
+function renderTable(table, context = {}) {
   const rows = table.children || [];
   if (rows.length === 0) {
     return "";
@@ -66698,15 +66749,15 @@ function renderTable(table) {
 
   const [header, ...body] = rows;
   const align = table.align || [];
-  const headerHtml = `<thead>${renderTableRow(header, "th", align)}</thead>`;
-  const bodyHtml = body.length > 0 ? `<tbody>${body.map((row) => renderTableRow(row, "td", align)).join("")}</tbody>` : "";
+  const headerHtml = `<thead>${renderTableRow(header, "th", align, context)}</thead>`;
+  const bodyHtml = body.length > 0 ? `<tbody>${body.map((row) => renderTableRow(row, "td", align, context)).join("")}</tbody>` : "";
   return `${headerHtml}${bodyHtml}`;
 }
 
-function renderTableRow(row, cellTag, align) {
+function renderTableRow(row, cellTag, align, context = {}) {
   return `<tr>${(row.children || []).map((cell, index) => {
     const alignment = align[index] ? ` style="text-align:${escapeAttribute(align[index])}"` : "";
-    return `<${cellTag}${alignment}>${renderInline(cell.children || [])}</${cellTag}>`;
+    return `<${cellTag}${alignment}>${renderInline(cell.children || [], context)}</${cellTag}>`;
   }).join("")}</tr>`;
 }
 
@@ -66756,13 +66807,39 @@ function stripSentinel(content) {
 const INDEX_FILENAMES = new Set(["index", "readme"]);
 
 async function collectDesiredPages(options) {
+  const context = createContext(options);
+  const byRoute = options.manifestFile
+    ? await collectManifestPages(context, options)
+    : await collectFilePages(context);
+
+  ensurePlaceholderHierarchy(byRoute, options.rootTitle);
+  await applyRedirects(byRoute, options, context);
+  ensurePlaceholderHierarchy(byRoute, options.rootTitle);
+  const linkResolver = createLinkResolver(byRoute, context, options);
+  convertMarkdownPages(byRoute, options, linkResolver);
+
+  return Array.from(byRoute.values())
+    .map((page) => finalizePage(page, options))
+    .sort((a, b) => a.depth - b.depth || a.key.localeCompare(b.key));
+}
+
+function createContext(options) {
   const cwd = options.cwd || process.cwd();
   const docsDir = options.docsDir || "docs";
   const absoluteDocsDir = external_node_path_namespaceObject.resolve(cwd, docsDir);
   const docsDirForSource = utils_toPosixPath(external_node_path_namespaceObject.relative(cwd, absoluteDocsDir)) || docsDir;
 
+  return {
+    cwd,
+    docsDir,
+    absoluteDocsDir,
+    docsDirForSource
+  };
+}
+
+async function collectFilePages(context) {
   const files = await out(["**/*.md", "**/*.markdown"], {
-    cwd: absoluteDocsDir,
+    cwd: context.absoluteDocsDir,
     onlyFiles: true,
     dot: false,
     unique: true
@@ -66771,7 +66848,7 @@ async function collectDesiredPages(options) {
   const byRoute = new Map();
 
   for (const file of files.sort()) {
-    const absolutePath = external_node_path_namespaceObject.join(absoluteDocsDir, file);
+    const absolutePath = external_node_path_namespaceObject.join(context.absoluteDocsDir, file);
     const markdown = await promises_namespaceObject.readFile(absolutePath, "utf8");
     const routeSegments = routeSegmentsForFile(file);
     const routeKey = routeSegments.join("/");
@@ -66780,30 +66857,138 @@ async function collectDesiredPages(options) {
       throw new Error(`Multiple Markdown files map to the same docs page: ${byRoute.get(routeKey).sourcePath} and ${file}`);
     }
 
-    const fallbackTitle = fallbackTitleForRoute(routeSegments, options.rootTitle);
-    const converted = markdownToBlocks(markdown, {
-      fallbackTitle,
-      createH1: options.createH1
-    });
-    const sourcePath = `${docsDirForSource}/${utils_toPosixPath(file)}`;
+    const sourcePath = `${context.docsDirForSource}/${utils_toPosixPath(file)}`;
 
     byRoute.set(routeKey, {
       kind: "file",
       routeKey,
       routeSegments,
       sourcePath,
-      sourceMarkdown: markdown,
-      title: converted.title,
-      body: converted.blocks,
-      frontmatter: converted.data
+      sourceMarkdown: markdown
     });
   }
 
-  ensurePlaceholderHierarchy(byRoute, options.rootTitle);
+  return byRoute;
+}
 
-  return Array.from(byRoute.values())
-    .map((page) => finalizePage(page, options))
-    .sort((a, b) => a.depth - b.depth || a.key.localeCompare(b.key));
+async function collectManifestPages(context, options) {
+  const manifestFile = utils_toPosixPath(options.manifestFile);
+  const manifestPath = external_node_path_namespaceObject.resolve(context.cwd, manifestFile);
+  const manifestDir = external_node_path_namespaceObject.dirname(manifestPath);
+  const data = JSON.parse(await promises_namespaceObject.readFile(manifestPath, "utf8"));
+  const entries = Array.isArray(data) ? data : data.pages || data.items || [];
+
+  if (!Array.isArray(entries)) {
+    throw new Error(`Docspress manifest must be a JSON array or an object with a pages array: ${manifestFile}`);
+  }
+
+  const normalized = entries.map((entry, index) => normalizeManifestEntry(entry, index));
+  const byId = new Map();
+  const byRoute = new Map();
+
+  for (const entry of normalized) {
+    if (byId.has(entry.id)) {
+      throw new Error(`Docspress manifest contains duplicate page id: ${entry.id}`);
+    }
+    byId.set(entry.id, entry);
+  }
+
+  for (const entry of normalized) {
+    const routeSegments = manifestRouteSegments(entry, byId);
+    const routeKey = routeSegments.join("/");
+
+    if (byRoute.has(routeKey)) {
+      throw new Error(`Multiple manifest entries map to the same docs page: ${byRoute.get(routeKey).manifestId} and ${entry.id}`);
+    }
+
+    if (entry.source) {
+      const sourcePath = resolveManifestSource(entry.source, manifestDir, context.cwd);
+      const markdown = await promises_namespaceObject.readFile(external_node_path_namespaceObject.resolve(context.cwd, sourcePath), "utf8");
+      byRoute.set(routeKey, {
+        kind: "file",
+        manifestId: entry.id,
+        routeKey,
+        routeSegments,
+        sourcePath,
+        sourceMarkdown: markdown,
+        titleOverride: entry.title
+      });
+      continue;
+    }
+
+    byRoute.set(routeKey, {
+      ...placeholderPage(routeSegments, entry.title || fallbackTitleForRoute(routeSegments, options.rootTitle)),
+      kind: "manifest-placeholder",
+      manifestId: entry.id,
+      sourcePath: `manifest:${manifestFile}#${entry.id}`
+    });
+  }
+
+  return byRoute;
+}
+
+function normalizeManifestEntry(entry, index) {
+  if (!entry || typeof entry !== "object") {
+    throw new Error(`Docspress manifest entry ${index + 1} must be an object.`);
+  }
+
+  const slug = entry.slug === "/" ? "" : slugify(entry.slug ?? entry.id ?? entry.key ?? "", "");
+  const id = String(entry.id ?? entry.key ?? entry.slug ?? (slug === "" ? "root" : slug) ?? index).trim();
+  const parent = entry.parent === undefined || entry.parent === null ? null : String(entry.parent);
+  const source = entry.markdown_source || entry.markdownSource || entry.source || null;
+
+  if (!id) {
+    throw new Error(`Docspress manifest entry ${index + 1} is missing id or slug.`);
+  }
+
+  return {
+    id,
+    parent,
+    slug,
+    title: typeof entry.title === "string" ? entry.title.trim() : "",
+    source: source ? String(source) : null
+  };
+}
+
+function manifestRouteSegments(entry, byId, seen = new Set()) {
+  if (seen.has(entry.id)) {
+    throw new Error(`Docspress manifest contains a parent cycle at ${entry.id}`);
+  }
+
+  seen.add(entry.id);
+  const parent = entry.parent ? byId.get(entry.parent) : null;
+  if (entry.parent && !parent) {
+    throw new Error(`Docspress manifest page ${entry.id} references missing parent ${entry.parent}`);
+  }
+
+  const parentSegments = parent ? manifestRouteSegments(parent, byId, seen) : [];
+  return entry.slug ? [...parentSegments, entry.slug] : parentSegments;
+}
+
+function resolveManifestSource(source, manifestDir, cwd) {
+  const absolutePath = external_node_path_namespaceObject.isAbsolute(source)
+    ? source
+    : external_node_path_namespaceObject.resolve(manifestDir, source);
+  return utils_toPosixPath(external_node_path_namespaceObject.relative(cwd, absolutePath));
+}
+
+function convertMarkdownPages(byRoute, options, linkResolver) {
+  for (const page of byRoute.values()) {
+    if (!page.sourceMarkdown) {
+      continue;
+    }
+
+    const fallbackTitle = page.titleOverride || fallbackTitleForRoute(page.routeSegments, options.rootTitle);
+    const converted = markdownToBlocks(page.sourceMarkdown, {
+      fallbackTitle,
+      createH1: options.createH1,
+      resolveLink: (url) => linkResolver(url, page.sourcePath)
+    });
+
+    page.title = page.titleOverride || converted.title;
+    page.body = converted.blocks;
+    page.frontmatter = converted.data;
+  }
 }
 
 function routeSegmentsForFile(file) {
@@ -66854,6 +67039,202 @@ function placeholderPage(routeSegments, title) {
   };
 }
 
+async function applyRedirects(byRoute, options, context) {
+  if (!options.redirectsFile) {
+    return;
+  }
+
+  const redirects = await readRedirectsFile(options.redirectsFile, context.cwd);
+  const rootSlug = slugify(options.rootSlug || "docs", "docs");
+
+  for (const redirect of redirects) {
+    const routeSegments = routeSegmentsForRedirect(redirect.from, rootSlug);
+    const routeKey = routeSegments.join("/");
+    if (!routeKey) {
+      throw new Error("Docspress redirect entries cannot target the managed root page.");
+    }
+    if (byRoute.has(routeKey) && byRoute.get(routeKey).kind !== "redirect") {
+      throw new Error(`Docspress redirect '${redirect.from}' conflicts with an existing docs page.`);
+    }
+
+    const targetUrl = redirectTargetUrl(redirect.to, rootSlug);
+    byRoute.set(routeKey, {
+      kind: "redirect",
+      routeKey,
+      routeSegments,
+      sourcePath: `redirects:${utils_toPosixPath(options.redirectsFile)}#${routeKey}`,
+      title: redirect.title || `Moved: ${titleFromSlug(routeSegments.at(-1))}`,
+      body: paragraphBlock(`This page moved to <a href="${escapeAttribute(targetUrl)}">${escapeHtml(targetUrl)}</a>.`)
+    });
+  }
+}
+
+async function readRedirectsFile(redirectsFile, cwd) {
+  const redirectsPath = external_node_path_namespaceObject.resolve(cwd, redirectsFile);
+  const data = JSON.parse(await promises_namespaceObject.readFile(redirectsPath, "utf8"));
+  const entries = Array.isArray(data) ? data : data.redirects || data;
+
+  if (Array.isArray(entries)) {
+    return entries.map((entry, index) => {
+      if (!entry || typeof entry !== "object") {
+        throw new Error(`Docspress redirect entry ${index + 1} must be an object.`);
+      }
+      return {
+        from: String(entry.from || ""),
+        to: String(entry.to || ""),
+        title: typeof entry.title === "string" ? entry.title : ""
+      };
+    });
+  }
+
+  if (entries && typeof entries === "object") {
+    return Object.entries(entries).map(([from, to]) => ({ from, to: String(to), title: "" }));
+  }
+
+  throw new Error(`Docspress redirects file must be an object, array, or object with redirects: ${redirectsFile}`);
+}
+
+function routeSegmentsForRedirect(value, rootSlug) {
+  const normalized = normalizeRoutePath(value, rootSlug);
+  return normalized ? normalized.split("/") : [];
+}
+
+function redirectTargetUrl(value, rootSlug) {
+  const raw = String(value || "").trim();
+  if (/^[a-z][a-z0-9+.-]*:/i.test(raw) || raw.startsWith("//") || raw.startsWith("#")) {
+    return raw;
+  }
+
+  const normalized = normalizeRoutePath(raw, rootSlug);
+  return `/${[rootSlug, normalized].filter(Boolean).join("/")}/`;
+}
+
+function createLinkResolver(byRoute, context, options) {
+  const rewriteLinks = options.rewriteLinks === undefined ? true : normalizeBoolean(options.rewriteLinks);
+  const aliases = new Map();
+  const rootSlug = slugify(options.rootSlug || "docs", "docs");
+
+  for (const page of byRoute.values()) {
+    const fullKey = [rootSlug, ...page.routeSegments].join("/");
+    addAlias(aliases, page.routeKey, fullKey);
+    addAlias(aliases, `${page.routeKey}/`, fullKey);
+    addAlias(aliases, fullKey, fullKey);
+    addAlias(aliases, `${fullKey}/`, fullKey);
+
+    const sourceRelative = docsRelativeSource(page.sourcePath, context.docsDirForSource);
+    if (sourceRelative) {
+      addSourceAliases(aliases, sourceRelative, fullKey);
+    }
+  }
+
+  return (url, sourcePath) => {
+    if (!rewriteLinks) {
+      return url;
+    }
+    return rewriteMarkdownLink(url, sourcePath, aliases, context, rootSlug);
+  };
+}
+
+function addSourceAliases(aliases, sourceRelative, fullKey) {
+  addAlias(aliases, sourceRelative, fullKey);
+  const parsed = external_node_path_namespaceObject.posix.parse(sourceRelative);
+  const withoutExt = external_node_path_namespaceObject.posix.join(parsed.dir, parsed.name);
+  addAlias(aliases, withoutExt, fullKey);
+
+  if (INDEX_FILENAMES.has(parsed.name.toLowerCase())) {
+    addAlias(aliases, parsed.dir, fullKey);
+    addAlias(aliases, `${parsed.dir}/`, fullKey);
+  }
+}
+
+function addAlias(aliases, alias, fullKey) {
+  const normalized = normalizeAlias(alias);
+  if (normalized !== null) {
+    aliases.set(normalized, fullKey);
+  }
+}
+
+function rewriteMarkdownLink(url, sourcePath, aliases, context, rootSlug) {
+  const raw = String(url || "");
+  if (!raw || raw.startsWith("#") || raw.startsWith("//") || /^[a-z][a-z0-9+.-]*:/i.test(raw)) {
+    return raw;
+  }
+
+  const match = raw.match(/^([^?#]*)(\?[^#]*)?(#.*)?$/);
+  const linkPath = match?.[1] || "";
+  const query = match?.[2] || "";
+  const hash = match?.[3] || "";
+  if (!linkPath) {
+    return raw;
+  }
+
+  const candidate = linkCandidate(linkPath, sourcePath, context, rootSlug);
+  const fullKey = aliases.get(normalizeAlias(candidate));
+  if (!fullKey) {
+    return raw;
+  }
+
+  return `/${fullKey}/${query}${hash}`;
+}
+
+function linkCandidate(linkPath, sourcePath, context, rootSlug) {
+  const rawPath = String(linkPath || "");
+  const stripped = rawPath.replace(/^\/+/, "");
+  const sourceRelative = docsRelativeSource(sourcePath, context.docsDirForSource);
+
+  if (rawPath.startsWith("/")) {
+    return stripKnownPrefix(stripped, context.docsDirForSource, rootSlug);
+  }
+
+  const repoRelative = stripKnownPrefix(stripped, context.docsDirForSource, rootSlug);
+  if (repoRelative !== stripped) {
+    return repoRelative;
+  }
+
+  const sourceDir = sourceRelative ? external_node_path_namespaceObject.posix.dirname(sourceRelative) : "";
+  return external_node_path_namespaceObject.posix.normalize(external_node_path_namespaceObject.posix.join(sourceDir === "." ? "" : sourceDir, stripped));
+}
+
+function stripKnownPrefix(value, docsDir, rootSlug) {
+  for (const prefix of [docsDir, rootSlug]) {
+    if (value === prefix) {
+      return "";
+    }
+    if (value.startsWith(`${prefix}/`)) {
+      return value.slice(prefix.length + 1);
+    }
+  }
+  return value;
+}
+
+function docsRelativeSource(sourcePath, docsDir) {
+  if (!sourcePath || sourcePath.startsWith("virtual:") || sourcePath.startsWith("manifest:") || sourcePath.startsWith("redirects:")) {
+    return "";
+  }
+
+  const normalized = normalizeAlias(sourcePath);
+  const docsPrefix = normalizeAlias(docsDir);
+  if (normalized === docsPrefix) {
+    return "";
+  }
+  if (normalized?.startsWith(`${docsPrefix}/`)) {
+    return normalized.slice(docsPrefix.length + 1);
+  }
+  return normalized;
+}
+
+function normalizeAlias(value) {
+  if (value === null || value === undefined) {
+    return null;
+  }
+  const normalized = external_node_path_namespaceObject.posix.normalize(String(value).replace(/\\/g, "/").replace(/^\/+/, ""));
+  return normalized === "." ? "" : normalized.replace(/\/+$/, "");
+}
+
+function normalizeRoutePath(value, rootSlug) {
+  return stripKnownPrefix(normalizeAlias(value) || "", rootSlug, rootSlug);
+}
+
 function finalizePage(page, options) {
   const rootSlug = slugify(options.rootSlug || "docs", "docs");
   const fullSegments = [rootSlug, ...page.routeSegments];
@@ -66863,9 +67244,13 @@ function finalizePage(page, options) {
   const slug = fullSegments.at(-1);
   const status = options.status || "publish";
   const createH1 = normalizeBoolean(options.createH1);
-  const body = createH1 && page.kind === "placeholder"
+  let body = createH1 && page.kind === "placeholder"
     ? `${headingBlock(1, escapeHtml(page.title))}\n\n${page.body}`
     : page.body;
+  const editUrl = editUrlForPage(page, options);
+  if (editUrl) {
+    body = `${body}\n\n${sourceLinkBlock(editUrl, options.editLinkText || "Edit this page on GitHub")}`;
+  }
   const stablePayload = {
     key,
     sourcePath: page.sourcePath,
@@ -66893,6 +67278,21 @@ function finalizePage(page, options) {
     content,
     depth: fullSegments.length
   };
+}
+
+function editUrlForPage(page, options) {
+  if (!normalizeBoolean(options.editLink) || !page.sourcePath || page.sourcePath.includes(":")) {
+    return "";
+  }
+
+  const repository = options.githubRepository || process.env.GITHUB_REPOSITORY || "";
+  if (!repository) {
+    return "";
+  }
+
+  const serverUrl = (options.githubServerUrl || process.env.GITHUB_SERVER_URL || "https://github.com").replace(/\/+$/, "");
+  const ref = options.githubRef || process.env.GITHUB_REF_NAME || "main";
+  return `${serverUrl}/${repository}/edit/${ref}/${page.sourcePath.split("/").map(encodeURIComponent).join("/")}`;
 }
 
 ;// CONCATENATED MODULE: ./src/sync.js
@@ -67195,9 +67595,17 @@ async function main() {
     site: getInput("wordpress-site", { required: true }),
     token: getInput("wordpress-access-token", { required: true }),
     docsDir: getInput("docs-dir") || "docs",
+    manifestFile: getInput("manifest-file") || "",
+    redirectsFile: getInput("redirects-file") || "",
     rootSlug: getInput("root-slug") || "docs",
     rootTitle: getInput("root-title") || "Docs",
     createH1: normalizeBoolean(getInput("create-h1") || "false"),
+    rewriteLinks: normalizeBoolean(getInput("rewrite-links") || "true"),
+    editLink: normalizeBoolean(getInput("edit-link") || "false"),
+    editLinkText: getInput("edit-link-text") || "Edit this page on GitHub",
+    githubRepository: getInput("github-repository") || process.env.GITHUB_REPOSITORY || "",
+    githubRef: getInput("github-ref") || process.env.GITHUB_REF_NAME || "main",
+    githubServerUrl: getInput("github-server-url") || process.env.GITHUB_SERVER_URL || "https://github.com",
     status: getInput("status") || "publish",
     deleteMode: getInput("delete-mode") || "trash",
     dryRun: normalizeBoolean(getInput("dry-run") || "false")
@@ -67206,9 +67614,17 @@ async function main() {
   const desiredPages = await collectDesiredPages({
     cwd: process.cwd(),
     docsDir: config.docsDir,
+    manifestFile: config.manifestFile,
+    redirectsFile: config.redirectsFile,
     rootSlug: config.rootSlug,
     rootTitle: config.rootTitle,
     createH1: config.createH1,
+    rewriteLinks: config.rewriteLinks,
+    editLink: config.editLink,
+    editLinkText: config.editLinkText,
+    githubRepository: config.githubRepository,
+    githubRef: config.githubRef,
+    githubServerUrl: config.githubServerUrl,
     status: config.status
   });
 
