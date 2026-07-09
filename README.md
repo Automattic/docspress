@@ -118,6 +118,26 @@ The page title comes from frontmatter `title`, then the first H1, then the filen
 
 Set `create-h1: true` if you want Docspress to add the WordPress page title as the first H1 block in the generated content. When the Markdown already starts with the same H1, Docspress reuses that title and avoids creating a duplicate.
 
+## Markdown and Gutenberg blocks
+
+Docspress maps common Markdown to Gutenberg-compatible core blocks, including paragraphs, headings, lists, quotes, code blocks, images, tables, separators, and raw HTML.
+
+You can also write serialized Gutenberg block comments directly in Markdown when you need a block Docspress does not map yet. Keep the block comments and their HTML unindented, with blank lines around the block:
+
+```html
+<!-- wp:quote -->
+<blockquote class="wp-block-quote"><p>Written as a raw Gutenberg block.</p></blockquote>
+<!-- /wp:quote -->
+```
+
+Self-closing block comments work too:
+
+```html
+<!-- wp:separator /-->
+```
+
+Docspress preserves these Gutenberg annotations as-is instead of wrapping them in an HTML block. WordPress is still responsible for validating the serialized block markup, so malformed block comments may need to be fixed in the Markdown source.
+
 ## Development
 
 ```bash

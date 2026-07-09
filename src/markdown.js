@@ -113,10 +113,62 @@ function normalizeHeadingText(value) {
 }
 
 function renderBlocks(nodes) {
-  return nodes.flatMap((node) => {
+  const blocks = [];
+
+  for (let index = 0; index < nodes.length; index += 1) {
+    const node = nodes[index];
+
+    if (node.type === "html" && isOpeningGutenbergHtml(node.value)) {
+      const collected = collectGutenbergHtml(nodes, index);
+      blocks.push(collected.value);
+      index = collected.endIndex;
+      continue;
+    }
+
     const rendered = renderBlock(node);
-    return rendered ? [rendered] : [];
-  });
+    if (rendered) {
+      blocks.push(rendered);
+    }
+  }
+
+  return blocks;
+}
+
+function collectGutenbergHtml(nodes, startIndex) {
+  let value = nodes[startIndex].value || "";
+  let endIndex = startIndex;
+
+  if (isSelfClosingGutenbergHtml(value) || hasGutenbergClose(value)) {
+    return { value, endIndex };
+  }
+
+  for (let index = startIndex + 1; index < nodes.length; index += 1) {
+    const node = nodes[index];
+    if (node.type !== "html") {
+      break;
+    }
+
+    value = `${value}\n${node.value || ""}`;
+    endIndex = index;
+
+    if (hasGutenbergClose(value)) {
+      break;
+    }
+  }
+
+  return { value, endIndex };
+}
+
+function isOpeningGutenbergHtml(value) {
+  return /^\s*<!--\s*wp:[\w/-]+(?:\s+\{[\s\S]*?\})?\s*(?:\/)?-->\s*$/s.test(String(value || ""));
+}
+
+function isSelfClosingGutenbergHtml(value) {
+  return /^\s*<!--\s*wp:[\w/-]+(?:\s+\{[\s\S]*?\})?\s*\/-->\s*$/s.test(String(value || ""));
+}
+
+function hasGutenbergClose(value) {
+  return /<!--\s*\/wp:[\w/-]+\s*-->/.test(String(value || ""));
 }
 
 function renderBlock(node) {
@@ -210,7 +262,11 @@ function renderListItems(items) {
 }
 
 function renderListItem(item) {
-  return (item.children || []).map((child) => {
+  const checkbox = typeof item.checked === "boolean"
+    ? `<input class="task-list-item-checkbox" type="checkbox"${item.checked ? " checked" : ""} disabled/> `
+    : "";
+
+  return `${checkbox}${(item.children || []).map((child) => {
     if (child.type === "paragraph") {
       return renderInline(child.children || []);
     }
@@ -222,7 +278,7 @@ function renderListItem(item) {
       return `<pre><code>${escapeHtml(child.value || "")}</code></pre>`;
     }
     return renderBlock(child);
-  }).join("");
+  }).join("")}`;
 }
 
 function renderQuoteChildren(children) {

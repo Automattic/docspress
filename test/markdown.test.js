@@ -93,4 +93,35 @@ console.log("hi");
     expect(result.blocks).toContain("<!-- wp:html -->");
     expect(parse(result.blocks).length).toBeGreaterThan(4);
   });
+
+  it("preserves checked state for task list items", () => {
+    const result = markdownToBlocks(`# Tasks
+
+- [x] Done
+- [ ] Todo
+`, { fallbackTitle: "Fallback" });
+
+    expect(result.blocks).toContain('type="checkbox" checked disabled');
+    expect(result.blocks).toContain('type="checkbox" disabled');
+  });
+
+  it("preserves raw Gutenberg block comments from Markdown", () => {
+    const result = markdownToBlocks(`# Custom Blocks
+
+<!-- wp:quote -->
+<blockquote class="wp-block-quote"><p>Keep this serialized block intact.</p></blockquote>
+<!-- /wp:quote -->
+
+<!-- wp:separator /-->
+`, { fallbackTitle: "Fallback" });
+
+    expect(result.blocks).toContain("<!-- wp:quote -->\n<blockquote");
+    expect(result.blocks).toContain("<!-- /wp:quote -->");
+    expect(result.blocks).toContain("<!-- wp:separator /-->");
+    expect(result.blocks).not.toContain("<!-- wp:html -->");
+
+    const blockNames = parse(result.blocks).map((block) => block.blockName).filter(Boolean);
+    expect(blockNames).toContain("core/quote");
+    expect(blockNames).toContain("core/separator");
+  });
 });
