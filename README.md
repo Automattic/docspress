@@ -54,6 +54,22 @@ WordPress.com API writes require an OAuth bearer token. Create that token on Wor
 For personal projects or demos that only access your own WordPress.com site:
 
 1. Create an app at [WordPress.com Apps](https://developer.wordpress.com/apps/) and copy its `client_id` and `client_secret`.
+
+   For the `f/docspress-demo` repository, use these app form values:
+
+   | Field | Value |
+   | --- | --- |
+   | Name | `Docspress Demo` |
+   | Description | `Sync Markdown docs from GitHub to WordPress Pages as Gutenberg content.` |
+   | Website URL | `https://github.com/f/docspress-demo` |
+   | Redirect URLs | `https://github.com/f/docspress-demo` |
+   | Javascript Origins | Leave blank |
+   | Type | `Web` |
+   | Follow Developer blog | Optional; leave unchecked unless you want the emails |
+   | Owner | Use your personal owner, such as `fatihkadirakin`, for personal/demo apps |
+
+   The redirect URL is not used by Docspress when you use the token exchange command below, but WordPress.com requires a valid URL when creating the app.
+
 2. Create a WordPress.com Application Password from your account security settings. This is recommended when two-factor authentication is enabled, and it avoids using your normal account password in scripts.
 3. Exchange the app credentials and Application Password for an OAuth token:
 
