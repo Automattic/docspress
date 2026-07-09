@@ -70,7 +70,7 @@ For personal projects or demos that only access your own WordPress.com site, use
 
    The redirect URL must match the local callback URL used by the token helper below.
 
-2. Run the local token helper from the Docspress checkout:
+2. Run the local token helper from the Docspress checkout. The helper requests WordPress.com's `global` OAuth scope because the WP v2 Pages API requires it for listing, creating, updating, and deleting pages.
 
 ```bash
 npm run token -- \
@@ -81,6 +81,8 @@ npm run token -- \
 ```
 
 The helper opens WordPress.com in your browser, waits for the `http://localhost:8787/callback` redirect, exchanges the authorization code for an access token, and prints the token.
+
+If you previously created a token with a narrower scope such as `posts media`, regenerate it with this helper and replace the `WP_ACCESS_TOKEN` secret. WordPress.com will reject the action with `Required scope: global` when the token is too narrow.
 
 3. Store the returned access token as `WP_ACCESS_TOKEN` in the repository that runs Docspress:
 

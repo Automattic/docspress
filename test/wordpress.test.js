@@ -67,4 +67,18 @@ describe("WordPressClient", () => {
 
     await expect(client.listPages()).rejects.toThrow("Invalid token");
   });
+
+  it("adds a useful hint for WordPress.com global scope failures", async () => {
+    const client = new WordPressClient({
+      baseUrl: "https://public-api.wordpress.com",
+      site: "fkadev.blog",
+      token: "narrow-token",
+      fetchImpl: async () => jsonResponse(
+        { message: "That API call is not allowed for this account. Required scope: `global`. Granted scope(s): `posts,media`." },
+        { ok: false, status: 403 }
+      )
+    });
+
+    await expect(client.listPages()).rejects.toThrow(/Regenerate WP_ACCESS_TOKEN/);
+  });
 });

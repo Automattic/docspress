@@ -4,6 +4,7 @@ import crypto from "node:crypto";
 import http from "node:http";
 
 const DEFAULT_REDIRECT_URI = "http://localhost:8787/callback";
+const DEFAULT_SCOPE = "global";
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
@@ -16,7 +17,7 @@ async function main() {
   const clientId = required(args["client-id"], "--client-id");
   const clientSecret = required(args["client-secret"], "--client-secret");
   const redirectUri = args["redirect-uri"] || DEFAULT_REDIRECT_URI;
-  const scope = args.scope || "posts media";
+  const scope = args.scope || DEFAULT_SCOPE;
   const site = args.site || "";
   const repo = args.repo || "";
   const setSecret = Boolean(args["set-secret"]);
@@ -234,7 +235,7 @@ Options:
   --client-id       WordPress.com app client ID.
   --client-secret   WordPress.com app client secret.
   --site            WordPress.com site domain or ID to request access for.
-  --scope           OAuth scope. Defaults to "posts media".
+  --scope           OAuth scope. Defaults to "${DEFAULT_SCOPE}".
   --redirect-uri    Local redirect URI. Defaults to ${DEFAULT_REDIRECT_URI}.
   --repo            GitHub repository for the printed secret command.
   --set-secret      Store WP_ACCESS_TOKEN in --repo using gh instead of printing it.

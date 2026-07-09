@@ -87,7 +87,7 @@ export class WordPressClient {
     const data = text ? JSON.parse(text) : null;
 
     if (!response.ok) {
-      const message = data?.message || data?.error || `${method} ${requestUrl} failed with HTTP ${response.status}`;
+      const message = formatApiError(data, method, requestUrl, response.status);
       throw new Error(message);
     }
 
@@ -96,6 +96,16 @@ export class WordPressClient {
       headers: response.headers
     };
   }
+}
+
+function formatApiError(data, method, requestUrl, status) {
+  const message = data?.message || data?.error || `${method} ${requestUrl} failed with HTTP ${status}`;
+
+  if (String(message).includes("Required scope: `global`")) {
+    return `${message} Regenerate WP_ACCESS_TOKEN with the Docspress token helper so it requests the WordPress.com "global" OAuth scope.`;
+  }
+
+  return message;
 }
 
 export function normalizePage(page) {
