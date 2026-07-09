@@ -7,6 +7,8 @@ export async function syncPages(options) {
     dryRun = false,
     deleteMode = "trash",
     rootSlug = "docs",
+    versioning = false,
+    versionTaxonomy = "docspress_version",
     logger = console
   } = options;
 
@@ -15,6 +17,9 @@ export async function syncPages(options) {
   const desiredKeys = new Set(desiredPages.map((page) => page.key));
   const result = createResult(dryRun);
   const idByKey = new Map();
+  const versionTermIds = versioning && !dryRun
+    ? await ensureVersionTerms({ desiredPages, client, versionTaxonomy })
+    : new Map();
   let syntheticId = -1;
 
   for (const [key, page] of indexed.managedByKey.entries()) {
@@ -36,10 +41,20 @@ export async function syncPages(options) {
     }
 
     const parentId = desired.parentKey ? idByKey.get(desired.parentKey) : 0;
-    const payload = pagePayload(desired, parentId);
+    const versionTermId = versionTermIdForPage(desired, versionTermIds);
+    const payload = pagePayload(desired, parentId, {
+      versioning,
+      versionTaxonomy,
+      versionTermId
+    });
 
     if (managed) {
-      if (managed.sentinel?.hash === desired.hash && managed.parent === parentId) {
+      const taxonomyMatches = !versioning || dryRun || termsMatch(
+        managed.terms?.[versionTaxonomy],
+        versionTermId ? [versionTermId] : []
+      );
+
+      if (managed.sentinel?.hash === desired.hash && managed.parent === parentId && taxonomyMatches) {
         result.unchanged += 1;
         result.operations.push({ action: "unchanged", key: desired.key, id: managed.id });
         continue;
@@ -85,14 +100,45 @@ export async function syncPages(options) {
   return result;
 }
 
-function pagePayload(page, parentId) {
-  return {
+async function ensureVersionTerms({ desiredPages, client, versionTaxonomy }) {
+  const versionsBySlug = new Map();
+
+  for (const page of desiredPages) {
+    if (page.docsVersion?.slug && !versionsBySlug.has(page.docsVersion.slug)) {
+      versionsBySlug.set(page.docsVersion.slug, page.docsVersion);
+    }
+  }
+
+  const termIds = new Map();
+  for (const version of versionsBySlug.values()) {
+    const term = await client.ensureTerm(versionTaxonomy, {
+      name: version.name || version.slug,
+      slug: version.slug
+    });
+    termIds.set(version.slug, term.id);
+  }
+
+  return termIds;
+}
+
+function versionTermIdForPage(page, versionTermIds) {
+  return page.docsVersion?.slug ? versionTermIds.get(page.docsVersion.slug) : null;
+}
+
+function pagePayload(page, parentId, options = {}) {
+  const payload = {
     title: page.title,
     content: page.content,
     slug: page.slug,
     status: page.status,
     parent: parentId || 0
   };
+
+  if (options.versioning) {
+    payload[options.versionTaxonomy] = options.versionTermId ? [options.versionTermId] : [];
+  }
+
+  return payload;
 }
 
 function createResult(dryRun) {
@@ -116,6 +162,28 @@ function addConflict(result, key, reason) {
 
 function isUnderRoot(key, rootSlug) {
   return key === rootSlug || key?.startsWith(`${rootSlug}/`);
+}
+
+function termsMatch(actual, expected) {
+  const actualIds = normalizeTermIds(actual);
+  const expectedIds = normalizeTermIds(expected);
+
+  if (actualIds.length !== expectedIds.length) {
+    return false;
+  }
+
+  return actualIds.every((id, index) => id === expectedIds[index]);
+}
+
+function normalizeTermIds(value) {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map((id) => Number(id))
+    .filter((id) => Number.isInteger(id) && id > 0)
+    .sort((a, b) => a - b);
 }
 
 export function indexExistingPages(pages) {

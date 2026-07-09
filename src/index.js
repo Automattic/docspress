@@ -14,6 +14,8 @@ async function main() {
     redirectsFile: core.getInput("redirects-file") || "",
     rootSlug: core.getInput("root-slug") || "docs",
     rootTitle: core.getInput("root-title") || "Docs",
+    versioning: normalizeBoolean(core.getInput("versioning") || "false"),
+    versionTaxonomy: core.getInput("version-taxonomy") || "docspress_version",
     createH1: normalizeBoolean(core.getInput("create-h1") || "false"),
     rewriteLinks: normalizeBoolean(core.getInput("rewrite-links") || "true"),
     editLink: normalizeBoolean(core.getInput("edit-link") || "false"),
@@ -33,6 +35,7 @@ async function main() {
     redirectsFile: config.redirectsFile,
     rootSlug: config.rootSlug,
     rootTitle: config.rootTitle,
+    versioning: config.versioning,
     createH1: config.createH1,
     rewriteLinks: config.rewriteLinks,
     editLink: config.editLink,
@@ -48,7 +51,8 @@ async function main() {
   const client = new WordPressClient({
     baseUrl: config.baseUrl,
     site: config.site,
-    token: config.token
+    token: config.token,
+    taxonomies: config.versioning ? [config.versionTaxonomy] : []
   });
 
   const result = await syncPages({
@@ -57,6 +61,8 @@ async function main() {
     dryRun: config.dryRun,
     deleteMode: config.deleteMode,
     rootSlug: config.rootSlug,
+    versioning: config.versioning,
+    versionTaxonomy: config.versionTaxonomy,
     logger: core
   });
 

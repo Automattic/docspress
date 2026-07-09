@@ -12,11 +12,12 @@ export async function collectDesiredPages(options) {
   const context = createContext(options);
   const byRoute = options.manifestFile
     ? await collectManifestPages(context, options)
-    : await collectFilePages(context);
+    : await collectFilePages(context, options);
 
   ensurePlaceholderHierarchy(byRoute, options.rootTitle);
   await applyRedirects(byRoute, options, context);
   ensurePlaceholderHierarchy(byRoute, options.rootTitle);
+  applyVersionMetadata(byRoute, options);
   const linkResolver = createLinkResolver(byRoute, context, options);
   convertMarkdownPages(byRoute, options, linkResolver);
 
@@ -39,7 +40,7 @@ function createContext(options) {
   };
 }
 
-async function collectFilePages(context) {
+async function collectFilePages(context, options) {
   const files = await fg(["**/*.md", "**/*.markdown"], {
     cwd: context.absoluteDocsDir,
     onlyFiles: true,
@@ -66,7 +67,8 @@ async function collectFilePages(context) {
       routeKey,
       routeSegments,
       sourcePath,
-      sourceMarkdown: markdown
+      sourceMarkdown: markdown,
+      docsVersion: docsVersionForRelativeSource(file, options)
     });
   }
 
@@ -113,7 +115,8 @@ async function collectManifestPages(context, options) {
         routeSegments,
         sourcePath,
         sourceMarkdown: markdown,
-        titleOverride: entry.title
+        titleOverride: entry.title,
+        docsVersion: docsVersionForSourcePath(sourcePath, context, options)
       });
       continue;
     }
@@ -203,6 +206,68 @@ function routeSegmentsForFile(file) {
   }
 
   return [...dirSegments, baseSlug];
+}
+
+function docsVersionForRelativeSource(file, options) {
+  if (!normalizeBoolean(options.versioning)) {
+    return null;
+  }
+
+  const parts = normalizeAlias(file)?.split("/").filter(Boolean) || [];
+  if (parts.length < 2) {
+    return null;
+  }
+
+  return docsVersionFromSegment(parts[0]);
+}
+
+function docsVersionForSourcePath(sourcePath, context, options) {
+  if (!normalizeBoolean(options.versioning)) {
+    return null;
+  }
+
+  const sourceRelative = docsRelativeSource(sourcePath, context.docsDirForSource);
+  return docsVersionForRelativeSource(sourceRelative, options);
+}
+
+function docsVersionFromSegment(segment) {
+  const name = String(segment || "").trim();
+  const slug = slugify(name, "");
+
+  if (!slug) {
+    return null;
+  }
+
+  return {
+    name: name || slug,
+    slug
+  };
+}
+
+function applyVersionMetadata(byRoute, options) {
+  if (!normalizeBoolean(options.versioning)) {
+    return;
+  }
+
+  const versionsBySlug = new Map();
+  for (const page of byRoute.values()) {
+    if (page.docsVersion?.slug && !versionsBySlug.has(page.docsVersion.slug)) {
+      versionsBySlug.set(page.docsVersion.slug, page.docsVersion);
+    }
+  }
+
+  for (const page of byRoute.values()) {
+    if (page.docsVersion?.slug || page.routeSegments.length === 0) {
+      continue;
+    }
+
+    if (page.kind === "file") {
+      continue;
+    }
+
+    const versionSlug = page.routeSegments[0];
+    page.docsVersion = versionsBySlug.get(versionSlug) || docsVersionFromSegment(versionSlug);
+  }
 }
 
 function fallbackTitleForRoute(routeSegments, rootTitle) {
@@ -460,12 +525,14 @@ function finalizePage(page, options) {
     slug,
     parentKey,
     status,
-    body
+    body,
+    docsVersion: page.docsVersion?.slug || null
   };
   const hash = sha256(stableJson(stablePayload));
   const content = prependSentinel(body, {
     key,
     source: page.sourcePath,
+    docsVersion: page.docsVersion?.slug || null,
     hash
   });
 
@@ -476,6 +543,7 @@ function finalizePage(page, options) {
     slug,
     status,
     body,
+    docsVersion: page.docsVersion || null,
     hash,
     content,
     depth: fullSegments.length

@@ -1,10 +1,29 @@
 # Docspress
 
-Docspress is a GitHub Action that syncs Markdown docs from a repository into WordPress Pages as Gutenberg-compatible block content.
+[![npm version](https://img.shields.io/npm/v/docspress.svg)](https://www.npmjs.com/package/docspress)
+[![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)](LICENSE)
 
-Markdown is the source of truth. Docspress only updates or deletes WordPress pages that contain its own hidden sentinel comment, so existing manually-created WordPress pages are protected and reported as conflicts.
+Docspress syncs Markdown documentation from GitHub into WordPress Pages as Gutenberg-compatible block content.
 
-## Usage
+It is built for teams that want GitHub to remain the source of truth for developer docs while WordPress remains the publishing surface. Commit Markdown, run a GitHub Action, and Docspress creates, updates, or removes managed WordPress Pages through the REST API.
+
+## Why Docspress?
+
+- Keep docs in Markdown next to the code they describe.
+- Publish to WordPress Pages instead of moving docs to a separate docs CMS.
+- Preserve nested docs folders as parent and child WordPress Pages.
+- Convert Markdown into Gutenberg core blocks instead of one large HTML blob.
+- Protect manual WordPress content with managed-page sentinels.
+- Review planned changes with `dry-run` before writing to WordPress.
+- Support manifests, redirects, version taxonomies, rewritten local links, and edit links.
+
+## Project status
+
+Docspress is early software. The core sync loop works, and the first-class target is WordPress.com with OAuth bearer tokens. Custom WordPress REST API base URLs are available through `wordpress-url`, but WordPress.com is the best-tested path right now.
+
+## Quick start
+
+Create a workflow in the repository that owns your Markdown docs:
 
 ```yaml
 name: Sync docs to WordPress
@@ -14,6 +33,7 @@ on:
     branches: [main]
     paths:
       - "docs/**/*.md"
+      - "docs/**/*.markdown"
       - "docs/**/*.json"
       - ".github/workflows/sync-docs.yml"
   workflow_dispatch:
@@ -28,18 +48,46 @@ jobs:
           wordpress-site: fkadev.blog
           wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}
           docs-dir: docs
-          manifest-file: docs/docspress.manifest.json
-          redirects-file: docs/redirects.json
           root-slug: docs
           root-title: Docs
-          create-h1: false
-          rewrite-links: true
-          edit-link: true
           status: draft
           dry-run: true
 ```
 
-## Inputs
+Start with `dry-run: true`. When the plan looks right in the GitHub Actions summary, switch to `dry-run: false`.
+
+## WordPress.com authentication
+
+WordPress.com API writes require an OAuth bearer token with the `global` scope. Docspress includes a token helper so you can authorize in the browser and store the result as a GitHub Actions secret.
+
+1. Create an app at [WordPress.com Apps](https://developer.wordpress.com/apps/).
+2. Set the redirect URL to `http://localhost:8787/callback`.
+3. Run the helper:
+
+```bash
+npx docspress token \
+  --client-id YOUR_CLIENT_ID \
+  --client-secret YOUR_CLIENT_SECRET \
+  --site fkadev.blog \
+  --repo OWNER/REPO
+```
+
+The helper opens WordPress.com, waits for the local callback, exchanges the authorization code for an access token, and prints a `gh secret set` command.
+
+To store the secret directly, install and authenticate the GitHub CLI, then run:
+
+```bash
+npx docspress token \
+  --client-id YOUR_CLIENT_ID \
+  --client-secret YOUR_CLIENT_SECRET \
+  --site fkadev.blog \
+  --repo OWNER/REPO \
+  --set-secret
+```
+
+The secret name is `WP_ACCESS_TOKEN`. Use it in your workflow as `${{ secrets.WP_ACCESS_TOKEN }}`.
+
+## Configuration
 
 | Input | Default | Description |
 | --- | --- | --- |
@@ -51,6 +99,8 @@ jobs:
 | `redirects-file` | empty | Optional JSON map of old docs paths to new docs paths or external URLs. Creates managed moved-page placeholders. |
 | `root-slug` | `docs` | Managed root page slug. |
 | `root-title` | `Docs` | Managed root page title when no root `index.md` exists. |
+| `versioning` | `false` | Infer docs versions from `docs/{version}/**/*.md`, create missing version terms, and assign synced pages to them. |
+| `version-taxonomy` | `docspress_version` | REST base and page field for the registered WordPress docs version taxonomy. |
 | `create-h1` | `false` | Add the page title as an H1 block at the top of generated content. |
 | `rewrite-links` | `true` | Rewrite local Markdown links to generated WordPress page URLs. |
 | `edit-link` | `false` | Append an "Edit this page on GitHub" link to Markdown-backed pages. |
@@ -62,96 +112,79 @@ jobs:
 | `delete-mode` | `trash` | Use `trash` or `force` for removed Markdown files. |
 | `dry-run` | `false` | Plan changes without writing to WordPress. |
 
-## WordPress.com authentication
+Docspress writes these outputs:
 
-WordPress.com API writes require an OAuth bearer token. Create that token on WordPress.com, then store it as a GitHub Actions secret.
-
-For personal projects or demos that only access your own WordPress.com site, use the authorization-code flow. This works with two-factor authentication because you authorize in the browser instead of sending your WordPress.com password to the token endpoint.
-
-1. Create an app at [WordPress.com Apps](https://developer.wordpress.com/apps/) and copy its `client_id` and `client_secret`.
-
-   For the `f/docspress-demo` repository, use these app form values:
-
-   | Field | Value |
-   | --- | --- |
-   | Name | `Docspress Demo` |
-   | Description | `Sync Markdown docs from GitHub to WordPress Pages as Gutenberg content.` |
-   | Website URL | `https://github.com/f/docspress-demo` |
-   | Redirect URLs | `http://localhost:8787/callback` |
-   | Javascript Origins | Leave blank |
-   | Type | `Web` |
-   | Follow Developer blog | Optional; leave unchecked unless you want the emails |
-   | Owner | Use your personal owner, such as `fatihkadirakin`, for personal/demo apps |
-
-   The redirect URL must match the local callback URL used by the token helper below.
-
-2. Run the token helper with `npx`. The helper requests WordPress.com's `global` OAuth scope because the WP v2 Pages API requires it for listing, creating, updating, and deleting pages.
-
-```bash
-npx docspress token \
-  --client-id YOUR_CLIENT_ID \
-  --client-secret YOUR_CLIENT_SECRET \
-  --site fkadev.blog \
-  --repo f/docspress-demo
-```
-
-The helper opens WordPress.com in your browser, waits for the `http://localhost:8787/callback` redirect, exchanges the authorization code for an access token, and prints the token.
-
-If you previously created a token with a narrower scope such as `posts media`, regenerate it with this helper and replace the `WP_ACCESS_TOKEN` secret. WordPress.com will reject the action with `Required scope: global` when the token is too narrow.
-
-3. Store the returned access token as `WP_ACCESS_TOKEN` in the repository that runs Docspress:
-
-```bash
-gh secret set WP_ACCESS_TOKEN --repo OWNER/REPO
-```
-
-Paste the token when prompted, then press `Ctrl-D`.
-
-You can also let the helper store the secret directly:
-
-```bash
-npx docspress token \
-  --client-id YOUR_CLIENT_ID \
-  --client-secret YOUR_CLIENT_SECRET \
-  --site fkadev.blog \
-  --repo f/docspress-demo \
-  --set-secret
-```
-
-Docspress sends the resulting OAuth token to WordPress.com as `Authorization: Bearer ...`.
+| Output | Description |
+| --- | --- |
+| `created` | Count of pages created or planned for creation. |
+| `updated` | Count of pages updated or planned for update. |
+| `deleted` | Count of pages deleted or planned for deletion. |
+| `unchanged` | Count of managed pages already in sync. |
+| `conflicts` | Count of unmanaged WordPress page conflicts. |
+| `summary-json` | JSON summary of the sync result. |
 
 ## Docs mapping
 
-- `docs/index.md` or `docs/README.md` becomes `/docs/`.
-- `docs/getting-started.md` becomes `/docs/getting-started/`.
-- `docs/guides/index.md` becomes `/docs/guides/`.
-- Missing parent sections are created as managed placeholder pages.
+Without a manifest, Docspress discovers every `.md` and `.markdown` file under `docs-dir`:
 
-The page title comes from frontmatter `title`, then the first H1, then the filename. When the first H1 is used as the title, it is removed from the body to avoid duplication.
+```text
+docs/index.md                    -> /docs/
+docs/getting-started.md          -> /docs/getting-started/
+docs/guides/index.md             -> /docs/guides/
+docs/guides/markdown-features.md -> /docs/guides/markdown-features/
+```
+
+Missing parent sections are created as managed placeholder pages. The page title comes from frontmatter `title`, then the first H1, then the filename. When the first H1 is used as the title, Docspress removes it from the body to avoid duplicate headings.
 
 Set `create-h1: true` if you want Docspress to add the WordPress page title as the first H1 block in the generated content. When the Markdown already starts with the same H1, Docspress reuses that title and avoids creating a duplicate.
 
-### Link rewriting
+## Markdown and Gutenberg support
 
-By default, local Markdown links are rewritten to the generated WordPress page URL:
+Docspress maps common Markdown to Gutenberg-compatible core blocks:
 
-```md
-[Getting Started](guides/getting-started.md)
-[Action Inputs](/docs/reference/action-inputs.md)
-```
+| Markdown | WordPress output |
+| --- | --- |
+| Paragraphs and inline formatting | `core/paragraph` |
+| Headings | `core/heading` |
+| Ordered, unordered, nested, and task lists | `core/list` |
+| Blockquotes | `core/quote` |
+| Fenced code blocks | `core/code` |
+| GFM tables | `core/table` |
+| Images | `core/image` |
+| Horizontal rules | `core/separator` |
+| Raw HTML | `core/html` |
+| Serialized Gutenberg block comments | Preserved as-is |
 
-With `root-slug: docs`, those become:
+Serialized Gutenberg block comments are an escape hatch for blocks Docspress does not map yet:
 
 ```html
-<a href="/docs/guides/getting-started/">Getting Started</a>
-<a href="/docs/reference/action-inputs/">Action Inputs</a>
+<!-- wp:quote -->
+<blockquote class="wp-block-quote"><p>Written as a raw Gutenberg block.</p></blockquote>
+<!-- /wp:quote -->
 ```
 
-External links, anchors, `mailto:` links, and unknown local files are left unchanged. Set `rewrite-links: false` to preserve Markdown links exactly as written.
+Docspress preserves these annotations instead of wrapping them in an HTML block. WordPress is still responsible for validating the serialized block markup.
 
-### Manifest mode
+Docspress also supports Gutenberg Handbook-style code tabs:
 
-Without `manifest-file`, Docspress discovers every Markdown file under `docs-dir`. Set `manifest-file` when you want stable slugs, titles, and parent relationships that are not purely derived from filenames.
+````md
+{% codetabs %}
+{% JSX %}
+```jsx
+<Button variant="primary" />
+```
+{% Plain %}
+```js
+wp.element.createElement(Button);
+```
+{% end %}
+````
+
+These become a Gutenberg HTML block containing `code-tabs`, `code-tab`, and `code-tab-block` markup.
+
+## Manifest mode
+
+Use `manifest-file` when you want stable slugs, titles, and parent relationships that are not purely derived from filenames.
 
 ```json
 {
@@ -171,9 +204,9 @@ Without `manifest-file`, Docspress discovers every Markdown file under `docs-dir
 
 `markdown_source` paths are resolved relative to the manifest file. Entries without `markdown_source` become managed placeholder pages.
 
-### Redirect map
+## Redirect map
 
-Set `redirects-file` to keep old docs paths alive after renames. On WordPress.com this creates a managed "moved" page with a link to the new destination; it is not a server-level 301 redirect.
+Use `redirects-file` to keep old docs paths alive after renames. On WordPress.com this creates a managed moved-page placeholder with a link to the new destination; it is not a server-level 301 redirect.
 
 ```json
 {
@@ -186,7 +219,49 @@ Set `redirects-file` to keep old docs paths alive after renames. On WordPress.co
 
 Relative destinations are resolved under `root-slug`; absolute URLs are used as-is.
 
-### Edit links
+## Versioning
+
+Set `versioning: true` when your docs live under version folders:
+
+```text
+docs/
+  v1/
+    index.md
+    guides/getting-started.md
+  v2/
+    index.md
+```
+
+Docspress keeps the version folder in the page path, so `docs/v1/guides/getting-started.md` becomes `/docs/v1/guides/getting-started/`. It also creates missing terms in the configured version taxonomy and assigns every page under `docs/{version}/` to that term, including generated placeholder pages.
+
+The taxonomy must already be registered on the WordPress site for Pages and exposed through the REST API. By default Docspress uses `docspress_version` as both the term endpoint and the page payload field:
+
+```yaml
+versioning: true
+version-taxonomy: docspress_version
+```
+
+Docspress does not delete version terms when folders are removed, because those terms may be shared with other content.
+
+## Link rewriting
+
+By default, local Markdown links are rewritten to generated WordPress page URLs:
+
+```md
+[Getting Started](guides/getting-started.md)
+[Action Inputs](/docs/reference/action-inputs.md)
+```
+
+With `root-slug: docs`, those become:
+
+```html
+<a href="/docs/guides/getting-started/">Getting Started</a>
+<a href="/docs/reference/action-inputs/">Action Inputs</a>
+```
+
+External links, anchors, `mailto:` links, and unknown local files are left unchanged. Set `rewrite-links: false` to preserve Markdown links exactly as written.
+
+## Edit links
 
 Set `edit-link: true` to append a source link to every Markdown-backed page:
 
@@ -199,42 +274,19 @@ github-ref: main
 
 Generated placeholder and redirect pages do not get edit links.
 
-## Markdown and Gutenberg blocks
+## Safety model
 
-Docspress maps common Markdown to Gutenberg-compatible core blocks, including paragraphs, headings, lists, quotes, code blocks, images, tables, separators, and raw HTML.
+Docspress adds a hidden sentinel comment to every page it manages. During sync it only updates or deletes WordPress pages that contain that sentinel. If a matching WordPress page exists without the sentinel, Docspress reports a conflict and fails instead of overwriting manual content.
 
-Docspress also supports Gutenberg Handbook-style code tabs:
+Recommended first run:
 
-````md
-{% codetabs %}
-{% JSX %}
-```jsx
-<Button variant="primary" />
-```
-{% Plain %}
-```js
-wp.element.createElement(Button);
-```
-{% end %}
-````
-
-These become a Gutenberg HTML block containing `code-tabs`, `code-tab`, and `code-tab-block` markup. Themes can style that markup if they want tab-like behavior.
-
-You can also write serialized Gutenberg block comments directly in Markdown when you need a block Docspress does not map yet. Keep the block comments and their HTML unindented, with blank lines around the block:
-
-```html
-<!-- wp:quote -->
-<blockquote class="wp-block-quote"><p>Written as a raw Gutenberg block.</p></blockquote>
-<!-- /wp:quote -->
+```yaml
+status: draft
+dry-run: true
+delete-mode: trash
 ```
 
-Self-closing block comments work too:
-
-```html
-<!-- wp:separator /-->
-```
-
-Docspress preserves these Gutenberg annotations as-is instead of wrapping them in an HTML block. WordPress is still responsible for validating the serialized block markup, so malformed block comments may need to be fixed in the Markdown source.
+Then review the GitHub Actions summary, change `dry-run` to `false`, and keep `status: draft` until the generated pages look right in WordPress.
 
 ## Development
 
@@ -245,4 +297,27 @@ npm run lint
 npm run build
 ```
 
-`dist/index.js` is committed so workflows can run the action without installing dependencies.
+`dist/index.js` is committed so GitHub Actions can run the action without installing dependencies.
+
+Before opening a pull request, run:
+
+```bash
+npm run package
+```
+
+That command lints, tests, and rebuilds the bundled action.
+
+## Contributing
+
+Contributions are welcome. Good first areas include Markdown-to-Gutenberg coverage, WordPress REST compatibility, docs examples, and tests for edge cases in sync behavior.
+
+When proposing a change, please include:
+
+- A short description of the docs workflow or WordPress behavior involved.
+- Tests for parser, mapping, or sync changes when possible.
+- Updated README examples when the public API changes.
+- A rebuilt `dist/index.js` when source changes affect the GitHub Action bundle.
+
+## License
+
+Docspress is free software licensed under the GNU General Public License v3.0 or later. See [LICENSE](LICENSE).

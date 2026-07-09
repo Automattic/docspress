@@ -10,6 +10,7 @@
   },
   "files": [
     "README.md",
+    "LICENSE",
     "action.yml",
     "bin/",
     "dist/",
@@ -31,7 +32,7 @@
     "docs"
   ],
   "author": "Fatih Kadir Akin",
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "dependencies": {
     "@actions/core": "^3.0.1",
     "fast-glob": "^3.3.3",
