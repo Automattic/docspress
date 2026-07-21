@@ -66441,7 +66441,7 @@ const parser = unified().use(remarkParse).use(remarkGfm);
 
 function parseMarkdown(markdown) {
   const parsed = gray_matter(markdown);
-  const content = transformCodetabs(parsed.content);
+  const content = normalizeGutenbergBlockComments(transformCodetabs(parsed.content));
   const tree = parser.parse(content);
 
   return {

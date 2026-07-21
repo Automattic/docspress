@@ -22,7 +22,7 @@ const parser = unified().use(remarkParse).use(remarkGfm);
 
 export function parseMarkdown(markdown) {
   const parsed = matter(markdown);
-  const content = transformCodetabs(parsed.content);
+  const content = normalizeGutenbergBlockComments(transformCodetabs(parsed.content));
   const tree = parser.parse(content);
 
   return {

@@ -137,6 +137,19 @@ console.log("hi");
     expect(block.attrs.content).toBe("<p>Use <code>dry-run</code> first.</p>");
   });
 
+  it("protects nested block comments inside serialized attributes before Markdown parsing", () => {
+    const source = String.raw`<!-- wp:docspress/api-request {"method":"POST","endpoint":"/wp-json/wp/v2/pages","responseStatus":"201 Created","responseBody":"{\n  \"content\": \"<!-- docspress:{...} -->\\n<!-- wp:paragraph -->...\"\n}","responseBodyFormat":"json"} /-->`;
+    const result = markdownToBlocks(source, { fallbackTitle: "Fallback" });
+
+    expect(result.blocks).not.toContain("<!-- wp:html -->");
+    expect(result.blocks).toContain("\\u003c!\\u002d\\u002d docspress:");
+
+    const [block] = parse(result.blocks);
+    expect(block.blockName).toBe("docspress/api-request");
+    expect(block.attrs.responseBody).toContain("<!-- docspress:{...} -->");
+    expect(block.attrs.responseBody).toContain("<!-- wp:paragraph -->");
+  });
+
   it("rewrites links through a supplied resolver", () => {
     const result = markdownToBlocks("[Guide](guides/start.md) and [external](https://example.com).", {
       fallbackTitle: "Fallback",
