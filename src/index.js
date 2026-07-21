@@ -92,6 +92,9 @@ async function main() {
   await writeSummary(result);
 
   if (result.conflicts > 0) {
+    for (const conflict of result.conflictDetails) {
+      core.error(`Conflict ${conflict.key}: ${conflict.reason}`);
+    }
     core.setFailed(`Docspress found ${result.conflicts} synchronization conflict(s).`);
   }
 }

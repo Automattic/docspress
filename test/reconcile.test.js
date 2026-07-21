@@ -60,6 +60,23 @@ describe("planReconciliation", () => {
     expect(plan.classifications[0].state).toBe("github-only");
   });
 
+  it("ignores equivalent WordPress escaping in Gutenberg block attributes", () => {
+    const baseBlock = '<!-- wp:docspress/example {"value":"first\\\\nsecond"} /-->';
+    const wordpressBlock = '<!-- wp:docspress/example {"value":"first\\u005cnsecond"} /-->';
+    const base = desiredPage({ body: `${baseBlock}\n\n${paragraph("Base")}` });
+    const desired = desiredPage({ body: `${baseBlock}\n\n${paragraph("Edited in GitHub")}` });
+    const plan = planReconciliation({
+      desiredPages: [desired],
+      existingPages: [existingFrom(base, {
+        body: `${wordpressBlock}\n\n${paragraph("Base")}`
+      })]
+    });
+
+    expect(plan.conflicts).toEqual([]);
+    expect(plan.wordpressChanges).toEqual([]);
+    expect(plan.classifications[0].state).toBe("github-only");
+  });
+
   it("refreshes a stale sentinel when both sides already converge", () => {
     const base = desiredPage();
     const desired = desiredPage({ body: paragraph("Merged proposal") });

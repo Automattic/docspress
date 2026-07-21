@@ -33,6 +33,10 @@ Keep `status: draft` if WordPress remains an editorial review gate. Set `status:
 
 After normal publishing is stable, use one workflow for push-based publishing and scheduled WordPress polling:
 
+Before the first reverse-sync run, open [Settings → Actions → General for the repository](https://github.com/Automattic/docspress/settings/actions). Under **Workflow permissions**, enable **Allow GitHub Actions to create and approve pull requests**, then select **Save**. For another repository, open the same settings page under its owner and repository name.
+
+![GitHub Actions workflow permissions with Allow GitHub Actions to create and approve pull requests enabled](https://raw.githubusercontent.com/Automattic/docspress/main/theme/assets/images/github-actions/allow-actions-create-pull-requests.png "Enable the pull request setting and save it before running WordPress-to-GitHub synchronization.")
+
 <!-- wp:docspress/colorful-code {"language":"yaml","filename":".github/workflows/sync-docs.yml","code":"on:\n  push:\n    branches: [main]\n    paths: [\"docs/**\", \".github/workflows/sync-docs.yml\"]\n  schedule:\n    - cron: \"3/5 * * * *\"\n  workflow_dispatch:\n\npermissions:\n  contents: write\n  pull-requests: write\n\nconcurrency:\n  group: docspress-sync\n  cancel-in-progress: false\n\njobs:\n  sync:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@FULL_COMMIT_SHA\n      - uses: Automattic/docspress@FULL_COMMIT_SHA\n        with:\n          mode: reconcile\n          wordpress-site: example.wordpress.com\n          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n          docs-dir: docs\n          root-slug: docs\n          status: publish","highlightedLines":"5-6,10-12,25","showLineNumbers":true,"caption":"Pushes publish Markdown; the off-hour five-minute schedule proposes WordPress editor changes."} /-->
 
 DocsPress converts supported core blocks back to readable Markdown and leaves custom or attributed blocks as serialized Gutenberg comments so a later publish remains lossless. It updates one action-owned branch and pull request instead of opening duplicates on every poll.
