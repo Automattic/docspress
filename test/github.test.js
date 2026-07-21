@@ -3,7 +3,10 @@ import { DOCSPRESS_PR_MARKER, GitHubPullRequestClient } from "../src/github.js";
 
 function mockOctokit(options = {}) {
   const branchExists = options.branchExists || false;
-  const pulls = options.pulls || [];
+  const pulls = (options.pulls || []).map((pull) => ({
+    head: { ref: "docspress/wordpress-sync", repo: { full_name: "o/r" } },
+    ...pull
+  }));
   const git = {
     getRef: vi.fn(async ({ ref }) => {
       if (ref === "heads/docspress/wordpress-sync" && !branchExists) {
@@ -67,25 +70,23 @@ describe("GitHubPullRequestClient", () => {
     expect(octokit.rest.pulls.update).toHaveBeenCalledWith(expect.objectContaining({ pull_number: 9 }));
   });
 
-  it("finds a managed closed pull request when GitHub's head filter returns no results", async () => {
-    const octokit = mockOctokit({ branchExists: true });
-    octokit.rest.pulls.list
-      .mockResolvedValueOnce({ data: [] })
-      .mockResolvedValueOnce({
-        data: [{
-          number: 9,
-          state: "closed",
-          body: DOCSPRESS_PR_MARKER,
-          html_url: "https://github.com/o/r/pull/9",
-          head: { ref: "docspress/wordpress-sync", repo: { full_name: "o/r" } }
-        }]
-      });
+  it("finds a managed closed pull request by filtering the repository pull list", async () => {
+    const octokit = mockOctokit({
+      branchExists: true,
+      pulls: [{
+        number: 9,
+        state: "closed",
+        body: DOCSPRESS_PR_MARKER,
+        html_url: "https://github.com/o/r/pull/9"
+      }]
+    });
 
     const result = await client(octokit).syncChanges([{ path: "docs/index.md", content: "# Docs\n" }]);
 
     expect(result.status).toBe("created");
     expect(octokit.rest.git.updateRef).toHaveBeenCalledWith(expect.objectContaining({ force: true }));
     expect(octokit.rest.pulls.create).toHaveBeenCalledOnce();
+    expect(octokit.rest.pulls.list).toHaveBeenCalledWith(expect.not.objectContaining({ head: expect.anything() }));
   });
 
   it("closes and removes a managed proposal when changes disappear", async () => {

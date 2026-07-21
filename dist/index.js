@@ -92964,23 +92964,11 @@ class GitHubPullRequestClient {
       owner: this.owner,
       repo: this.repo,
       state: "all",
-      head: `${this.owner}:${this.branch}`,
-      base,
-      per_page: 100
-    });
-    if (response.data.length > 0) {
-      return response.data;
-    }
-
-    const fallback = await this.octokit.rest.pulls.list({
-      owner: this.owner,
-      repo: this.repo,
-      state: "all",
       base,
       per_page: 100
     });
     const repository = `${this.owner}/${this.repo}`.toLowerCase();
-    return fallback.data.filter((pull) =>
+    return response.data.filter((pull) =>
       pull.head?.ref === this.branch &&
       String(pull.head?.repo?.full_name || "").toLowerCase() === repository
     );
