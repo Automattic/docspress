@@ -33,7 +33,17 @@ Keep `status: draft` if WordPress remains an editorial review gate. Set `status:
 
 The Action exports counters for created, updated, deleted, unchanged, and conflict operations plus `summary-json` for downstream jobs.
 
-<!-- wp:docspress/result {"status":"success","title":"Continuous documentation delivery","content":"<p>Every merged change under the selected docs paths now reconciles the same managed WordPress Page tree.</p>","meta":"GitHub remains source of truth"} /-->
+Open the workflow run summary before inspecting individual steps. It identifies the triggering commit and branch, reports the overall status and duration, and shows whether the `sync` job completed. This [real DocsPress synchronization run](https://github.com/Automattic/docspress/actions/runs/29798422167) completed successfully in 15 seconds.
+
+![A successful DocsPress workflow run showing the status, duration, and sync job](https://raw.githubusercontent.com/Automattic/docspress/main/theme/assets/images/github-actions/workflow-run-overview.jpg "The tightly cropped run overview keeps the successful status, duration, triggering revision, and sync job graph in view.")
+
+Open the `sync` job when the run fails or when you need to verify which Action revision executed. The completed-step list separates checkout, DocsPress synchronization, post-job cleanup, and final completion.
+
+![The completed sync job showing the checkout, DocsPress, cleanup, and completion steps](https://raw.githubusercontent.com/Automattic/docspress/main/theme/assets/images/github-actions/sync-job-steps.jpg "The job crop removes unrelated GitHub navigation and focuses on the steps that must complete successfully.")
+
+The DocsPress step found 21 desired Pages in this example. It created the new theme-customization guide, updated three existing Pages, and left 17 Pages unchanged. A successful run with no deletion or conflict messages confirmed that the public Page tree matched the repository.
+
+<!-- wp:docspress/result {"status":"success","title":"Example synchronization completed","content":"<p>The run created 1 Page, updated 3 Pages, left 17 unchanged, and reported no deletions or conflicts.</p>","meta":"21 desired Pages · Success in 15 seconds"} /-->
 
 ## Pin and update intentionally
 
