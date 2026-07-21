@@ -21,6 +21,6 @@ jobs:
           create-h1: false
           rewrite-links: true
           edit-link: false
-          status: draft
+          status: publish
           delete-mode: trash
-          dry-run: true
+          dry-run: false
