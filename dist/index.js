@@ -92968,7 +92968,22 @@ class GitHubPullRequestClient {
       base,
       per_page: 100
     });
-    return response.data;
+    if (response.data.length > 0) {
+      return response.data;
+    }
+
+    const fallback = await this.octokit.rest.pulls.list({
+      owner: this.owner,
+      repo: this.repo,
+      state: "all",
+      base,
+      per_page: 100
+    });
+    const repository = `${this.owner}/${this.repo}`.toLowerCase();
+    return fallback.data.filter((pull) =>
+      pull.head?.ref === this.branch &&
+      String(pull.head?.repo?.full_name || "").toLowerCase() === repository
+    );
   }
 
   async getBranchRef() {
