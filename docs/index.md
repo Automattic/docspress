@@ -6,7 +6,7 @@ DocsPress keeps documentation beside the code that explains it, then publishes t
 
 <!-- wp:docspress/callout {"tone":"tip","title":"The shortest path","content":"<p>Give your coding agent the DocsPress skills. It can inspect an existing repository, generate missing documentation from verified source, and prepare the WordPress synchronization workflow.</p>","collapsible":false} /-->
 
-## Install DocsPress with your coding agent
+## Install DocsPress with your coding agents
 
 Install both skills into the repository that owns the documentation:
 
