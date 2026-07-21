@@ -47,7 +47,7 @@ DocsPress is a Node 20 GitHub Action configured entirely through `with` inputs.
 | `github-token` | `github.token` | Token used to create commits, the managed branch, and pull requests. |
 | `pull-request-base` | repository default branch | Base branch for the rolling pull request. |
 | `pull-request-branch` | `docspress/wordpress-sync` | Action-owned branch that is refreshed from the latest base on every run. |
-| `pull-request-title` | `Sync WordPress documentation changes` | Pull request and commit title. |
+| `pull-request-title` | generated | Optional pull request and commit title override. The generated title follows Conventional Commits, for example `docs(sync-and-rest-api): sync changes from WordPress`. |
 
 Reverse sync requires `contents: write` and `pull-requests: write`. The repository must also allow GitHub Actions to create pull requests, or `github-token` must use a suitable GitHub App or personal access token. Follow the [continuous synchronization guide](../guides/continuous-sync.md#stage-4-reconcile-wordpress-edits) to enable the repository setting.
 

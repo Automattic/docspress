@@ -206,7 +206,7 @@ The secret name is `WP_ACCESS_TOKEN`. Use it in your workflow as `${{ secrets.WP
 | `github-token` | `github.token` | Token used for reverse-sync branches and pull requests. |
 | `pull-request-base` | repository default branch | Base for reverse-sync pull requests. |
 | `pull-request-branch` | `docspress/wordpress-sync` | Dedicated rolling proposal branch. |
-| `pull-request-title` | `Sync WordPress documentation changes` | Rolling pull request title. |
+| `pull-request-title` | generated | Optional pull request and commit title override. By default DocsPress creates a Conventional Commits title such as `docs(sync-and-rest-api): sync changes from WordPress`. |
 | `status` | `publish` | Status for created or updated pages. Use `draft` for private review or `publish` for public pages. |
 | `delete-mode` | `trash` | Use `trash` or `force` for removed Markdown files. |
 | `dry-run` | `false` | Plan changes without writing to WordPress or GitHub. |

@@ -28,7 +28,7 @@ async function main() {
     githubToken: core.getInput("github-token"),
     pullRequestBase: core.getInput("pull-request-base") || "",
     pullRequestBranch: core.getInput("pull-request-branch") || "docspress/wordpress-sync",
-    pullRequestTitle: core.getInput("pull-request-title") || "Sync WordPress documentation changes",
+    pullRequestTitle: core.getInput("pull-request-title"),
     status: core.getInput("status") || "publish",
     deleteMode: core.getInput("delete-mode") || "trash",
     dryRun: normalizeBoolean(core.getInput("dry-run") || "false")

@@ -38,11 +38,12 @@ function mockOctokit(options = {}) {
   };
 }
 
-function client(octokit) {
+function client(octokit, options = {}) {
   return new GitHubPullRequestClient({
     token: "token",
     repository: "o/r",
-    octokit
+    octokit,
+    ...options
   });
 }
 
@@ -53,8 +54,41 @@ describe("GitHubPullRequestClient", () => {
 
     expect(result.status).toBe("created");
     expect(octokit.rest.git.createRef).toHaveBeenCalledWith(expect.objectContaining({ sha: "new-commit" }));
+    expect(octokit.rest.git.createCommit).toHaveBeenCalledWith(expect.objectContaining({
+      message: "docs(docs): sync changes from WordPress"
+    }));
     expect(octokit.rest.pulls.create).toHaveBeenCalledWith(expect.objectContaining({
-      body: expect.stringContaining(DOCSPRESS_PR_MARKER)
+      title: "docs(docs): sync changes from WordPress",
+      body: expect.stringMatching(/Summary[\s\S]*WordPress → GitHub[\s\S]*Review and merge/)
+    }));
+  });
+
+  it("uses a conventional multi-file title and a descriptive file count", async () => {
+    const octokit = mockOctokit();
+    await client(octokit).syncChanges([
+      { path: "docs/guide.md", content: "# Guide\n" },
+      { path: "docs/api.md", content: "# API\n" }
+    ]);
+
+    expect(octokit.rest.git.createCommit).toHaveBeenCalledWith(expect.objectContaining({
+      message: "docs(wordpress): sync 2 files from WordPress"
+    }));
+    expect(octokit.rest.pulls.create).toHaveBeenCalledWith(expect.objectContaining({
+      title: "docs(wordpress): sync 2 files from WordPress",
+      body: expect.stringContaining("2 Markdown files")
+    }));
+  });
+
+  it("honors an explicit pull request title override", async () => {
+    const octokit = mockOctokit();
+    await client(octokit, { title: "docs(api): import editorial updates" })
+      .syncChanges([{ path: "docs/api.md", content: "# API\n" }]);
+
+    expect(octokit.rest.git.createCommit).toHaveBeenCalledWith(expect.objectContaining({
+      message: "docs(api): import editorial updates"
+    }));
+    expect(octokit.rest.pulls.create).toHaveBeenCalledWith(expect.objectContaining({
+      title: "docs(api): import editorial updates"
     }));
   });
 

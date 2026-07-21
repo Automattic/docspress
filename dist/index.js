@@ -92814,7 +92814,7 @@ class GitHubPullRequestClient {
     this.repo = repo;
     this.base = options.base || "";
     this.branch = options.branch || "docspress/wordpress-sync";
-    this.title = options.title || "Sync WordPress documentation changes";
+    this.title = String(options.title || "").trim();
     this.octokit = options.octokit || github.getOctokit(options.token);
   }
 
@@ -92892,10 +92892,11 @@ class GitHubPullRequestClient {
       return this.syncChanges([]);
     }
 
+    const title = this.title || pullRequestTitle(changes);
     const commit = await this.octokit.rest.git.createCommit({
       owner: this.owner,
       repo: this.repo,
-      message: this.title,
+      message: title,
       tree: tree.data.sha,
       parents: [baseSha]
     });
@@ -92923,7 +92924,7 @@ class GitHubPullRequestClient {
         owner: this.owner,
         repo: this.repo,
         pull_number: openPull.number,
-        title: this.title,
+        title,
         body
       });
       return {
@@ -92938,7 +92939,7 @@ class GitHubPullRequestClient {
       repo: this.repo,
       head: this.branch,
       base,
-      title: this.title,
+      title,
       body
     });
     return {
@@ -92993,7 +92994,31 @@ class GitHubPullRequestClient {
 
 function pullRequestBody(changes) {
   const files = changes.map((change) => `- \`${change.path}\``).join("\n");
-  return `${DOCSPRESS_PR_MARKER}\n\nWordPress contains documentation changes that are not yet in the repository. This pull request is maintained automatically by Docspress.\n\n## Changed files\n\n${files}\n`;
+  const fileLabel = `${changes.length} Markdown ${changes.length === 1 ? "file" : "files"}`;
+  return `${DOCSPRESS_PR_MARKER}\n\n## Summary\n\nSynchronizes documentation edits made in WordPress back to their Markdown sources. This rolling pull request is maintained automatically by DocsPress.\n\n| Direction | Changes |\n| --- | ---: |\n| WordPress → GitHub | ${fileLabel} |\n\n## Changed files\n\n${files}\n\n## Review and merge\n\nReview these as normal documentation changes. After this pull request merges, the next DocsPress reconcile run refreshes the WordPress synchronization baseline.\n\n> This branch is owned by DocsPress and may be force-refreshed on every synchronization run.\n`;
+}
+
+function pullRequestTitle(changes) {
+  if (changes.length !== 1) {
+    return `docs(wordpress): sync ${changes.length} files from WordPress`;
+  }
+
+  const parts = String(changes[0].path || "")
+    .replace(/\\/g, "/")
+    .replace(/\.[^.\/]+$/, "")
+    .split("/")
+    .filter(Boolean);
+  let candidate = parts.at(-1) || "wordpress";
+  if (candidate.toLowerCase() === "index" && parts.length > 1) {
+    candidate = parts.at(-2);
+  }
+  const scope = candidate
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40)
+    .replace(/-+$/g, "") || "wordpress";
+  return `docs(${scope}): sync changes from WordPress`;
 }
 
 ;// CONCATENATED MODULE: ./src/wordpress.js
@@ -93161,7 +93186,7 @@ async function main() {
     githubToken: getInput("github-token"),
     pullRequestBase: getInput("pull-request-base") || "",
     pullRequestBranch: getInput("pull-request-branch") || "docspress/wordpress-sync",
-    pullRequestTitle: getInput("pull-request-title") || "Sync WordPress documentation changes",
+    pullRequestTitle: getInput("pull-request-title"),
     status: getInput("status") || "publish",
     deleteMode: getInput("delete-mode") || "trash",
     dryRun: normalizeBoolean(getInput("dry-run") || "false")

@@ -78,9 +78,9 @@ inputs:
     required: false
     default: docspress/wordpress-sync
   pull-request-title:
-    description: Title for the rolling WordPress-to-GitHub pull request.
+    description: Optional pull request and commit title override. Defaults to a conventional docs(scope) title derived from the changed Markdown files.
     required: false
-    default: Sync WordPress documentation changes
+    default: ""
   status:
     description: WordPress status for created or updated pages, such as draft or publish.
     required: false
