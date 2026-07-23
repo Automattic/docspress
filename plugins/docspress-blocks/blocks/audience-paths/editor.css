@@ -10,10 +10,9 @@
 .docspress-audience-paths--editor .docspress-audience-paths__eyebrow,
 .docspress-audience-paths--editor .docspress-audience-paths__title,
 .docspress-audience-paths--editor .docspress-audience-paths__description,
-.docspress-audience-paths--editor .docspress-audience-paths__icon,
 .docspress-audience-paths--editor .docspress-audience-paths__card-title,
 .docspress-audience-paths--editor .docspress-audience-paths__card-description,
-.docspress-audience-paths--editor .docspress-audience-paths__cta {
+.docspress-audience-paths--editor .docspress-audience-paths__cta-label {
 	cursor: text;
 }
 

@@ -5,7 +5,7 @@ Documentation-focused Gutenberg blocks for the DocsPress theme. The plugin has n
 ## Blocks
 
 - **Hero** — a responsive, theme-native homepage introduction with inline editing for every visible text label, configurable actions, transparent artwork, split-panel and editorial spotlight compositions, and opt-in decorative or color overrides.
-- **Audience Paths** — one to six starting-point cards that route to independent documentation roots, with spacious and compact layouts, inline copy, destination URLs, symbols, accents, new-tab behavior, responsive columns, and optional presentation overrides.
+- **Audience Paths** — one to six starting-point cards that route to independent documentation roots, with spacious and compact layouts, inline copy, destination URLs, a curated SVG icon system, accents, new-tab behavior, responsive columns, and optional presentation overrides.
 - **Colorful Code** — filename chrome, language-aware token colors, line numbers, highlighted ranges, captions, and copy-to-clipboard.
 - **Code Tabs** — up to eight keyboard-accessible examples with independent labels, languages, filenames, and code.
 - **Callout** — note, tip, warning, danger, and success tones, with an optional collapsible presentation.
@@ -66,10 +66,12 @@ The blocks are dynamic. WordPress stores concise canonical block comments and th
 Starting paths keep each reader’s destination explicit:
 
 ```html
-<!-- wp:docspress/audience-paths {"anchor":"choose-your-path","align":"wide","compact":false,"paths":[{"title":"I already have Markdown docs","description":"Connect an existing docs folder to WordPress and begin with a safe draft sync.","url":"/docs/publish-existing-docs/","cta":"Publish existing docs","icon":"MD","accent":"blue","newTab":false},{"title":"I need to create docs","description":"Generate source-grounded documentation with AI, review it, then publish it.","url":"/docs/create-docs-with-ai/","cta":"Create docs with AI","icon":"AI","accent":"gold","newTab":false}]} /-->
+<!-- wp:docspress/audience-paths {"anchor":"choose-your-path","align":"wide","compact":false,"paths":[{"title":"I already have Markdown docs","description":"Connect an existing docs folder to WordPress and begin with a safe draft sync.","url":"/docs/publish-existing-docs/","cta":"Publish existing docs","icon":"document","accent":"blue","newTab":false},{"title":"I need to create docs","description":"Generate source-grounded documentation with AI, review it, then publish it.","url":"/docs/create-docs-with-ai/","cta":"Create docs with AI","icon":"sparkles","accent":"gold","newTab":false}]} /-->
 ```
 
 Set `"compact":true` for task routers inside documentation articles. Compact paths keep the same content, responsive columns, and accessible whole-card links while reducing the panel spacing, card height, and type scale.
+
+The editor exposes the icon registry as a named selector instead of accepting arbitrary text. Existing blocks do not need migration: familiar legacy values such as `MD`, `AI`, `WP`, `DEV`, `AG`, `CLI`, `QA`, and `FIX` resolve to their semantic vector icons at render time. New content stores stable IDs such as `document`, `sparkles`, `site`, `code`, `agency`, `terminal`, `testing`, and `troubleshoot`.
 
 A colorful workflow example looks like this:
 

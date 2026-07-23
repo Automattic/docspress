@@ -18,13 +18,14 @@
 		themeStyle,
 		useBlockProps
 	} = shared;
+	const iconSystem = window.docspressAudiencePathIcons || { fallback: 'compass', icons: {}, aliases: {} };
 	const defaultPaths = [
 		{
 			title: 'I already have Markdown docs',
 			description: 'Connect an existing docs folder to WordPress and begin with a safe draft sync.',
 			url: '/docs/publish-existing-docs/',
 			cta: 'Publish existing docs',
-			icon: 'MD',
+			icon: 'document',
 			accent: 'blue',
 			newTab: false
 		},
@@ -33,16 +34,49 @@
 			description: 'Generate source-grounded documentation with AI, review it, then publish it.',
 			url: '/docs/create-docs-with-ai/',
 			cta: 'Create docs with AI',
-			icon: 'AI',
+			icon: 'sparkles',
 			accent: 'gold',
 			newTab: false
 		}
 	];
-	const icon = el(
+	const blockIcon = el(
 		'svg',
 		{ viewBox: '0 0 24 24', width: 24, height: 24, fill: 'none', stroke: 'currentColor', strokeWidth: 1.8 },
 		el( 'path', { d: 'M4 5.5h6.5V12H4V5.5Zm9.5 6.5H20v6.5h-6.5V12ZM10.5 8.75h3m-1.5-1.5 1.5 1.5-1.5 1.5M10.5 15.25h3' } )
 	);
+	const resolveIcon = ( value ) => {
+		const key = String( value || '' ).trim();
+		const canonical = key.toLowerCase();
+
+		if ( iconSystem.icons[ canonical ] ) return canonical;
+		return iconSystem.aliases[ key ] || iconSystem.aliases[ key.toUpperCase() ] || iconSystem.fallback;
+	};
+	const renderIcon = ( value, className = 'docspress-audience-paths__icon-svg' ) => {
+		const iconId = resolveIcon( value );
+		const definition = iconSystem.icons[ iconId ] || iconSystem.icons[ iconSystem.fallback ];
+
+		if ( ! definition ) return null;
+
+		return el(
+			'svg',
+			{
+				className,
+				viewBox: '0 0 24 24',
+				fill: 'none',
+				stroke: 'currentColor',
+				strokeWidth: 1.75,
+				strokeLinecap: 'round',
+				strokeLinejoin: 'round',
+				focusable: false,
+				'aria-hidden': true
+			},
+			...definition.elements.map( ( element, index ) => el( element.tag, { ...element.attrs, key: `${ iconId }-${ index }` } ) )
+		);
+	};
+	const iconOptions = Object.entries( iconSystem.icons )
+		.filter( ( [ iconId ] ) => iconId !== 'arrow-up-right' )
+		.map( ( [ value, definition ] ) => ( { value, label: definition.label } ) )
+		.sort( ( left, right ) => left.label.localeCompare( right.label ) );
 
 	function normalizedPaths( paths ) {
 		return Array.isArray( paths ) && paths.length ? paths : defaultPaths;
@@ -53,7 +87,7 @@
 		title: __( 'DocsPress: Audience Paths', 'docspress-blocks' ),
 		description: __( 'Guide different kinds of readers into dedicated documentation roots.', 'docspress-blocks' ),
 		category: 'design',
-		icon,
+		icon: blockIcon,
 		keywords: [ __( 'audience', 'docspress-blocks' ), __( 'onboarding', 'docspress-blocks' ), __( 'docs navigation', 'docspress-blocks' ) ],
 		attributes: {
 			eyebrow: { type: 'string', default: 'Choose a starting point' },
@@ -107,7 +141,7 @@
 							description: __( 'Explain what this reader will find in their documentation path.', 'docspress-blocks' ),
 							url: '/docs/',
 							cta: __( 'Open this path', 'docspress-blocks' ),
-							icon: '→',
+							icon: 'compass',
 							accent: accents[ paths.length % accents.length ],
 							newTab: false
 						}
@@ -179,10 +213,11 @@
 							type: 'url',
 							onChange: ( url ) => updatePath( index, 'url', url )
 						} ),
-						el( TextControl, {
-							label: __( 'Symbol', 'docspress-blocks' ),
-							help: __( 'Use a short symbol, emoji, or abbreviation.', 'docspress-blocks' ),
-							value: path.icon || '',
+						el( SelectControl, {
+							label: __( 'Icon', 'docspress-blocks' ),
+							help: __( 'Choose a consistent vector icon. Legacy symbols are mapped automatically.', 'docspress-blocks' ),
+							value: resolveIcon( path.icon ),
+							options: iconOptions,
 							onChange: ( iconValue ) => updatePath( index, 'icon', iconValue )
 						} ),
 						el( SelectControl, {
@@ -274,15 +309,11 @@
 								'div',
 								{ className: `docspress-audience-paths__card docspress-audience-paths__card--${ path.accent || 'blue' }` },
 								el( 'span', { className: 'docspress-audience-paths__number', 'aria-hidden': true }, String( index + 1 ).padStart( 2, '0' ) ),
-								el( RichText, {
-									tagName: 'span',
-									className: 'docspress-audience-paths__icon',
-									value: path.icon || '',
-									onChange: ( iconValue ) => updatePath( index, 'icon', iconValue ),
-									allowedFormats: [],
-									'aria-label': __( 'Path symbol', 'docspress-blocks' ),
-									placeholder: '→'
-								} ),
+								el(
+									'span',
+									{ className: 'docspress-audience-paths__icon', 'aria-hidden': true },
+									renderIcon( path.icon )
+								),
 								el(
 									'span',
 									{ className: 'docspress-audience-paths__card-copy' },
@@ -303,14 +334,23 @@
 										placeholder: __( 'What will this reader find?', 'docspress-blocks' )
 									} )
 								),
-								el( RichText, {
-									tagName: 'span',
-									className: 'docspress-audience-paths__cta',
-									value: path.cta || '',
-									onChange: ( cta ) => updatePath( index, 'cta', cta ),
-									allowedFormats: [],
-									placeholder: __( 'Open this path…', 'docspress-blocks' )
-								} ),
+								el(
+									'span',
+									{ className: 'docspress-audience-paths__cta' },
+									el( RichText, {
+										tagName: 'span',
+										className: 'docspress-audience-paths__cta-label',
+										value: path.cta || '',
+										onChange: ( cta ) => updatePath( index, 'cta', cta ),
+										allowedFormats: [],
+										placeholder: __( 'Open this path…', 'docspress-blocks' )
+									} ),
+									el(
+										'span',
+										{ className: 'docspress-audience-paths__cta-icon', 'aria-hidden': true },
+										renderIcon( 'arrow-up-right', 'docspress-audience-paths__cta-svg' )
+									)
+								),
 								el( 'code', { className: 'docspress-audience-paths__route' }, path.url || __( 'Add destination URL', 'docspress-blocks' ) )
 							)
 						) )

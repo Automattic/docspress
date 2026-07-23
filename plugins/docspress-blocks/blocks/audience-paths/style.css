@@ -160,16 +160,20 @@ a.docspress-audience-paths__card:focus-visible {
 	display: grid;
 	place-items: center;
 	box-sizing: border-box;
-	width: 38px;
-	min-width: 38px;
-	height: 38px;
+	width: 44px;
+	min-width: 44px;
+	height: 44px;
 	margin-bottom: 26px;
-	border: 1px solid color-mix(in srgb, var(--db-path-card-accent) 44%, var(--db-paths-line));
+	border: 1px solid color-mix(in srgb, var(--db-path-card-accent) 52%, var(--db-paths-line));
 	border-radius: var(--dp-radius, 10px);
-	background: transparent;
-	color: var(--db-paths-heading);
-	font-size: 14px;
-	font-weight: 800;
+	background: color-mix(in srgb, var(--db-path-card-accent) 11%, var(--db-paths-panel));
+	color: color-mix(in srgb, var(--db-path-card-accent) 82%, var(--db-paths-heading));
+}
+
+.docspress-audience-paths__icon-svg {
+	display: block;
+	width: 22px;
+	height: 22px;
 }
 
 .docspress-audience-paths__card-copy {
@@ -209,10 +213,17 @@ a.docspress-audience-paths__card:focus-visible {
 	font-weight: 750;
 }
 
-.docspress-audience-paths__cta > span {
+.docspress-audience-paths__cta-icon {
+	display: grid;
+	place-items: center;
 	color: var(--db-path-card-accent);
-	font-size: 16px;
 	transition: transform 150ms ease;
+}
+
+.docspress-audience-paths__cta-svg {
+	display: block;
+	width: 17px;
+	height: 17px;
 }
 
 .docspress-audience-paths--compact {
@@ -249,7 +260,7 @@ a.docspress-audience-paths__card:focus-visible {
 	grid-template-areas:
 		"icon copy"
 		"cta cta";
-	grid-template-columns: 32px minmax(0, 1fr);
+	grid-template-columns: 36px minmax(0, 1fr);
 	gap: 12px;
 	min-height: 0;
 	padding: 16px;
@@ -262,11 +273,15 @@ a.docspress-audience-paths__card:focus-visible {
 
 .docspress-audience-paths--compact .docspress-audience-paths__icon {
 	grid-area: icon;
-	width: 32px;
-	min-width: 32px;
-	height: 32px;
+	width: 36px;
+	min-width: 36px;
+	height: 36px;
 	margin: 0;
-	font-size: 11px;
+}
+
+.docspress-audience-paths--compact .docspress-audience-paths__icon-svg {
+	width: 18px;
+	height: 18px;
 }
 
 .docspress-audience-paths--compact .docspress-audience-paths__card-copy {
@@ -300,7 +315,7 @@ a.docspress-audience-paths__card:focus-visible {
 	font-size: 12px;
 }
 
-a.docspress-audience-paths__card:hover .docspress-audience-paths__cta > span {
+a.docspress-audience-paths__card:hover .docspress-audience-paths__cta-icon {
 	transform: translate(2px, -2px);
 }
 
@@ -345,7 +360,7 @@ a.docspress-audience-paths__card:hover .docspress-audience-paths__cta > span {
 
 @media (prefers-reduced-motion: reduce) {
 	.docspress-audience-paths__card,
-	.docspress-audience-paths__cta > span {
+	.docspress-audience-paths__cta-icon {
 		transition: none;
 	}
 }

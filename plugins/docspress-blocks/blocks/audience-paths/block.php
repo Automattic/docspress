@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/icons.php';
+
 /**
  * Return the default audience paths.
  *
@@ -21,7 +23,7 @@ function docspress_blocks_audience_paths_defaults() {
 			'description' => 'Connect an existing docs folder to WordPress and begin with a safe draft sync.',
 			'url'         => '/docs/publish-existing-docs/',
 			'cta'         => 'Publish existing docs',
-			'icon'        => 'MD',
+			'icon'        => 'document',
 			'accent'      => 'blue',
 			'newTab'      => false,
 		),
@@ -30,7 +32,7 @@ function docspress_blocks_audience_paths_defaults() {
 			'description' => 'Generate source-grounded documentation with AI, review it, then publish it.',
 			'url'         => '/docs/create-docs-with-ai/',
 			'cta'         => 'Create docs with AI',
-			'icon'        => 'AI',
+			'icon'        => 'sparkles',
 			'accent'      => 'gold',
 			'newTab'      => false,
 		),
@@ -51,7 +53,7 @@ function docspress_blocks_normalize_audience_path( $path ) {
 		'description' => isset( $path['description'] ) ? sanitize_text_field( $path['description'] ) : '',
 		'url'         => isset( $path['url'] ) ? esc_url( $path['url'] ) : '',
 		'cta'         => isset( $path['cta'] ) ? sanitize_text_field( $path['cta'] ) : '',
-		'icon'        => isset( $path['icon'] ) ? sanitize_text_field( $path['icon'] ) : '',
+		'icon'        => docspress_blocks_resolve_audience_path_icon( isset( $path['icon'] ) ? $path['icon'] : '' ),
 		'accent'      => docspress_blocks_allowed_value( isset( $path['accent'] ) ? $path['accent'] : '', array( 'blue', 'gold', 'coral', 'green' ), 'blue' ),
 		'new_tab'     => ! empty( $path['newTab'] ),
 	);
@@ -128,13 +130,20 @@ function docspress_blocks_render_audience_paths( $attributes ) {
 						<?php endif; ?>
 					>
 						<span class="docspress-audience-paths__number" aria-hidden="true"><?php echo esc_html( str_pad( (string) ( $index + 1 ), 2, '0', STR_PAD_LEFT ) ); ?></span>
-						<span class="docspress-audience-paths__icon" aria-hidden="true"><?php echo esc_html( $path['icon'] ); ?></span>
+						<span class="docspress-audience-paths__icon" aria-hidden="true">
+							<?php echo docspress_blocks_render_audience_path_icon( $path['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						</span>
 						<span class="docspress-audience-paths__card-copy">
 							<?php if ( $path['title'] ) : ?><span class="docspress-audience-paths__card-title"><?php echo esc_html( $path['title'] ); ?></span><?php endif; ?>
 							<?php if ( $path['description'] ) : ?><span class="docspress-audience-paths__card-description"><?php echo esc_html( $path['description'] ); ?></span><?php endif; ?>
 						</span>
 						<?php if ( $path['cta'] ) : ?>
-							<span class="docspress-audience-paths__cta"><?php echo esc_html( $path['cta'] ); ?><span aria-hidden="true">↗</span></span>
+							<span class="docspress-audience-paths__cta">
+								<span class="docspress-audience-paths__cta-label"><?php echo esc_html( $path['cta'] ); ?></span>
+								<span class="docspress-audience-paths__cta-icon" aria-hidden="true">
+									<?php echo docspress_blocks_render_audience_path_icon( 'arrow-up-right', 'docspress-audience-paths__cta-svg' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+								</span>
+							</span>
 						<?php endif; ?>
 					</<?php echo esc_attr( $tag ); ?>>
 				</div>
@@ -153,6 +162,11 @@ function docspress_blocks_register_audience_paths() {
 	$defaults  = docspress_blocks_audience_paths_defaults();
 
 	wp_register_script( 'docspress-audience-paths-editor', $block_url . 'editor.js', array( 'wp-blocks', 'docspress-blocks-editor-shared' ), DOCSPRESS_BLOCKS_VERSION, true );
+	wp_add_inline_script(
+		'docspress-audience-paths-editor',
+		'window.docspressAudiencePathIcons = ' . wp_json_encode( docspress_blocks_audience_path_icon_editor_data() ) . ';',
+		'before'
+	);
 	wp_register_style( 'docspress-audience-paths', $block_url . 'style.css', array(), DOCSPRESS_BLOCKS_VERSION );
 	wp_register_style( 'docspress-audience-paths-editor-style', $block_url . 'editor.css', array( 'wp-edit-blocks', 'docspress-audience-paths' ), DOCSPRESS_BLOCKS_VERSION );
 
