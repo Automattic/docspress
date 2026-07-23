@@ -263,6 +263,24 @@ a.docspress-hero__button--secondary:hover {
 	box-shadow: 0 24px 64px color-mix(in srgb, #182319 10%, transparent);
 }
 
+.docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper,
+.docspress-blocks--preset-jetpack.docspress-hero--layout-editorial.docspress-hero--paper {
+	--db-hero-accent: #008710;
+	--db-hero-copy: #32373c;
+	--db-hero-heading: #000;
+	--db-hero-panel: #fff;
+	border-color: transparent;
+	background-image:
+		radial-gradient(circle at 82% 28%, color-mix(in srgb, #a9c6ff 28%, transparent) 0, transparent 34%),
+		radial-gradient(circle at 88% 72%, color-mix(in srgb, #bde9c4 36%, transparent) 0, transparent 38%);
+	box-shadow: none;
+}
+
+.docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper::before,
+.docspress-blocks--preset-jetpack.docspress-hero--layout-editorial.docspress-hero--paper::before {
+	display: none;
+}
+
 .docspress-hero--layout-editorial:not(.docspress-hero--no-grid)::before {
 	position: absolute;
 	z-index: 0;
@@ -305,6 +323,15 @@ a.docspress-hero__button--secondary:hover {
 	font-size: clamp(52px, 6.5vw, 82px);
 	letter-spacing: -0.06em;
 	line-height: 0.94;
+}
+
+.docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__title,
+.docspress-blocks--preset-jetpack.docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__title {
+	font-family: var(--dp-font-ui, "Inter", "Helvetica Neue", sans-serif);
+	font-size: clamp(50px, 6vw, 76px);
+	font-weight: 700;
+	letter-spacing: -0.055em;
+	line-height: 0.97;
 }
 
 .docspress-hero--layout-editorial .docspress-hero__description,
@@ -364,6 +391,11 @@ a.docspress-hero__button--secondary:hover {
 	background: transparent;
 }
 
+.docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__visual,
+.docspress-blocks--preset-jetpack.docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__visual {
+	background-image: none;
+}
+
 .docspress-hero--layout-editorial .docspress-hero__visual::before {
 	width: min(110%, 430px);
 	border: 0;
@@ -388,6 +420,11 @@ a.docspress-hero__button--secondary:hover {
 	left: auto;
 }
 
+.docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__visual::after,
+.docspress-blocks--preset-jetpack.docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__visual::after {
+	display: none;
+}
+
 .docspress-hero--layout-editorial .docspress-hero__visual-label {
 	position: absolute;
 	z-index: 0;
@@ -406,6 +443,11 @@ a.docspress-hero__button--secondary:hover {
 	-webkit-text-stroke: 1px color-mix(in srgb, var(--db-hero-heading) 18%, transparent);
 }
 
+.docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__visual-label,
+.docspress-blocks--preset-jetpack.docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__visual-label {
+	display: none;
+}
+
 .docspress-hero--layout-editorial .docspress-hero__media {
 	z-index: 2;
 	transform: translateX(-8%) rotate(-5deg);
@@ -417,8 +459,19 @@ a.docspress-hero__button--secondary:hover {
 	filter: drop-shadow(0 24px 30px color-mix(in srgb, #173318 20%, transparent));
 }
 
+.docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__media,
+.docspress-blocks--preset-jetpack.docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__media {
+	transform: none;
+	filter: none;
+}
+
 .docspress-hero--layout-editorial:hover .docspress-hero__media {
 	transform: translateX(-8%) rotate(-2deg) scale(1.025);
+}
+
+.docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper:hover .docspress-hero__media,
+.docspress-blocks--preset-jetpack.docspress-hero--layout-editorial.docspress-hero--paper:hover .docspress-hero__media {
+	transform: scale(1.015);
 }
 
 @media (max-width: 860px) {
