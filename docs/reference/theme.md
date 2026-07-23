@@ -12,6 +12,8 @@ The companion theme turns the managed Page hierarchy into a Docusaurus-inspired 
 - `⌘K` or `Ctrl+K` command search across the configured docs tree.
 - Sidebar filtering, breadcrumbs, right-hand table of contents, and previous/next navigation.
 - WordPress edit and exact GitHub Markdown proposal actions.
+- A custom site homepage and dedicated post, archive, search, and singular templates.
+- Optional native WordPress discussions with threaded replies and accessible forms.
 - Responsive navigation, light/dark mode, copy buttons, and print styles.
 
 ## Install and configure
@@ -30,15 +32,28 @@ The companion theme turns the managed Page hierarchy into a Docusaurus-inspired 
 | --- | --- |
 | Design presets | DocsPress, WordPress.org, WordPress.com, Jetpack, or individually customized tokens. |
 | Navigation | Docs root, Page tree or menu, order, depth, root visibility, filter, version-selector visibility. |
+| Homepage | Landing or documentation layout, intro label, description, actions, Page content, recent posts. |
 | Header | Menu, brand suffix, color switcher/default mode, repository link, custom logo. |
 | Command search | Labels, dimensions, radius, backdrop, count, paths, excerpts, keyboard legend. |
 | Layout and reading tools | Article/sidebar/TOC widths, density, TOC, breadcrumbs, previous/next, excerpt, edit actions. |
+| Posts and archives | Metadata, date, author, featured image, categories, and tags. |
+| Discussion | Page/post visibility, headings, count, avatars, dates, and closed message. |
 | Light and dark colors | Independent accent, surface, text, muted, and border tokens. |
 | Typography | Interface, reading, and heading stacks, reading size, heading weight. |
 | Article labels and actions | Kicker, TOC heading, WordPress/GitHub action labels, source repository and ref. |
 | Footer | Visibility, text, optional link, `{year}` and `{site_title}` placeholders. |
 
-The default footer is `Documentation powered by WordPress and {site_title} · {year}`.
+The default footer is `Documentation powered by WordPress and {site_title} · {year}`. The theme also registers native footer navigation and footer widget locations.
+
+## Homepage, posts, and discussion
+
+Choose the front Page and posts page in **Settings → Reading**. The DocsPress **Homepage** section can render the front Page as a site landing page with calls to action, optional Page content, and recent posts, or preserve the standard three-column documentation layout.
+
+Posts, archives, categories, tags, authors, search results, feeds, featured images, and previous/next post navigation use native WordPress data and dedicated templates. Their visible metadata is configurable under **Posts & archives**.
+
+Discussions are optional. The theme can independently expose them on Pages and posts, including existing replies after a thread closes. WordPress **Settings → Discussion** remains responsible for default status, registration, moderation, threading, paging, ordering, notifications, avatars, and spam handling; the per-post Discussion panel decides whether one specific item accepts replies.
+
+Try these surfaces in the [browser-ready DocsPress Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground). It opens the logged-in Customizer with seeded homepage, post, and threaded-comment examples.
 
 ## LLM-friendly endpoints
 

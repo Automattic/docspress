@@ -13,7 +13,7 @@
 		"JETPACK_DEV_DEBUG": true,
 		"WP_ENVIRONMENT_TYPE": "development"
 	},
-	"landingPage": "/docs/",
+	"landingPage": "/",
 	"login": true,
 	"steps": [
 		{

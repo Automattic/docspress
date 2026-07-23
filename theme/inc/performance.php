@@ -10,15 +10,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Remove discovery markup and legacy assets that documentation pages do not use.
+ * Remove legacy publishing markup and emoji assets the theme does not use.
+ *
+ * REST API discovery, feeds, and oEmbed discovery remain available because the
+ * theme supports normal posts, discussions, embeds, and external publishing.
  */
 function docspress_performance_setup() {
 	remove_action( 'wp_head', 'rsd_link' );
 	remove_action( 'wp_head', 'wlwmanifest_link' );
 	remove_action( 'wp_head', 'wp_generator' );
 	remove_action( 'wp_head', 'wp_shortlink_wp_head' );
-	remove_action( 'wp_head', 'rest_output_link_wp_head' );
-	remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
 	remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 	remove_action( 'wp_print_styles', 'print_emoji_styles' );
 	remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
@@ -27,11 +28,9 @@ function docspress_performance_setup() {
 add_action( 'init', 'docspress_performance_setup' );
 
 /**
- * Remove the legacy embed runtime and mark the theme interaction script deferred.
+ * Mark the theme interaction script deferred.
  */
 function docspress_performance_assets() {
-	wp_dequeue_script( 'wp-embed' );
-	wp_deregister_script( 'wp-embed' );
 	wp_script_add_data( 'docspress-navigation', 'strategy', 'defer' );
 }
 add_action( 'wp_enqueue_scripts', 'docspress_performance_assets', 100 );

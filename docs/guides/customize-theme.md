@@ -14,6 +14,14 @@ Open **Design presets** and choose DocsPress, WordPress.org, WordPress.com, or J
 
 The DocsPress Blocks plugin follows the selected preset in the editor and on the published site. Block colors remain semantic so code, prompts, callouts, API exchanges, terminal sessions, results, and file trees stay legible in light and dark mode.
 
+## Build the site homepage
+
+First choose a static front Page and optional posts page under **Settings → Reading**. Then open **DocsPress Theme → Homepage** and choose either the site landing layout or the familiar documentation Page layout.
+
+The landing layout uses the front Page title and its excerpt, falling back to the site description. You can change the intro label, show or hide that description, edit both action labels and URLs, include the Page’s Gutenberg content, and show one to six recent posts. A blank primary URL opens the configured documentation root; a blank secondary URL opens the posts page or recent-post section.
+
+The [DocsPress browser Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground) opens directly in this logged-in customization environment with representative content already seeded.
+
 ## Configure documentation navigation
 
 Open **Navigation**, choose the synchronized documentation root, and select either the automatic Page hierarchy or a hand-built WordPress menu. The live preview shows the exact sidebar tree readers will receive.
@@ -38,12 +46,25 @@ Open command search in the live preview to inspect the resulting reader experien
 
 When command search is enabled, readers can open it from the header, press `⌘K` or `Ctrl+K`, or press `/`. Disabling it removes both the visible control and its keyboard shortcuts.
 
+## Configure posts and discussion
+
+Open **Posts & archives** to decide whether post metadata, dates, authors, featured images, categories, and tags appear. These choices apply across the posts page, archives, search cards, and individual posts.
+
+Open **Discussion** to show or hide conversations separately on Pages and posts. You can also change the headings, comment count, avatar display and size, dates, and the message shown when an existing thread is closed.
+
+The theme does not replace WordPress’s discussion workflow. Use **Settings → Discussion** for default comment status, account requirements, moderation, threading, paging, ordering, notifications, avatars, and spam behavior. Use the editor’s **Discussion** panel to open or close comments on one Page or post. If a closed item already has replies, DocsPress can keep those replies visible without showing a new-comment form.
+
+<!-- wp:docspress/callout {"tone":"note","title":"Documentation comments are optional","content":"<p>Keep reference Pages closed, enable comments only on guides that benefit from questions, or hide all Page discussions from the theme while retaining normal post conversations.</p>","collapsible":false} /-->
+
 ## Finish the reading experience
 
 Return to the DocsPress Theme panel for the remaining sections:
 
 - **Header** controls the menu, brand suffix, repository link, custom logo, and color-mode switcher.
 - **Layout & reading tools** controls article, sidebar, and table-of-contents widths plus breadcrumbs, previous/next navigation, excerpts, and edit actions.
+- **Homepage** controls the front-page layout, actions, content, and recent posts.
+- **Posts & archives** controls metadata and taxonomy presentation.
+- **Discussion** controls where conversations appear and how they are labeled.
 - **Light & dark colors** exposes independent semantic palettes for both modes.
 - **Typography** selects the interface, reading, and heading stacks and adjusts reading size and heading weight.
 - **Article labels & actions** changes the kicker, table-of-contents label, and WordPress or GitHub action buttons.

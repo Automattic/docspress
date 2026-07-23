@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once ABSPATH . 'wp-admin/includes/taxonomy.php';
+
 /**
  * Create or update one generated documentation Page.
  *
@@ -112,6 +114,85 @@ function docspress_playground_add_page_menu_item( $menu_id, $page_id, $title, $m
 }
 
 /**
+ * Create or update a hand-authored demo post.
+ *
+ * @param string $post_type Post type.
+ * @param string $slug      Post slug.
+ * @param string $title     Post title.
+ * @param string $content   Gutenberg content.
+ * @param array  $overrides Additional wp_insert_post fields.
+ * @return int
+ */
+function docspress_playground_upsert_content( $post_type, $slug, $title, $content, $overrides = array() ) {
+	$existing = get_page_by_path( $slug, OBJECT, $post_type );
+	$post     = array_merge(
+		array(
+			'post_title'     => sanitize_text_field( $title ),
+			'post_name'      => sanitize_title( $slug ),
+			'post_content'   => wp_slash( $content ),
+			'post_status'    => 'publish',
+			'post_type'      => $post_type,
+			'comment_status' => 'closed',
+		),
+		$overrides
+	);
+
+	if ( $existing ) {
+		$post['ID'] = $existing->ID;
+		$post_id    = wp_update_post( $post );
+	} else {
+		$post_id = wp_insert_post( $post );
+	}
+
+	return is_wp_error( $post_id ) ? 0 : (int) $post_id;
+}
+
+/**
+ * Create or update one deterministic demo comment.
+ *
+ * @param int    $post_id   Post ID.
+ * @param string $key       Stable demo key.
+ * @param string $author    Comment author.
+ * @param string $content   Comment content.
+ * @param int    $parent_id Parent comment ID.
+ * @return int
+ */
+function docspress_playground_upsert_comment( $post_id, $key, $author, $content, $parent_id = 0 ) {
+	$existing = get_comments(
+		array(
+			'post_id'    => $post_id,
+			'meta_key'   => '_docspress_playground_comment',
+			'meta_value' => $key,
+			'number'     => 1,
+			'status'     => 'all',
+		)
+	);
+	$data     = array(
+		'comment_post_ID'      => $post_id,
+		'comment_author'       => sanitize_text_field( $author ),
+		'comment_author_email' => sanitize_email( strtolower( str_replace( ' ', '.', $author ) ) . '@example.com' ),
+		'comment_content'      => wp_kses_post( $content ),
+		'comment_approved'     => 1,
+		'comment_parent'       => $parent_id,
+		'comment_type'         => 'comment',
+	);
+
+	if ( $existing ) {
+		$data['comment_ID'] = $existing[0]->comment_ID;
+		$result             = wp_update_comment( $data );
+		$comment_id         = $result ? $existing[0]->comment_ID : 0;
+	} else {
+		$comment_id = wp_insert_comment( $data );
+	}
+
+	if ( $comment_id ) {
+		update_comment_meta( $comment_id, '_docspress_playground_comment', $key );
+	}
+
+	return (int) $comment_id;
+}
+
+/**
  * Build a live Gutenberg table of Playground components.
  *
  * @return string
@@ -175,6 +256,14 @@ if ( ! is_array( $generated ) || empty( $generated['pages'] ) || ! is_array( $ge
 	wp_die( 'The generated Playground documentation payload is invalid.' );
 }
 
+// Remove WordPress starter content so the acceptance site remains deterministic.
+foreach ( array( array( 'post', 'hello-world' ), array( 'page', 'sample-page' ) ) as $starter_content ) {
+	$starter_post = get_page_by_path( $starter_content[1], OBJECT, $starter_content[0] );
+	if ( $starter_post ) {
+		wp_delete_post( $starter_post->ID, true );
+	}
+}
+
 usort(
 	$generated['pages'],
 	static function ( $left, $right ) {
@@ -217,10 +306,121 @@ if ( ! $docs_id ) {
 	wp_die( 'The generated documentation does not contain the docs root Page.' );
 }
 
+$home_content = <<<'HTML'
+<!-- wp:heading {"level":2} -->
+<h2 class="wp-block-heading">One WordPress site, every publishing surface</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>DocsPress keeps product documentation in a focused reading shell without switching off the rest of WordPress. Publish updates, invite discussion, build menus, add widgets, and customize the whole experience from the familiar admin.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:columns -->
+<div class="wp-block-columns"><!-- wp:column -->
+<div class="wp-block-column"><!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Documentation</h3>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>Source-backed Pages gain navigation, search, Markdown routes, and an <code>llms.txt</code> index.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column -->
+<!-- wp:column -->
+<div class="wp-block-column"><!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Community</h3>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>Native posts and threaded comments make release notes, ideas, and support conversations feel at home.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns -->
+HTML;
+
+$home_id = docspress_playground_upsert_content(
+	'page',
+	'home',
+	'Docs that stay connected',
+	$home_content,
+	array(
+		'post_excerpt' => 'A complete WordPress theme for documentation, updates, and the conversations around them.',
+	)
+);
+$updates_id = docspress_playground_upsert_content( 'page', 'updates', 'Updates', '' );
+
+$release_post_id = docspress_playground_upsert_content(
+	'post',
+	'native-discussions-arrive',
+	'Native discussions arrive in DocsPress',
+	'<!-- wp:paragraph --><p>The theme now treats WordPress comments as a first-class publishing surface. Threaded replies, moderation, avatars, paging, and comment status remain powered by WordPress core.</p><!-- /wp:paragraph --><!-- wp:heading --><h2 class="wp-block-heading">Designed for real conversations</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Theme controls decide where discussion appears and how it is presented, while site owners keep using <strong>Settings → Discussion</strong> for policy and workflow.</p><!-- /wp:paragraph -->',
+	array(
+		'post_excerpt'   => 'Threaded replies and the complete WordPress discussion workflow now share the DocsPress reading system.',
+		'comment_status' => 'open',
+	)
+);
+$workflow_post_id = docspress_playground_upsert_content(
+	'post',
+	'publishing-workflow-notes',
+	'Publishing workflow notes',
+	'<!-- wp:paragraph --><p>A documentation site can also tell the story behind each release. Use normal WordPress posts for announcements and keep reference material in the synchronized Page tree.</p><!-- /wp:paragraph --><!-- wp:list --><ul class="wp-block-list"><li>Draft and preview in WordPress.</li><li>Organize updates with categories and tags.</li><li>Let readers subscribe through native feeds.</li></ul><!-- /wp:list -->',
+	array(
+		'post_excerpt'   => 'Use posts for release notes and announcements while DocsPress Pages remain source-backed.',
+		'comment_status' => 'open',
+	)
+);
+$community_post_id = docspress_playground_upsert_content(
+	'post',
+	'community-feedback-loop',
+	'Close the community feedback loop',
+	'<!-- wp:paragraph --><p>Documentation improves when readers can ask a question at the point of need. Keep comments open on selected Pages or posts, moderate them with core tools, and turn useful answers into lasting documentation.</p><!-- /wp:paragraph -->',
+	array(
+		'post_excerpt'   => 'A practical way to turn reader questions into stronger documentation.',
+		'comment_status' => 'open',
+	)
+);
+
+$updates_category = wp_create_category( 'Product updates' );
+$community_category = wp_create_category( 'Community' );
+if ( $release_post_id ) {
+	wp_set_post_categories( $release_post_id, array_filter( array( $updates_category, $community_category ) ) );
+	wp_set_post_tags( $release_post_id, array( 'comments', 'theme' ) );
+	$first_comment = docspress_playground_upsert_comment(
+		$release_post_id,
+		'release-question',
+		'Maya Reader',
+		'<p>Can I keep discussions enabled on release notes while leaving synchronized reference Pages closed?</p>'
+	);
+	docspress_playground_upsert_comment(
+		$release_post_id,
+		'release-answer',
+		'DocsPress Team',
+		'<p>Yes. WordPress stores comment status per post, and the theme also provides separate visibility controls for Pages and posts.</p>',
+		$first_comment
+	);
+	docspress_playground_upsert_comment(
+		$release_post_id,
+		'release-feedback',
+		'Theo Builder',
+		'<p>The separate reply button and active thread styling work especially well on mobile.</p>'
+	);
+}
+if ( $workflow_post_id ) {
+	wp_set_post_categories( $workflow_post_id, array_filter( array( $updates_category ) ) );
+	wp_set_post_tags( $workflow_post_id, array( 'publishing', 'workflow' ) );
+}
+if ( $community_post_id ) {
+	wp_set_post_categories( $community_post_id, array_filter( array( $community_category ) ) );
+	wp_set_post_tags( $community_post_id, array( 'feedback', 'documentation' ) );
+}
+
 $header_menu = docspress_playground_menu( 'DocsPress Header' );
 if ( $header_menu ) {
 	docspress_playground_clear_menu( $header_menu );
+	if ( $home_id ) {
+		docspress_playground_add_page_menu_item( $header_menu, $home_id, 'Home' );
+	}
 	docspress_playground_add_page_menu_item( $header_menu, $docs_id, 'Docs' );
+	if ( $updates_id ) {
+		docspress_playground_add_page_menu_item( $header_menu, $updates_id, 'Updates' );
+	}
 	if ( isset( $ids_by_key['docs/why-docspress'] ) ) {
 		docspress_playground_add_page_menu_item( $header_menu, $ids_by_key['docs/why-docspress'], 'Why DocsPress?' );
 	}
@@ -256,6 +456,15 @@ if ( $sidebar_menu ) {
 	}
 }
 
+$footer_menu = docspress_playground_menu( 'DocsPress Footer' );
+if ( $footer_menu ) {
+	docspress_playground_clear_menu( $footer_menu );
+	docspress_playground_add_page_menu_item( $footer_menu, $docs_id, 'Documentation' );
+	if ( $updates_id ) {
+		docspress_playground_add_page_menu_item( $footer_menu, $updates_id, 'Updates' );
+	}
+}
+
 $menu_locations = get_theme_mod( 'nav_menu_locations', array() );
 if ( $header_menu ) {
 	$menu_locations['primary'] = $header_menu;
@@ -263,13 +472,21 @@ if ( $header_menu ) {
 if ( $sidebar_menu ) {
 	$menu_locations['docs_sidebar'] = $sidebar_menu;
 }
+if ( $footer_menu ) {
+	$menu_locations['footer'] = $footer_menu;
+}
 set_theme_mod( 'nav_menu_locations', $menu_locations );
 
 update_option( 'blogname', 'DocsPress' );
 update_option( 'blogdescription', 'Markdown in GitHub. Native documentation in WordPress.' );
 update_option( 'show_on_front', 'page' );
-update_option( 'page_on_front', $docs_id );
+update_option( 'page_on_front', $home_id );
+update_option( 'page_for_posts', $updates_id );
 update_option( 'permalink_structure', '/%postname%/' );
+update_option( 'default_comment_status', 'open' );
+update_option( 'thread_comments', 1 );
+update_option( 'page_comments', 1 );
+update_option( 'comments_per_page', 5 );
 
 set_theme_mod( 'docspress_docs_root', $docs_id );
 set_theme_mod( 'docspress_sidebar_source', 'page_tree' );
@@ -284,6 +501,10 @@ update_option(
 		'jetpack_active'          => in_array( 'jetpack/jetpack.php', (array) get_option( 'active_plugins', array() ), true ),
 		'docspress_blocks_active' => in_array( 'docspress-blocks/docspress-blocks.php', (array) get_option( 'active_plugins', array() ), true ),
 		'page_count'              => count( $generated['pages'] ),
+		'home_page'               => $home_id,
+		'posts_page'              => $updates_id,
+		'release_post'            => $release_post_id,
+		'demo_comment_count'      => $release_post_id ? get_comments_number( $release_post_id ) : 0,
 		'docs_page'               => $docs_id,
 		'kitchen_sink_page'       => $kitchen_sink_id,
 		'design_preset'           => get_theme_mod( 'docspress_design_preset', 'docspress' ),

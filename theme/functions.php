@@ -18,10 +18,13 @@ function docspress_setup() {
 	load_theme_textdomain( 'docspress', get_template_directory() . '/languages' );
 
 	add_theme_support( 'title-tag' );
+	add_theme_support( 'automatic-feed-links' );
 	add_theme_support( 'post-thumbnails' );
 	add_theme_support( 'responsive-embeds' );
+	add_theme_support( 'align-wide' );
 	add_theme_support( 'wp-block-styles' );
 	add_theme_support( 'editor-styles' );
+	add_theme_support( 'customize-selective-refresh-widgets' );
 	add_editor_style( 'style.css' );
 	add_theme_support(
 		'html5',
@@ -41,10 +44,29 @@ function docspress_setup() {
 		array(
 			'primary'      => __( 'Header navigation', 'docspress' ),
 			'docs_sidebar' => __( 'Documentation sidebar', 'docspress' ),
+			'footer'       => __( 'Footer navigation', 'docspress' ),
 		)
 	);
 }
 add_action( 'after_setup_theme', 'docspress_setup' );
+
+/**
+ * Register widget areas exposed by the theme.
+ */
+function docspress_widgets_init() {
+	register_sidebar(
+		array(
+			'name'          => __( 'Footer widgets', 'docspress' ),
+			'id'            => 'footer-widgets',
+			'description'   => __( 'Widgets shown above the footer navigation and copyright line.', 'docspress' ),
+			'before_widget' => '<section id="%1$s" class="footer-widget %2$s">',
+			'after_widget'  => '</section>',
+			'before_title'  => '<h2 class="footer-widget-title">',
+			'after_title'   => '</h2>',
+		)
+	);
+}
+add_action( 'widgets_init', 'docspress_widgets_init' );
 
 /**
  * Enqueue the theme assets.
@@ -62,6 +84,10 @@ function docspress_assets() {
 			'strategy'  => 'defer',
 		)
 	);
+
+	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
+		wp_enqueue_script( 'comment-reply' );
+	}
 }
 add_action( 'wp_enqueue_scripts', 'docspress_assets' );
 
@@ -89,6 +115,109 @@ function docspress_icon( $name ) {
 	);
 
 	return isset( $icons[ $name ] ) ? $icons[ $name ] : '';
+}
+
+/**
+ * Whether the theme should render the native discussion for a singular post.
+ *
+ * Core comment status, registration, moderation, threading, paging, and order
+ * remain controlled by WordPress. These theme settings only control placement.
+ *
+ * @param int $post_id Post ID.
+ * @return bool
+ */
+function docspress_should_show_comments( $post_id = 0 ) {
+	$post_id   = $post_id ? absint( $post_id ) : get_the_ID();
+	$post_type = get_post_type( $post_id );
+	$enabled   = 'page' === $post_type
+		? get_theme_mod( 'docspress_comments_on_pages', true )
+		: get_theme_mod( 'docspress_comments_on_posts', true );
+
+	return (bool) $enabled && ( comments_open( $post_id ) || 0 < get_comments_number( $post_id ) );
+}
+
+/**
+ * Render post metadata with the configured visibility controls.
+ *
+ * @param int  $post_id Post ID.
+ * @param bool $compact Whether to render the compact archive-card variant.
+ */
+function docspress_post_meta( $post_id = 0, $compact = false ) {
+	$post_id = $post_id ? absint( $post_id ) : get_the_ID();
+	if ( ! $post_id || ! get_theme_mod( 'docspress_show_post_meta', true ) ) {
+		return;
+	}
+
+	$parts = array();
+	if ( get_theme_mod( 'docspress_show_post_date', true ) ) {
+		$parts[] = sprintf(
+			'<time datetime="%1$s">%2$s</time>',
+			esc_attr( get_the_date( DATE_W3C, $post_id ) ),
+			esc_html( get_the_date( '', $post_id ) )
+		);
+	}
+
+	if ( get_theme_mod( 'docspress_show_post_author', true ) ) {
+		$author_id = (int) get_post_field( 'post_author', $post_id );
+		$parts[]   = sprintf(
+			'<span class="byline">%1$s <a href="%2$s">%3$s</a></span>',
+			esc_html__( 'By', 'docspress' ),
+			esc_url( get_author_posts_url( $author_id ) ),
+			esc_html( get_the_author_meta( 'display_name', $author_id ) )
+		);
+	}
+
+	if ( ! $compact && get_theme_mod( 'docspress_show_comment_count', true ) && ( comments_open( $post_id ) || get_comments_number( $post_id ) ) ) {
+		$parts[] = sprintf(
+			'<a href="%1$s">%2$s</a>',
+			esc_url( get_comments_link( $post_id ) ),
+			esc_html(
+				sprintf(
+					/* translators: %s: Number of comments. */
+					_n( '%s comment', '%s comments', get_comments_number( $post_id ), 'docspress' ),
+					number_format_i18n( get_comments_number( $post_id ) )
+				)
+			)
+		);
+	}
+
+	if ( $parts ) {
+		echo '<div class="entry-meta">' . implode( '<span aria-hidden="true">·</span>', $parts ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Each part is escaped while assembled.
+	}
+}
+
+/**
+ * Return the configured homepage primary action URL.
+ *
+ * @return string
+ */
+function docspress_homepage_primary_url() {
+	$url = get_theme_mod( 'docspress_homepage_primary_url', '' );
+	if ( $url ) {
+		return esc_url_raw( $url );
+	}
+
+	$root_id = docspress_get_docs_root_id();
+	return $root_id ? get_permalink( $root_id ) : home_url( '/' );
+}
+
+/**
+ * Return the configured homepage secondary action URL.
+ *
+ * @return string
+ */
+function docspress_homepage_secondary_url() {
+	$url = get_theme_mod( 'docspress_homepage_secondary_url', '' );
+	if ( $url ) {
+		return esc_url_raw( $url );
+	}
+
+	$posts_page_id = absint( get_option( 'page_for_posts' ) );
+	if ( $posts_page_id ) {
+		return get_permalink( $posts_page_id );
+	}
+
+	return get_theme_mod( 'docspress_homepage_show_latest_posts', true ) ? home_url( '/#latest-updates' ) : '';
 }
 
 /**

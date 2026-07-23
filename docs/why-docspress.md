@@ -21,6 +21,7 @@ DocsPress is the advantageous choice when documentation belongs in GitHub but Wo
 | Navigation | WordPress Page hierarchy or configurable menus | Sidebars generated or configured in the Docusaurus project |
 | Search | Theme-integrated Page search and command palette | First-class Algolia DocSearch; community local-search options |
 | Visual configuration | WordPress Customizer, presets, light/dark tokens, no theme build | React/Infima configuration, CSS, and component swizzling |
+| Reader discussion | Optional native comments on individual Pages and posts | Usually requires a third-party commenting integration |
 | Platform ecosystem | WordPress users, plugins, REST APIs, menus, and site operations | Node.js, React, Docusaurus plugins, and static-host tooling |
 | Built-in versioned docs | Not currently provided by the DocsPress Action | Dedicated versioning CLI and versioned docs directories |
 
@@ -41,6 +42,12 @@ DocsPress blocks cover code, tabs, callouts, HTTP exchanges, terminal output, re
 ### WordPress-native navigation and customization
 
 The bundled theme can use the synchronized Page hierarchy automatically or use hand-built WordPress menus. Site owners can configure the header, sidebar, command search, article actions, typography, colors, footer, widths, and reading tools through the Customizer.
+
+### Optional discussions where readers need them
+
+DocsPress can keep comments closed on reference material and enable them only on the Pages or posts where questions and feedback are useful. The theme presents threaded replies as part of the reading experience, while WordPress continues to own comment status, registration rules, moderation, notifications, paging, and spam controls. Site owners can hide discussions across all Pages or posts in the Customizer without deleting existing comments.
+
+<!-- wp:docspress/callout {"tone":"tip","title":"Comments are opt-in per publishing surface","content":"<p>Use WordPress's per-Page discussion setting to decide where replies are accepted, then use <strong>DocsPress Theme → Discussion</strong> to control how Pages and posts expose that conversation.</p>","collapsible":false} /-->
 
 ### A smaller operational change for WordPress teams
 

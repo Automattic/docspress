@@ -4,6 +4,8 @@ A small, Docusaurus-inspired documentation theme for [Docspress](https://github.
 
 ![DocsPress theme showing the Kitchen Sink documentation page](screenshot.png)
 
+[Launch the complete theme demo in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground). It creates a temporary site, logs you into the admin, and opens the DocsPress Customizer so you can change homepage, navigation, discussion, color, typography, and layout settings with a live preview.
+
 ## What it includes
 
 - A sticky, hierarchy-aware documentation sidebar built from published Pages.
@@ -12,12 +14,14 @@ A small, Docusaurus-inspired documentation theme for [Docspress](https://github.
 - Instant sidebar-only Page filtering for quickly narrowing the visible navigation tree.
 - An automatic “On this page” table of contents from `h2` and `h3` headings.
 - Previous and next links that follow the sidebar order.
+- A customizable site homepage plus native posts, archives, categories, tags, feeds, featured images, and post navigation.
+- Optional WordPress discussions on Pages and posts, including threading, avatars, moderation states, reply links, paging, and comment forms.
 - A generated `/llms.txt` index and exact source Markdown responses for managed Pages.
 - A two-button article action bar for editing in WordPress or proposing changes to the exact source Markdown file on GitHub.
 - Responsive mobile navigation, dark mode, code-copy buttons, and print styles.
 - Optional `docspress_version` taxonomy selector when that taxonomy is registered on the site.
-- A dedicated **DocsPress Theme** Customizer panel with preset, navigation, command-search, layout, color, typography, header, article, and footer controls.
-- Automatic Page-tree navigation or fully hand-built WordPress menus for both the header and documentation sidebar.
+- A dedicated **DocsPress Theme** Customizer panel with homepage, discussion, post, preset, navigation, search, layout, color, typography, header, article, and footer controls.
+- Automatic Page-tree navigation or fully hand-built WordPress menus for the header, documentation sidebar, and footer.
 - A transparent Octocat/Wapuu hybrid default header mark, while preserving WordPress's standard custom-logo override.
 - The companion DocsPress Blocks plugin with code, prompt, callout, API exchange, terminal session, result, and file-tree blocks plus starter documentation patterns.
 - Jetpack installed and activated by the Playground blueprint in local Offline Mode.
@@ -37,10 +41,10 @@ npx @wp-playground/cli@latest start \
   --port=9400
 ```
 
-Playground mounts and activates the theme and DocsPress Blocks, installs Jetpack, creates two editable navigation menus and the source-backed documentation tree, logs you into WordPress, and opens the DocsPress introduction at:
+Playground mounts and activates the theme and DocsPress Blocks, installs Jetpack, creates editable navigation menus, a homepage, a posts page, sample discussions, and the source-backed documentation tree, logs you into WordPress, and opens the site homepage at:
 
 ```text
-http://127.0.0.1:9400/docs/
+http://127.0.0.1:9400/
 ```
 
 The Playground content is generated from the repository's `docs/` tree with `npm run playground:docs`, so local preview and production synchronization use the same converted Gutenberg content. The Kitchen Sink remains available at `http://127.0.0.1:9400/docs/reference/kitchen-sink/`; it appends a live component inventory and exercises all eight DocsPress blocks, every semantic state, and meaningful configuration combinations.
@@ -118,11 +122,27 @@ The dedicated **Command search** section can enable or disable the feature; chan
 - Change the repository URL.
 - Set a custom logo under the standard **Site Identity** section.
 
+### Homepage
+
+WordPress still chooses the front Page under **Settings → Reading**. The **Homepage** theme section then switches that Page between the documentation template and a site landing layout. The landing layout can show the Page title, excerpt or site description, editable primary and secondary actions, Page content, and a configurable recent-post grid.
+
+Blank action URLs use useful native fallbacks: the primary action opens the configured documentation root, while the secondary action opens the WordPress posts page or recent-post section.
+
 ### Layout & reading tools
 
 - Adjust article, sidebar, and table-of-contents widths with live range controls.
 - Choose compact, comfortable, or roomy reading density.
 - Independently toggle the table of contents, breadcrumbs, previous/next cards, WordPress edit button, and Page excerpt.
+
+### Posts & archives
+
+Individual posts, the posts page, archives, and search results use dedicated templates rather than the documentation Page shell. Controls toggle post dates, authors, featured images, categories, tags, and the shared metadata row. WordPress sticky posts, pagination, archive descriptions, password protection, wide alignment, and post navigation remain native.
+
+### Discussion
+
+The theme can independently show discussions on Pages and posts, then customize the discussion and reply headings, count, avatar visibility and size, dates, and closed message. A discussion appears when comments are open or existing replies need to remain visible.
+
+WordPress core remains authoritative for policy and workflow. Use **Settings → Discussion** for default status, registration, moderation, threading, paging, ordering, notifications, avatars, and spam controls, and use each post’s **Discussion** panel to open or close that specific conversation.
 
 ### Light & dark colors
 
@@ -140,7 +160,7 @@ The GitHub action reads the exact `source` path from the hidden Docspress sentin
 
 ### Footer
 
-The footer defaults to `Documentation powered by WordPress and {site_title} · {year}`. It can be hidden, given custom text, and paired with an optional link. Footer text supports `{year}` and `{site_title}` placeholders.
+The footer defaults to `Documentation powered by WordPress and {site_title} · {year}`. It can be hidden, given custom text, and paired with an optional link. Footer text supports `{year}` and `{site_title}` placeholders. A native **Footer navigation** location and **Footer widgets** area can add administrator-managed content above that line.
 
 ## Use it with Docspress
 
@@ -186,7 +206,7 @@ On a public production site, connect Jetpack to WordPress.com and enable **Jetpa
 
 - Page queries are reused within each request.
 - Large Page trees are grouped and rendered in linear time instead of repeatedly rescanning the whole tree.
-- Legacy emoji, oEmbed, discovery, and embed assets are removed where the theme does not use them.
+- Legacy emoji, RSD, Windows Live Writer, generator, and shortlink output are removed where the theme does not use them. REST, feeds, oEmbed discovery, and WordPress embeds remain available.
 - Core block CSS is loaded per block instead of as the full combined library.
 - The interaction script is deferred and has no framework dependency.
 - Inter and EB Garamond are self-hosted; the WordPress.com and Jetpack Recoleta face loads on demand from the official WordPress.com font CDN.
@@ -209,12 +229,17 @@ On a public production site, connect Jetpack to WordPress.com and enable **Jetpa
 ├── template-parts/search-dialog.php # Accessible command-search markup
 ├── 404.php
 ├── blueprint.json
+├── blueprint-browser.json      # One-click remote Playground demo
 ├── comments.php
+├── front-page.php              # Customizable site landing page
 ├── footer.php
 ├── functions.php           # Theme setup and documentation helpers
 ├── header.php
+├── home.php                    # WordPress posts page
 ├── index.php
 ├── page.php                # Main three-column documentation template
+├── single.php                  # Individual post and discussion
+├── archive.php
 ├── search.php
 ├── sidebar-docs.php
 ├── style.css

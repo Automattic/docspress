@@ -131,6 +131,27 @@ function docspress_customizer_hides_color_toggle( $control ) {
 }
 
 /**
+ * Whether landing-page homepage controls are relevant.
+ *
+ * @param WP_Customize_Control $control Current control.
+ * @return bool
+ */
+function docspress_customizer_uses_homepage_landing( $control ) {
+	return 'landing' === $control->manager->get_setting( 'docspress_homepage_layout' )->value();
+}
+
+/**
+ * Whether the landing page is configured to show recent posts.
+ *
+ * @param WP_Customize_Control $control Current control.
+ * @return bool
+ */
+function docspress_customizer_homepage_shows_posts( $control ) {
+	return docspress_customizer_uses_homepage_landing( $control )
+		&& (bool) $control->manager->get_setting( 'docspress_homepage_show_latest_posts' )->value();
+}
+
+/**
  * Register the full DocsPress theme configuration panel.
  *
  * @param WP_Customize_Manager $wp_customize Customizer manager.
@@ -154,6 +175,10 @@ function docspress_customize_register( $wp_customize ) {
 			'title'       => __( 'Navigation', 'docspress' ),
 			'description' => __( 'Use automatic Page hierarchy or a hand-built WordPress menu for documentation navigation.', 'docspress' ),
 		),
+		'docspress_homepage'   => array(
+			'title'       => __( 'Homepage', 'docspress' ),
+			'description' => __( 'Turn the front page into a welcoming site landing page or use the documentation layout. WordPress Settings → Reading still chooses which Page appears here.', 'docspress' ),
+		),
 		'docspress_header'     => array(
 			'title'       => __( 'Header', 'docspress' ),
 			'description' => __( 'Control the brand, primary menu, color switcher, and repository link.', 'docspress' ),
@@ -165,6 +190,14 @@ function docspress_customize_register( $wp_customize ) {
 		'docspress_layout'     => array(
 			'title'       => __( 'Layout & reading tools', 'docspress' ),
 			'description' => __( 'Tune column widths and decide which documentation aids are shown.', 'docspress' ),
+		),
+		'docspress_blog'       => array(
+			'title'       => __( 'Posts & archives', 'docspress' ),
+			'description' => __( 'Choose the details shown on posts, the posts page, archives, and search results.', 'docspress' ),
+		),
+		'docspress_discussion' => array(
+			'title'       => __( 'Discussion', 'docspress' ),
+			'description' => __( 'Style where discussions appear. Settings → Discussion still controls registration, moderation, threading, paging, notifications, and default comment status.', 'docspress' ),
 		),
 		'docspress_colors'     => array(
 			'title'       => __( 'Light & dark colors', 'docspress' ),
@@ -310,6 +343,116 @@ function docspress_customize_register( $wp_customize ) {
 			'section' => 'docspress_navigation',
 			'label' => __( 'Show version selector when available', 'docspress' ),
 			'type' => 'checkbox',
+		),
+		'docspress_homepage_layout' => array(
+			'default' => 'landing',
+			'sanitize_callback' => 'docspress_sanitize_choice',
+			'sanitize_js_callback' => 'sanitize_text_field',
+			'section' => 'docspress_homepage',
+			'label' => __( 'Front-page layout', 'docspress' ),
+			'description' => __( 'Landing page adds an introduction, actions, optional Page content, and recent posts. Documentation uses the normal three-column Page template.', 'docspress' ),
+			'type' => 'select',
+			'choices' => array(
+				'landing' => __( 'Site landing page', 'docspress' ),
+				'documentation' => __( 'Documentation page', 'docspress' ),
+			),
+		),
+		'docspress_homepage_kicker' => array(
+			'default' => __( 'Documentation, publishing, and community', 'docspress' ),
+			'sanitize_callback' => 'sanitize_text_field',
+			'sanitize_js_callback' => 'sanitize_text_field',
+			'section' => 'docspress_homepage',
+			'label' => __( 'Intro label', 'docspress' ),
+			'type' => 'text',
+			'transport' => 'postMessage',
+			'active_callback' => 'docspress_customizer_uses_homepage_landing',
+		),
+		'docspress_homepage_show_description' => array(
+			'default' => true,
+			'sanitize_callback' => 'docspress_sanitize_checkbox',
+			'sanitize_js_callback' => 'rest_sanitize_boolean',
+			'section' => 'docspress_homepage',
+			'label' => __( 'Show Page excerpt or site description', 'docspress' ),
+			'type' => 'checkbox',
+			'active_callback' => 'docspress_customizer_uses_homepage_landing',
+		),
+		'docspress_homepage_primary_label' => array(
+			'default' => __( 'Browse documentation', 'docspress' ),
+			'sanitize_callback' => 'sanitize_text_field',
+			'sanitize_js_callback' => 'sanitize_text_field',
+			'section' => 'docspress_homepage',
+			'label' => __( 'Primary action label', 'docspress' ),
+			'type' => 'text',
+			'transport' => 'postMessage',
+			'active_callback' => 'docspress_customizer_uses_homepage_landing',
+		),
+		'docspress_homepage_primary_url' => array(
+			'default' => '',
+			'sanitize_callback' => 'esc_url_raw',
+			'sanitize_js_callback' => 'esc_url_raw',
+			'section' => 'docspress_homepage',
+			'label' => __( 'Primary action URL', 'docspress' ),
+			'description' => __( 'Leave blank to use the configured documentation root.', 'docspress' ),
+			'type' => 'url',
+			'active_callback' => 'docspress_customizer_uses_homepage_landing',
+		),
+		'docspress_homepage_secondary_label' => array(
+			'default' => __( 'Latest updates', 'docspress' ),
+			'sanitize_callback' => 'sanitize_text_field',
+			'sanitize_js_callback' => 'sanitize_text_field',
+			'section' => 'docspress_homepage',
+			'label' => __( 'Secondary action label', 'docspress' ),
+			'type' => 'text',
+			'transport' => 'postMessage',
+			'active_callback' => 'docspress_customizer_uses_homepage_landing',
+		),
+		'docspress_homepage_secondary_url' => array(
+			'default' => '',
+			'sanitize_callback' => 'esc_url_raw',
+			'sanitize_js_callback' => 'esc_url_raw',
+			'section' => 'docspress_homepage',
+			'label' => __( 'Secondary action URL', 'docspress' ),
+			'description' => __( 'Leave blank to use the WordPress posts page or the recent-posts section.', 'docspress' ),
+			'type' => 'url',
+			'active_callback' => 'docspress_customizer_uses_homepage_landing',
+		),
+		'docspress_homepage_show_page_content' => array(
+			'default' => true,
+			'sanitize_callback' => 'docspress_sanitize_checkbox',
+			'sanitize_js_callback' => 'rest_sanitize_boolean',
+			'section' => 'docspress_homepage',
+			'label' => __( 'Show front Page content', 'docspress' ),
+			'type' => 'checkbox',
+			'active_callback' => 'docspress_customizer_uses_homepage_landing',
+		),
+		'docspress_homepage_show_latest_posts' => array(
+			'default' => true,
+			'sanitize_callback' => 'docspress_sanitize_checkbox',
+			'sanitize_js_callback' => 'rest_sanitize_boolean',
+			'section' => 'docspress_homepage',
+			'label' => __( 'Show latest posts', 'docspress' ),
+			'type' => 'checkbox',
+			'active_callback' => 'docspress_customizer_uses_homepage_landing',
+		),
+		'docspress_homepage_posts_title' => array(
+			'default' => __( 'Latest updates', 'docspress' ),
+			'sanitize_callback' => 'sanitize_text_field',
+			'sanitize_js_callback' => 'sanitize_text_field',
+			'section' => 'docspress_homepage',
+			'label' => __( 'Recent posts heading', 'docspress' ),
+			'type' => 'text',
+			'transport' => 'postMessage',
+			'active_callback' => 'docspress_customizer_homepage_shows_posts',
+		),
+		'docspress_homepage_posts_count' => array(
+			'default' => 3,
+			'sanitize_callback' => 'docspress_sanitize_range',
+			'sanitize_js_callback' => 'absint',
+			'section' => 'docspress_homepage',
+			'label' => __( 'Number of recent posts', 'docspress' ),
+			'type' => 'range',
+			'input_attrs' => array( 'min' => 1, 'max' => 6, 'step' => 1 ),
+			'active_callback' => 'docspress_customizer_homepage_shows_posts',
 		),
 		'docspress_header_menu' => array(
 			'default' => 0,
@@ -610,6 +753,130 @@ function docspress_customize_register( $wp_customize ) {
 			'section' => 'docspress_layout',
 			'label' => __( 'Show previous/next navigation', 'docspress' ),
 			'type' => 'checkbox',
+		),
+		'docspress_show_post_meta' => array(
+			'default' => true,
+			'sanitize_callback' => 'docspress_sanitize_checkbox',
+			'sanitize_js_callback' => 'rest_sanitize_boolean',
+			'section' => 'docspress_blog',
+			'label' => __( 'Show post details', 'docspress' ),
+			'type' => 'checkbox',
+		),
+		'docspress_show_post_date' => array(
+			'default' => true,
+			'sanitize_callback' => 'docspress_sanitize_checkbox',
+			'sanitize_js_callback' => 'rest_sanitize_boolean',
+			'section' => 'docspress_blog',
+			'label' => __( 'Show publication date', 'docspress' ),
+			'type' => 'checkbox',
+		),
+		'docspress_show_post_author' => array(
+			'default' => true,
+			'sanitize_callback' => 'docspress_sanitize_checkbox',
+			'sanitize_js_callback' => 'rest_sanitize_boolean',
+			'section' => 'docspress_blog',
+			'label' => __( 'Show author', 'docspress' ),
+			'type' => 'checkbox',
+		),
+		'docspress_show_featured_images' => array(
+			'default' => true,
+			'sanitize_callback' => 'docspress_sanitize_checkbox',
+			'sanitize_js_callback' => 'rest_sanitize_boolean',
+			'section' => 'docspress_blog',
+			'label' => __( 'Show featured images', 'docspress' ),
+			'type' => 'checkbox',
+		),
+		'docspress_show_post_categories' => array(
+			'default' => true,
+			'sanitize_callback' => 'docspress_sanitize_checkbox',
+			'sanitize_js_callback' => 'rest_sanitize_boolean',
+			'section' => 'docspress_blog',
+			'label' => __( 'Show categories', 'docspress' ),
+			'type' => 'checkbox',
+		),
+		'docspress_show_post_tags' => array(
+			'default' => true,
+			'sanitize_callback' => 'docspress_sanitize_checkbox',
+			'sanitize_js_callback' => 'rest_sanitize_boolean',
+			'section' => 'docspress_blog',
+			'label' => __( 'Show tags', 'docspress' ),
+			'type' => 'checkbox',
+		),
+		'docspress_comments_on_pages' => array(
+			'default' => true,
+			'sanitize_callback' => 'docspress_sanitize_checkbox',
+			'sanitize_js_callback' => 'rest_sanitize_boolean',
+			'section' => 'docspress_discussion',
+			'label' => __( 'Show discussions on Pages', 'docspress' ),
+			'description' => __( 'A discussion appears only when comments are open or the Page already has replies.', 'docspress' ),
+			'type' => 'checkbox',
+		),
+		'docspress_comments_on_posts' => array(
+			'default' => true,
+			'sanitize_callback' => 'docspress_sanitize_checkbox',
+			'sanitize_js_callback' => 'rest_sanitize_boolean',
+			'section' => 'docspress_discussion',
+			'label' => __( 'Show discussions on posts', 'docspress' ),
+			'type' => 'checkbox',
+		),
+		'docspress_show_comment_count' => array(
+			'default' => true,
+			'sanitize_callback' => 'docspress_sanitize_checkbox',
+			'sanitize_js_callback' => 'rest_sanitize_boolean',
+			'section' => 'docspress_discussion',
+			'label' => __( 'Show comment counts', 'docspress' ),
+			'type' => 'checkbox',
+		),
+		'docspress_show_comment_avatars' => array(
+			'default' => true,
+			'sanitize_callback' => 'docspress_sanitize_checkbox',
+			'sanitize_js_callback' => 'rest_sanitize_boolean',
+			'section' => 'docspress_discussion',
+			'label' => __( 'Show commenter avatars', 'docspress' ),
+			'type' => 'checkbox',
+		),
+		'docspress_comment_avatar_size' => array(
+			'default' => 44,
+			'sanitize_callback' => 'docspress_sanitize_range',
+			'sanitize_js_callback' => 'absint',
+			'section' => 'docspress_discussion',
+			'label' => __( 'Avatar size (px)', 'docspress' ),
+			'type' => 'range',
+			'input_attrs' => array( 'min' => 24, 'max' => 72, 'step' => 2 ),
+		),
+		'docspress_show_comment_dates' => array(
+			'default' => true,
+			'sanitize_callback' => 'docspress_sanitize_checkbox',
+			'sanitize_js_callback' => 'rest_sanitize_boolean',
+			'section' => 'docspress_discussion',
+			'label' => __( 'Show comment dates', 'docspress' ),
+			'type' => 'checkbox',
+		),
+		'docspress_discussion_title' => array(
+			'default' => __( 'Discussion', 'docspress' ),
+			'sanitize_callback' => 'sanitize_text_field',
+			'sanitize_js_callback' => 'sanitize_text_field',
+			'section' => 'docspress_discussion',
+			'label' => __( 'Discussion heading', 'docspress' ),
+			'type' => 'text',
+			'transport' => 'postMessage',
+		),
+		'docspress_comment_form_title' => array(
+			'default' => __( 'Join the discussion', 'docspress' ),
+			'sanitize_callback' => 'sanitize_text_field',
+			'sanitize_js_callback' => 'sanitize_text_field',
+			'section' => 'docspress_discussion',
+			'label' => __( 'Reply form heading', 'docspress' ),
+			'type' => 'text',
+			'transport' => 'postMessage',
+		),
+		'docspress_comments_closed_message' => array(
+			'default' => __( 'This discussion is closed, but the existing replies remain available.', 'docspress' ),
+			'sanitize_callback' => 'sanitize_text_field',
+			'sanitize_js_callback' => 'sanitize_text_field',
+			'section' => 'docspress_discussion',
+			'label' => __( 'Closed discussion message', 'docspress' ),
+			'type' => 'text',
 		),
 		'docspress_show_edit_link' => array(
 			'default' => true,
@@ -996,6 +1263,9 @@ function docspress_customizer_body_classes( $classes ) {
 	$preset = in_array( $preset, $valid_presets, true ) ? $preset : 'custom';
 	$classes[] = 'docspress-preset-' . $preset;
 	$classes[] = 'docspress-sidebar-' . ( 'custom_menu' === get_theme_mod( 'docspress_sidebar_source', 'page_tree' ) ? 'menu' : 'pages' );
+	$homepage_layout = get_theme_mod( 'docspress_homepage_layout', 'landing' );
+	$homepage_layout = in_array( $homepage_layout, array( 'landing', 'documentation' ), true ) ? $homepage_layout : 'landing';
+	$classes[] = 'docspress-homepage-' . $homepage_layout;
 
 	if ( ! get_theme_mod( 'docspress_show_toc', true ) ) {
 		$classes[] = 'docspress-no-toc';
@@ -1011,6 +1281,10 @@ function docspress_customizer_body_classes( $classes ) {
 
 	if ( ! get_theme_mod( 'docspress_search_show_hints', true ) ) {
 		$classes[] = 'docspress-search-hide-hints';
+	}
+
+	if ( ! get_theme_mod( 'docspress_show_comment_dates', true ) ) {
+		$classes[] = 'docspress-hide-comment-dates';
 	}
 
 	return $classes;

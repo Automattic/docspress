@@ -1,0 +1,62 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"meta": {
+		"title": "DocsPress Theme Playground",
+		"author": "Automattic",
+		"description": "A browser-ready DocsPress site with a custom homepage, documentation, posts, threaded comments, menus, and Customizer controls."
+	},
+	"preferredVersions": {
+		"php": "8.3",
+		"wp": "latest"
+	},
+	"constants": {
+		"JETPACK_DEV_DEBUG": true,
+		"WP_ENVIRONMENT_TYPE": "development"
+	},
+	"landingPage": "/wp-admin/customize.php?autofocus%5Bpanel%5D=docspress_theme",
+	"login": true,
+	"steps": [
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "git:directory",
+				"url": "https://github.com/Automattic/docspress",
+				"ref": "main",
+				"refType": "branch",
+				"path": "plugins/docspress-blocks"
+			},
+			"options": {
+				"activate": true,
+				"targetFolderName": "docspress-blocks"
+			}
+		},
+		{
+			"step": "installTheme",
+			"themeData": {
+				"resource": "git:directory",
+				"url": "https://github.com/Automattic/docspress",
+				"ref": "main",
+				"refType": "branch",
+				"path": "theme"
+			},
+			"options": {
+				"activate": true,
+				"targetFolderName": "docspress"
+			}
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "wordpress.org/plugins",
+				"slug": "jetpack"
+			},
+			"options": {
+				"activate": true
+			}
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php require_once '/wordpress/wp-load.php'; require get_theme_root( 'docspress' ) . '/docspress/playground/setup.php';"
+		}
+	]
+}

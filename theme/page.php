@@ -36,8 +36,13 @@ while ( have_posts() ) :
 					<?php endif; ?>
 				</header>
 
+				<?php if ( get_theme_mod( 'docspress_show_featured_images', true ) && has_post_thumbnail() ) : ?>
+					<figure class="entry-featured-image"><?php the_post_thumbnail( 'full' ); ?></figure>
+				<?php endif; ?>
+
 				<div class="entry-content">
 					<?php echo $prepared['content']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Filtered WordPress post content. ?>
+					<?php wp_link_pages(); ?>
 				</div>
 
 				<?php if ( get_theme_mod( 'docspress_show_edit_link', true ) || ( $github_edit_url && get_theme_mod( 'docspress_show_github_edit_link', true ) ) ) : ?>
@@ -55,6 +60,10 @@ while ( have_posts() ) :
 							</a>
 						<?php endif; ?>
 					</nav>
+				<?php endif; ?>
+
+				<?php if ( docspress_should_show_comments() ) : ?>
+					<?php comments_template(); ?>
 				<?php endif; ?>
 
 				<?php if ( ( $adjacent['previous'] || $adjacent['next'] ) && get_theme_mod( 'docspress_show_pagination', true ) ) : ?>
