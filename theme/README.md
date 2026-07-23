@@ -86,7 +86,7 @@ The preset selector applies a complete, editable recipe. Selecting a preset upda
 - **DocsPress** follows the project wordmark: its sampled `#005CB3` blue, `#FEC408` Wapuu yellow, `#FE8301` orange, deep `#232323` ink, Nunito Sans typography, and friendly pill-shaped brand details.
 - **WordPress.org** follows the current [WordPress.org](https://wordpress.org/) visual system: WordPress blue, neutral gray surfaces, Inter interface and body copy, EB Garamond headings, lighter heading weights, and crisp corners.
 - **WordPress.com** follows the current [WordPress.com](https://wordpress.com/) marketing system: WordPress blue, Studio neutral surfaces, Inter interface and body copy, Recoleta display headings, and compact corners.
-- **Jetpack** follows the current [Jetpack.com](https://jetpack.com/) visual system: Jetpack green, bright neutral surfaces, Inter interface and body copy, Recoleta display headings, and compact corners.
+- **Jetpack** follows the current [Jetpack.com](https://jetpack.com/) visual system: Jetpack green, bright neutral surfaces, Inter interface and body copy, Recoleta display headings, compact corners, and a Jetpack-specific product header. On a Gutenberg-built landing page, its scoped homepage classes add the high-contrast reference bands, resource grids, post cards, and agent handoff used by Jetpack Developer Docs without changing the shared documentation templates.
 
 The DocsPress preset uses bundled Nunito Sans with a Trebuchet fallback so its friendly rounded typography is consistent from the first render. Inter and EB Garamond are also bundled as variable WOFF2 fonts so the reference presets render consistently. The WordPress.com and Jetpack presets load Recoleta from WordPress.com's production font endpoint, with EB Garamond and Georgia as fallbacks.
 
@@ -126,7 +126,7 @@ The dedicated **Command search** section can enable or disable the feature; chan
 
 ### Homepage
 
-WordPress still chooses the front Page under **Settings → Reading**. Edit that Page and add **DocsPress: Hero** to control its copy, actions, transparent artwork, labels, and restrained layout. Add **DocsPress: Audience Paths** to route one to six reader personas into dedicated Page roots. Both blocks inherit the active theme by default; decorative treatments, inverse styles, and custom colors remain optional overrides.
+WordPress still chooses the front Page under **Settings → Reading**. Edit that Page and add **DocsPress: Hero** to control its copy, actions, transparent artwork, labels, and restrained layout. Add **DocsPress: Audience Paths** to route one to six reader personas into dedicated Page roots. Both blocks inherit the active theme by default; decorative treatments, inverse styles, and custom colors remain optional overrides. Native Group, Columns, Buttons, List, and Query blocks can be mixed with DocsPress blocks; for example, a Query block can show a curated post category without enabling the theme's separate latest-post section.
 
 The **Homepage** theme section switches the front Page between the documentation template and a site landing layout, then controls the optional recent-post grid. The landing layout renders the Page’s Gutenberg blocks directly; it does not generate a separate static hero.
 
