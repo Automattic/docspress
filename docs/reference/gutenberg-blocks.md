@@ -15,6 +15,8 @@ Use `docspress/hero` as the editable introduction on a WordPress front Page. Edi
 - Optional custom colors and opt-in grid or orbit decorations.
 - Optional backdrop text behind the image in the editorial composition.
 
+The editorial spotlight supports a dark midnight treatment and a warm paper treatment. Use paper when the hero should feel lighter than the surrounding documentation shell.
+
 Empty action labels or URLs hide that action. Removing the image keeps the hero usable as a text-only block. The image renders without an added card or image background, preserving transparent artwork.
 
 <!-- wp:docspress/hero {"eyebrow":"Documentation, publishing, and community","title":"Docs that stay connected to your GitHub repo","description":"Write beside your code. Publish a WordPress experience that guides every reader to the docs written for them.","primaryLabel":"Choose your path","primaryUrl":"#choose-your-path","secondaryLabel":"Latest updates","secondaryUrl":"/#latest-updates","mediaUrl":"https://raw.githubusercontent.com/Automattic/docspress/main/theme/assets/images/homepage-octocat-wapuu.webp","mediaAlt":"The GitHub Octocat and WordPress Wapuu celebrating their documentation workflow together.","visualLabel":"DOCS","layout":"editorial","mediaPosition":"right","mediaWidth":38,"imageScale":90,"height":"standard","tone":"midnight","textAlign":"left","showGrid":true,"showOrbit":false} /-->

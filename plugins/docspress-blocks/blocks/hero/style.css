@@ -253,6 +253,16 @@ a.docspress-hero__button--secondary:hover {
 	box-shadow: 0 28px 80px color-mix(in srgb, #000 20%, transparent);
 }
 
+.docspress-hero--layout-editorial.docspress-hero--paper {
+	--db-hero-copy: #465046;
+	--db-hero-heading: #101510;
+	--db-hero-panel: #f4f7f1;
+	--db-hero-visual: transparent;
+	border-color: #d8dfd4;
+	background-color: var(--db-hero-panel);
+	box-shadow: 0 24px 64px color-mix(in srgb, #182319 10%, transparent);
+}
+
 .docspress-hero--layout-editorial:not(.docspress-hero--no-grid)::before {
 	position: absolute;
 	z-index: 0;
@@ -401,6 +411,10 @@ a.docspress-hero__button--secondary:hover {
 	transform: translateX(-8%) rotate(-5deg);
 	filter: drop-shadow(0 28px 36px color-mix(in srgb, #000 34%, transparent));
 	transition: transform 420ms cubic-bezier(0.2, 0.75, 0.2, 1);
+}
+
+.docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__media {
+	filter: drop-shadow(0 24px 30px color-mix(in srgb, #173318 20%, transparent));
 }
 
 .docspress-hero--layout-editorial:hover .docspress-hero__media {

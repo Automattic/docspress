@@ -19,6 +19,8 @@ The inserter also includes **Homepage hero**, **Documentation starting paths**, 
 
 Every block inherits the active DocsPress design preset in both Gutenberg and the published site, including its light or dark tokens, typography, exact radius, borders, and article width. WordPress.org therefore keeps crisp 2px corners, while WordPress.com and Jetpack use their 4px recipes; block styles do not impose a larger minimum radius or a separate card shadow. Hero and Audience Paths default to those theme tokens with clean surfaces and modest type scales; the Hero's editorial spotlight, inverse styles, decorations, and custom colors are explicit opt-ins.
 
+The editorial spotlight can use either the dark midnight treatment or the warm paper treatment. Paper intentionally creates a light editorial island inside a dark documentation shell.
+
 ## Folder structure
 
 Every block owns its registration, renderer, editor UI, front-end styles, and editor-only styles. To add or maintain a block, work inside its folder instead of editing a plugin-wide bundle:
