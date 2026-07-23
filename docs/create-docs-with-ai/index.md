@@ -6,6 +6,14 @@ sidebar_collapsed: true
 
 Build a verified Markdown documentation tree from the repository itself, review it, and then publish it through the same safe DocsPress workflow.
 
+## 1. Add the DocsPress skills
+
+Run this in the repository before asking your coding agent to create the documentation:
+
+<!-- wp:docspress/terminal-session {"title":"Add DocsPress skills","shell":"bash","prompt":"$","command":"npx skills add Automattic/docspress --all --full-depth","output":""} /-->
+
+## 2. Create the docs
+
 <!-- wp:docspress/prompt {"prompt":"Use $generate-docs-from-source to inspect this repository and create verified DocsPress-compatible documentation from its source code and tests. Preserve useful existing docs, show me the proposed docs tree, and do not publish anything yet.","model":"Coding agent","mode":"code","thinking":true,"context":"$generate-docs-from-source, @repository, src/, test/, docs/","caption":"Use this path when the repository has incomplete, stale, or no usable documentation."} /-->
 
 If the repository already has a usable Markdown tree, skip generation and [publish the existing docs](../publish-existing-docs/index.md).
