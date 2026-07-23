@@ -91918,7 +91918,7 @@ async function syncPages(options) {
     }
 
     const parentId = desired.parentKey ? idByKey.get(desired.parentKey) : 0;
-    const payload = pagePayload(desired, parentId);
+    const payload = pagePayload(desired, parentId, managed);
 
     if (managed) {
       if (skipUpdateKeys.has(desired.key)) {
@@ -91931,7 +91931,11 @@ async function syncPages(options) {
         });
         continue;
       }
-      if (managed.sentinel?.hash === desired.hash && managed.parent === parentId) {
+      if (
+        managed.sentinel?.hash === desired.hash
+        && managed.parent === parentId
+        && managedMetadataMatches(desired, managed)
+      ) {
         result.unchanged += 1;
         result.operations.push({ action: "unchanged", key: desired.key, id: managed.id });
         continue;
@@ -91977,7 +91981,7 @@ async function syncPages(options) {
   return result;
 }
 
-function pagePayload(page, parentId) {
+function pagePayload(page, parentId, managed) {
   const payload = {
     title: page.title,
     content: page.content,
@@ -91986,7 +91990,36 @@ function pagePayload(page, parentId) {
     parent: parentId || 0
   };
 
+  if (Object.hasOwn(page, "sidebarPosition")) {
+    payload.menu_order = page.sidebarPosition;
+  } else if (Object.hasOwn(managed?.sentinel || {}, "sidebarPosition")) {
+    payload.menu_order = 0;
+  }
+
   return payload;
+}
+
+function managedMetadataMatches(desired, managed) {
+  const desiredSentinel = readSentinel(desired.content) || {};
+  const desiredHasPosition = Object.hasOwn(desired, "sidebarPosition");
+  const managedHasPosition = Object.hasOwn(managed.sentinel || {}, "sidebarPosition");
+  const desiredHasCollapsed = Object.hasOwn(desired, "sidebarCollapsed");
+  const managedHasCollapsed = Object.hasOwn(managed.sentinel || {}, "sidebarCollapsed");
+  const desiredHasSourceContent = Object.hasOwn(desiredSentinel, "sourceContentBase64");
+  const managedHasSourceContent = Object.hasOwn(managed.sentinel || {}, "sourceContentBase64");
+  const positionMatches = desiredHasPosition
+    ? managedHasPosition
+      && managed.sentinel.sidebarPosition === desired.sidebarPosition
+      && managed.menuOrder === desired.sidebarPosition
+    : !managedHasPosition;
+  const collapsedMatches = desiredHasCollapsed
+    ? managedHasCollapsed && managed.sentinel.sidebarCollapsed === desired.sidebarCollapsed
+    : !managedHasCollapsed;
+  const sourceContentMatches = desiredHasSourceContent
+    ? managedHasSourceContent && managed.sentinel.sourceContentBase64 === desiredSentinel.sourceContentBase64
+    : !managedHasSourceContent;
+
+  return positionMatches && collapsedMatches && sourceContentMatches;
 }
 
 function createResult(dryRun) {
@@ -92485,7 +92518,30 @@ function convertMarkdownPages(byRoute, options, linkResolver) {
     page.title = page.titleOverride || converted.title;
     page.body = converted.blocks;
     page.frontmatter = converted.data;
+    Object.assign(page, normalizeSidebarFrontmatter(converted.data, page.sourcePath));
   }
+}
+
+function normalizeSidebarFrontmatter(frontmatter, sourcePath) {
+  const normalized = {};
+
+  if (Object.hasOwn(frontmatter, "sidebar_position")) {
+    const position = frontmatter.sidebar_position;
+    if (!Number.isSafeInteger(position)) {
+      throw new Error(`Invalid sidebar_position in ${sourcePath}: expected a signed integer.`);
+    }
+    normalized.sidebarPosition = position;
+  }
+
+  if (Object.hasOwn(frontmatter, "sidebar_collapsed")) {
+    const collapsed = frontmatter.sidebar_collapsed;
+    if (typeof collapsed !== "boolean") {
+      throw new Error(`Invalid sidebar_collapsed in ${sourcePath}: expected true or false.`);
+    }
+    normalized.sidebarCollapsed = collapsed;
+  }
+
+  return normalized;
 }
 
 function routeSegmentsForFile(file) {
@@ -92758,11 +92814,21 @@ function finalizePage(page, options) {
     body
   };
   const hash = hashPageState(stablePayload);
-  const content = prependSentinel(body, {
+  const sentinel = {
     key,
     source: page.sourcePath,
     hash
-  });
+  };
+  if (typeof page.sourceMarkdown === "string") {
+    sentinel.sourceContentBase64 = Buffer.from(page.sourceMarkdown, "utf8").toString("base64");
+  }
+  if (Object.hasOwn(page, "sidebarPosition")) {
+    sentinel.sidebarPosition = page.sidebarPosition;
+  }
+  if (Object.hasOwn(page, "sidebarCollapsed")) {
+    sentinel.sidebarCollapsed = page.sidebarCollapsed;
+  }
+  const content = prependSentinel(body, sentinel);
 
   return {
     ...page,
@@ -93157,11 +93223,13 @@ function normalizePage(page) {
   const rawContent = typeof page.content === "string" ? page.content : page.content?.raw ?? page.content?.rendered ?? "";
   const renderedTitle = typeof page.title === "string" ? page.title : page.title?.raw ?? page.title?.rendered ?? "";
   const parent = typeof page.parent === "number" ? page.parent : page.parent?.ID ?? page.parent?.id ?? 0;
+  const menuOrder = page.menu_order ?? page.menuOrder ?? 0;
 
   return {
     id,
     slug: page.slug,
     parent,
+    menuOrder,
     title: renderedTitle,
     content: rawContent,
     status: page.status,

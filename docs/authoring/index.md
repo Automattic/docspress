@@ -1,5 +1,7 @@
 ---
 title: Authoring documentation
+sidebar_position: 30
+sidebar_collapsed: true
 ---
 
 Write ordinary Markdown for ordinary content and use DocsPress blocks where documentation needs richer semantics such as commands, results, API exchanges, or reusable prompts.

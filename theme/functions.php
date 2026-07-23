@@ -66,6 +66,7 @@ function docspress_assets() {
 add_action( 'wp_enqueue_scripts', 'docspress_assets' );
 
 require get_theme_file_path( 'inc/customizer.php' );
+require get_theme_file_path( 'inc/llms.php' );
 require get_theme_file_path( 'inc/performance.php' );
 require get_theme_file_path( 'inc/search.php' );
 
@@ -225,13 +226,18 @@ function docspress_render_page_tree( $pages, $parent_id = 0, $root_id = 0, $leve
 
 	echo '<ul>';
 	foreach ( $children as $page ) {
-		$is_current = (int) get_queried_object_id() === (int) $page->ID;
+		$is_current        = (int) get_queried_object_id() === (int) $page->ID;
+		$sidebar_collapsed = docspress_get_sidebar_collapsed( $page->ID );
+		$collapsed_attr    = null === $sidebar_collapsed
+			? ''
+			: ' data-sidebar-collapsed="' . ( $sidebar_collapsed ? 'true' : 'false' ) . '"';
 		printf(
-			'<li data-doc-title="%1$s"><a href="%2$s"%3$s><span class="nav-dot" aria-hidden="true"></span><span>%4$s</span></a>',
+			'<li data-doc-title="%1$s"><a href="%2$s"%3$s%5$s><span class="nav-dot" aria-hidden="true"></span><span>%4$s</span></a>',
 			esc_attr( wp_strip_all_tags( $page->post_title ) ),
 			esc_url( get_permalink( $page ) ),
 			$is_current ? ' aria-current="page"' : '',
-			esc_html( $page->post_title )
+			esc_html( $page->post_title ),
+			$collapsed_attr // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Attribute is assembled from fixed boolean strings.
 		);
 		docspress_render_page_tree( $pages, (int) $page->ID, 0, $level + 1, $max_depth, $grouped );
 		echo '</li>';
@@ -495,6 +501,74 @@ function docspress_page_summary() {
 }
 
 /**
+ * Read DocsPress's hidden management metadata for a Page.
+ *
+ * @param int $post_id Page ID.
+ * @return array<string,mixed>
+ */
+function docspress_get_managed_metadata( $post_id = 0 ) {
+	static $metadata_cache = array();
+
+	$post_id = $post_id ? absint( $post_id ) : get_queried_object_id();
+	if ( ! $post_id ) {
+		return array();
+	}
+
+	if ( isset( $metadata_cache[ $post_id ] ) ) {
+		return $metadata_cache[ $post_id ];
+	}
+
+	$content  = (string) get_post_field( 'post_content', $post_id, 'raw' );
+	$metadata = array();
+	if ( $content && preg_match( '/<!--\s*docspress:(.*?)\s*-->/s', $content, $matches ) ) {
+		$parsed = json_decode( trim( $matches[1] ), true );
+		if ( is_array( $parsed ) && 1 === (int) ( isset( $parsed['version'] ) ? $parsed['version'] : 0 ) ) {
+			$metadata = $parsed;
+		}
+	}
+
+	$metadata_cache[ $post_id ] = $metadata;
+	return $metadata_cache[ $post_id ];
+}
+
+/**
+ * Return a Page's explicit initial sidebar state.
+ *
+ * @param int $post_id Page ID.
+ * @return bool|null
+ */
+function docspress_get_sidebar_collapsed( $post_id = 0 ) {
+	$metadata = docspress_get_managed_metadata( $post_id );
+	if ( ! array_key_exists( 'sidebarCollapsed', $metadata ) || ! is_bool( $metadata['sidebarCollapsed'] ) ) {
+		return null;
+	}
+
+	return $metadata['sidebarCollapsed'];
+}
+
+/**
+ * Add managed collapse metadata to Page links in the custom docs menu.
+ *
+ * @param array    $attributes Menu link attributes.
+ * @param WP_Post  $item       Menu item.
+ * @param stdClass $args       Menu arguments.
+ * @return array
+ */
+function docspress_sidebar_menu_link_attributes( $attributes, $item, $args ) {
+	if ( empty( $args->theme_location ) || 'docs_sidebar' !== $args->theme_location || 'page' !== $item->object ) {
+		return $attributes;
+	}
+
+	$collapsed = docspress_get_sidebar_collapsed( (int) $item->object_id );
+	if ( null !== $collapsed ) {
+		$attributes['data-sidebar-collapsed'] = $collapsed ? 'true' : 'false';
+	}
+
+	return $attributes;
+}
+add_filter( 'nav_menu_link_attributes', 'docspress_sidebar_menu_link_attributes', 10, 3 );
+
+/**
  * Normalize a file-backed Docspress source path.
  *
  * @param mixed $source Untrusted source path.
@@ -517,7 +591,7 @@ function docspress_normalize_markdown_source_path( $source ) {
 		}
 	}
 
-	if ( ! preg_match( '/\.mdx?$/i', $source ) ) {
+	if ( ! preg_match( '/\.(?:md|markdown|mdx)$/i', $source ) ) {
 		return '';
 	}
 
@@ -535,16 +609,8 @@ function docspress_normalize_markdown_source_path( $source ) {
  */
 function docspress_get_markdown_source_path( $post_id = 0 ) {
 	$post_id  = $post_id ? absint( $post_id ) : get_queried_object_id();
-	$content  = $post_id ? (string) get_post_field( 'post_content', $post_id, 'raw' ) : '';
-	$metadata = array();
-	$source   = '';
-
-	if ( $content && preg_match( '/<!--\s*docspress:(.*?)\s*-->/s', $content, $matches ) ) {
-		$metadata = json_decode( trim( $matches[1] ), true );
-		if ( is_array( $metadata ) && 1 === (int) ( isset( $metadata['version'] ) ? $metadata['version'] : 0 ) ) {
-			$source = isset( $metadata['source'] ) ? $metadata['source'] : '';
-		}
-	}
+	$metadata = docspress_get_managed_metadata( $post_id );
+	$source   = isset( $metadata['source'] ) ? $metadata['source'] : '';
 
 	if ( ! $source && $post_id ) {
 		$source = get_post_meta( $post_id, '_docspress_source_path', true );

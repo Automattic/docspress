@@ -20,6 +20,8 @@ With `root-slug: docs`, these files map to:
 
 Both `index.md` and `README.md` are treated as a folder index. Do not place both in the same directory: they normalize to the same route and DocsPress stops with an error.
 
+When the DocsPress theme is active, every file-backed Page also exposes the exact source at the Page path with `.md` instead of the trailing slash. For example, `/docs/reference/action-inputs.md` returns the original Markdown and frontmatter. The theme lists these source endpoints in `/llms.txt`; generated placeholder Pages are omitted because they have no source file.
+
 ## Titles and headings
 
 Title precedence is:
@@ -41,6 +43,24 @@ One-sentence page outcome.
 ```
 
 Use `create-h1: false` because the theme already renders the WordPress Page title.
+
+## Sidebar position and initial state
+
+The DocsPress theme reads two optional Docusaurus-style frontmatter fields:
+
+```markdown
+---
+title: Continuous synchronization
+sidebar_position: 20
+sidebar_collapsed: true
+---
+```
+
+- `sidebar_position` must be a signed integer. DocsPress synchronizes it to WordPress `menu_order`; the automatic Page tree honors it when **Page order, then title** is selected. Positions apply among siblings, with titles breaking ties.
+- `sidebar_collapsed` must be `true` or `false`. It controls the initial state only when the Page has children in the rendered sidebar.
+- Without `sidebar_collapsed`, inactive branches start collapsed. The current Page and all its ancestors remain visible regardless of their configured default.
+
+A hand-built WordPress sidebar menu keeps its menu-item order, but Page-backed parent items still inherit `sidebar_collapsed`. Removing a previously synchronized `sidebar_position` resets that source-owned Page order to `0`; DocsPress leaves legacy manual Page order untouched when frontmatter never owned it. Invalid field values stop collection and identify the source file instead of publishing an ambiguous navigation state.
 
 ## Missing parents
 

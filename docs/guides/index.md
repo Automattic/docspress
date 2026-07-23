@@ -1,5 +1,7 @@
 ---
 title: Guides
+sidebar_position: 40
+sidebar_collapsed: false
 ---
 
 Move from a reviewed manual draft to maintainable synchronization in either direction, then add routing controls only when the directory tree is not enough.

@@ -1,5 +1,7 @@
 ---
 title: Getting started
+sidebar_position: 10
+sidebar_collapsed: true
 ---
 
 Connect a GitHub documentation tree to WordPress without allowing an unreviewed workflow run to publish Pages or open pull requests immediately.

@@ -1,5 +1,7 @@
 ---
 title: Reference
+sidebar_position: 50
+sidebar_collapsed: true
 ---
 
 Use these pages when configuring the Action, diagnosing reconciliation, installing the presentation layer, or emitting custom blocks.

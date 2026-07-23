@@ -45,7 +45,14 @@ describe("WordPressClient", () => {
       fetchImpl: async (url, init) => {
         calls.push({ url: String(url), init });
         const page = new URL(String(url)).searchParams.get("page");
-        return jsonResponse([{ id: Number(page), slug: `page-${page}`, parent: 0, content: { raw: "" }, title: { raw: "" } }], {
+        return jsonResponse([{
+          id: Number(page),
+          slug: `page-${page}`,
+          parent: 0,
+          menu_order: Number(page) * 10,
+          content: { raw: "" },
+          title: { raw: "" }
+        }], {
           headers: { "x-wp-totalpages": "2" }
         });
       }
@@ -54,6 +61,7 @@ describe("WordPressClient", () => {
     const pages = await client.listPages();
 
     expect(pages.map((page) => page.id)).toEqual([1, 2]);
+    expect(pages.map((page) => page.menuOrder)).toEqual([10, 20]);
     expect(calls).toHaveLength(2);
   });
 

@@ -6,7 +6,7 @@ The companion theme turns the managed Page hierarchy into a Docusaurus-inspired 
 
 ## Reading experience
 
-- Sticky full-height documentation sidebar.
+- Sticky full-height documentation sidebar with independently collapsible branches.
 - Automatic Page-tree navigation or a selected WordPress menu.
 - Header navigation menu and repository link.
 - `⌘K` or `Ctrl+K` command search across the configured docs tree.
@@ -39,6 +39,18 @@ The companion theme turns the managed Page hierarchy into a Docusaurus-inspired 
 | Footer | Visibility, text, optional link, `{year}` and `{site_title}` placeholders. |
 
 The default footer is `Documentation powered by WordPress and {site_title} · {year}`.
+
+## LLM-friendly endpoints
+
+The theme generates `/llms.txt` with the site title, description, and absolute links to source-backed documentation Pages. Each normal Page route also has a clean Markdown representation by replacing its trailing slash with `.md`; for example, `/docs/guides/continuous-sync/` becomes `/docs/guides/continuous-sync.md`.
+
+Markdown responses preserve the exact synchronized source, including frontmatter, and use the `text/markdown` content type. Only published, file-backed DocsPress Pages are exposed. Generated placeholders and hand-authored WordPress Pages return `404`. Pages synchronized before this feature become available after the next DocsPress run refreshes their management metadata.
+
+## Sidebar frontmatter
+
+Markdown-backed Pages can set `sidebar_position` to a signed integer and `sidebar_collapsed` to a boolean. Position maps to native WordPress Page order and applies to the automatic Page tree when **Page order, then title** is selected. Collapse defaults apply to both automatic navigation and Page-backed items in a custom sidebar menu; custom menu ordering remains controlled in WordPress.
+
+Parent Page links and disclosure buttons are separate controls. Inactive branches start collapsed, `sidebar_collapsed: false` keeps a branch open, and the current Page's ancestor path always opens. Filtering temporarily expands the tree to reveal matches, then restores the prior state. Without JavaScript, all links remain visible.
 
 For a screenshot-led walkthrough of the native controls and live preview, see [Customize the theme in WordPress](../guides/customize-theme.md).
 

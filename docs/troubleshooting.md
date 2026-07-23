@@ -1,5 +1,6 @@
 ---
 title: Troubleshooting
+sidebar_position: 60
 ---
 
 Start with the GitHub Actions summary, then match the symptom to the narrowest source-backed check.

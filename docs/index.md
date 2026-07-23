@@ -1,5 +1,7 @@
 ---
 title: DocsPress documentation
+sidebar_position: 0
+sidebar_collapsed: false
 ---
 
 DocsPress keeps documentation beside the code that explains it, then publishes that Markdown as native WordPress Pages and Gutenberg blocks.

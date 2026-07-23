@@ -22,6 +22,8 @@ Open **Navigation**, choose the synchronized documentation root, and select eith
 
 Use the remaining controls to choose Page ordering, include or hide the root Page, limit nesting depth, change the sidebar heading, and configure the filter or version selector.
 
+Parent Pages keep their normal links and gain a separate disclosure button for their children. Inactive branches start collapsed, while the branch containing the current Page always opens. Use Markdown frontmatter `sidebar_collapsed: false` to keep a managed section expanded or `sidebar_collapsed: true` to make its default explicit. With **Page order, then title** selected, `sidebar_position` controls a managed Page's order among its siblings. Hand-built menus keep their WordPress menu-item order.
+
 <!-- wp:docspress/callout {"tone":"tip","title":"Keep the synchronized root selected","content":"<p>Set Documentation root to the root Page created by DocsPress. This keeps unrelated site Pages out of the sidebar, search results, breadcrumbs, and previous/next navigation.</p>","collapsible":false} /-->
 
 ## Shape command search

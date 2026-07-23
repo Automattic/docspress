@@ -119,11 +119,13 @@ export function normalizePage(page) {
   const rawContent = typeof page.content === "string" ? page.content : page.content?.raw ?? page.content?.rendered ?? "";
   const renderedTitle = typeof page.title === "string" ? page.title : page.title?.raw ?? page.title?.rendered ?? "";
   const parent = typeof page.parent === "number" ? page.parent : page.parent?.ID ?? page.parent?.id ?? 0;
+  const menuOrder = page.menu_order ?? page.menuOrder ?? 0;
 
   return {
     id,
     slug: page.slug,
     parent,
+    menuOrder,
     title: renderedTitle,
     content: rawContent,
     status: page.status,

@@ -1,5 +1,6 @@
 ---
 title: Why DocsPress?
+sidebar_position: 20
 ---
 
 DocsPress is the advantageous choice when documentation belongs in GitHub but WordPress is already the trusted publishing, editorial, and presentation platform.

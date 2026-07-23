@@ -30,8 +30,27 @@ describe("collectDesiredPages", () => {
     expect(pages.find((page) => page.key === "docs/guides/install")?.parentKey).toBe("docs/guides");
     expect(readSentinel(pages[0].content)).toMatchObject({
       key: "docs",
-      source: "docs/index.md"
+      source: "docs/index.md",
+      sourceContentBase64: Buffer.from("# Product Docs\n\nWelcome.").toString("base64")
     });
+  });
+
+  it("stores the exact Markdown source for theme endpoints", async () => {
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
+    const source = "---\ntitle: Exact source\ncustom: preserved\n---\n\n# Heading\n\nBody.\n";
+    await fs.mkdir(path.join(cwd, "docs"), { recursive: true });
+    await fs.writeFile(path.join(cwd, "docs", "index.md"), source);
+
+    const pages = await collectDesiredPages({
+      cwd,
+      docsDir: "docs",
+      rootSlug: "docs",
+      rootTitle: "Docs",
+      status: "draft"
+    });
+    const sentinel = readSentinel(pages[0].content);
+
+    expect(Buffer.from(sentinel.sourceContentBase64, "base64").toString("utf8")).toBe(source);
   });
 
   it("adds title h1 blocks to files and placeholders when requested", async () => {
@@ -52,6 +71,66 @@ describe("collectDesiredPages", () => {
     expect(pages.find((page) => page.key === "docs")?.content).toContain("<h1>Product Docs</h1>");
     expect(pages.find((page) => page.key === "docs/guides")?.content).toContain("<h1>Guides</h1>");
     expect(pages.find((page) => page.key === "docs/guides/install")?.content.match(/<h1>Install<\/h1>/g)).toHaveLength(1);
+  });
+
+  it("reads sidebar position and collapse defaults from frontmatter", async () => {
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
+    await fs.mkdir(path.join(cwd, "docs", "guides"), { recursive: true });
+    await fs.writeFile(path.join(cwd, "docs", "index.md"), [
+      "---",
+      "title: Product Docs",
+      "sidebar_position: -10",
+      "sidebar_collapsed: false",
+      "---",
+      "",
+      "Welcome."
+    ].join("\n"));
+    await fs.writeFile(path.join(cwd, "docs", "guides", "index.md"), "# Guides");
+
+    const pages = await collectDesiredPages({
+      cwd,
+      docsDir: "docs",
+      rootSlug: "docs",
+      rootTitle: "Docs",
+      status: "draft"
+    });
+    const root = pages.find((page) => page.key === "docs");
+    const guides = pages.find((page) => page.key === "docs/guides");
+
+    expect(root).toMatchObject({
+      sidebarPosition: -10,
+      sidebarCollapsed: false
+    });
+    expect(readSentinel(root.content)).toMatchObject({
+      sidebarPosition: -10,
+      sidebarCollapsed: false
+    });
+    expect(Object.hasOwn(guides, "sidebarPosition")).toBe(false);
+    expect(Object.hasOwn(readSentinel(guides.content), "sidebarCollapsed")).toBe(false);
+  });
+
+  it("rejects invalid sidebar frontmatter with the source path", async () => {
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
+    await fs.mkdir(path.join(cwd, "docs"), { recursive: true });
+    await fs.writeFile(path.join(cwd, "docs", "index.md"), "---\nsidebar_position: 1.5\n---\n\n# Docs");
+
+    await expect(collectDesiredPages({
+      cwd,
+      docsDir: "docs",
+      rootSlug: "docs",
+      rootTitle: "Docs",
+      status: "draft"
+    })).rejects.toThrow(/Invalid sidebar_position in docs\/index\.md/);
+
+    await fs.writeFile(path.join(cwd, "docs", "index.md"), "---\nsidebar_collapsed: yes\n---\n\n# Docs");
+
+    await expect(collectDesiredPages({
+      cwd,
+      docsDir: "docs",
+      rootSlug: "docs",
+      rootTitle: "Docs",
+      status: "draft"
+    })).rejects.toThrow(/Invalid sidebar_collapsed in docs\/index\.md/);
   });
 
   it("rejects files that map to the same page", async () => {

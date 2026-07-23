@@ -12,6 +12,7 @@ A small, Docusaurus-inspired documentation theme for [Docspress](https://github.
 - Instant sidebar-only Page filtering for quickly narrowing the visible navigation tree.
 - An automatic “On this page” table of contents from `h2` and `h3` headings.
 - Previous and next links that follow the sidebar order.
+- A generated `/llms.txt` index and exact source Markdown responses for managed Pages.
 - A two-button article action bar for editing in WordPress or proposing changes to the exact source Markdown file on GitHub.
 - Responsive mobile navigation, dark mode, code-copy buttons, and print styles.
 - Optional `docspress_version` taxonomy selector when that taxonomy is registered on the site.
@@ -56,6 +57,18 @@ To rebuild the persisted Playground site from scratch, add `--reset`. To keep it
 
 If no documentation root is configured, the theme uses the current Page’s top-most ancestor. On non-Page views, it lists all published Pages.
 
+## Markdown and llms.txt endpoints
+
+The theme exposes a standard `llms.txt` index at `/llms.txt`. It contains the site title and description followed by absolute links to every source-backed Page in the configured documentation tree.
+
+Each linked Page is available as its exact synchronized Markdown source by replacing the trailing slash with `.md`:
+
+```text
+/docs/getting-started/  → /docs/getting-started.md
+```
+
+The response includes the original frontmatter and uses `text/markdown; charset=utf-8`. Placeholder sections, hand-authored WordPress Pages, drafts, and invalid paths return `404` because they do not have source-owned Markdown. Existing managed Pages gain this metadata on their next DocsPress synchronization.
+
 ## Theme customization
 
 Open **Appearance → Customize → DocsPress Theme**. Settings are grouped by job instead of presented as one long form.
@@ -86,6 +99,10 @@ Preset code lives under `inc/design-presets/`, with one automatically discovered
 | Sidebar heading | Changes the navigation eyebrow text. |
 | Sidebar filter | Shows or hides filtering and changes its placeholder. |
 | Version selector | Shows `docspress_version` terms when that taxonomy is available. |
+
+Every sidebar item with children receives a separate disclosure button, so its Page title remains a normal link. Inactive branches start collapsed; the branch containing the current Page always opens. Managed Pages can override the initial state with `sidebar_collapsed: true` or `sidebar_collapsed: false` in Markdown frontmatter. The same collapse behavior applies to Page-backed items in a hand-built sidebar menu, while custom links use the inactive-branch default.
+
+Use the default **Page order, then title** setting to honor frontmatter `sidebar_position` through WordPress's native Page order. Custom menus always retain their explicit menu-item order. Sidebar filtering temporarily reveals matching branches and restores their previous state when cleared.
 
 ### Command search
 
@@ -119,7 +136,7 @@ Choose independent interface, reading, and heading font stacks, including bundle
 
 Customize the article kicker, table-of-contents heading, and both article action buttons. The WordPress and GitHub actions can be shown independently, their labels can be changed, and the Markdown repository plus branch/ref can be configured separately from the header repository link.
 
-The GitHub action reads the exact `source` path from the hidden Docspress sentinel and opens GitHub's editor for that file. Hand-authored Pages can provide the same path through `_docspress_source_path` post meta or the `docspress_markdown_source_path` filter. Pages without a validated `.md` or `.mdx` source path do not show a misleading GitHub action.
+The GitHub action reads the exact `source` path from the hidden Docspress sentinel and opens GitHub's editor for that file. Hand-authored Pages can provide the same path through `_docspress_source_path` post meta or the `docspress_markdown_source_path` filter. Pages without a validated `.md`, `.markdown`, or `.mdx` source path do not show a misleading GitHub action.
 
 ### Footer
 

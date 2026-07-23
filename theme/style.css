@@ -3,7 +3,7 @@ Theme Name: DocsPress
 Theme URI: https://github.com/Automattic/docspress
 Author: Fatih Kadir Akın
 Description: A focused, Docusaurus-inspired documentation theme for WordPress and Docspress.
-Version: 0.5.0
+Version: 0.6.0
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
@@ -819,6 +819,12 @@ body.command-search-open {
 	position: relative;
 }
 
+.docs-nav-row {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+}
+
 .docs-nav a {
 	display: flex;
 	align-items: center;
@@ -835,6 +841,53 @@ body.command-search-open {
 	transition: background 140ms ease, color 140ms ease, transform 140ms ease;
 }
 
+.docs-nav-row > a {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.docs-nav-toggle {
+	display: grid;
+	place-items: center;
+	width: 29px;
+	height: 29px;
+	flex: 0 0 29px;
+	padding: 0;
+	border: 0;
+	border-radius: 7px;
+	background: transparent;
+	color: var(--dp-muted);
+	cursor: pointer;
+	transition: background 140ms ease, color 140ms ease, transform 140ms ease;
+}
+
+.docs-nav-toggle:hover {
+	background: color-mix(in srgb, var(--dp-blue-soft) 72%, transparent);
+	color: var(--dp-blue-dark);
+}
+
+.docs-nav-toggle:active {
+	transform: scale(0.94);
+}
+
+.docs-nav-chevron {
+	width: 7px;
+	height: 7px;
+	border-right: 1.6px solid currentColor;
+	border-bottom: 1.6px solid currentColor;
+	transform: rotate(-45deg);
+	transition: transform 170ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.docs-nav-toggle[aria-expanded="true"] .docs-nav-chevron {
+	transform: rotate(45deg) translate(-1px, -1px);
+}
+
+.docs-nav.is-filtering .docs-nav-toggle {
+	opacity: 0.45;
+	cursor: default;
+}
+
 .docs-nav a:hover {
 	background: color-mix(in srgb, var(--dp-blue-soft) 72%, transparent);
 	color: var(--dp-blue-dark);
@@ -847,7 +900,8 @@ body.command-search-open {
 	font-weight: 750;
 }
 
-.docs-nav > ul > li > a {
+.docs-nav > ul > li > a,
+.docs-nav > ul > li > .docs-nav-row > a {
 	color: var(--dp-ink);
 	font-weight: 720;
 }

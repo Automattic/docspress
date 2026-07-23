@@ -47,6 +47,7 @@ Docspress keeps Markdown and WordPress documentation synchronized. It can publis
 - Review planned changes with `dry-run` before writing to WordPress.
 - Support manifests, redirects, rewritten local links, and edit links.
 - Propose WordPress editor changes as readable Markdown pull requests.
+- Serve a generated `/llms.txt` index and exact source Markdown at each Page path with `.md`.
 
 ## Project status
 
@@ -249,6 +250,18 @@ docs/guides/markdown-features.md -> /docs/guides/markdown-features/
 ```
 
 Missing parent sections are created as managed placeholder pages. The page title comes from frontmatter `title`, then the first H1, then the filename. When the first H1 is used as the title, Docspress removes it from the body to avoid duplicate headings.
+
+The companion theme also understands Docusaurus-style sidebar metadata:
+
+```yaml
+---
+title: Guides
+sidebar_position: 20
+sidebar_collapsed: true
+---
+```
+
+`sidebar_position` must be a signed integer and maps to the WordPress Page's native `menu_order`. The theme honors it when automatic navigation uses **Page order, then title**; a hand-built WordPress menu keeps its own administrator-defined order. `sidebar_collapsed` must be `true` or `false` and sets the initial state of a Page's child branch. Inactive branches without the field start collapsed, while the current Page's ancestor path always opens.
 
 Set `create-h1: true` if you want Docspress to add the WordPress page title as the first H1 block in the generated content. When the Markdown already starts with the same H1, Docspress reuses that title and avoids creating a duplicate.
 

@@ -28,7 +28,9 @@ const payload = {
     title: page.title,
     content: page.content,
     sourcePath: page.sourcePath,
-    depth: page.depth
+    depth: page.depth,
+    sidebarPosition: page.sidebarPosition,
+    sidebarCollapsed: page.sidebarCollapsed
   }))
 };
 

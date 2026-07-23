@@ -7,6 +7,7 @@
 	const drawerClose = document.querySelector('[data-drawer-close]');
 	const sidebar = document.querySelector('#docs-sidebar');
 	const sidebarSearchInput = document.querySelector('[data-docs-filter]');
+	const docsNav = document.querySelector('[data-docs-nav]');
 	const searchTrigger = document.querySelector('[data-docs-search-trigger]');
 	const clearButton = document.querySelector('[data-search-clear]');
 	const searchDialog = document.querySelector('[data-docs-search-dialog]');
@@ -32,6 +33,7 @@
 	let activeSearchResult = -1;
 	let visibleSearchResults = [];
 	let searchReturnFocus = null;
+	const sidebarBranches = [];
 
 	function setDrawer(open) {
 		body.classList.toggle('drawer-open', open);
@@ -40,6 +42,93 @@
 			drawerToggle.setAttribute('aria-label', open ? 'Close documentation menu' : 'Open documentation menu');
 		}
 	}
+
+	function directChild(element, predicate) {
+		return Array.from(element.children).find(predicate) || null;
+	}
+
+	function directNavigationLink(item) {
+		const link = directChild(item, function (child) { return child.tagName === 'A'; });
+		if (link) return link;
+		const row = directChild(item, function (child) { return child.classList.contains('docs-nav-row'); });
+		return row ? directChild(row, function (child) { return child.tagName === 'A'; }) : null;
+	}
+
+	function setBranchExpanded(branch, expanded) {
+		branch.list.hidden = !expanded;
+		branch.button.setAttribute('aria-expanded', String(expanded));
+		branch.button.setAttribute('aria-label', (expanded ? 'Collapse ' : 'Expand ') + branch.title);
+		branch.item.classList.toggle('is-expanded', expanded);
+	}
+
+	function enhanceSidebarNavigation() {
+		if (!docsNav) return;
+
+		Array.from(docsNav.querySelectorAll('li')).forEach(function (item, index) {
+			const childList = directChild(item, function (child) { return child.tagName === 'UL'; });
+			const link = directNavigationLink(item);
+			if (!childList || !link) return;
+
+			const row = document.createElement('div');
+			const button = document.createElement('button');
+			const chevron = document.createElement('span');
+			const title = (item.dataset.docTitle || link.textContent).trim();
+			const branchId = 'docspress-nav-branch-' + index;
+			const explicitlyCollapsed = link.dataset.sidebarCollapsed;
+			const activeBranch = item.classList.contains('current-menu-item')
+				|| item.classList.contains('current-menu-ancestor')
+				|| Boolean(item.querySelector('a[aria-current="page"]'));
+			const expanded = activeBranch || explicitlyCollapsed === 'false';
+
+			row.className = 'docs-nav-row';
+			item.insertBefore(row, link);
+			row.appendChild(link);
+			button.className = 'docs-nav-toggle';
+			button.type = 'button';
+			button.setAttribute('aria-controls', branchId);
+			chevron.className = 'docs-nav-chevron';
+			chevron.setAttribute('aria-hidden', 'true');
+			button.appendChild(chevron);
+			row.appendChild(button);
+			childList.id = branchId;
+
+			const branch = {
+				button: button,
+				item: item,
+				list: childList,
+				title: title
+			};
+			button.addEventListener('click', function () {
+				setBranchExpanded(branch, button.getAttribute('aria-expanded') !== 'true');
+			});
+			sidebarBranches.push(branch);
+			setBranchExpanded(branch, expanded);
+		});
+
+		if (sidebarBranches.length) docsNav.classList.add('is-collapsible');
+	}
+
+	function setSidebarFiltering(filtering) {
+		sidebarBranches.forEach(function (branch) {
+			if (filtering) {
+				if (!('filterExpanded' in branch.button.dataset)) {
+					branch.button.dataset.filterExpanded = branch.button.getAttribute('aria-expanded');
+				}
+				branch.button.disabled = true;
+				setBranchExpanded(branch, true);
+				return;
+			}
+
+			if ('filterExpanded' in branch.button.dataset) {
+				setBranchExpanded(branch, branch.button.dataset.filterExpanded === 'true');
+				delete branch.button.dataset.filterExpanded;
+			}
+			branch.button.disabled = false;
+		});
+		if (docsNav) docsNav.classList.toggle('is-filtering', filtering);
+	}
+
+	enhanceSidebarNavigation();
 
 	if (drawerToggle) {
 		drawerToggle.addEventListener('click', function () {
@@ -334,18 +423,18 @@
 
 	function filterNavigation() {
 		const query = sidebarSearchInput.value.trim().toLocaleLowerCase();
-		const nav = document.querySelector('[data-docs-nav]');
 		const noResults = document.querySelector('[data-no-results]');
-		if (!nav) return;
+		if (!docsNav) return;
 
-		const items = Array.from(nav.querySelectorAll('li'));
+		const items = Array.from(docsNav.querySelectorAll('li'));
 		items.forEach(function (item) {
 			item.hidden = false;
 		});
+		setSidebarFiltering(Boolean(query));
 
 		if (query) {
 			items.slice().reverse().forEach(function (item) {
-				const directLink = Array.from(item.children).find(function (child) { return child.tagName === 'A'; });
+				const directLink = directNavigationLink(item);
 				const title = item.dataset.docTitle || (directLink ? directLink.textContent.trim() : '');
 				const ownMatch = title.toLocaleLowerCase().includes(query);
 				const childMatch = Array.from(item.children).some(function (child) {

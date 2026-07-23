@@ -6,6 +6,13 @@ function desiredPage(key, overrides = {}) {
   const segments = key.split("/");
   const body = "<!-- wp:paragraph -->\n<p>Hello</p>\n<!-- /wp:paragraph -->";
   const hash = overrides.hash || `${key}-hash`;
+  const sentinel = { key, source: overrides.source || `docs/${key}.md`, hash };
+  if (Object.hasOwn(overrides, "sidebarPosition")) {
+    sentinel.sidebarPosition = overrides.sidebarPosition;
+  }
+  if (Object.hasOwn(overrides, "sidebarCollapsed")) {
+    sentinel.sidebarCollapsed = overrides.sidebarCollapsed;
+  }
 
   return {
     key,
@@ -14,7 +21,7 @@ function desiredPage(key, overrides = {}) {
     title: overrides.title || key,
     status: overrides.status || "draft",
     hash,
-    content: prependSentinel(body, { key, source: overrides.source || `docs/${key}.md`, hash }),
+    content: prependSentinel(body, sentinel),
     depth: segments.length,
     ...overrides
   };
@@ -22,14 +29,22 @@ function desiredPage(key, overrides = {}) {
 
 function existingPage(id, key, options = {}) {
   const hash = options.hash || `${key}-hash`;
+  const sentinel = { key, source: `docs/${key}.md`, hash };
+  if (Object.hasOwn(options, "sidebarPosition")) {
+    sentinel.sidebarPosition = options.sidebarPosition;
+  }
+  if (Object.hasOwn(options, "sidebarCollapsed")) {
+    sentinel.sidebarCollapsed = options.sidebarCollapsed;
+  }
   const content = options.managed === false
     ? "<p>Manual page</p>"
-    : prependSentinel("<p>Managed page</p>", { key, source: `docs/${key}.md`, hash });
+    : prependSentinel("<p>Managed page</p>", sentinel);
 
   return {
     id,
     slug: options.slug || key.split("/").at(-1),
     parent: options.parent || 0,
+    menuOrder: options.menuOrder ?? 0,
     content,
     title: key,
     status: options.status || "draft"
@@ -96,6 +111,42 @@ describe("syncPages", () => {
     expect(client.calls[0][1]).toBe(1);
   });
 
+  it("updates legacy and changed embedded Markdown source independently of the content hash", async () => {
+    const hash = "same-rendered-content";
+    const sourceContentBase64 = Buffer.from("# Docs\n\nExact source.\n").toString("base64");
+    const desired = desiredPage("docs", { hash });
+    desired.content = prependSentinel("<p>Managed page</p>", {
+      key: "docs",
+      source: "docs/docs.md",
+      hash,
+      sourceContentBase64
+    });
+    const legacy = existingPage(1, "docs", { hash });
+    const stale = existingPage(2, "docs", { hash });
+    stale.content = prependSentinel("<p>Managed page</p>", {
+      key: "docs",
+      source: "docs/docs.md",
+      hash,
+      sourceContentBase64: Buffer.from("# Old source\n").toString("base64")
+    });
+
+    for (const existing of [legacy, stale]) {
+      const client = mockClient([existing]);
+      const result = await syncPages({
+        desiredPages: [desired],
+        client,
+        dryRun: false,
+        rootSlug: "docs",
+        logger: { info() {} }
+      });
+
+      expect(result.updated).toBe(1);
+      expect(client.calls[0]).toEqual(["update", existing.id, expect.objectContaining({
+        content: desired.content
+      })]);
+    }
+  });
+
   it("reports unmanaged path collisions as conflicts", async () => {
     const client = mockClient([existingPage(1, "docs", { managed: false })]);
     const result = await syncPages({
@@ -127,5 +178,51 @@ describe("syncPages", () => {
 
     expect(result.deleted).toBe(1);
     expect(client.calls).toContainEqual(["delete", 2, { force: true }]);
+  });
+
+  it("updates navigation metadata independently from the content hash", async () => {
+    const client = mockClient([
+      existingPage(1, "docs", {
+        sidebarPosition: 10,
+        sidebarCollapsed: true,
+        menuOrder: 10
+      })
+    ]);
+    const result = await syncPages({
+      desiredPages: [desiredPage("docs", {
+        sidebarPosition: 20,
+        sidebarCollapsed: false
+      })],
+      client,
+      dryRun: false,
+      rootSlug: "docs",
+      logger: { info() {} }
+    });
+
+    expect(result.updated).toBe(1);
+    expect(client.calls[0][2]).toMatchObject({
+      menu_order: 20
+    });
+    expect(client.calls[0][2].content).toContain('"sidebarCollapsed":false');
+  });
+
+  it("resets a removed source-owned position without changing legacy manual order", async () => {
+    const client = mockClient([
+      existingPage(1, "docs", { sidebarPosition: 40, menuOrder: 40 }),
+      existingPage(2, "docs/legacy", { parent: 1, menuOrder: 70 })
+    ]);
+    const result = await syncPages({
+      desiredPages: [desiredPage("docs"), desiredPage("docs/legacy")],
+      client,
+      dryRun: false,
+      rootSlug: "docs",
+      logger: { info() {} }
+    });
+
+    expect(result.updated).toBe(1);
+    expect(result.unchanged).toBe(1);
+    expect(client.calls).toEqual([
+      ["update", 1, expect.objectContaining({ menu_order: 0 })]
+    ]);
   });
 });

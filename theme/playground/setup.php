@@ -38,7 +38,7 @@ function docspress_playground_upsert_page( $page, $parent_id, $order ) {
 		'post_name'      => sanitize_title( $page['slug'] ),
 		'post_content'   => wp_slash( $content ),
 		'post_parent'    => $parent_id,
-		'menu_order'     => $order,
+		'menu_order'     => array_key_exists( 'sidebarPosition', $page ) ? (int) $page['sidebarPosition'] : $order,
 		'post_status'    => 'publish',
 		'post_type'      => 'page',
 		'comment_status' => 'closed',

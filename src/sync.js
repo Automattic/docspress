@@ -39,7 +39,7 @@ export async function syncPages(options) {
     }
 
     const parentId = desired.parentKey ? idByKey.get(desired.parentKey) : 0;
-    const payload = pagePayload(desired, parentId);
+    const payload = pagePayload(desired, parentId, managed);
 
     if (managed) {
       if (skipUpdateKeys.has(desired.key)) {
@@ -52,7 +52,11 @@ export async function syncPages(options) {
         });
         continue;
       }
-      if (managed.sentinel?.hash === desired.hash && managed.parent === parentId) {
+      if (
+        managed.sentinel?.hash === desired.hash
+        && managed.parent === parentId
+        && managedMetadataMatches(desired, managed)
+      ) {
         result.unchanged += 1;
         result.operations.push({ action: "unchanged", key: desired.key, id: managed.id });
         continue;
@@ -98,7 +102,7 @@ export async function syncPages(options) {
   return result;
 }
 
-function pagePayload(page, parentId) {
+function pagePayload(page, parentId, managed) {
   const payload = {
     title: page.title,
     content: page.content,
@@ -107,7 +111,36 @@ function pagePayload(page, parentId) {
     parent: parentId || 0
   };
 
+  if (Object.hasOwn(page, "sidebarPosition")) {
+    payload.menu_order = page.sidebarPosition;
+  } else if (Object.hasOwn(managed?.sentinel || {}, "sidebarPosition")) {
+    payload.menu_order = 0;
+  }
+
   return payload;
+}
+
+function managedMetadataMatches(desired, managed) {
+  const desiredSentinel = readSentinel(desired.content) || {};
+  const desiredHasPosition = Object.hasOwn(desired, "sidebarPosition");
+  const managedHasPosition = Object.hasOwn(managed.sentinel || {}, "sidebarPosition");
+  const desiredHasCollapsed = Object.hasOwn(desired, "sidebarCollapsed");
+  const managedHasCollapsed = Object.hasOwn(managed.sentinel || {}, "sidebarCollapsed");
+  const desiredHasSourceContent = Object.hasOwn(desiredSentinel, "sourceContentBase64");
+  const managedHasSourceContent = Object.hasOwn(managed.sentinel || {}, "sourceContentBase64");
+  const positionMatches = desiredHasPosition
+    ? managedHasPosition
+      && managed.sentinel.sidebarPosition === desired.sidebarPosition
+      && managed.menuOrder === desired.sidebarPosition
+    : !managedHasPosition;
+  const collapsedMatches = desiredHasCollapsed
+    ? managedHasCollapsed && managed.sentinel.sidebarCollapsed === desired.sidebarCollapsed
+    : !managedHasCollapsed;
+  const sourceContentMatches = desiredHasSourceContent
+    ? managedHasSourceContent && managed.sentinel.sourceContentBase64 === desiredSentinel.sourceContentBase64
+    : !managedHasSourceContent;
+
+  return positionMatches && collapsedMatches && sourceContentMatches;
 }
 
 function createResult(dryRun) {

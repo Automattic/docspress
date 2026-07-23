@@ -191,7 +191,30 @@ function convertMarkdownPages(byRoute, options, linkResolver) {
     page.title = page.titleOverride || converted.title;
     page.body = converted.blocks;
     page.frontmatter = converted.data;
+    Object.assign(page, normalizeSidebarFrontmatter(converted.data, page.sourcePath));
   }
+}
+
+function normalizeSidebarFrontmatter(frontmatter, sourcePath) {
+  const normalized = {};
+
+  if (Object.hasOwn(frontmatter, "sidebar_position")) {
+    const position = frontmatter.sidebar_position;
+    if (!Number.isSafeInteger(position)) {
+      throw new Error(`Invalid sidebar_position in ${sourcePath}: expected a signed integer.`);
+    }
+    normalized.sidebarPosition = position;
+  }
+
+  if (Object.hasOwn(frontmatter, "sidebar_collapsed")) {
+    const collapsed = frontmatter.sidebar_collapsed;
+    if (typeof collapsed !== "boolean") {
+      throw new Error(`Invalid sidebar_collapsed in ${sourcePath}: expected true or false.`);
+    }
+    normalized.sidebarCollapsed = collapsed;
+  }
+
+  return normalized;
 }
 
 function routeSegmentsForFile(file) {
@@ -464,11 +487,21 @@ function finalizePage(page, options) {
     body
   };
   const hash = hashPageState(stablePayload);
-  const content = prependSentinel(body, {
+  const sentinel = {
     key,
     source: page.sourcePath,
     hash
-  });
+  };
+  if (typeof page.sourceMarkdown === "string") {
+    sentinel.sourceContentBase64 = Buffer.from(page.sourceMarkdown, "utf8").toString("base64");
+  }
+  if (Object.hasOwn(page, "sidebarPosition")) {
+    sentinel.sidebarPosition = page.sidebarPosition;
+  }
+  if (Object.hasOwn(page, "sidebarCollapsed")) {
+    sentinel.sidebarCollapsed = page.sidebarCollapsed;
+  }
+  const content = prependSentinel(body, sentinel);
 
   return {
     ...page,
