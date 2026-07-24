@@ -1,13 +1,15 @@
 ---
-title: Site Editor migration audit
+title: Move legacy Customizer settings to the Site Editor
 sidebar_position: 55
 ---
 
-This audit maps every setting from the retired Customizer implementation to its native Site Editor destination. Visibility settings are now expressed by inserting or removing a block. Text, data, and behavior settings live on the relevant block. Site-wide visual settings live in Global Styles.
+This page is for sites upgrading from the retired Customizer-based DocsPress theme. The current theme has no Customizer interface or runtime settings layer: visibility is expressed by inserting or removing a block, text and behavior live on the relevant block, and site-wide visual settings live in Global Styles.
+
+<!-- wp:docspress/callout {"tone":"note","title":"New sites can skip this migration map","content":"<p>Open <strong>Appearance → Editor</strong> and follow <a href=\"/docs/guides/customize-theme/\">Customize the theme in the Site Editor</a>. Use the tables below only when translating saved settings from the retired Customizer implementation.</p>","collapsible":false} /-->
 
 ## Visual system and layout
 
-| Retired setting | Site Editor destination |
+| Retired Customizer setting | Site Editor destination |
 | --- | --- |
 | `docspress_design_preset` | **Styles → Browse styles**: DocsPress, WordPress.org, WordPress.com, or Jetpack family |
 | `docspress_article_width` | **Styles → Layout → Content**; the live-compatible default is 770px |
@@ -23,7 +25,7 @@ This audit maps every setting from the retired Customizer implementation to its 
 
 ## Documentation navigation
 
-| Retired setting | Docs Navigation block setting |
+| Retired Customizer setting | Docs Navigation block setting |
 | --- | --- |
 | `docspress_docs_root` | Documentation root path |
 | `docspress_sidebar_source` | Source: automatic Page tree or classic menu |
@@ -36,11 +38,11 @@ This audit maps every setting from the retired Customizer implementation to its 
 | `docspress_search_placeholder` | Filter placeholder |
 | `docspress_show_version_selector` | Show version selector |
 
-The block also adds desktop collapse/expand controls and labels that did not exist in the Customizer.
+The block also adds desktop collapse/expand controls and labels that did not exist in the retired Customizer.
 
 ## Homepage
 
-| Retired setting | Site Editor destination |
+| Retired Customizer setting | Site Editor destination |
 | --- | --- |
 | `docspress_homepage_layout` | **Templates → Front Page** block composition |
 | `docspress_homepage_show_latest_posts` | Insert or remove the latest-posts Query block |
@@ -51,7 +53,7 @@ The Hero, Audience Paths, latest-posts heading, Query, Post Template, and each c
 
 ## Header
 
-| Retired setting | Site Editor destination |
+| Retired Customizer setting | Site Editor destination |
 | --- | --- |
 | `docspress_header_menu` | Header → Navigation block |
 | `docspress_show_brand_suffix` | Insert or remove the `brand-wordpress` Paragraph |
@@ -66,7 +68,7 @@ The Hero, Audience Paths, latest-posts heading, Query, Post Template, and each c
 
 ## Command search
 
-| Retired setting | Command Search block setting |
+| Retired Customizer setting | Command Search block setting |
 | --- | --- |
 | `docspress_search_dialog_placeholder` | Field placeholder |
 | `docspress_search_suggested_label` | Suggested results label |
@@ -83,7 +85,7 @@ The Hero, Audience Paths, latest-posts heading, Query, Post Template, and each c
 
 ## Page reading tools
 
-| Retired setting | Site Editor destination |
+| Retired Customizer setting | Site Editor destination |
 | --- | --- |
 | `docspress_show_toc` | Insert or remove Table of Contents |
 | `docspress_toc_title` | Table of Contents → Heading |
@@ -101,7 +103,7 @@ The Hero, Audience Paths, latest-posts heading, Query, Post Template, and each c
 
 ## Blog and post cards
 
-| Retired setting | Site Editor destination |
+| Retired Customizer setting | Site Editor destination |
 | --- | --- |
 | `docspress_show_post_meta` | Insert or remove the post-meta Group |
 | `docspress_show_post_date` | Insert or remove Post Date |
@@ -114,7 +116,7 @@ These controls are available separately in Single, Blog Home, Archive, Search, a
 
 ## Discussion
 
-| Retired setting | Site Editor destination |
+| Retired Customizer setting | Site Editor destination |
 | --- | --- |
 | `docspress_comments_on_pages`, `docspress_comments_on_posts` | Insert or remove the Comments template part and use the native per-content Discussion status |
 | `docspress_show_comment_count` | Insert, remove, or configure Comments Title |
@@ -129,14 +131,14 @@ Core comment status, registration, moderation, threading, paging, and order rema
 
 ## Footer
 
-| Retired setting | Site Editor destination |
+| Retired Customizer setting | Site Editor destination |
 | --- | --- |
 | `docspress_show_footer` | Insert or remove the Footer template part |
 | `docspress_footer_text` | Edit the Footer Paragraph |
 | `docspress_footer_link_label` | Edit or add a Footer Navigation link label |
 | `docspress_footer_link_url` | Edit or add a Footer Navigation link URL |
 
-## Verification contract
+## Current Site Editor contract
 
 - No Customizer PHP or preview/control JavaScript is loaded.
 - All theme templates are block HTML files.
@@ -144,3 +146,5 @@ Core comment status, registration, moderation, threading, paging, and order rema
 - All DocsPress shell blocks use API version 3, expose native design supports, and render their instance attributes on the live site.
 - The default 770px article, 266px sidebar, 226px table of contents, 14px radius, 17px reading size, and Nunito Sans typography match the reference DocsPress site.
 - The Front Page template, Page template, and all three Global Style families are editable without PHP changes.
+
+The legacy setting names above are migration references, not active configuration. After translating them, continue with [Customize the theme in the Site Editor](../guides/customize-theme.md).

@@ -2,7 +2,7 @@
 title: Theme reference
 ---
 
-The DocsPress theme is a native WordPress block theme. It uses `theme.json` version 3, HTML templates and template parts, Global Style variations, block style variations, API v3 dynamic blocks, and native block supports.
+The DocsPress theme is a highly customizable native WordPress block theme. It uses `theme.json` version 3, HTML templates and template parts, Global Style variations, block style variations, API v3 dynamic blocks, and native block supports.
 
 ## Requirements
 
@@ -57,6 +57,8 @@ The theme also ships JSON block style variations for Soft panel, Outline card, a
 
 All nine support native color, background, link color, gradients, typography, spacing, borders, minimum height, sticky positioning, shadow, anchor, and CSS-class controls. Their server renderers ensure the editor-facing parameters control live Page, navigation, heading, and source-path data. Page Summary displays a manually written Page excerpt or its optional fallback, preventing WordPress from generating a duplicate summary from the first paragraph.
 
+In a content-only Header view, **DocsPress: Command Search** includes a disclosure chevron. Select it to open the block's Search content and Dialog options without first entering the full Header block-editing mode.
+
 ## `theme.json` controls
 
 Site editors receive:
@@ -74,6 +76,8 @@ Site editors receive:
 Theme-specific CSS variables under `settings.custom` cover the header, sidebar, table-of-contents, article and search dimensions, heading weight, typography roles, radius, and family-specific Page heading recipe. Global Style families can replace these values; color-only variations replace the semantic light/dark palette.
 
 The default design and each family variation serialize a complete style contract for Text, Links, Headings H1–H6, Captions, Buttons, Code, and Quotes. Their font-size scale and every exposed typography value are explicit, so applying a different style replaces earlier Global Styles edits instead of inheriting missing values. Heading levels use explicit `null` reset markers for properties owned by **All headings**, then define only their level-specific size, letter spacing, and line height; this prevents stale H1–H6 edits without blocking later family, weight, case, alignment, or color changes made at the Heading element. Display remains an opt-in size for hero text; the automatic H1–H6 scale starts at Heading 2 and steps down through Small. Headings default to weight 900 in DocsPress and 700 in the brand families, with the shared **All headings** control remaining authoritative. Each color-only variation likewise reapplies all root, element, state, and relevant block colors without changing the active typography family.
+
+The Site Editor’s root Design canvas and Styles canvas both preview the complete Page template rather than the homepage content entity. This keeps the editable header, documentation navigation sidebar, article surface, table of contents, actions, and footer visible while evaluating theme-wide changes.
 
 ## Content integration
 

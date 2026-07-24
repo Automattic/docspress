@@ -322,7 +322,11 @@
 				return el(
 					Fragment,
 					null,
-					el( InspectorControls, null, ...config.controls( attributes, setAttributes ) ),
+					( ! config.controlGroup || isSelected ) && el(
+						InspectorControls,
+						config.controlGroup ? { group: config.controlGroup } : null,
+						...config.controls( attributes, setAttributes )
+					),
 					el( 'div', blockProps, preview )
 				);
 			},
@@ -401,6 +405,7 @@
 		icon: icons.search,
 		empty: __( 'Search is available on the published site.', 'docspress' ),
 		EditorPreview: CommandSearchEditorPreview,
+		controlGroup: 'content',
 		attributes: {
 			label: { type: 'string', default: 'Search docs', role: 'content' },
 			placeholder: { type: 'string', default: 'Search documentation…', role: 'content' },
@@ -771,23 +776,66 @@
 		} );
 	}
 
-	let templatePartLabelFrame = 0;
-	function queueTemplatePartLabelUpdate() {
-		if ( templatePartLabelFrame ) {
+	function createQuickNavigationChevron() {
+		const namespace = 'http://www.w3.org/2000/svg';
+		const wrapper = document.createElement( 'span' );
+		const icon = document.createElementNS( namespace, 'svg' );
+		const path = document.createElementNS( namespace, 'path' );
+
+		wrapper.className = 'components-flex__item docspress-quick-navigation-chevron';
+		wrapper.setAttribute( 'aria-hidden', 'true' );
+		icon.setAttribute( 'viewBox', '0 0 24 24' );
+		icon.setAttribute( 'focusable', 'false' );
+		icon.setAttribute( 'height', '24' );
+		icon.setAttribute( 'width', '24' );
+		path.setAttribute( 'd', 'm9 6 6 6-6 6' );
+		path.setAttribute( 'fill', 'none' );
+		path.setAttribute( 'stroke', 'currentColor' );
+		path.setAttribute( 'stroke-linecap', 'round' );
+		path.setAttribute( 'stroke-linejoin', 'round' );
+		path.setAttribute( 'stroke-width', '1.5' );
+		icon.appendChild( path );
+		wrapper.appendChild( icon );
+		return wrapper;
+	}
+
+	/*
+	 * Leaf blocks normally have no chevron in WordPress's content-only
+	 * navigator. Command Search has a complete Content inspector, so expose
+	 * that destination with the same affordance used by nested core blocks.
+	 */
+	function updateComponentNavigatorOptions() {
+		const title = __( 'DocsPress: Command Search', 'docspress' );
+		const buttons = Array.from(
+			document.querySelectorAll( '.block-editor-block-quick-navigation__item' )
+		).filter( ( button ) => button.querySelector( '.components-truncate' )?.textContent.trim() === title );
+
+		buttons.forEach( ( button ) => {
+			button.classList.add( 'docspress-quick-navigation-has-options' );
+			if ( ! button.querySelector( '.docspress-quick-navigation-chevron' ) ) {
+				button.querySelector( '.components-flex' )?.appendChild( createQuickNavigationChevron() );
+			}
+		} );
+	}
+
+	let editorNavigatorFrame = 0;
+	function queueEditorNavigatorUpdate() {
+		if ( editorNavigatorFrame ) {
 			return;
 		}
-		templatePartLabelFrame = window.requestAnimationFrame( () => {
-			templatePartLabelFrame = 0;
+		editorNavigatorFrame = window.requestAnimationFrame( () => {
+			editorNavigatorFrame = 0;
 			updateTemplatePartNavigatorLabels();
+			updateComponentNavigatorOptions();
 		} );
 	}
 
 	if ( window.wp.data ) {
-		window.wp.data.subscribe( queueTemplatePartLabelUpdate );
-		new MutationObserver( queueTemplatePartLabelUpdate ).observe( document.documentElement, {
+		window.wp.data.subscribe( queueEditorNavigatorUpdate );
+		new MutationObserver( queueEditorNavigatorUpdate ).observe( document.documentElement, {
 			childList: true,
 			subtree: true
 		} );
-		queueTemplatePartLabelUpdate();
+		queueEditorNavigatorUpdate();
 	}
 } )( window.wp.blocks, window.wp.blockEditor, window.wp.components, window.wp.element, window.wp.i18n, window.wp.serverSideRender );

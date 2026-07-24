@@ -14,7 +14,10 @@
 		}
 
 		const url = new URL( window.location.href );
-		if ( url.searchParams.get( 'p' ) !== '/styles' ) {
+		const previewRoute = url.searchParams.get( 'p' );
+		const isDesignPreview =
+			previewRoute === null || previewRoute === '/';
+		if ( ! isDesignPreview && previewRoute !== '/styles' ) {
 			return;
 		}
 
@@ -29,6 +32,9 @@
 		}
 
 		redirecting = true;
+		if ( previewRoute === null ) {
+			url.searchParams.set( 'p', '/' );
+		}
 		url.searchParams.set( 'postType', context.postType );
 		url.searchParams.set( 'postId', String( context.postId ) );
 		window.location.replace( url.toString() );

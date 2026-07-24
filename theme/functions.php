@@ -368,8 +368,8 @@ function docspress_get_docs_root_id( $root_slug = 'docs' ) {
 }
 
 /**
- * Keep the Site Editor Styles canvas focused on the complete documentation
- * template instead of an individual Page's content entity.
+ * Keep the Site Editor Design and Styles canvases focused on the complete
+ * documentation template instead of the homepage or an individual Page.
  */
 function docspress_site_editor_preview_context() {
 	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
@@ -401,6 +401,37 @@ function docspress_site_editor_preview_context() {
 	);
 }
 add_action( 'enqueue_block_editor_assets', 'docspress_site_editor_preview_context' );
+
+/**
+ * Give a direct visit to the bare Site Editor URL a deterministic Design
+ * preview before WordPress can restore another previously visited section.
+ */
+function docspress_redirect_site_editor_design_preview() {
+	global $pagenow;
+
+	if (
+		'site-editor.php' !== $pagenow ||
+		! current_user_can( 'edit_theme_options' ) ||
+		isset( $_GET['p'] ) ||
+		isset( $_GET['postType'] ) ||
+		isset( $_GET['postId'] )
+	) {
+		return;
+	}
+
+	$url = add_query_arg(
+		array(
+			'p'        => '/',
+			'postType' => 'wp_template',
+			'postId'   => get_stylesheet() . '//page',
+		),
+		admin_url( 'site-editor.php' )
+	);
+
+	wp_safe_redirect( $url );
+	exit;
+}
+add_action( 'admin_init', 'docspress_redirect_site_editor_design_preview' );
 
 /**
  * Get published Pages within a documentation tree.

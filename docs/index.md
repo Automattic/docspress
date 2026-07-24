@@ -46,6 +46,16 @@ Read [Publish existing docs](publish-existing-docs/index.md) for the safe synchr
 
 See [Why DocsPress?](why-docspress.md) for a practical comparison with Docusaurus and the cases where keeping WordPress as the publishing surface removes an entire parallel docs stack.
 
+## Build a highly customizable WordPress documentation site
+
+DocsPress includes a native block theme rather than a fixed documentation frontend. Use the WordPress Site Editor to change the complete header, documentation sidebar, article tools, table of contents, footer, homepage, posts, archives, search results, comments, and alternate page layouts.
+
+Global Styles provide complete visual presets plus site-wide controls for colors, typography, font sizes, spacing, borders, shadows, and layout. The default design and the WordPress.org, WordPress.com, and Jetpack families each define a full component and typography system, while nine color variations provide coordinated light and dark palettes. Native per-block controls let one template or component differ without breaking the site-wide system.
+
+<!-- wp:docspress/callout {"tone":"success","title":"Highly customizable and WordPress-native","content":"<p>The same Global Styles update the documentation shell, normal content, comments, core blocks, and DocsPress blocks. Editors can change the complete presentation without a theme build or legacy Customizer panel.</p>","collapsible":false} /-->
+
+Follow [Customize the theme in the Site Editor](guides/customize-theme.md) for the editing workflow, or read [Why DocsPress?](why-docspress.md) to compare this model with a separately built documentation site.
+
 ## Keep documentation synchronized
 
 Prove the connection with `workflow_dispatch`, `status: draft`, and `dry-run: true`. After the dry run and draft Page tree are approved, add this path-scoped trigger:
@@ -76,7 +86,7 @@ Read [GitHub to WordPress](guides/github-to-wordpress.md) and [WordPress to GitH
 <!-- /wp:list-item -->
 
 <!-- wp:list-item -->
-<li><a href="/docs/guides/">Guides</a>: synchronize in either direction, prevent merge loops, and control routes with manifests or redirects.</li>
+<li><a href="/docs/guides/">Guides</a>: customize the complete theme in the Site Editor, synchronize in either direction, prevent merge loops, and control routes with manifests or redirects.</li>
 <!-- /wp:list-item -->
 
 <!-- wp:list-item -->

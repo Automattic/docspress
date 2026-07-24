@@ -678,6 +678,10 @@ describe("DocsPress block theme constraints", () => {
     expect(editor).toContain("Preview search dialog");
     expect(editor).toContain("Click the search trigger or use the block toolbar");
     expect(editor).toContain("docspress-command-search-editor-overlay");
+    expect(editor).toContain("controlGroup: 'content'");
+    expect(editor).toContain("( ! config.controlGroup || isSelected )");
+    expect(editor).toContain("updateComponentNavigatorOptions");
+    expect(editor).toContain("docspress-quick-navigation-chevron");
     expect(editor).toContain("attributes.suggestedLabel");
     expect(styles).toContain(".docspress-command-search-editor-overlay {");
     expect(styles).toContain(".search-dialog.is-editor-preview {");
@@ -1064,14 +1068,24 @@ describe("DocsPress block theme constraints", () => {
     );
 
     expect(functions).toContain("function docspress_site_editor_preview_context()");
+    expect(functions).toContain(
+      "function docspress_redirect_site_editor_design_preview()"
+    );
     expect(functions).toContain("get_stylesheet() . '//page'");
     expect(functions).toContain("get_stylesheet() . '//archive'");
     expect(functions).toMatch(/'postType'\s*=>\s*'wp_template'/);
     expect(functions).not.toContain("'postType' => 'page',");
     expect(functions).toContain("'enqueue_block_editor_assets'");
+    expect(functions).toContain(
+      "add_action( 'admin_init', 'docspress_redirect_site_editor_design_preview' )"
+    );
+    expect(functions).toContain("wp_safe_redirect( $url )");
     expect(functions).toContain("'docspress-site-editor-preview'");
     expect(functions).toContain("array( 'wp-compose', 'wp-element', 'wp-hooks' )");
-    expect(preview).toContain("url.searchParams.get( 'p' ) !== '/styles'");
+    expect(preview).toContain("const previewRoute = url.searchParams.get( 'p' )");
+    expect(preview).toContain("previewRoute === null || previewRoute === '/'");
+    expect(preview).toContain("! isDesignPreview && previewRoute !== '/styles'");
+    expect(preview).toContain("url.searchParams.set( 'p', '/' )");
     expect(preview).toContain("url.searchParams.get( 'postType' ) === 'page'");
     expect(preview).toContain("hasEntityContext && ! isLegacyPagePreview");
     expect(preview).toContain("url.searchParams.set( 'postType', context.postType )");

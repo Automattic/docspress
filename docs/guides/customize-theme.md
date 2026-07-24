@@ -2,7 +2,28 @@
 title: Customize the theme in the Site Editor
 ---
 
-DocsPress is a native block theme. Open **Appearance → Editor** to change the complete documentation site with WordPress blocks and Global Styles. There is no separate Customizer panel or hidden theme-settings layer.
+DocsPress is a highly customizable native block theme. Open **Appearance → Editor** to change the complete documentation site with WordPress blocks and Global Styles. There is no separate Customizer panel or hidden theme-settings layer.
+
+<!-- wp:docspress/callout {"tone":"success","title":"Highly customizable without a theme build","content":"<p>Global colors, typography, spacing, borders, shadows, and layout flow through the documentation shell, homepage, posts, archives, comments, and DocsPress content blocks. Templates, template parts, and individual block settings remain available when a particular surface needs a different treatment.</p>","collapsible":false} /-->
+
+## Understand the editing layers
+
+| What you want to change | Open in the Site Editor | Scope |
+| --- | --- | --- |
+| Complete visual system | **Styles → Browse styles** | Typography, component recipes, corners, and the default palette |
+| Color variation | **Styles → Colors → Palette** | The complete light and dark semantic color system |
+| Site-wide design | **Styles → Colors, Typography, Layout, or Blocks** | Every compatible shell, core, and DocsPress block |
+| Page structure | **Design → Templates** | Page, Front Page, Single, Blog Home, Archive, Search, 404, and alternate layouts |
+| Shared header, footer, or comments | **Design → Patterns → Template parts** | Every template that includes that part |
+| One component | Select the block and open **Settings** or **Styles** | Only that block instance |
+
+Use the broadest layer that matches the intended result. A Global Styles change is appropriate for the site’s normal heading font; a block-level override is appropriate for one promotional heading.
+
+## Preview the complete documentation shell
+
+The root **Design** canvas and **Styles** canvas preview the complete Page template. The header, documentation sidebar, article surface, table of contents, actions, and footer stay visible while you evaluate site-wide changes.
+
+The homepage remains normal Page content inside the independently editable Front Page template. Open that template or its assigned static Page when you want to change the homepage rather than the documentation shell.
 
 ## Choose a visual system
 
@@ -19,6 +40,14 @@ After selecting a family, open **Styles → Colors → Palette** to choose its c
 The parent style controls the family’s typography, corners, and component recipes. The Page heading is one example: DocsPress uses the outlined label with an offset shadow, WordPress.org uses an editorial rule, WordPress.com uses an underlined publishing label, and Jetpack uses a green signal bar with bold sans-serif type. Each palette variation replaces the full light and dark semantic color system without replacing that family recipe, updating the documentation shell and DocsPress content blocks together. Because these are native WordPress color-only style variations, editors can also mix a palette with another family when desired.
 
 To tune the result, open **Styles → Colors**, **Typography**, **Layout**, or **Blocks**. WordPress exposes the configured palettes, gradients, duotones, font families, fluid sizes, spacing scale, shadows, borders, minimum height, and layout widths without a theme build.
+
+Each parent style is a complete preset for Text, Links, Headings H1–H6, Captions, Buttons, Code, Quotes, and the theme’s relevant blocks. Switching styles reapplies every exposed font, size, weight, line height, letter spacing, case, alignment, color, and component recipe, so a partial edit from the previous style does not leak into the next one. You can still customize the newly selected style afterward.
+
+## Choose between global and local changes
+
+Changes under **Styles** are site-wide. They apply to the article body, documentation sidebar, homepage, blog and archive templates, comments, core blocks, and DocsPress blocks wherever that feature supports the selected setting.
+
+Use **Styles → Blocks** to set the default for one block type, such as all Buttons or all DocsPress Callouts. Select an individual block when only one instance should differ. If a component does not appear to follow a global change, inspect that block for a local color, typography, or spacing override and use **Reset** to return it to the active style.
 
 ## Replace the site logo
 
@@ -70,6 +99,8 @@ Select **Command search** in the Header. Its settings control the trigger label,
 
 Search remains keyboard accessible and uses the Page tree beneath that block’s root slug. The setting belongs to the block instance, so a second template can search another documentation root.
 
+In the Header’s content-only view, the **DocsPress: Command Search** row includes a disclosure chevron. Select the row to reveal its **Search content** and **Dialog** controls. Use the visible search trigger or the block toolbar’s preview control to inspect the sample command-search results without leaving the Site Editor.
+
 ## Configure reading tools
 
 Each reading component has its own Block Settings:
@@ -94,6 +125,12 @@ The DocsPress Blocks plugin inherits Global Styles in the editor and on the publ
 
 Use **Styles → Blocks** for a site-wide default or select an individual block for a local override.
 
+## Customize posts, archives, and comments
+
+Open **Design → Templates** to customize Single, Blog Home, Archive, and Search independently. Their Query, Post Template, title, metadata, pagination, cards, and empty state are native blocks, so each surface can keep or depart from the site-wide design.
+
+Open the **Comments** template part to change discussion headings, avatars, dates, paging, reply links, and the comment form everywhere it is included. Comments inherit the active Global Styles for colors and typography unless the template part or one of its blocks has a local override.
+
 ## Build the homepage
 
 Choose a static front Page under **Settings → Reading**, then edit that Page with normal blocks. The Playground example uses DocsPress Hero and Audience Paths in the Page content, followed by the Front Page template’s independently editable latest-posts Query.
@@ -103,3 +140,5 @@ To change or remove the updates grid, open **Design → Templates → Front Page
 ## Try it without installing
 
 [Open the DocsPress browser Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground). It signs in and opens the Site Editor with representative Pages, posts, comments, blocks, templates, and style variations already available.
+
+If you are upgrading from the retired Customizer-based theme, use [Move legacy Customizer settings to the Site Editor](../reference/site-editor-migration-audit.md) to find the native replacement for each old option. New sites do not need that migration step.
