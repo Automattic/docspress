@@ -5,6 +5,7 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/docspress"><img alt="npm version" src="https://img.shields.io/npm/v/docspress.svg"></a>
   <a href="LICENSE"><img alt="License: GPL-3.0-or-later" src="https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg"></a>
+  <a href="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-docs.json&amp;page-title=DocsPress%20Documentation"><img alt="Launch DocsPress documentation in WordPress Playground" src="https://img.shields.io/badge/WordPress%20Playground-Launch-3858E9?logo=wordpress&amp;logoColor=white"></a>
 </p>
 
 <p align="center">
@@ -13,8 +14,8 @@
 </p>
 
 <p align="center">
-  <a href="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground"><strong>Launch the DocsPress theme in WordPress Playground →</strong></a><br>
-  Opens a temporary, logged-in WordPress site directly in the Site Editor.
+  <a href="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-docs.json&page-title=DocsPress%20Documentation"><strong>Read the complete DocsPress documentation in WordPress Playground →</strong></a><br>
+  One link creates an editable WordPress site, converts the documentation tree into native Pages, and opens <code>/docs/</code>.
 </p>
 
 ## Install with an AI coding agent
@@ -63,12 +64,14 @@ Docspress is early software. The core sync loop works, and the first-class targe
 
 - `src/`, `bin/`, and `scripts/` contain the GitHub Action, npm package, and Playground docs generator.
 - [`docs/`](docs/) contains the source-backed DocsPress product documentation published by the Action and previewed in Playground.
-- [`theme/`](theme/) contains the installable DocsPress WordPress theme and its local Playground blueprint.
+- [`theme/`](theme/) contains the installable DocsPress WordPress theme, the one-link documentation Blueprint, and the complete Site Editor demo Blueprint.
 - [`plugins/docspress-blocks/`](plugins/docspress-blocks/) provides documentation-focused Gutenberg blocks and starter patterns.
 
 The WordPress theme and plugin directories are distributed through this GitHub repository. They are intentionally excluded from the `docspress` npm tarball, which remains focused on the Action and CLI runtime.
 
-[Open the browser Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground) to edit the seeded Hero and Audience Paths blocks, switch among ten complete visual systems, customize templates and shell components, try the publish-existing and create-with-AI documentation paths, and explore posts and threaded comments without installing anything. Changes stay in that temporary browser session.
+[Open the documentation Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-docs.json&page-title=DocsPress%20Documentation) to read the complete source-backed documentation as native WordPress Pages. The Blueprint installs the theme and blocks plugin, imports the converter-generated hierarchy, signs in, and opens `/docs/`.
+
+[Open the complete Site Editor demo](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground) to edit the seeded Hero and Audience Paths blocks, switch among ten complete visual systems, customize templates and shell components, and explore posts and threaded comments. Both experiences are temporary and require no installation.
 
 Run the complete WordPress experience from the repository root:
 

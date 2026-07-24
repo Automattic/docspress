@@ -229,6 +229,54 @@ const legacyCustomizerSettings = [
 ];
 
 describe("DocsPress block theme constraints", () => {
+  it("provides a standard one-link Playground documentation experience", async () => {
+    const docsBlueprintPath = path.join(root, "theme", "blueprint-docs.json");
+    const docsBlueprint = JSON.parse(await fs.readFile(docsBlueprintPath, "utf8"));
+    const generated = JSON.parse(
+      await fs.readFile(path.join(root, "theme", "playground", "generated-docs.json"), "utf8")
+    );
+    const readme = await fs.readFile(path.join(root, "README.md"), "utf8");
+    const setup = await fs.readFile(
+      path.join(root, "theme", "playground", "setup.php"),
+      "utf8"
+    );
+
+    expect(docsBlueprint.$schema).toBe(
+      "https://playground.wordpress.net/blueprint-schema.json"
+    );
+    expect(docsBlueprint.landingPage).toBe("/docs/");
+    expect(docsBlueprint.login).toBe(true);
+    expect(docsBlueprint.steps).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          step: "installPlugin",
+          pluginData: expect.objectContaining({
+            url: "https://github.com/Automattic/docspress",
+            path: "plugins/docspress-blocks",
+          }),
+        }),
+        expect.objectContaining({
+          step: "installTheme",
+          themeData: expect.objectContaining({
+            url: "https://github.com/Automattic/docspress",
+            path: "theme",
+          }),
+        }),
+        expect.objectContaining({
+          step: "runPHP",
+          code: expect.stringContaining("/docspress/playground/setup.php"),
+        }),
+      ])
+    );
+    expect(generated.generatedBy).toBe("scripts/build-playground-docs.mjs");
+    expect(generated.pages.length).toBeGreaterThan(20);
+    expect(generated.pages.some((page) => page.key === "docs")).toBe(true);
+    expect(setup).toContain("'permalink_structure', '/%postname%/'");
+    expect(readme).toContain(
+      "https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-docs.json"
+    );
+  });
+
   it("uses the exact theme radius instead of independent minimums or pills", async () => {
     const stylePaths = [
       path.join(root, "plugins", "docspress-blocks", "assets", "code.css"),

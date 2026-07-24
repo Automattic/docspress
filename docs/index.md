@@ -6,6 +6,8 @@ sidebar_collapsed: false
 
 DocsPress keeps documentation beside the code that explains it, then publishes that Markdown as native WordPress Pages and Gutenberg blocks.
 
+<!-- wp:docspress/callout {"tone":"success","title":"This entire documentation site fits in one Playground link","content":"<p><a href=\"https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-docs.json&amp;page-title=DocsPress%20Documentation\">Open the complete DocsPress documentation in WordPress Playground</a>. The Blueprint creates a temporary editable WordPress site, imports this converter-generated Page tree, and lands on <code>/docs/</code>.</p>","collapsible":false} /-->
+
 ## Choose a starting point
 
 <!-- wp:docspress/audience-paths {"eyebrow":"Start here","title":"Where are your docs today?","description":"Choose the workflow that matches the current state of your repository.","paths":[{"title":"I already have Markdown docs","description":"Connect an existing docs folder to WordPress and begin with a safe draft sync.","url":"/docs/publish-existing-docs/","cta":"Publish existing docs","icon":"document","accent":"blue","newTab":false},{"title":"I need to create docs","description":"Generate source-grounded documentation with AI, review it, then publish it.","url":"/docs/create-docs-with-ai/","cta":"Create docs with AI","icon":"sparkles","accent":"gold","newTab":false}],"columns":2,"tone":"theme","textAlign":"left","showNumbers":false} /-->

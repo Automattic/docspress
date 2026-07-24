@@ -10,6 +10,12 @@ The DocsPress theme is a highly customizable native WordPress block theme. It us
 - PHP 7.4 or newer
 - DocsPress Blocks for `docspress/*` content blocks
 
+## One-link documentation Blueprint
+
+[`theme/blueprint-docs.json`](https://github.com/Automattic/docspress/blob/main/theme/blueprint-docs.json) is the browser documentation entry point. Its standard [`blueprint-url`](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-docs.json&page-title=DocsPress%20Documentation) installs the theme and blocks plugin from GitHub, runs `theme/playground/setup.php`, and lands on `/docs/`.
+
+The setup script imports `theme/playground/generated-docs.json`, which is produced from the repository’s Markdown by the same DocsPress collector and converter used by the publishing workflow. Run `npm run playground:docs` after changing `docs/`; the next launch receives the updated hierarchy without maintaining a separate documentation website.
+
 ## Templates
 
 | Template | Purpose |

@@ -2,7 +2,9 @@
 
 DocsPress is a native WordPress block theme for documentation sites. Templates, template parts, navigation, search, article tools, colors, typography, spacing, borders, shadows, and layout are edited in **Appearance → Editor**. There is no Customizer settings layer.
 
-[Launch the complete demo in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground). The blueprint activates the companion blocks plugin, seeds documentation and discussion examples, signs in, and opens the Site Editor.
+[Read the complete documentation in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-docs.json&page-title=DocsPress%20Documentation). The Blueprint activates the theme and companion blocks plugin, imports the converter-generated documentation hierarchy, signs in, and opens `/docs/`.
+
+[Launch the complete Site Editor demo](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground) to seed the same documentation plus posts and discussion examples, then open the Site Editor.
 
 ## Requirements
 

@@ -139,6 +139,8 @@ To change or remove the updates grid, open **Design → Templates → Front Page
 
 ## Try it without installing
 
-[Open the DocsPress browser Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground). It signs in and opens the Site Editor with representative Pages, posts, comments, blocks, templates, and style variations already available.
+[Open the complete documentation in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-docs.json&page-title=DocsPress%20Documentation). The one-link Blueprint creates an editable WordPress site, imports the converter-generated documentation hierarchy, signs in, and lands on `/docs/`.
+
+[Open the Site Editor demo](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground) when you want the same documentation plus representative posts, comments, blocks, templates, and style variations with the Site Editor open.
 
 If you are upgrading from the retired Customizer-based theme, use [Move legacy Customizer settings to the Site Editor](../reference/site-editor-migration-audit.md) to find the native replacement for each old option. New sites do not need that migration step.
