@@ -260,6 +260,10 @@ a {
 	object-fit: contain;
 }
 
+.brand-title {
+	font-weight: var(--wp--custom--heading-weight, 700);
+}
+
 .brand-wordpress {
 	opacity: 0.72;
 }

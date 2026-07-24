@@ -422,6 +422,20 @@ describe("DocsPress block theme constraints", () => {
     expect(template).not.toContain('"query":{"inherit":true}');
   });
 
+  it("centers empty-state headings despite global heading alignment", async () => {
+    for (const templateName of ["archive", "front-page", "home", "index"]) {
+      const template = await fs.readFile(
+        path.join(root, "theme", "templates", `${templateName}.html`),
+        "utf8"
+      );
+
+      expect(template).toContain('wp:heading {"textAlign":"center","level":3}');
+      expect(template).toContain(
+        '<h3 class="wp-block-heading has-text-align-center">'
+      );
+    }
+  });
+
   it("groups brand palettes under three native global style families", async () => {
     const functions = await fs.readFile(path.join(root, "theme", "functions.php"), "utf8");
     const families = {
@@ -556,6 +570,9 @@ describe("DocsPress block theme constraints", () => {
     expect(functions).toContain("update_option( 'site_icon', $logo_id );");
     expect(styles).not.toContain(".brand::before");
     expect(styles).toContain(".brand-mark img {");
+    expect(styles).toMatch(
+      /\.brand-title\s*\{[^}]*font-weight:\s*var\(--wp--custom--heading-weight,\s*700\);[^}]*\}/s
+    );
     expect(styles).toContain("background: var(--dp-highlight);");
     expect(theme.settings.custom.entryKickerRadius).toBe("999px");
     expect(theme.settings.custom.entryKickerShadow).toBe(
