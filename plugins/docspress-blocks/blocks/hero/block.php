@@ -89,15 +89,16 @@ function docspress_blocks_render_hero( $attributes ) {
 	}
 
 	$custom_colors = array(
-		'panelColor'  => '--db-hero-panel',
-		'visualColor' => '--db-hero-visual',
-		'textColor'   => '--db-hero-heading',
-		'accentColor' => '--db-hero-accent',
+		'panelColor'  => array( '--db-hero-panel', 'docspress-hero--has-panel-color' ),
+		'visualColor' => array( '--db-hero-visual', 'docspress-hero--has-visual-color' ),
+		'textColor'   => array( '--db-hero-heading', 'docspress-hero--has-text-color' ),
+		'accentColor' => array( '--db-hero-accent', 'docspress-hero--has-accent-color' ),
 	);
-	foreach ( $custom_colors as $attribute_name => $variable ) {
+	foreach ( $custom_colors as $attribute_name => $color_config ) {
 		$color = isset( $attributes[ $attribute_name ] ) ? sanitize_hex_color( $attributes[ $attribute_name ] ) : '';
 		if ( $color ) {
-			$styles[] = $variable . ':' . $color;
+			$styles[]  = $color_config[0] . ':' . $color;
+			$classes[] = $color_config[1];
 			if ( 'textColor' === $attribute_name ) {
 				$styles[] = '--db-hero-copy:' . $color;
 			}

@@ -31,5 +31,46 @@
 				{ "slug": "dark-code", "color": "#111111", "name": "Dark code" }
 			]
 		}
+	},
+	"styles": {
+		"color": {
+			"background": "var:preset|color|paper",
+			"text": "var:preset|color|copy"
+		},
+		"elements": {
+			"button": {
+				"color": { "background": "var:preset|color|accent", "text": "var:preset|color|paper" },
+				":hover": { "color": { "background": "var:preset|color|accent-strong", "text": "var:preset|color|paper" } },
+				":focus-visible": { "outline": { "color": "var:preset|color|accent" } }
+			},
+			"caption": { "color": { "background": "transparent", "text": "var:preset|color|muted" } },
+			"heading": { "color": { "background": "transparent", "text": "var:preset|color|ink" } },
+			"h1": { "color": { "background": null, "text": null } },
+			"h2": { "color": { "background": null, "text": null } },
+			"h3": { "color": { "background": null, "text": null } },
+			"h4": { "color": { "background": null, "text": null } },
+			"h5": { "color": { "background": null, "text": null } },
+			"h6": { "color": { "background": null, "text": null } },
+			"link": {
+				"color": { "background": "transparent", "text": "var:preset|color|accent-strong" },
+				":hover": { "color": { "text": "var:preset|color|accent" } }
+			}
+		},
+		"blocks": {
+			"core/button": {
+				"variations": {
+					"outline": {
+						"border": { "color": "var:preset|color|accent" },
+						"color": { "background": "transparent", "text": "var:preset|color|accent-strong" }
+					}
+				}
+			},
+			"core/code": {
+				"color": { "background": "var:preset|color|code", "text": "var:preset|color|dark-ink" }
+			},
+			"core/quote": {
+				"border": { "left": { "color": "var:preset|color|accent" } }
+			}
+		}
 	}
 }

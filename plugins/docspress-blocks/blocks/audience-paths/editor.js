@@ -114,6 +114,9 @@
 				`docspress-audience-paths--align-${ attributes.textAlign }`,
 				attributes.compact ? 'docspress-audience-paths--compact' : '',
 				attributes.showNumbers ? '' : 'docspress-audience-paths--no-numbers',
+				attributes.panelColor ? 'docspress-audience-paths--has-panel-color' : '',
+				attributes.textColor ? 'docspress-audience-paths--has-text-color' : '',
+				attributes.accentColor ? 'docspress-audience-paths--has-accent-color' : '',
 				'docspress-audience-paths--editor',
 				presetClass
 			].filter( Boolean ).join( ' ' );
@@ -316,10 +319,10 @@
 									renderIcon( path.icon )
 								),
 								el(
-									'span',
+									'div',
 									{ className: 'docspress-audience-paths__card-copy' },
 									el( RichText, {
-										tagName: 'span',
+										tagName: 'h3',
 										className: 'docspress-audience-paths__card-title',
 										value: path.title || '',
 										onChange: ( title ) => updatePath( index, 'title', title ),
@@ -327,7 +330,7 @@
 										placeholder: __( 'Audience name…', 'docspress-blocks' )
 									} ),
 									el( RichText, {
-										tagName: 'span',
+										tagName: 'p',
 										className: 'docspress-audience-paths__card-description',
 										value: path.description || '',
 										onChange: ( description ) => updatePath( index, 'description', description ),

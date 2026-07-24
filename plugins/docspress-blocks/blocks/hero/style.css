@@ -16,10 +16,7 @@
 	overflow: hidden;
 	border: 1px solid var(--dp-line, #dcdcde);
 	border-radius: var(--dp-radius, 10px);
-	background: var(--db-hero-panel);
 	box-shadow: none;
-	color: var(--db-hero-copy);
-	font-family: var(--dp-font-ui, "Nunito Sans", "Trebuchet MS", sans-serif);
 }
 
 .docspress-hero--midnight {
@@ -33,6 +30,31 @@
 	--db-hero-heading: #fff;
 	--db-hero-panel: var(--dp-blue, #3858e9);
 	--db-hero-visual: color-mix(in srgb, var(--dp-blue, #3858e9) 86%, #000);
+}
+
+.docspress-hero--paper:not(.has-background),
+.docspress-hero--midnight:not(.has-background),
+.docspress-hero--brand:not(.has-background),
+.docspress-hero--has-panel-color:not(.has-background) {
+	background: var(--db-hero-panel);
+}
+
+.docspress-hero--midnight:not(.has-text-color),
+.docspress-hero--brand:not(.has-text-color),
+.docspress-hero--has-text-color:not(.has-text-color) {
+	color: var(--db-hero-copy);
+}
+
+.docspress-hero--midnight:not(.has-text-color) :where(.docspress-hero__eyebrow, .docspress-hero__description),
+.docspress-hero--brand:not(.has-text-color) :where(.docspress-hero__eyebrow, .docspress-hero__description),
+.docspress-hero--has-text-color:not(.has-text-color) :where(.docspress-hero__eyebrow, .docspress-hero__description) {
+	color: var(--db-hero-copy);
+}
+
+.docspress-hero--midnight:not(.has-text-color) .docspress-hero__title,
+.docspress-hero--brand:not(.has-text-color) .docspress-hero__title,
+.docspress-hero--has-text-color:not(.has-text-color) .docspress-hero__title {
+	color: var(--db-hero-heading);
 }
 
 .docspress-hero--height-compact {
@@ -60,12 +82,6 @@
 	gap: 10px;
 	width: fit-content;
 	margin: 0 0 18px;
-	color: var(--db-hero-copy);
-	font-size: 11px;
-	font-weight: 800;
-	letter-spacing: 0.1em;
-	line-height: 1.5;
-	text-transform: uppercase;
 }
 
 .docspress-hero__eyebrow::before {
@@ -78,8 +94,6 @@
 :where(.docspress-hero__title) {
 	max-width: 680px;
 	margin: 0;
-	color: var(--db-hero-heading);
-	font-family: var(--dp-font-heading, var(--dp-font-ui, "Nunito Sans", "Trebuchet MS", sans-serif));
 	font-size: clamp(40px, 5vw, 62px);
 	font-weight: var(--dp-heading-weight, 750);
 	letter-spacing: -0.045em;
@@ -90,10 +104,6 @@
 .docspress-hero__description {
 	max-width: 580px;
 	margin: clamp(28px, 2.5vw, 34px) 0 0;
-	color: var(--db-hero-copy);
-	font-family: var(--dp-font-copy, var(--dp-font-ui, "Nunito Sans", "Trebuchet MS", sans-serif));
-	font-size: clamp(16px, 1.6vw, 19px);
-	line-height: 1.6;
 }
 
 .docspress-preset-wordpress .docspress-hero__description,
@@ -118,11 +128,6 @@
 	justify-content: center;
 	box-sizing: border-box;
 	min-height: 44px;
-	padding: 10px 16px;
-	border: 1px solid var(--dp-line-strong, var(--dp-line, #dcdcde));
-	border-radius: var(--dp-radius, 10px);
-	font-size: 14px;
-	font-weight: 750;
 	text-decoration: none;
 	transition: border-color 150ms ease, background 150ms ease, transform 150ms ease;
 }
@@ -132,27 +137,16 @@
 	transform: translateY(-1px);
 }
 
-:where(.docspress-hero__button--primary) {
-	border-color: var(--db-hero-accent);
-	background: var(--db-hero-accent);
-	color: #fff;
-}
-
-:where(a.docspress-hero__button--primary:hover) {
-	background: color-mix(in srgb, var(--db-hero-accent) 88%, #000);
-	color: #fff;
-}
-
 .docspress-hero__button--secondary.wp-element-button {
-	border-color: color-mix(in srgb, var(--db-hero-heading) 24%, transparent);
+	border-color: currentColor;
 	background: transparent;
-	color: var(--db-hero-heading);
+	color: inherit;
 }
 
 a.docspress-hero__button--secondary.wp-element-button:hover {
-	border-color: color-mix(in srgb, var(--db-hero-heading) 48%, transparent);
-	background: color-mix(in srgb, var(--db-hero-heading) 5%, transparent);
-	color: var(--db-hero-heading);
+	border-color: currentColor;
+	background: color-mix(in srgb, currentColor 8%, transparent);
+	color: inherit;
 }
 
 .docspress-hero__visual {
@@ -164,6 +158,10 @@ a.docspress-hero__button--secondary.wp-element-button:hover {
 	padding: clamp(36px, 4vw, 52px);
 	overflow: hidden;
 	border-left: 1px solid var(--dp-line, #dcdcde);
+}
+
+.docspress-hero--brand .docspress-hero__visual,
+.docspress-hero--has-visual-color .docspress-hero__visual {
 	background-color: var(--db-hero-visual);
 }
 
@@ -238,15 +236,11 @@ a.docspress-hero__button--secondary.wp-element-button:hover {
 }
 
 .docspress-hero--layout-editorial {
-	--db-hero-copy: #c9d0c6;
-	--db-hero-heading: #f5f7f2;
-	--db-hero-panel: #101411;
 	--db-hero-visual: transparent;
 	isolation: isolate;
 	grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.55fr);
 	min-height: 500px;
 	border-color: color-mix(in srgb, var(--db-hero-heading) 14%, transparent);
-	background-color: var(--db-hero-panel);
 	background-image:
 		radial-gradient(circle at 76% 48%, color-mix(in srgb, var(--db-hero-accent) 16%, transparent) 0, transparent 27%),
 		linear-gradient(112deg, transparent 0 68%, color-mix(in srgb, var(--db-hero-heading) 3%, transparent) 68% 100%);
@@ -254,30 +248,19 @@ a.docspress-hero__button--secondary.wp-element-button:hover {
 }
 
 .docspress-hero--layout-editorial.docspress-hero--paper {
-	--db-hero-copy: #465046;
-	--db-hero-heading: #101510;
-	--db-hero-panel: #f4f7f1;
 	--db-hero-visual: transparent;
 	border-color: #d8dfd4;
-	background-color: var(--db-hero-panel);
 	box-shadow: 0 24px 64px color-mix(in srgb, #182319 10%, transparent);
 }
 
 .docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper,
 .docspress-blocks--preset-jetpack.docspress-hero--layout-editorial.docspress-hero--paper {
 	--db-hero-accent: #008710;
-	--db-hero-copy: #32373c;
-	--db-hero-heading: #000;
 	--db-hero-panel: transparent;
 	border: 0;
 	border-radius: 0;
 	background-image: none;
 	box-shadow: none;
-}
-
-html[data-theme="dark"] .docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper {
-	--db-hero-copy: #c4c8cc;
-	--db-hero-heading: #fff;
 }
 
 .docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper::before,
@@ -314,8 +297,6 @@ html[data-theme="dark"] .docspress-preset-jetpack .docspress-hero--layout-editor
 
 .docspress-hero--layout-editorial .docspress-hero__eyebrow {
 	margin-bottom: clamp(24px, 3vw, 36px);
-	color: color-mix(in srgb, var(--db-hero-heading) 72%, transparent);
-	letter-spacing: 0.15em;
 }
 
 .docspress-hero--layout-editorial .docspress-hero__eyebrow::before {
@@ -331,22 +312,10 @@ html[data-theme="dark"] .docspress-preset-jetpack .docspress-hero--layout-editor
 
 :where(.docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__title),
 :where(.docspress-blocks--preset-jetpack.docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__title) {
-	font-family: var(--dp-font-ui, "Inter", "Helvetica Neue", sans-serif);
 	font-size: clamp(50px, 6vw, 76px);
 	font-weight: 700;
 	letter-spacing: -0.055em;
 	line-height: 0.97;
-}
-
-:where(.docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__button--primary),
-:where(.docspress-blocks--preset-jetpack.docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__button--primary) {
-	border-color: #008710;
-	background: #008710;
-}
-
-:where(.docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper a.docspress-hero__button--primary:hover),
-:where(.docspress-blocks--preset-jetpack.docspress-hero--layout-editorial.docspress-hero--paper a.docspress-hero__button--primary:hover) {
-	background: #006b0d;
 }
 
 .docspress-hero--layout-editorial .docspress-hero__description,
@@ -358,9 +327,6 @@ html[data-theme="dark"] .docspress-preset-jetpack .docspress-hero--layout-editor
 .docspress-blocks--preset-jetpack.docspress-hero--layout-editorial .docspress-hero__description {
 	max-width: 610px;
 	margin-top: 26px;
-	color: var(--db-hero-copy);
-	font-size: clamp(16px, 1.5vw, 19px);
-	line-height: 1.55;
 }
 
 .docspress-hero--layout-editorial .docspress-hero__actions {
@@ -370,7 +336,6 @@ html[data-theme="dark"] .docspress-preset-jetpack .docspress-hero--layout-editor
 
 :where(.docspress-hero--layout-editorial .docspress-hero__button) {
 	min-height: 46px;
-	padding-inline: 20px;
 }
 
 :where(.docspress-hero--layout-editorial .docspress-hero__button--primary) {
@@ -378,7 +343,6 @@ html[data-theme="dark"] .docspress-preset-jetpack .docspress-hero--layout-editor
 }
 
 :where(.docspress-hero--layout-editorial .docspress-hero__button--secondary) {
-	padding-inline: 4px;
 	border-color: transparent;
 }
 
@@ -447,7 +411,6 @@ html[data-theme="dark"] .docspress-preset-jetpack .docspress-hero--layout-editor
 	right: clamp(14px, 2vw, 28px);
 	display: block;
 	color: transparent;
-	font-family: var(--dp-font-ui, "Nunito Sans", "Trebuchet MS", sans-serif);
 	font-size: clamp(72px, 9vw, 118px);
 	font-weight: 850;
 	letter-spacing: 0.08em;

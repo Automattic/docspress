@@ -73,6 +73,8 @@ Site editors receive:
 
 Theme-specific CSS variables under `settings.custom` cover the header, sidebar, table-of-contents, article and search dimensions, heading weight, typography roles, radius, and family-specific Page heading recipe. Global Style families can replace these values; color-only variations replace the semantic light/dark palette.
 
+The default design and each family variation serialize a complete style contract for Text, Links, Headings H1–H6, Captions, Buttons, Code, and Quotes. Their font-size scale and every exposed typography value are explicit, so applying a different style replaces earlier Global Styles edits instead of inheriting missing values. Heading levels use explicit `null` reset markers for properties owned by **All headings**, then define only their level-specific size, letter spacing, and line height; this prevents stale H1–H6 edits without blocking later family, weight, case, alignment, or color changes made at the Heading element. Display remains an opt-in size for hero text; the automatic H1–H6 scale starts at Heading 2 and steps down through Small. Headings default to weight 900 in DocsPress and 700 in the brand families, with the shared **All headings** control remaining authoritative. Each color-only variation likewise reapplies all root, element, state, and relevant block colors without changing the active typography family.
+
 ## Content integration
 
 The Docs Navigation, Command Search, and Adjacent Navigation blocks resolve a synchronized root by Page path, defaulting to `docs`. The Edit Links block combines `_docspress_source_path` metadata with its repository and ref attributes. Table of Contents uses the rendered current post content and assigns stable anchors to H1–H6 headings.

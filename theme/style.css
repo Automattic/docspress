@@ -206,7 +206,6 @@ a {
 	top: 0;
 	z-index: 100;
 	height: var(--dp-header-height);
-	background: color-mix(in srgb, var(--dp-paper) 92%, transparent);
 	border-bottom: 1px solid var(--dp-line);
 	backdrop-filter: blur(14px) saturate(140%);
 }
@@ -229,9 +228,6 @@ a {
 	align-items: center;
 	gap: 11px;
 	flex-shrink: 0;
-	font-size: 17px;
-	font-weight: 700;
-	letter-spacing: -0.025em;
 	text-decoration: none;
 }
 
@@ -265,8 +261,7 @@ a {
 }
 
 .brand-wordpress {
-	color: var(--dp-muted);
-	font-weight: 500;
+	opacity: 0.72;
 }
 
 .primary-navigation {
@@ -288,15 +283,12 @@ a {
 	display: block;
 	padding: 8px 10px;
 	border-radius: 7px;
-	font-size: 14px;
-	font-weight: 650;
 	text-decoration: none;
 }
 
 .primary-navigation a:hover,
 .primary-navigation .current-menu-item > a {
-	background: var(--dp-blue-soft);
-	color: var(--dp-blue-dark);
+	background: color-mix(in srgb, currentColor 8%, transparent);
 }
 
 .header-actions {
@@ -315,19 +307,17 @@ a {
 	min-width: 40px;
 	height: 40px;
 	padding: 0 11px;
-	border: 1px solid var(--dp-line);
+	border: 1px solid currentColor;
 	border-radius: 8px;
-	background: var(--dp-canvas);
-	color: var(--dp-muted);
+	background: transparent;
+	color: inherit;
 	cursor: pointer;
 	transition: border-color 160ms ease, color 160ms ease, transform 160ms ease, background 160ms ease;
 }
 
 .header-button:hover,
 .menu-toggle:hover {
-	border-color: var(--dp-line-strong);
-	background: var(--dp-paper);
-	color: var(--dp-ink);
+	background: color-mix(in srgb, currentColor 8%, transparent);
 	transform: translateY(-1px);
 }
 
@@ -345,10 +335,10 @@ a {
 .search-shortcut kbd {
 	margin-left: auto;
 	padding: 1px 7px;
-	border: 1px solid var(--dp-line-strong);
+	border: 1px solid currentColor;
 	border-radius: 5px;
-	background: var(--dp-paper);
-	color: var(--dp-muted);
+	background: transparent;
+	color: inherit;
 	font: 12px/1.6 var(--dp-font-mono);
 }
 
@@ -1175,11 +1165,6 @@ body.command-search-open {
 	align-items: center;
 	gap: 7px;
 	margin-bottom: 11px;
-	color: var(--dp-blue-dark);
-	font-size: 11px;
-	font-weight: 800;
-	letter-spacing: 0.11em;
-	text-transform: uppercase;
 }
 
 .entry-kicker::before {
@@ -1210,7 +1195,6 @@ body.command-search-open {
 :where(.entry-content) :where(h3),
 :where(.entry-content) :where(h4) {
 	position: relative;
-	font-family: var(--dp-font-heading);
 	font-weight: 750;
 	letter-spacing: -0.026em;
 	line-height: 1.25;
@@ -1552,9 +1536,6 @@ body.command-search-open {
 .site-footer {
 	padding: 30px 28px;
 	border-top: 1px solid var(--dp-line);
-	background: var(--dp-canvas);
-	color: var(--dp-muted);
-	font-size: 12px;
 }
 
 .footer-inner {
@@ -1564,10 +1545,6 @@ body.command-search-open {
 
 .site-footer p {
 	margin: 0;
-}
-
-.site-footer a {
-	color: inherit;
 }
 
 .footer-widgets {
@@ -1582,8 +1559,6 @@ body.command-search-open {
 
 .footer-widget-title {
 	margin: 0 0 10px;
-	color: var(--dp-ink);
-	font-size: 14px;
 }
 
 .footer-widget ul {
@@ -1609,7 +1584,6 @@ body.command-search-open {
 }
 
 .footer-navigation a {
-	font-weight: 700;
 	text-decoration: none;
 }
 
@@ -1722,7 +1696,6 @@ body.command-search-open {
 	padding: 20px 22px;
 	border: 1px solid var(--dp-line);
 	border-radius: var(--dp-radius);
-	background: var(--dp-paper);
 	transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
@@ -1738,16 +1711,8 @@ body.command-search-open {
 	letter-spacing: -0.025em;
 }
 
-:where(.result-card) :where(h2) a {
-	color: var(--dp-ink);
-	text-decoration: none;
-}
-
 .result-card p {
 	margin: 0;
-	color: var(--dp-muted);
-	font-family: var(--dp-font-copy);
-	font-size: 15px;
 }
 
 .site-content-shell,
@@ -1772,27 +1737,16 @@ body.command-search-open {
 	align-items: center;
 	gap: 7px;
 	margin-top: 12px;
-	color: var(--dp-muted);
-	font-size: 13px;
-}
-
-.entry-meta a {
-	color: inherit;
+	opacity: 0.72;
 }
 
 .entry-taxonomy,
 .content-card-taxonomy {
 	margin-bottom: 10px;
-	color: var(--dp-blue-dark);
-	font-size: 12px;
-	font-weight: 800;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
 }
 
 .entry-taxonomy a,
 .content-card-taxonomy a {
-	color: inherit;
 	text-decoration: none;
 }
 
@@ -1821,7 +1775,6 @@ body.command-search-open {
 	display: block;
 	overflow: hidden;
 	border-bottom: 1px solid var(--dp-line);
-	background: var(--dp-canvas);
 }
 
 .content-card-thumbnail img {
@@ -1843,7 +1796,6 @@ body.command-search-open {
 
 .content-card .entry-meta {
 	margin: -1px 0 12px;
-	font-size: 12px;
 }
 
 .content-card-excerpt {
@@ -1855,8 +1807,6 @@ body.command-search-open {
 	align-items: center;
 	gap: 6px;
 	margin-top: 15px;
-	font-size: 13px;
-	font-weight: 800;
 	text-decoration: none;
 }
 
@@ -2005,7 +1955,6 @@ body.command-search-open {
 
 :where(.section-heading) :where(h2) {
 	margin: 0;
-	font-family: var(--dp-font-heading);
 	font-size: clamp(32px, 4vw, 48px);
 	letter-spacing: -0.04em;
 }
@@ -2731,15 +2680,11 @@ body .wp-site-blocks > header.wp-block-template-part > .site-header.wp-block-gro
 
 .brand .wp-block-site-title a,
 .brand .brand-title a {
-	color: var(--dp-ink);
-	font-weight: 900;
-	letter-spacing: -0.045em;
 	text-decoration: none;
 }
 
 .brand .brand-wordpress {
-	color: var(--dp-blue-dark);
-	font-weight: 700;
+	opacity: 0.72;
 }
 
 .primary-navigation .wp-block-navigation__container {
@@ -2756,14 +2701,12 @@ body .wp-site-blocks > header.wp-block-template-part > .site-header.wp-block-gro
 
 .primary-navigation .current-menu-item > .wp-block-navigation-item__content,
 .primary-navigation .current_page_item > .wp-block-navigation-item__content {
-	background: var(--dp-highlight);
-	color: var(--dp-ink);
+	background: color-mix(in srgb, currentColor 8%, transparent);
 }
 
 .search-shortcut kbd {
-	border-color: color-mix(in srgb, var(--dp-highlight-strong) 48%, var(--dp-line));
-	background: color-mix(in srgb, var(--dp-highlight) 22%, var(--dp-paper));
-	color: var(--dp-ink);
+	border-color: currentColor;
+	background: transparent;
 }
 
 .header-actions > *,
@@ -2781,8 +2724,6 @@ body .wp-site-blocks > header.wp-block-template-part > .site-header.wp-block-gro
 .repository-link .wp-social-link {
 	border: 1px solid var(--dp-line);
 	border-radius: 8px;
-	background: var(--dp-canvas);
-	color: var(--dp-muted);
 }
 
 .repository-link .wp-block-social-link-anchor {
@@ -2834,8 +2775,6 @@ body .wp-site-blocks > header.wp-block-template-part > .site-header.wp-block-gro
 	border-radius: var(--wp--custom--entry-kicker-radius, 999px);
 	background: var(--wp--custom--entry-kicker-background, var(--dp-highlight));
 	box-shadow: var(--wp--custom--entry-kicker-shadow, 3px 3px 0 var(--dp-highlight-strong));
-	color: var(--wp--custom--entry-kicker-color, var(--dp-ink));
-	letter-spacing: var(--wp--custom--entry-kicker-letter-spacing, 0.08em);
 }
 
 .entry-kicker::before {

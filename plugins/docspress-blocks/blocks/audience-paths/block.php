@@ -91,14 +91,15 @@ function docspress_blocks_render_audience_paths( $attributes ) {
 	}
 
 	$custom_colors = array(
-		'panelColor'  => '--db-paths-panel',
-		'textColor'   => '--db-paths-heading',
-		'accentColor' => '--db-paths-accent',
+		'panelColor'  => array( '--db-paths-panel', 'docspress-audience-paths--has-panel-color' ),
+		'textColor'   => array( '--db-paths-heading', 'docspress-audience-paths--has-text-color' ),
+		'accentColor' => array( '--db-paths-accent', 'docspress-audience-paths--has-accent-color' ),
 	);
-	foreach ( $custom_colors as $attribute_name => $variable ) {
+	foreach ( $custom_colors as $attribute_name => $color_config ) {
 		$color = isset( $attributes[ $attribute_name ] ) ? sanitize_hex_color( $attributes[ $attribute_name ] ) : '';
 		if ( $color ) {
-			$styles[] = $variable . ':' . $color;
+			$styles[]  = $color_config[0] . ':' . $color;
+			$classes[] = $color_config[1];
 			if ( 'textColor' === $attribute_name ) {
 				$styles[] = '--db-paths-copy:' . $color;
 			}
@@ -133,10 +134,10 @@ function docspress_blocks_render_audience_paths( $attributes ) {
 						<span class="docspress-audience-paths__icon" aria-hidden="true">
 							<?php echo docspress_blocks_render_audience_path_icon( $path['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						</span>
-						<span class="docspress-audience-paths__card-copy">
-							<?php if ( $path['title'] ) : ?><span class="docspress-audience-paths__card-title"><?php echo esc_html( $path['title'] ); ?></span><?php endif; ?>
-							<?php if ( $path['description'] ) : ?><span class="docspress-audience-paths__card-description"><?php echo esc_html( $path['description'] ); ?></span><?php endif; ?>
-						</span>
+						<div class="docspress-audience-paths__card-copy">
+							<?php if ( $path['title'] ) : ?><h3 class="docspress-audience-paths__card-title"><?php echo esc_html( $path['title'] ); ?></h3><?php endif; ?>
+							<?php if ( $path['description'] ) : ?><p class="docspress-audience-paths__card-description"><?php echo esc_html( $path['description'] ); ?></p><?php endif; ?>
+						</div>
 						<?php if ( $path['cta'] ) : ?>
 							<span class="docspress-audience-paths__cta">
 								<span class="docspress-audience-paths__cta-label"><?php echo esc_html( $path['cta'] ); ?></span>

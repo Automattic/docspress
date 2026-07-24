@@ -102,6 +102,10 @@
 				attributes.showGrid ? '' : 'docspress-hero--no-grid',
 				attributes.showOrbit ? '' : 'docspress-hero--no-orbit',
 				hasVisual ? '' : 'docspress-hero--no-visual',
+				attributes.panelColor ? 'docspress-hero--has-panel-color' : '',
+				attributes.visualColor ? 'docspress-hero--has-visual-color' : '',
+				attributes.textColor ? 'docspress-hero--has-text-color' : '',
+				attributes.accentColor ? 'docspress-hero--has-accent-color' : '',
 				'docspress-hero--editor',
 				presetClass
 			].filter( Boolean ).join( ' ' );

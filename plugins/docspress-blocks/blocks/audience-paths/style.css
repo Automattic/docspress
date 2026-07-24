@@ -11,10 +11,7 @@
 	padding: clamp(32px, 5vw, 52px);
 	border: 1px solid var(--db-paths-line);
 	border-radius: var(--dp-radius, 10px);
-	background: var(--db-paths-panel);
 	box-shadow: none;
-	color: var(--db-paths-copy);
-	font-family: var(--dp-font-ui, "Nunito Sans", "Trebuchet MS", sans-serif);
 }
 
 .docspress-audience-paths--columns-1 {
@@ -40,6 +37,31 @@
 	--db-paths-panel: #234f9f;
 }
 
+.docspress-audience-paths--paper:not(.has-background),
+.docspress-audience-paths--ink:not(.has-background),
+.docspress-audience-paths--blueprint:not(.has-background),
+.docspress-audience-paths--has-panel-color:not(.has-background) {
+	background: var(--db-paths-panel);
+}
+
+.docspress-audience-paths--ink:not(.has-text-color),
+.docspress-audience-paths--blueprint:not(.has-text-color),
+.docspress-audience-paths--has-text-color:not(.has-text-color) {
+	color: var(--db-paths-copy);
+}
+
+.docspress-audience-paths--ink:not(.has-text-color) :where(.docspress-audience-paths__eyebrow, .docspress-audience-paths__description),
+.docspress-audience-paths--blueprint:not(.has-text-color) :where(.docspress-audience-paths__eyebrow, .docspress-audience-paths__description),
+.docspress-audience-paths--has-text-color:not(.has-text-color) :where(.docspress-audience-paths__eyebrow, .docspress-audience-paths__description) {
+	color: var(--db-paths-copy);
+}
+
+.docspress-audience-paths--ink:not(.has-text-color) :where(.docspress-audience-paths__title, .docspress-audience-paths__card-title),
+.docspress-audience-paths--blueprint:not(.has-text-color) :where(.docspress-audience-paths__title, .docspress-audience-paths__card-title),
+.docspress-audience-paths--has-text-color:not(.has-text-color) :where(.docspress-audience-paths__title, .docspress-audience-paths__card-title) {
+	color: var(--db-paths-heading);
+}
+
 .docspress-audience-paths__header {
 	max-width: 720px;
 	margin-bottom: clamp(26px, 4vw, 38px);
@@ -51,12 +73,6 @@
 	gap: 9px;
 	width: fit-content;
 	margin: 0 0 14px;
-	color: var(--db-paths-copy);
-	font-size: 11px;
-	font-weight: 800;
-	letter-spacing: 0.1em;
-	line-height: 1.5;
-	text-transform: uppercase;
 }
 
 .docspress-audience-paths__eyebrow::before {
@@ -68,8 +84,6 @@
 
 :where(.docspress-audience-paths .docspress-audience-paths__title) {
 	margin: 0;
-	color: var(--db-paths-heading);
-	font-family: var(--dp-font-heading, var(--dp-font-ui, "Nunito Sans", "Trebuchet MS", sans-serif));
 	font-size: clamp(32px, 4vw, 46px);
 	font-weight: var(--dp-heading-weight, 750);
 	letter-spacing: -0.035em;
@@ -80,10 +94,6 @@
 .docspress-audience-paths .docspress-audience-paths__description {
 	max-width: 620px;
 	margin: 14px 0 0;
-	color: var(--db-paths-copy);
-	font-family: var(--dp-font-copy, var(--dp-font-ui, "Nunito Sans", "Trebuchet MS", sans-serif));
-	font-size: clamp(15px, 1.5vw, 18px);
-	line-height: 1.6;
 }
 
 .docspress-audience-paths__grid {
@@ -109,10 +119,15 @@
 	padding: clamp(24px, 3vw, 30px);
 	border: 1px solid var(--db-paths-line);
 	border-radius: var(--dp-radius, 10px);
-	background: color-mix(in srgb, var(--db-paths-panel) 97%, var(--db-path-card-accent));
-	color: var(--db-paths-copy);
 	text-decoration: none;
 	transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+
+.docspress-audience-paths--paper:not(.has-background) .docspress-audience-paths__card,
+.docspress-audience-paths--ink:not(.has-background) .docspress-audience-paths__card,
+.docspress-audience-paths--blueprint:not(.has-background) .docspress-audience-paths__card,
+.docspress-audience-paths--has-panel-color:not(.has-background) .docspress-audience-paths__card {
+	background: color-mix(in srgb, var(--db-paths-panel) 97%, var(--db-path-card-accent));
 }
 
 .docspress-audience-paths__card--gold {
@@ -131,7 +146,6 @@ a.docspress-audience-paths__card:hover,
 a.docspress-audience-paths__card:focus-visible {
 	border-color: var(--db-path-card-accent);
 	box-shadow: none;
-	color: var(--db-paths-copy);
 	text-decoration: none;
 	transform: translateY(-2px);
 }
@@ -145,11 +159,11 @@ a.docspress-audience-paths__card:focus-visible {
 	position: absolute;
 	top: 24px;
 	right: 24px;
-	color: color-mix(in srgb, var(--db-paths-copy) 58%, transparent);
 	font-size: 11px;
 	font-weight: 800;
 	letter-spacing: 0.08em;
 	line-height: 1;
+	opacity: 0.58;
 }
 
 .docspress-audience-paths--no-numbers .docspress-audience-paths__number {
@@ -181,24 +195,13 @@ a.docspress-audience-paths__card:focus-visible {
 	flex-direction: column;
 }
 
-.docspress-audience-paths__card-title {
-	display: block;
+:where(.docspress-audience-paths__card-title) {
+	margin: 0;
 	padding-right: 28px;
-	color: var(--db-paths-heading);
-	font-family: var(--dp-font-heading, var(--dp-font-ui, "Nunito Sans", "Trebuchet MS", sans-serif));
-	font-size: clamp(21px, 2.2vw, 27px);
-	font-weight: 750;
-	letter-spacing: -0.025em;
-	line-height: 1.1;
 }
 
 .docspress-audience-paths__card-description {
-	display: block;
-	margin-top: 10px;
-	color: var(--db-paths-copy);
-	font-family: var(--dp-font-copy, var(--dp-font-ui, "Nunito Sans", "Trebuchet MS", sans-serif));
-	font-size: 14px;
-	line-height: 1.55;
+	margin: 10px 0 0;
 }
 
 .docspress-audience-paths__cta {
@@ -208,9 +211,6 @@ a.docspress-audience-paths__card:focus-visible {
 	justify-content: space-between;
 	margin-top: auto;
 	padding-top: 24px;
-	color: var(--db-paths-heading);
-	font-size: 13px;
-	font-weight: 750;
 }
 
 .docspress-audience-paths__cta-icon {
@@ -240,15 +240,8 @@ a.docspress-audience-paths__card:focus-visible {
 	margin-bottom: 8px;
 }
 
-:where(.docspress-audience-paths--compact .docspress-audience-paths__title) {
-	font-size: clamp(24px, 3vw, 32px);
-	line-height: 1.1;
-}
-
 .docspress-audience-paths--compact .docspress-audience-paths__description {
 	margin-top: 8px;
-	font-size: clamp(14px, 1.4vw, 16px);
-	line-height: 1.5;
 }
 
 .docspress-audience-paths--compact .docspress-audience-paths__grid {
@@ -288,12 +281,6 @@ a.docspress-audience-paths__card:focus-visible {
 	grid-area: copy;
 }
 
-.docspress-audience-paths--compact .docspress-audience-paths__card-title {
-	font-size: 17px;
-	letter-spacing: -0.015em;
-	line-height: 1.2;
-}
-
 .docspress-audience-paths--compact.docspress-audience-paths--no-numbers .docspress-audience-paths__card-title {
 	padding-right: 0;
 }
@@ -302,8 +289,6 @@ a.docspress-audience-paths__card:focus-visible {
 	display: -webkit-box;
 	margin-top: 4px;
 	overflow: hidden;
-	font-size: 13px;
-	line-height: 1.45;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 }
@@ -312,7 +297,6 @@ a.docspress-audience-paths__card:focus-visible {
 	grid-area: cta;
 	margin: 0;
 	padding-top: 0;
-	font-size: 12px;
 }
 
 a.docspress-audience-paths__card:hover .docspress-audience-paths__cta-icon {

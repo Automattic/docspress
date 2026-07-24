@@ -4,6 +4,135 @@ import { describe, expect, it } from "vitest";
 
 const root = process.cwd();
 const blocksRoot = path.join(root, "plugins", "docspress-blocks", "blocks");
+const completeTypographyKeys = [
+  "fontFamily",
+  "fontSize",
+  "fontStyle",
+  "fontWeight",
+  "letterSpacing",
+  "lineHeight",
+  "textAlign",
+  "textColumns",
+  "textDecoration",
+  "textIndent",
+  "textTransform",
+  "writingMode",
+];
+const headingTypographyKeys = completeTypographyKeys.filter((key) => key !== "fontSize");
+const inheritedHeadingLevelKeys = completeTypographyKeys.filter(
+  (key) => !["fontSize", "letterSpacing", "lineHeight"].includes(key)
+);
+const semanticHeadingScale = {
+  h1: "heading-2",
+  h2: "heading-3",
+  h3: "heading-4",
+  h4: "lead",
+  h5: "body",
+  h6: "small",
+};
+const styledElements = [
+  "button",
+  "caption",
+  "heading",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "link",
+];
+const expectCompleteThemePreset = (preset) => {
+  expect(preset.settings.typography.fontSizes.map(({ slug }) => slug)).toEqual([
+    "small",
+    "body",
+    "lead",
+    "heading-4",
+    "heading-3",
+    "heading-2",
+    "display",
+  ]);
+  expect(Object.keys(preset.styles).sort()).toEqual([
+    "blocks",
+    "color",
+    "elements",
+    "spacing",
+    "typography",
+  ]);
+  expect(Object.keys(preset.styles.typography).sort()).toEqual(
+    [...completeTypographyKeys].sort()
+  );
+  expect(preset.styles.typography.fontSize).toBe(
+    "var(--wp--custom--content-font-size)"
+  );
+  expect(Object.keys(preset.styles.elements).sort()).toEqual([...styledElements].sort());
+  expect(Object.keys(preset.styles.elements.button.typography).sort()).toEqual(
+    [...completeTypographyKeys].sort()
+  );
+  expect(Object.keys(preset.styles.elements.caption.typography).sort()).toEqual(
+    [...completeTypographyKeys].sort()
+  );
+  expect(Object.keys(preset.styles.elements.heading.typography).sort()).toEqual(
+    [...headingTypographyKeys].sort()
+  );
+  expect(Object.keys(preset.styles.elements.link.typography).sort()).toEqual(
+    [...completeTypographyKeys].sort()
+  );
+
+  for (const level of ["h1", "h2", "h3", "h4", "h5", "h6"]) {
+    expect(Object.keys(preset.styles.elements[level].typography).sort()).toEqual(
+      [...completeTypographyKeys].sort()
+    );
+    expect(preset.styles.elements[level].color).toEqual({
+      background: null,
+      text: null,
+    });
+    expect(preset.styles.elements[level].typography.fontSize).toBe(
+      `var:preset|font-size|${semanticHeadingScale[level]}`
+    );
+    for (const key of inheritedHeadingLevelKeys) {
+      expect(preset.styles.elements[level].typography[key]).toBeNull();
+    }
+  }
+
+  expect(Object.keys(preset.styles.blocks).sort()).toEqual([
+    "core/button",
+    "core/code",
+    "core/quote",
+  ]);
+  expect(preset.styles.blocks["core/code"].typography).toBeTruthy();
+};
+const expectCompleteColorPreset = (preset) => {
+  expect(Object.keys(preset.styles).sort()).toEqual(["blocks", "color", "elements"]);
+  expect(preset.styles.color).toEqual({
+    background: "var:preset|color|paper",
+    text: "var:preset|color|copy",
+  });
+  expect(Object.keys(preset.styles.elements).sort()).toEqual([...styledElements].sort());
+
+  for (const element of ["caption", "heading", "link"]) {
+    expect(preset.styles.elements[element].color).toEqual({
+      background: "transparent",
+      text: expect.any(String),
+    });
+  }
+  for (const level of ["h1", "h2", "h3", "h4", "h5", "h6"]) {
+    expect(preset.styles.elements[level].color).toEqual({
+      background: null,
+      text: null,
+    });
+  }
+
+  expect(preset.styles.elements.button.color).toEqual({
+    background: "var:preset|color|accent",
+    text: "var:preset|color|paper",
+  });
+  expect(Object.keys(preset.styles.blocks).sort()).toEqual([
+    "core/button",
+    "core/code",
+    "core/quote",
+  ]);
+};
 const blockNames = [
   "api-request",
   "audience-paths",
@@ -294,8 +423,10 @@ describe("DocsPress block theme constraints", () => {
   });
 
   it("groups brand palettes under three native global style families", async () => {
+    const functions = await fs.readFile(path.join(root, "theme", "functions.php"), "utf8");
     const families = {
       "wordpress-org": {
+        headingWeight: "700",
         kicker: {
           border: "0",
           markerWidth: "18px",
@@ -308,6 +439,7 @@ describe("DocsPress block theme constraints", () => {
         variants: ["blueberry", "lemon", "purple"]
       },
       "wordpress-com": {
+        headingWeight: "700",
         kicker: {
           border: "0",
           markerWidth: "0",
@@ -320,6 +452,7 @@ describe("DocsPress block theme constraints", () => {
         variants: ["blue", "ink", "warm"]
       },
       jetpack: {
+        headingWeight: "700",
         kicker: {
           border: "0",
           markerWidth: "5px",
@@ -332,6 +465,10 @@ describe("DocsPress block theme constraints", () => {
         variants: ["green", "electric", "forest"]
       }
     };
+
+    expect(functions).toContain("styles/theme/*.json");
+    expect(functions).toContain("styles/color/*/*.json");
+    expect(functions).toContain("styles/block/*.json");
 
     for (const [family, config] of Object.entries(families)) {
       const familyVariation = JSON.parse(
@@ -351,8 +488,13 @@ describe("DocsPress block theme constraints", () => {
       expect(familyVariation.settings.custom.entryKickerShadow).toBe(config.kicker.shadow);
       expect(familyVariation.settings.custom.entryTitleSize).toBe(config.titleSize);
       expect(familyVariation.settings.custom.entryRuleWidth).toBe(config.ruleWidth);
-      expect(familyVariation.styles.typography).toBeTruthy();
+      expect(familyVariation.settings.custom.headingWeight).toBe(config.headingWeight);
+      expect(familyVariation.settings.custom.entryTitleWeight).toBe(config.headingWeight);
+      expect(familyVariation.styles.elements.heading.typography.fontWeight).toBe(
+        config.headingWeight
+      );
       expect(familyVariation.settings.color.palette).toHaveLength(24);
+      expectCompleteThemePreset(familyVariation);
 
       for (const variant of config.variants) {
         const colorVariation = JSON.parse(
@@ -370,9 +512,7 @@ describe("DocsPress block theme constraints", () => {
         expect(colorVariation.settings.color.palette.map(({ slug }) => slug)).toEqual(
           expect.arrayContaining(["highlight-strong", "dark-accent", "dark-code"])
         );
-        if (colorVariation.styles) {
-          expect(Object.keys(colorVariation.styles)).toEqual(["color"]);
-        }
+        expectCompleteColorPreset(colorVariation);
       }
     }
   });
@@ -606,11 +746,15 @@ describe("DocsPress block theme constraints", () => {
       background: "var(--dp-paper)",
       text: "var(--dp-copy)",
     });
-    expect(theme.styles.typography).toEqual({
+    expect(theme.styles.typography).toMatchObject({
       fontFamily: "var:preset|font-family|ui",
-      fontSize: "var:custom|contentFontSize",
+      fontSize: "var(--wp--custom--content-font-size)",
       lineHeight: "1.78",
     });
+    expect(theme.styles.elements.heading.typography.fontWeight).toBe(
+      "var(--wp--custom--heading-weight)"
+    );
+    expectCompleteThemePreset(theme);
     expect(theme.styles.elements.heading.color.text).toBe("var(--dp-ink)");
     expect(theme.styles.elements.link.color.text).toBe("var(--dp-blue-dark)");
 
@@ -723,6 +867,131 @@ describe("DocsPress block theme constraints", () => {
       );
       expect(variation.styles.blocks?.["core/post-title"]).toBeUndefined();
     }
+  });
+
+  it("lets Global Styles flow through the homepage shell and custom blocks", async () => {
+    const theme = JSON.parse(await fs.readFile(path.join(root, "theme", "theme.json"), "utf8"));
+    const styles = await fs.readFile(path.join(root, "theme", "style.css"), "utf8");
+    const header = await fs.readFile(path.join(root, "theme", "parts", "header.html"), "utf8");
+    const footer = await fs.readFile(path.join(root, "theme", "parts", "footer.html"), "utf8");
+    const heroEditor = await fs.readFile(path.join(blocksRoot, "hero", "editor.js"), "utf8");
+    const heroRender = await fs.readFile(path.join(blocksRoot, "hero", "block.php"), "utf8");
+    const heroStyles = await fs.readFile(path.join(blocksRoot, "hero", "style.css"), "utf8");
+    const audienceEditor = await fs.readFile(
+      path.join(blocksRoot, "audience-paths", "editor.js"),
+      "utf8"
+    );
+    const audienceRender = await fs.readFile(
+      path.join(blocksRoot, "audience-paths", "block.php"),
+      "utf8"
+    );
+    const audienceStyles = await fs.readFile(
+      path.join(blocksRoot, "audience-paths", "style.css"),
+      "utf8"
+    );
+    const cssRule = (css, selector) => {
+      const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return css.match(new RegExp(`\\n${escapedSelector}\\s*\\{([^}]*)\\}`, "m"))?.[1] ?? "";
+    };
+
+    for (const selector of [
+      ".site-header",
+      ".site-footer",
+      ".result-card",
+      ".result-card p",
+      ".content-card-thumbnail",
+    ]) {
+      expect(cssRule(styles, selector)).not.toMatch(/(?:^|\s)background\s*:/);
+    }
+    for (const selector of [
+      ".brand-wordpress",
+      ".site-footer",
+      ".result-card p",
+      ".entry-meta",
+      ".content-card-taxonomy",
+    ]) {
+      expect(cssRule(styles, selector)).not.toMatch(/(?:^|\s)color\s*:/);
+    }
+    for (const selector of [
+      ".brand",
+      ".primary-navigation a",
+      ".footer-navigation a",
+      ".site-footer",
+      ".result-card p",
+    ]) {
+      const rule = cssRule(styles, selector);
+      expect(rule).not.toMatch(/(?:^|\s)font-family\s*:/);
+      expect(rule).not.toMatch(/(?:^|\s)font-size\s*:/);
+      expect(rule).not.toMatch(/(?:^|\s)font-weight\s*:/);
+    }
+    for (const selector of [
+      ".entry-kicker",
+      ".entry-meta",
+      ".content-card-taxonomy",
+      ".content-card .entry-meta",
+      ".content-card-link",
+    ]) {
+      const rule = cssRule(styles, selector);
+      expect(rule).not.toMatch(/(?:^|\s)font-family\s*:/);
+      expect(rule).not.toMatch(/(?:^|\s)font-size\s*:/);
+      expect(rule).not.toMatch(/(?:^|\s)font-weight\s*:/);
+      expect(rule).not.toMatch(/(?:^|\s)letter-spacing\s*:/);
+      expect(rule).not.toMatch(/(?:^|\s)text-transform\s*:/);
+    }
+    expect(styles).not.toMatch(
+      /:where\(\.result-card\) :where\(h2\) a\s*\{[^}]*color\s*:/s
+    );
+    expect(styles).not.toMatch(
+      /:where\(\.section-heading\) :where\(h2\)\s*\{[^}]*font-family\s*:/s
+    );
+    expect(cssRule(styles, ".entry-kicker")).not.toMatch(/(?:^|\s)color\s*:/);
+    expect(styles).not.toContain(".site-footer a {");
+    expect(footer).toContain("<!-- wp:paragraph -->");
+    expect(footer).not.toContain('"textColor"');
+    expect(footer).not.toContain('"fontSize"');
+    expect(header).not.toContain('"iconColor"');
+    expect(header).not.toContain("has-icon-color");
+    expect(theme.styles.blocks?.["core/navigation"]).toBeUndefined();
+    expect(theme.styles.blocks?.["core/site-title"]).toBeUndefined();
+
+    for (const [css, selector] of [
+      [heroStyles, ".docspress-hero"],
+      [audienceStyles, ".docspress-audience-paths"],
+    ]) {
+      const rule = cssRule(css, selector);
+      expect(rule).not.toMatch(/(?:^|\s)background\s*:/);
+      expect(rule).not.toMatch(/(?:^|\s)color\s*:/);
+      expect(rule).not.toMatch(/(?:^|\s)font-family\s*:/);
+    }
+    for (const [css, selector] of [
+      [heroStyles, ".docspress-hero__eyebrow"],
+      [heroStyles, ".docspress-hero__description"],
+      [audienceStyles, ".docspress-audience-paths .docspress-audience-paths__eyebrow"],
+      [audienceStyles, ".docspress-audience-paths .docspress-audience-paths__description"],
+      [audienceStyles, ".docspress-audience-paths__card-description"],
+    ]) {
+      const rule = cssRule(css, selector);
+      expect(rule).not.toMatch(/(?:^|\s)color\s*:/);
+      expect(rule).not.toMatch(/(?:^|\s)font-family\s*:/);
+    }
+    expect(heroStyles).not.toMatch(
+      /:where\(\.docspress-hero__button--primary\)\s*\{[^}]*(?:background|color)\s*:/s
+    );
+    expect(heroStyles).toMatch(
+      /\.docspress-hero__button--secondary\.wp-element-button\s*\{[^}]*background:\s*transparent;[^}]*color:\s*inherit;/s
+    );
+    for (const source of [heroEditor, heroRender]) {
+      expect(source).toContain("docspress-hero--has-panel-color");
+      expect(source).toContain("docspress-hero--has-text-color");
+    }
+    for (const source of [audienceEditor, audienceRender]) {
+      expect(source).toContain("docspress-audience-paths--has-panel-color");
+      expect(source).toContain("docspress-audience-paths--has-text-color");
+    }
+    expect(audienceEditor).toContain("tagName: 'h3'");
+    expect(audienceEditor).toContain("tagName: 'p'");
+    expect(audienceRender).toContain('<h3 class="docspress-audience-paths__card-title">');
+    expect(audienceRender).toContain('<p class="docspress-audience-paths__card-description">');
   });
 
   it("makes the documentation sidebar collapsible from block settings", async () => {

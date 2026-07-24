@@ -43,7 +43,9 @@ add_action( 'after_setup_theme', 'docspress_setup' );
 function docspress_maybe_refresh_theme_json_cache() {
 	$files = array_merge(
 		array( get_theme_file_path( 'theme.json' ) ),
-		(array) glob( get_theme_file_path( 'styles/theme/*.json' ) )
+		(array) glob( get_theme_file_path( 'styles/theme/*.json' ) ),
+		(array) glob( get_theme_file_path( 'styles/color/*/*.json' ) ),
+		(array) glob( get_theme_file_path( 'styles/block/*.json' ) )
 	);
 	$versions = array();
 
