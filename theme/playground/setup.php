@@ -323,16 +323,6 @@ $hero_attributes = array(
 	'secondaryUrl'    => $updates_id ? get_permalink( $updates_id ) : home_url( '/#latest-updates' ),
 	'mediaUrl'        => get_theme_file_uri( 'assets/images/homepage-octocat-wapuu.webp' ),
 	'mediaAlt'        => 'The GitHub Octocat and WordPress Wapuu celebrating their documentation workflow together.',
-	'visualLabel'     => 'DOCS',
-	'layout'          => 'editorial',
-	'mediaPosition'   => 'right',
-	'mediaWidth'      => 38,
-	'imageScale'      => 90,
-	'height'          => 'standard',
-	'tone'            => 'midnight',
-	'textAlign'       => 'left',
-	'showGrid'        => true,
-	'showOrbit'       => false,
 );
 $audience_paths_attributes = array(
 	'anchor'      => 'choose-your-path',
@@ -527,18 +517,6 @@ if ( $footer_menu ) {
 	}
 }
 
-$menu_locations = get_theme_mod( 'nav_menu_locations', array() );
-if ( $header_menu ) {
-	$menu_locations['primary'] = $header_menu;
-}
-if ( $sidebar_menu ) {
-	$menu_locations['docs_sidebar'] = $sidebar_menu;
-}
-if ( $footer_menu ) {
-	$menu_locations['footer'] = $footer_menu;
-}
-set_theme_mod( 'nav_menu_locations', $menu_locations );
-
 update_option( 'blogname', 'DocsPress' );
 update_option( 'blogdescription', 'Markdown in GitHub. Native documentation in WordPress.' );
 update_option( 'show_on_front', 'page' );
@@ -549,13 +527,6 @@ update_option( 'default_comment_status', 'open' );
 update_option( 'thread_comments', 1 );
 update_option( 'page_comments', 1 );
 update_option( 'comments_per_page', 5 );
-
-set_theme_mod( 'docspress_docs_root', $docs_id );
-set_theme_mod( 'docspress_sidebar_source', 'page_tree' );
-set_theme_mod( 'docspress_sidebar_sort', 'menu_order' );
-set_theme_mod( 'docspress_github_url', 'https://github.com/Automattic/docspress' );
-set_theme_mod( 'docspress_github_edit_repository_url', 'https://github.com/Automattic/docspress' );
-set_theme_mod( 'docspress_github_edit_ref', 'main' );
 
 update_option(
 	'docspress_playground_runtime',
@@ -571,7 +542,11 @@ update_option(
 		'publish_existing_page'   => $publish_existing_id,
 		'create_docs_page'        => $create_docs_id,
 		'kitchen_sink_page'       => $kitchen_sink_id,
-		'design_preset'           => get_theme_mod( 'docspress_design_preset', 'docspress' ),
+		'block_theme'             => wp_is_block_theme(),
+		'style_family_count'      => count( glob( get_template_directory() . '/styles/theme/*.json' ) ),
+		'color_variation_count'   => count( glob( get_template_directory() . '/styles/color/*/*.json' ) ),
+		'style_variation_count'   => count( WP_Theme_JSON_Resolver::get_style_variations() ),
+		'site_editor_components'  => 8,
 	)
 );
 

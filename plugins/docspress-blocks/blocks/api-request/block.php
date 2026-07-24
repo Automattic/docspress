@@ -128,7 +128,7 @@ function docspress_blocks_register_api_request() {
 				'responseBody'      => array( 'type' => 'string', 'default' => "{\n  \"id\": 42,\n  \"slug\": \"getting-started\"\n}" ),
 				'responseBodyFormat' => array( 'type' => 'string', 'default' => 'json' ),
 			),
-			'supports'        => array( 'anchor' => true, 'html' => false ),
+			'supports'        => docspress_blocks_design_supports(),
 		)
 	);
 }

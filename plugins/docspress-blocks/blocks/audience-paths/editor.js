@@ -13,6 +13,7 @@
 		TextControl,
 		ToggleControl,
 		__,
+		designSupports,
 		el,
 		presetClass,
 		themeStyle,
@@ -103,7 +104,7 @@
 			textColor: { type: 'string', default: '' },
 			accentColor: { type: 'string', default: '' }
 		},
-		supports: { align: [ 'wide', 'full' ], anchor: true, html: false },
+		supports: { ...designSupports, align: [ 'wide', 'full' ] },
 		edit: function AudiencePathsEdit( { attributes, setAttributes } ) {
 			const paths = normalizedPaths( attributes.paths );
 			const classes = [

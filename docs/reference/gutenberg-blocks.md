@@ -10,16 +10,16 @@ Use `docspress/hero` as the editable introduction on a WordPress front Page. Edi
 
 - Primary and secondary action labels, URLs, and new-tab behavior.
 - A Media Library image or external image URL, alternative text, and image scale.
-- Split-panel or editorial spotlight composition, image side and visual-column width, compact/standard/tall height, and left or centered text.
+- The simple split composition used on [fkadev.blog](https://fkadev.blog/), plus an optional editorial spotlight, image side and visual-column width, compact/standard/tall height, and left or centered text.
 - A theme-native default plus optional midnight, paper, or brand-color overrides.
 - Optional custom colors and opt-in grid or orbit decorations.
 - Optional backdrop text behind the image in the editorial composition.
 
-The editorial spotlight supports a dark midnight treatment and a warm paper treatment. Use paper when the hero should feel lighter than the surrounding documentation shell. With the Jetpack preset, paper uses the brand's clean sans-serif headline and green action on a flat, borderless canvas that follows the site's light or dark mode.
+The inserted block starts with the restrained fkadev.blog composition: a theme-native panel, text on the left, media on the right, and no decorative grid, orbit, or backdrop label. The editorial spotlight remains an explicit alternative and supports dark midnight and warm paper treatments.
 
 Empty action labels or URLs hide that action. Removing the image keeps the hero usable as a text-only block. The image renders without an added card or image background, preserving transparent artwork.
 
-<!-- wp:docspress/hero {"eyebrow":"Documentation, publishing, and community","title":"Docs that stay connected to your GitHub repo","description":"Write beside your code. Publish a WordPress experience that guides every reader to the docs written for them.","primaryLabel":"Choose your path","primaryUrl":"#choose-your-path","secondaryLabel":"Latest updates","secondaryUrl":"/#latest-updates","mediaUrl":"https://raw.githubusercontent.com/Automattic/docspress/main/theme/assets/images/homepage-octocat-wapuu.webp","mediaAlt":"The GitHub Octocat and WordPress Wapuu celebrating their documentation workflow together.","visualLabel":"DOCS","layout":"editorial","mediaPosition":"right","mediaWidth":38,"imageScale":90,"height":"standard","tone":"midnight","textAlign":"left","showGrid":true,"showOrbit":false} /-->
+<!-- wp:docspress/hero {"eyebrow":"Documentation, publishing, and community","title":"Docs that stay connected to your GitHub repo","description":"Write beside your code. Publish a WordPress experience that guides every reader to the docs written for them.","primaryLabel":"Choose your path","primaryUrl":"#choose-your-path","secondaryLabel":"Latest updates","secondaryUrl":"/#latest-updates","mediaUrl":"https://raw.githubusercontent.com/Automattic/docspress/main/theme/assets/images/homepage-octocat-wapuu.webp","mediaAlt":"The GitHub Octocat and WordPress Wapuu celebrating their documentation workflow together."} /-->
 
 ## Audience Paths
 

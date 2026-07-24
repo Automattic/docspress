@@ -16,6 +16,7 @@
 		TextControl,
 		ToggleControl,
 		__,
+		designSupports,
 		el,
 		presetClass,
 		themeStyle,
@@ -88,7 +89,7 @@
 			textColor: { type: 'string', default: '' },
 			accentColor: { type: 'string', default: '' }
 		},
-		supports: { align: [ 'wide', 'full' ], anchor: true, html: false },
+		supports: { ...designSupports, align: [ 'wide', 'full' ] },
 		edit: function HeroEdit( { attributes, setAttributes } ) {
 			const hasVisual = Boolean( attributes.mediaUrl );
 			const classes = [
@@ -343,7 +344,7 @@
 							{ className: 'docspress-hero__actions' },
 							attributes.primaryLabel && el( RichText, {
 								tagName: 'span',
-								className: 'docspress-hero__button docspress-hero__button--primary',
+								className: 'docspress-hero__button docspress-hero__button--primary wp-element-button',
 								value: attributes.primaryLabel,
 								onChange: ( primaryLabel ) => setAttributes( { primaryLabel } ),
 								allowedFormats: [],
@@ -352,7 +353,7 @@
 							} ),
 							attributes.secondaryLabel && el( RichText, {
 								tagName: 'span',
-								className: 'docspress-hero__button docspress-hero__button--secondary',
+								className: 'docspress-hero__button docspress-hero__button--secondary wp-element-button',
 								value: attributes.secondaryLabel,
 								onChange: ( secondaryLabel ) => setAttributes( { secondaryLabel } ),
 								allowedFormats: [],

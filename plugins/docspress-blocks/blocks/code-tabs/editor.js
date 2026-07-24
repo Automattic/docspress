@@ -14,6 +14,7 @@
 		SelectControl,
 		TextControl,
 		__,
+		designSupports,
 		el,
 		languages,
 		presetClass,
@@ -45,7 +46,7 @@
 			showLineNumbers: { type: 'boolean', default: true },
 			caption: { type: 'string', default: '' }
 		},
-		supports: { anchor: true, html: false },
+		supports: designSupports,
 		edit: function CodeTabsEdit( { attributes, setAttributes } ) {
 			const tabs = Array.isArray( attributes.tabs ) && attributes.tabs.length ? attributes.tabs : [ { label: 'Example', language: 'plaintext', filename: '', code: '' } ];
 			const [ selected, setSelected ] = useState( 0 );

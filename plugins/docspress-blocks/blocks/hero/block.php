@@ -104,8 +104,8 @@ function docspress_blocks_render_hero( $attributes ) {
 		}
 	}
 
-	$primary_action   = docspress_blocks_render_hero_action( $primary_label, $primary_url, 'docspress-hero__button docspress-hero__button--primary', $primary_new_tab );
-	$secondary_action = docspress_blocks_render_hero_action( $secondary_label, $secondary_url, 'docspress-hero__button docspress-hero__button--secondary', $secondary_new_tab );
+	$primary_action   = docspress_blocks_render_hero_action( $primary_label, $primary_url, 'docspress-hero__button docspress-hero__button--primary wp-element-button', $primary_new_tab );
+	$secondary_action = docspress_blocks_render_hero_action( $secondary_label, $secondary_url, 'docspress-hero__button docspress-hero__button--secondary wp-element-button', $secondary_new_tab );
 	$image             = '';
 	if ( $media_id ) {
 		$image = wp_get_attachment_image(
@@ -203,11 +203,7 @@ function docspress_blocks_register_hero() {
 				'textColor'     => array( 'type' => 'string', 'default' => '' ),
 				'accentColor'   => array( 'type' => 'string', 'default' => '' ),
 			),
-			'supports'        => array(
-				'align'  => array( 'wide', 'full' ),
-				'anchor' => true,
-				'html'   => false,
-			),
+			'supports'        => docspress_blocks_design_supports( array( 'wide', 'full' ) ),
 		)
 	);
 }

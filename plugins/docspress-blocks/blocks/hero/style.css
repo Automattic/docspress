@@ -75,7 +75,7 @@
 	content: "";
 }
 
-.docspress-hero__title {
+:where(.docspress-hero__title) {
 	max-width: 680px;
 	margin: 0;
 	color: var(--db-hero-heading);
@@ -112,7 +112,7 @@
 	margin-top: 28px;
 }
 
-.docspress-hero__button {
+:where(.docspress-hero__button) {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -127,29 +127,29 @@
 	transition: border-color 150ms ease, background 150ms ease, transform 150ms ease;
 }
 
-a.docspress-hero__button:hover {
+:where(a.docspress-hero__button:hover) {
 	text-decoration: none;
 	transform: translateY(-1px);
 }
 
-.docspress-hero__button--primary {
+:where(.docspress-hero__button--primary) {
 	border-color: var(--db-hero-accent);
 	background: var(--db-hero-accent);
 	color: #fff;
 }
 
-a.docspress-hero__button--primary:hover {
+:where(a.docspress-hero__button--primary:hover) {
 	background: color-mix(in srgb, var(--db-hero-accent) 88%, #000);
 	color: #fff;
 }
 
-.docspress-hero__button--secondary {
+.docspress-hero__button--secondary.wp-element-button {
 	border-color: color-mix(in srgb, var(--db-hero-heading) 24%, transparent);
 	background: transparent;
 	color: var(--db-hero-heading);
 }
 
-a.docspress-hero__button--secondary:hover {
+a.docspress-hero__button--secondary.wp-element-button:hover {
 	border-color: color-mix(in srgb, var(--db-hero-heading) 48%, transparent);
 	background: color-mix(in srgb, var(--db-hero-heading) 5%, transparent);
 	color: var(--db-hero-heading);
@@ -322,15 +322,15 @@ html[data-theme="dark"] .docspress-preset-jetpack .docspress-hero--layout-editor
 	width: 34px;
 }
 
-.docspress-hero--layout-editorial .docspress-hero__title {
+:where(.docspress-hero--layout-editorial .docspress-hero__title) {
 	max-width: 760px;
 	font-size: clamp(52px, 6.5vw, 82px);
 	letter-spacing: -0.06em;
 	line-height: 0.94;
 }
 
-.docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__title,
-.docspress-blocks--preset-jetpack.docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__title {
+:where(.docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__title),
+:where(.docspress-blocks--preset-jetpack.docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__title) {
 	font-family: var(--dp-font-ui, "Inter", "Helvetica Neue", sans-serif);
 	font-size: clamp(50px, 6vw, 76px);
 	font-weight: 700;
@@ -338,14 +338,14 @@ html[data-theme="dark"] .docspress-preset-jetpack .docspress-hero--layout-editor
 	line-height: 0.97;
 }
 
-.docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__button--primary,
-.docspress-blocks--preset-jetpack.docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__button--primary {
+:where(.docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__button--primary),
+:where(.docspress-blocks--preset-jetpack.docspress-hero--layout-editorial.docspress-hero--paper .docspress-hero__button--primary) {
 	border-color: #008710;
 	background: #008710;
 }
 
-.docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper a.docspress-hero__button--primary:hover,
-.docspress-blocks--preset-jetpack.docspress-hero--layout-editorial.docspress-hero--paper a.docspress-hero__button--primary:hover {
+:where(.docspress-preset-jetpack .docspress-hero--layout-editorial.docspress-hero--paper a.docspress-hero__button--primary:hover),
+:where(.docspress-blocks--preset-jetpack.docspress-hero--layout-editorial.docspress-hero--paper a.docspress-hero__button--primary:hover) {
 	background: #006b0d;
 }
 
@@ -368,32 +368,32 @@ html[data-theme="dark"] .docspress-preset-jetpack .docspress-hero--layout-editor
 	margin-top: 34px;
 }
 
-.docspress-hero--layout-editorial .docspress-hero__button {
+:where(.docspress-hero--layout-editorial .docspress-hero__button) {
 	min-height: 46px;
 	padding-inline: 20px;
 }
 
-.docspress-hero--layout-editorial .docspress-hero__button--primary {
+:where(.docspress-hero--layout-editorial .docspress-hero__button--primary) {
 	box-shadow: 0 10px 28px color-mix(in srgb, var(--db-hero-accent) 24%, transparent);
 }
 
-.docspress-hero--layout-editorial .docspress-hero__button--secondary {
+:where(.docspress-hero--layout-editorial .docspress-hero__button--secondary) {
 	padding-inline: 4px;
 	border-color: transparent;
 }
 
-.docspress-hero--layout-editorial .docspress-hero__button--secondary::after {
+:where(.docspress-hero--layout-editorial .docspress-hero__button--secondary)::after {
 	margin-left: 10px;
 	content: "↗";
 	transition: transform 150ms ease;
 }
 
-.docspress-hero--layout-editorial a.docspress-hero__button--secondary:hover {
+:where(.docspress-hero--layout-editorial a.docspress-hero__button--secondary:hover) {
 	border-color: transparent;
 	background: transparent;
 }
 
-.docspress-hero--layout-editorial a.docspress-hero__button--secondary:hover::after {
+:where(.docspress-hero--layout-editorial a.docspress-hero__button--secondary:hover)::after {
 	transform: translate(2px, -2px);
 }
 
@@ -544,7 +544,7 @@ html[data-theme="dark"] .docspress-preset-jetpack .docspress-hero--layout-editor
 		padding: 42px 26px;
 	}
 
-	.docspress-hero__title {
+	:where(.docspress-hero__title) {
 		font-size: clamp(38px, 12vw, 52px);
 	}
 
@@ -553,7 +553,7 @@ html[data-theme="dark"] .docspress-preset-jetpack .docspress-hero--layout-editor
 		width: 100%;
 	}
 
-	.docspress-hero__button {
+	:where(.docspress-hero__button) {
 		width: 100%;
 	}
 
@@ -567,7 +567,7 @@ html[data-theme="dark"] .docspress-preset-jetpack .docspress-hero--layout-editor
 		padding: 42px 24px 38px;
 	}
 
-	.docspress-hero--layout-editorial .docspress-hero__title {
+	:where(.docspress-hero--layout-editorial .docspress-hero__title) {
 		font-size: clamp(44px, 14vw, 62px);
 	}
 
@@ -605,7 +605,7 @@ html[data-theme="dark"] .docspress-preset-jetpack .docspress-hero--layout-editor
 		gap: 8px;
 	}
 
-	.docspress-hero--layout-editorial .docspress-hero__button--secondary {
+	:where(.docspress-hero--layout-editorial .docspress-hero__button--secondary) {
 		padding-block: 10px;
 	}
 }

@@ -1,0 +1,28 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/theme.json",
+	"version": 3,
+	"title": "Signal band",
+	"slug": "signal-band",
+	"blockTypes": [ "core/group", "core/cover", "core/media-text" ],
+	"styles": {
+		"border": {
+			"top": {
+				"color": "var:preset|color|highlight",
+				"style": "solid",
+				"width": "6px"
+			}
+		},
+		"color": {
+			"background": "var:preset|color|canvas",
+			"text": "var:preset|color|ink"
+		},
+		"spacing": {
+			"padding": {
+				"bottom": "var:preset|spacing|70",
+				"left": "var:preset|spacing|60",
+				"right": "var:preset|spacing|60",
+				"top": "var:preset|spacing|70"
+			}
+		}
+	}
+}

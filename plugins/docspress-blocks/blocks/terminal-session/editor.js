@@ -2,7 +2,7 @@
 	'use strict';
 
 	const { registerBlockType } = blocks;
-	const { Fragment, InspectorControls, PanelBody, PlainText, TextControl, __, el, presetClass, themeStyle, useBlockProps } = shared;
+	const { Fragment, InspectorControls, PanelBody, PlainText, TextControl, __, designSupports, el, presetClass, themeStyle, useBlockProps } = shared;
 	const icon = el(
 		'svg',
 		{ viewBox: '0 0 24 24', width: 24, height: 24, fill: 'none', stroke: 'currentColor', strokeWidth: 1.8 },
@@ -24,7 +24,7 @@
 			command: { type: 'string', default: 'npx docspress publish ./docs' },
 			output: { type: 'string', default: '✓ Read 12 documents\n✓ Published 12 WordPress pages' }
 		},
-		supports: { anchor: true, html: false },
+		supports: designSupports,
 		edit: function TerminalSessionEdit( { attributes, setAttributes } ) {
 			const blockProps = useBlockProps( {
 				className: `docspress-terminal docspress-terminal--editor ${ presetClass }`,

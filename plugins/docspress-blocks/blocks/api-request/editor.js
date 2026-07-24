@@ -2,7 +2,7 @@
 	'use strict';
 
 	const { registerBlockType } = blocks;
-	const { Fragment, InspectorControls, PanelBody, PlainText, SelectControl, TextControl, __, el, presetClass, themeStyle, useBlockProps } = shared;
+	const { Fragment, InspectorControls, PanelBody, PlainText, SelectControl, TextControl, __, designSupports, el, presetClass, themeStyle, useBlockProps } = shared;
 	const icon = el(
 		'svg',
 		{ viewBox: '0 0 24 24', width: 24, height: 24, fill: 'none', stroke: 'currentColor', strokeWidth: 1.8 },
@@ -41,7 +41,7 @@
 			responseBody: { type: 'string', default: '{\n  "id": 42,\n  "slug": "getting-started"\n}' },
 			responseBodyFormat: { type: 'string', default: 'json' }
 		},
-		supports: { anchor: true, html: false },
+		supports: designSupports,
 		edit: function ApiRequestEdit( { attributes, setAttributes } ) {
 			const blockProps = useBlockProps( {
 				className: `docspress-api docspress-api--editor ${ presetClass }`,

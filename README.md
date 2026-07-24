@@ -14,7 +14,7 @@
 
 <p align="center">
   <a href="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground"><strong>Launch the DocsPress theme in WordPress Playground →</strong></a><br>
-  Opens a temporary, logged-in WordPress site directly in the DocsPress Customizer.
+  Opens a temporary, logged-in WordPress site directly in the Site Editor.
 </p>
 
 ## Install with an AI coding agent
@@ -53,7 +53,7 @@ Docspress keeps Markdown and WordPress documentation synchronized. It can publis
 - Support manifests, redirects, rewritten local links, and edit links.
 - Propose WordPress editor changes as readable Markdown pull requests.
 - Serve a generated `/llms.txt` index and exact source Markdown at each Page path with `.md`.
-- Use the rest of WordPress too: a Gutenberg-built homepage with configurable Hero and audience-routing blocks, posts, archives, feeds, menus, widgets, and optional threaded discussions.
+- Use the rest of WordPress too: a block-built homepage, editable templates and template parts, Global Styles, posts, archives, feeds, navigation, and optional threaded discussions.
 
 ## Project status
 
@@ -68,7 +68,7 @@ Docspress is early software. The core sync loop works, and the first-class targe
 
 The WordPress theme and plugin directories are distributed through this GitHub repository. They are intentionally excluded from the `docspress` npm tarball, which remains focused on the Action and CLI runtime.
 
-[Open the browser Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground) to edit the seeded Hero and Audience Paths blocks, try the publish-existing and create-with-AI documentation paths, and explore posts, threaded comments, admin screens, and the live Customizer without installing anything. Changes stay in that temporary browser session.
+[Open the browser Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground) to edit the seeded Hero and Audience Paths blocks, switch among ten complete visual systems, customize templates and shell components, try the publish-existing and create-with-AI documentation paths, and explore posts and threaded comments without installing anything. Changes stay in that temporary browser session.
 
 Run the complete WordPress experience from the repository root:
 

@@ -2,7 +2,7 @@
 	'use strict';
 
 	const { registerBlockType } = blocks;
-	const { Fragment, InspectorControls, PanelBody, PlainText, RichText, SelectControl, TextControl, ToggleControl, __, el, presetClass, themeStyle, useBlockProps } = shared;
+	const { Fragment, InspectorControls, PanelBody, PlainText, RichText, SelectControl, TextControl, ToggleControl, __, designSupports, el, presetClass, themeStyle, useBlockProps } = shared;
 	const icon = el(
 		'svg',
 		{ viewBox: '0 0 24 24', width: 24, height: 24, fill: 'none', stroke: 'currentColor', strokeWidth: 1.8 },
@@ -38,7 +38,7 @@
 			context: { type: 'string', default: '$docspress-install, @repository, src/sync.js, docs/' },
 			caption: { type: 'string', default: 'Prompt example' }
 		},
-		supports: { anchor: true, html: false },
+		supports: designSupports,
 		edit: function PromptEdit( { attributes, setAttributes } ) {
 			const blockProps = useBlockProps( {
 				className: `docspress-prompt docspress-prompt--editor ${ presetClass }`,

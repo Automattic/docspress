@@ -5,7 +5,11 @@
 	const body = document.body;
 	const drawerToggle = document.querySelector('[data-drawer-toggle]');
 	const drawerClose = document.querySelector('[data-drawer-close]');
-	const sidebar = document.querySelector('#docs-sidebar');
+	const sidebar = document.querySelector('#docs-sidebar, .docs-sidebar');
+	const sidebarCollapseToggle = sidebar ? sidebar.querySelector('[data-sidebar-collapse-toggle]') : null;
+	const sidebarContent = sidebar ? sidebar.querySelector('[data-sidebar-content]') : null;
+	const docsShell = sidebar ? sidebar.closest('.docs-shell') : null;
+	const desktopSidebarMedia = window.matchMedia('(min-width: 861px)');
 	const sidebarSearchInput = document.querySelector('[data-docs-filter]');
 	const docsNav = document.querySelector('[data-docs-nav]');
 	const searchTrigger = document.querySelector('[data-docs-search-trigger]');
@@ -20,7 +24,15 @@
 	const shortcutHint = document.querySelector('[data-search-shortcut-hint]');
 	const themeToggle = document.querySelector('[data-theme-toggle]');
 	const versionSelect = document.querySelector('[data-version-select]');
-	const searchData = window.docspressSearchData || {};
+	const searchDataNode = document.querySelector('[data-docspress-search-data]');
+	let searchData = {};
+	if (searchDataNode) {
+		try {
+			searchData = JSON.parse(searchDataNode.textContent);
+		} catch (error) {
+			searchData = {};
+		}
+	}
 	const searchLimit = Number(searchData.limit) || 8;
 	const searchIndex = (Array.isArray(searchData.index) ? searchData.index : []).map(function (record) {
 		return Object.assign({}, record, {
@@ -34,6 +46,7 @@
 	let visibleSearchResults = [];
 	let searchReturnFocus = null;
 	const sidebarBranches = [];
+	let sidebarCollapsed = Boolean(sidebar && sidebar.dataset.sidebarStartCollapsed === 'true');
 
 	function setDrawer(open) {
 		body.classList.toggle('drawer-open', open);
@@ -41,6 +54,23 @@
 			drawerToggle.setAttribute('aria-expanded', String(open));
 			drawerToggle.setAttribute('aria-label', open ? 'Close documentation menu' : 'Open documentation menu');
 		}
+	}
+
+	function applySidebarCollapsed() {
+		if (!sidebar || !sidebarCollapseToggle || !sidebarContent) return;
+		const collapsed = desktopSidebarMedia.matches && sidebarCollapsed;
+		const collapseLabel = sidebarCollapseToggle.dataset.collapseLabel || 'Collapse sidebar';
+		const expandLabel = sidebarCollapseToggle.dataset.expandLabel || 'Expand sidebar';
+		const currentLabel = collapsed ? expandLabel : collapseLabel;
+		const visibleLabel = sidebarCollapseToggle.querySelector('.sidebar-collapse-label');
+
+		sidebar.classList.toggle('is-sidebar-collapsed', collapsed);
+		if (docsShell) docsShell.classList.toggle('is-sidebar-collapsed', collapsed);
+		sidebarCollapseToggle.setAttribute('aria-expanded', String(!collapsed));
+		sidebarCollapseToggle.setAttribute('aria-label', currentLabel);
+		sidebarCollapseToggle.title = currentLabel;
+		sidebarContent.setAttribute('aria-hidden', String(collapsed));
+		if (visibleLabel) visibleLabel.textContent = currentLabel;
 	}
 
 	function directChild(element, predicate) {
@@ -129,6 +159,19 @@
 	}
 
 	enhanceSidebarNavigation();
+
+	if (sidebarCollapseToggle) {
+		applySidebarCollapsed();
+		sidebarCollapseToggle.addEventListener('click', function () {
+			sidebarCollapsed = !sidebarCollapsed;
+			applySidebarCollapsed();
+		});
+		if (typeof desktopSidebarMedia.addEventListener === 'function') {
+			desktopSidebarMedia.addEventListener('change', applySidebarCollapsed);
+		} else {
+			desktopSidebarMedia.addListener(applySidebarCollapsed);
+		}
+	}
 
 	if (drawerToggle) {
 		drawerToggle.addEventListener('click', function () {
@@ -481,15 +524,30 @@
 	function updateThemeButton() {
 		if (!themeToggle) return;
 		const isDark = root.dataset.theme === 'dark';
-		themeToggle.setAttribute('aria-label', isDark ? 'Use light theme' : 'Use dark theme');
-		themeToggle.title = isDark ? 'Use light theme' : 'Use dark theme';
+		const actionLabel = isDark ? 'Use light theme' : 'Use dark theme';
+		themeToggle.setAttribute('aria-label', actionLabel);
+		themeToggle.title = actionLabel;
 		const lightIcon = themeToggle.querySelector('.theme-icon-light');
 		const darkIcon = themeToggle.querySelector('.theme-icon-dark');
+		const visibleLabel = themeToggle.querySelector('[data-theme-label]');
 		if (lightIcon) lightIcon.style.display = isDark ? 'none' : 'block';
 		if (darkIcon) darkIcon.style.display = isDark ? 'block' : 'none';
+		if (visibleLabel) visibleLabel.textContent = actionLabel;
 	}
 
 	if (themeToggle) {
+		let storedTheme = '';
+		try { storedTheme = localStorage.getItem('docspress-color-mode') || ''; } catch (error) {}
+		if (storedTheme !== 'light' && storedTheme !== 'dark') {
+			const defaultMode = themeToggle.dataset.defaultMode || 'light';
+			if (defaultMode === 'light' || defaultMode === 'dark') {
+				root.dataset.theme = defaultMode;
+			} else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+				root.dataset.theme = 'dark';
+			} else {
+				delete root.dataset.theme;
+			}
+		}
 		updateThemeButton();
 		themeToggle.addEventListener('click', function () {
 			const next = root.dataset.theme === 'dark' ? 'light' : 'dark';

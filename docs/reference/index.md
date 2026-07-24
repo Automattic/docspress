@@ -12,6 +12,7 @@ Use these pages when configuring the Action, diagnosing reconciliation, installi
 - [Token helper CLI](cli.md)
 - [Synchronization and REST API](sync-and-rest-api.md)
 - [DocsPress WordPress theme](theme.md)
+- [Site Editor migration audit](site-editor-migration-audit.md)
 - [DocsPress Gutenberg blocks](gutenberg-blocks.md)
 - [Kitchen Sink](kitchen-sink.md)
 

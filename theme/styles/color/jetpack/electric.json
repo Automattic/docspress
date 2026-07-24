@@ -1,0 +1,41 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/theme.json",
+	"version": 3,
+	"title": "Jetpack · Electric",
+	"settings": {
+		"color": {
+			"palette": [
+				{ "slug": "accent", "color": "#0ced57", "name": "Electric green" },
+				{ "slug": "accent-strong", "color": "#91e982", "name": "Light green" },
+				{ "slug": "accent-soft", "color": "#183b20", "name": "Forest wash" },
+				{ "slug": "highlight", "color": "#ffffff", "name": "White" },
+				{ "slug": "highlight-strong", "color": "#0ced57", "name": "Highlight strong" },
+				{ "slug": "paper", "color": "#101517", "name": "Jetpack ink" },
+				{ "slug": "canvas", "color": "#000000", "name": "Black" },
+				{ "slug": "ink", "color": "#ffffff", "name": "White" },
+				{ "slug": "copy", "color": "#d7dade", "name": "Light copy" },
+				{ "slug": "muted", "color": "#9ca3a8", "name": "Muted" },
+				{ "slug": "line", "color": "#2d3438", "name": "Line" },
+				{ "slug": "line-strong", "color": "#50575e", "name": "Strong line" },
+				{ "slug": "code", "color": "#050708", "name": "Code black" },
+				{ "slug": "dark-accent", "color": "#0ced57", "name": "Dark accent" },
+				{ "slug": "dark-accent-strong", "color": "#91e982", "name": "Dark accent strong" },
+				{ "slug": "dark-accent-soft", "color": "#183b20", "name": "Dark accent soft" },
+				{ "slug": "dark-paper", "color": "#101517", "name": "Dark paper" },
+				{ "slug": "dark-canvas", "color": "#000000", "name": "Dark canvas" },
+				{ "slug": "dark-ink", "color": "#ffffff", "name": "Dark ink" },
+				{ "slug": "dark-copy", "color": "#d7dade", "name": "Dark copy" },
+				{ "slug": "dark-muted", "color": "#9ca3a8", "name": "Dark muted" },
+				{ "slug": "dark-line", "color": "#2d3438", "name": "Dark line" },
+				{ "slug": "dark-line-strong", "color": "#50575e", "name": "Dark line strong" },
+				{ "slug": "dark-code", "color": "#050708", "name": "Dark code" }
+			]
+		}
+	},
+	"styles": {
+		"color": {
+			"background": "var:preset|color|paper",
+			"text": "var:preset|color|copy"
+		}
+	}
+}

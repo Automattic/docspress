@@ -1,0 +1,35 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/theme.json",
+	"version": 3,
+	"title": "WordPress.org · Purple",
+	"settings": {
+		"color": {
+			"palette": [
+				{ "slug": "accent", "color": "#7a00df", "name": "Purple" },
+				{ "slug": "accent-strong", "color": "#5300be", "name": "Deep purple" },
+				{ "slug": "accent-soft", "color": "#f1e5ff", "name": "Purple tint" },
+				{ "slug": "highlight", "color": "#33f078", "name": "Acid green" },
+				{ "slug": "highlight-strong", "color": "#5300be", "name": "Highlight strong" },
+				{ "slug": "paper", "color": "#ffffff", "name": "White" },
+				{ "slug": "canvas", "color": "#f6f6f6", "name": "Light grey" },
+				{ "slug": "ink", "color": "#1e1e1e", "name": "Charcoal" },
+				{ "slug": "copy", "color": "#40464d", "name": "Charcoal 3" },
+				{ "slug": "muted", "color": "#656a71", "name": "Charcoal 4" },
+				{ "slug": "line", "color": "#d9d9d9", "name": "Light grey 1" },
+				{ "slug": "line-strong", "color": "#979aa1", "name": "Charcoal 5" },
+				{ "slug": "code", "color": "#1e1e1e", "name": "Code charcoal" },
+				{ "slug": "dark-accent", "color": "#d7a7ff", "name": "Dark accent" },
+				{ "slug": "dark-accent-strong", "color": "#33f078", "name": "Dark accent strong" },
+				{ "slug": "dark-accent-soft", "color": "#3b2051", "name": "Dark accent soft" },
+				{ "slug": "dark-paper", "color": "#1e1e1e", "name": "Dark paper" },
+				{ "slug": "dark-canvas", "color": "#171717", "name": "Dark canvas" },
+				{ "slug": "dark-ink", "color": "#ffffff", "name": "Dark ink" },
+				{ "slug": "dark-copy", "color": "#d9d9d9", "name": "Dark copy" },
+				{ "slug": "dark-muted", "color": "#979aa1", "name": "Dark muted" },
+				{ "slug": "dark-line", "color": "#40464d", "name": "Dark line" },
+				{ "slug": "dark-line-strong", "color": "#656a71", "name": "Dark line strong" },
+				{ "slug": "dark-code", "color": "#101010", "name": "Dark code" }
+			]
+		}
+	}
+}

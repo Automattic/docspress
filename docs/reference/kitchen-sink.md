@@ -2,7 +2,7 @@
 title: Kitchen Sink
 ---
 
-This Page is the acceptance surface for the DocsPress theme and all eight documentation blocks. Switch design presets and light/dark mode while checking spacing, typography, borders, interactions, and copy controls.
+This Page is the acceptance surface for the DocsPress theme and all ten DocsPress Blocks. Switch Global Style variations and light/dark mode while checking native color, typography, spacing, border, dimensions, interactions, and content controls.
 
 <!-- wp:docspress/callout {"tone":"note","title":"Playground acceptance page","content":"<p>The local Playground appends its live component inventory to this source-backed Page after seeding it.</p>","collapsible":false} /-->
 

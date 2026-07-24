@@ -1,0 +1,28 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/theme.json",
+	"version": 3,
+	"title": "Outline card",
+	"slug": "outline-card",
+	"blockTypes": [ "core/group", "core/column", "core/media-text", "core/post-template" ],
+	"styles": {
+		"border": {
+			"color": "var:preset|color|line",
+			"radius": "var:custom|radius",
+			"style": "solid",
+			"width": "1px"
+		},
+		"color": {
+			"background": "var:preset|color|paper",
+			"text": "var:preset|color|copy"
+		},
+		"shadow": "var:preset|shadow|soft",
+		"spacing": {
+			"padding": {
+				"bottom": "var:preset|spacing|50",
+				"left": "var:preset|spacing|50",
+				"right": "var:preset|spacing|50",
+				"top": "var:preset|spacing|50"
+			}
+		}
+	}
+}

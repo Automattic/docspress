@@ -1,0 +1,35 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/theme.json",
+	"version": 3,
+	"title": "WordPress.com · Blue",
+	"settings": {
+		"color": {
+			"palette": [
+				{ "slug": "accent", "color": "#3858e9", "name": "WordPress.com blue" },
+				{ "slug": "accent-strong", "color": "#193acc", "name": "WordPress.com deep blue" },
+				{ "slug": "accent-soft", "color": "#f7f8fe", "name": "Blue wash" },
+				{ "slug": "highlight", "color": "#212cff", "name": "Electric blue" },
+				{ "slug": "highlight-strong", "color": "#193acc", "name": "Highlight strong" },
+				{ "slug": "paper", "color": "#ffffff", "name": "White" },
+				{ "slug": "canvas", "color": "#f6f7f7", "name": "Studio grey" },
+				{ "slug": "ink", "color": "#1d1d1d", "name": "WordPress.com ink" },
+				{ "slug": "copy", "color": "#1d2327", "name": "Copy" },
+				{ "slug": "muted", "color": "#646970", "name": "Muted" },
+				{ "slug": "line", "color": "#e2e2e7", "name": "Line" },
+				{ "slug": "line-strong", "color": "#96959a", "name": "Strong line" },
+				{ "slug": "code", "color": "#101517", "name": "Code ink" },
+				{ "slug": "dark-accent", "color": "#8fa2ff", "name": "Dark accent" },
+				{ "slug": "dark-accent-strong", "color": "#c3cdf8", "name": "Dark accent strong" },
+				{ "slug": "dark-accent-soft", "color": "#14215a", "name": "Dark accent soft" },
+				{ "slug": "dark-paper", "color": "#101517", "name": "Dark paper" },
+				{ "slug": "dark-canvas", "color": "#090c0d", "name": "Dark canvas" },
+				{ "slug": "dark-ink", "color": "#ffffff", "name": "Dark ink" },
+				{ "slug": "dark-copy", "color": "#e2e2e7", "name": "Dark copy" },
+				{ "slug": "dark-muted", "color": "#96959a", "name": "Dark muted" },
+				{ "slug": "dark-line", "color": "#2c3338", "name": "Dark line" },
+				{ "slug": "dark-line-strong", "color": "#50575e", "name": "Dark line strong" },
+				{ "slug": "dark-code", "color": "#050708", "name": "Dark code" }
+			]
+		}
+	}
+}

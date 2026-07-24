@@ -17,7 +17,9 @@ Documentation-focused Gutenberg blocks for the DocsPress theme. The plugin has n
 
 The inserter also includes **Homepage hero**, **Documentation starting paths**, **Documentation page starter**, **API request example**, and **AI prompt example** patterns under the **DocsPress** category.
 
-Every block inherits the active DocsPress design preset in both Gutenberg and the published site, including its light or dark tokens, typography, exact radius, borders, and article width. WordPress.org therefore keeps crisp 2px corners, while WordPress.com and Jetpack use their 4px recipes; block styles do not impose a larger minimum radius or a separate card shadow. Hero and Audience Paths default to those theme tokens with clean surfaces and modest type scales; the Hero's editorial spotlight, inverse styles, decorations, and custom colors are explicit opt-ins.
+Every block inherits the active Global Style variation in both Gutenberg and the published site, including semantic light/dark colors, typography, radius, borders, and article width. The plugin declares native Block Supports for colors and gradients, typography, spacing, borders, minimum height, sticky positioning, shadows, anchors, and custom classes. Hero and Audience Paths also support wide/full alignment and retain their purpose-built composition controls.
+
+The DocsPress block theme includes WordPress.org, WordPress.com, and Jetpack style families. WordPress.org variants keep crisp 2px corners, while WordPress.com and Jetpack use 4px recipes; block styles do not impose a larger minimum radius or a separate card shadow. Hero and Audience Paths default to the active tokens with clean surfaces and modest type scales. The Hero starts with the simple split composition used on fkadev.blog; its editorial spotlight, inverse styles, decorations, and custom colors are explicit opt-ins.
 
 The editorial spotlight can use either the dark midnight treatment or the warm paper treatment. Paper intentionally creates a light editorial island inside a dark documentation shell.
 
@@ -60,7 +62,7 @@ docspress-blocks/
 The blocks are dynamic. WordPress stores concise canonical block comments and the plugin renders accessible markup on the front end. A homepage hero can be serialized with every presentation choice kept in block attributes:
 
 ```html
-<!-- wp:docspress/hero {"title":"Docs that stay connected to your GitHub repo","primaryLabel":"Choose your path","primaryUrl":"#choose-your-path","secondaryLabel":"Latest updates","secondaryUrl":"/#latest-updates","mediaUrl":"https://example.com/hero.png","mediaAlt":"Two project mascots celebrating together.","visualLabel":"DOCS","layout":"editorial","mediaPosition":"right","height":"standard","tone":"midnight","showGrid":true,"showOrbit":false} /-->
+<!-- wp:docspress/hero {"title":"Docs that stay connected to your GitHub repo","primaryLabel":"Choose your path","primaryUrl":"#choose-your-path","secondaryLabel":"Latest updates","secondaryUrl":"/#latest-updates","mediaUrl":"https://example.com/hero.png","mediaAlt":"Two project mascots celebrating together."} /-->
 ```
 
 Starting paths keep each reader’s destination explicit:

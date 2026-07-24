@@ -2,7 +2,7 @@
 	'use strict';
 
 	const { registerBlockType } = blocks;
-	const { Fragment, InspectorControls, PanelBody, RichText, SelectControl, TextControl, __, el, presetClass, themeStyle, useBlockProps } = shared;
+	const { Fragment, InspectorControls, PanelBody, RichText, SelectControl, TextControl, __, designSupports, el, presetClass, themeStyle, useBlockProps } = shared;
 	const icon = el(
 		'svg',
 		{ viewBox: '0 0 24 24', width: 24, height: 24, fill: 'none', stroke: 'currentColor', strokeWidth: 1.8 },
@@ -23,7 +23,7 @@
 			content: { type: 'string', default: '<p>All documentation pages are up to date.</p>' },
 			meta: { type: 'string', default: '12 pages · 1.8s' }
 		},
-		supports: { anchor: true, html: false },
+		supports: designSupports,
 		edit: function ResultEdit( { attributes, setAttributes } ) {
 			const blockProps = useBlockProps( {
 				className: `docspress-result docspress-result--${ attributes.status } docspress-result--editor ${ presetClass }`,

@@ -15,7 +15,6 @@
 	border-radius: var(--dp-radius, 10px);
 	background: var(--db-result-surface);
 	box-shadow: none;
-	color: var(--dp-copy, #2c3338);
 }
 
 .docspress-result--neutral {

@@ -1,6 +1,6 @@
 <?php
 /**
- * DocsPress theme functions.
+ * DocsPress block theme functions.
  *
  * @package DocsPress
  */
@@ -9,70 +9,304 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require get_theme_file_path( 'inc/design-presets/loader.php' );
-
 /**
- * Set up theme defaults.
+ * Set up the block theme.
  */
 function docspress_setup() {
 	load_theme_textdomain( 'docspress', get_template_directory() . '/languages' );
 
-	add_theme_support( 'title-tag' );
 	add_theme_support( 'automatic-feed-links' );
-	add_theme_support( 'post-thumbnails' );
-	add_theme_support( 'responsive-embeds' );
-	add_theme_support( 'align-wide' );
-	add_theme_support( 'wp-block-styles' );
-	add_theme_support( 'editor-styles' );
-	add_theme_support( 'customize-selective-refresh-widgets' );
-	add_editor_style( 'style.css' );
-	add_theme_support(
-		'html5',
-		array( 'search-form', 'comment-form', 'comment-list', 'gallery', 'caption', 'style', 'script' )
-	);
+	add_theme_support( 'block-template-parts' );
 	add_theme_support(
 		'custom-logo',
 		array(
-			'height'      => 64,
-			'width'       => 64,
+			'height'      => 256,
+			'width'       => 256,
 			'flex-height' => true,
 			'flex-width'  => true,
 		)
 	);
-
-	register_nav_menus(
-		array(
-			'primary'      => __( 'Header navigation', 'docspress' ),
-			'docs_sidebar' => __( 'Documentation sidebar', 'docspress' ),
-			'footer'       => __( 'Footer navigation', 'docspress' ),
-		)
-	);
+	add_theme_support( 'editor-styles' );
+	add_theme_support( 'html5', array( 'comment-form', 'comment-list', 'gallery', 'caption', 'style', 'script' ) );
+	add_theme_support( 'post-thumbnails' );
+	add_theme_support( 'responsive-embeds' );
+	add_theme_support( 'title-tag' );
+	add_theme_support( 'wp-block-styles' );
+	add_editor_style( 'style.css' );
 }
 add_action( 'after_setup_theme', 'docspress_setup' );
 
 /**
- * Register widget areas exposed by the theme.
+ * Refresh WordPress's persistent theme.json cache after bundled style files
+ * change. This matters for mounted Playground themes as well as upgrades.
  */
-function docspress_widgets_init() {
-	register_sidebar(
-		array(
-			'name'          => __( 'Footer widgets', 'docspress' ),
-			'id'            => 'footer-widgets',
-			'description'   => __( 'Widgets shown above the footer navigation and copyright line.', 'docspress' ),
-			'before_widget' => '<section id="%1$s" class="footer-widget %2$s">',
-			'after_widget'  => '</section>',
-			'before_title'  => '<h2 class="footer-widget-title">',
-			'after_title'   => '</h2>',
-		)
+function docspress_maybe_refresh_theme_json_cache() {
+	$files = array_merge(
+		array( get_theme_file_path( 'theme.json' ) ),
+		(array) glob( get_theme_file_path( 'styles/theme/*.json' ) )
 	);
+	$versions = array();
+
+	foreach ( $files as $file ) {
+		if ( is_readable( $file ) ) {
+			$versions[] = $file . ':' . filemtime( $file ) . ':' . filesize( $file );
+		}
+	}
+
+	$signature = md5( implode( '|', $versions ) );
+	if ( get_option( 'docspress_theme_json_signature' ) === $signature ) {
+		return;
+	}
+
+	if ( function_exists( 'wp_clean_theme_json_cache' ) ) {
+		wp_clean_theme_json_cache();
+	}
+	update_option( 'docspress_theme_json_signature', $signature, false );
 }
-add_action( 'widgets_init', 'docspress_widgets_init' );
+add_action( 'after_setup_theme', 'docspress_maybe_refresh_theme_json_cache', 100 );
 
 /**
- * Enqueue the theme assets.
+ * Check whether Post Title typography matches a retired DocsPress default.
+ *
+ * @param array<string,mixed> $typography Typography settings.
+ * @return bool
+ */
+function docspress_is_legacy_post_title_typography( $typography ) {
+	if ( ! is_array( $typography ) ) {
+		return false;
+	}
+
+	$font_family = isset( $typography['fontFamily'] ) ? (string) $typography['fontFamily'] : '';
+	$font_weight = isset( $typography['fontWeight'] ) ? (string) $typography['fontWeight'] : '';
+	$legacy_locks = array(
+		array( 'var:preset|font-family|ui', 'var:custom|headingWeight' ),
+		array( 'var(--wp--preset--font-family--ui)', 'var(--wp--custom--heading-weight)' ),
+		array( 'var:preset|font-family|inter', '700' ),
+		array( 'var(--wp--preset--font-family--inter)', '700' ),
+		array( 'var:preset|font-family|eb-garamond', '400' ),
+		array( 'var(--wp--preset--font-family--eb-garamond)', '400' ),
+		array( 'var:preset|font-family|recoleta', '400' ),
+		array( 'var(--wp--preset--font-family--recoleta)', '400' ),
+	);
+
+	return in_array( array( $font_family, $font_weight ), $legacy_locks, true );
+}
+
+/**
+ * Remove typography locks copied into Global Styles by older DocsPress style
+ * variations so Core Post Title follows the site's Heading element settings.
+ *
+ * The filter is intentionally narrow: a deliberate Post Title override that
+ * does not match one of the retired theme defaults is preserved.
+ *
+ * @param WP_Theme_JSON_Data $theme_json User-origin Global Styles data.
+ * @return WP_Theme_JSON_Data
+ */
+function docspress_inherit_post_title_typography_from_headings( $theme_json ) {
+	if ( ! $theme_json instanceof WP_Theme_JSON_Data ) {
+		return $theme_json;
+	}
+
+	$data       = $theme_json->get_data();
+	$typography = isset( $data['styles']['blocks']['core/post-title']['typography'] )
+		? $data['styles']['blocks']['core/post-title']['typography']
+		: array();
+
+	if ( ! is_array( $typography ) ) {
+		return $theme_json;
+	}
+
+	if ( ! docspress_is_legacy_post_title_typography( $typography ) ) {
+		return $theme_json;
+	}
+
+	unset(
+		$data['styles']['blocks']['core/post-title']['typography']['fontFamily'],
+		$data['styles']['blocks']['core/post-title']['typography']['fontWeight']
+	);
+
+	if ( empty( $data['styles']['blocks']['core/post-title']['typography'] ) ) {
+		unset( $data['styles']['blocks']['core/post-title']['typography'] );
+	}
+	if ( empty( $data['styles']['blocks']['core/post-title'] ) ) {
+		unset( $data['styles']['blocks']['core/post-title'] );
+	}
+	if ( empty( $data['styles']['blocks'] ) ) {
+		unset( $data['styles']['blocks'] );
+	}
+
+	return new WP_Theme_JSON_Data( $data, 'custom' );
+}
+add_filter( 'wp_theme_json_data_user', 'docspress_inherit_post_title_typography_from_headings' );
+
+/**
+ * Remove the retired Post Title typography lock from the saved Global Styles
+ * post so the Site Editor canvas and REST responses inherit Headings too.
+ */
+function docspress_migrate_legacy_post_title_typography() {
+	if (
+		'1' === get_option( 'docspress_post_title_typography_migration' ) ||
+		! current_user_can( 'edit_theme_options' ) ||
+		! class_exists( 'WP_Theme_JSON_Resolver' )
+	) {
+		return;
+	}
+
+	$post_id = WP_Theme_JSON_Resolver::get_user_global_styles_post_id();
+	$post    = $post_id ? get_post( $post_id ) : null;
+
+	if ( ! $post instanceof WP_Post ) {
+		update_option( 'docspress_post_title_typography_migration', '1', false );
+		return;
+	}
+
+	$data       = json_decode( $post->post_content, true );
+	$typography = isset( $data['styles']['blocks']['core/post-title']['typography'] )
+		? $data['styles']['blocks']['core/post-title']['typography']
+		: array();
+
+	if ( docspress_is_legacy_post_title_typography( $typography ) ) {
+		unset(
+			$data['styles']['blocks']['core/post-title']['typography']['fontFamily'],
+			$data['styles']['blocks']['core/post-title']['typography']['fontWeight']
+		);
+
+		if ( empty( $data['styles']['blocks']['core/post-title']['typography'] ) ) {
+			unset( $data['styles']['blocks']['core/post-title']['typography'] );
+		}
+		if ( empty( $data['styles']['blocks']['core/post-title'] ) ) {
+			unset( $data['styles']['blocks']['core/post-title'] );
+		}
+		if ( empty( $data['styles']['blocks'] ) ) {
+			unset( $data['styles']['blocks'] );
+		}
+
+		wp_update_post(
+			array(
+				'ID'           => $post_id,
+				'post_content' => wp_slash(
+					wp_json_encode( $data, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP )
+				),
+			)
+		);
+
+		if ( function_exists( 'wp_clean_theme_json_cache' ) ) {
+			wp_clean_theme_json_cache();
+		}
+	}
+
+	update_option( 'docspress_post_title_typography_migration', '1', false );
+}
+add_action( 'admin_init', 'docspress_migrate_legacy_post_title_typography' );
+
+/**
+ * Give the reusable discussion shell its own meaningful template-part area.
+ *
+ * @param array<int,array<string,mixed>> $areas Registered areas.
+ * @return array<int,array<string,mixed>>
+ */
+function docspress_template_part_areas( $areas ) {
+	$areas[] = array(
+		'area'        => 'comments',
+		'area_tag'    => 'section',
+		'label'       => __( 'Comments', 'docspress' ),
+		'description' => __( 'Reusable discussion and reply-form layouts.', 'docspress' ),
+		'icon'        => 'sidebar',
+	);
+	return $areas;
+}
+add_filter( 'default_wp_template_part_areas', 'docspress_template_part_areas' );
+
+/**
+ * Install the bundled DocsPress icon as the initial editable Site Logo.
+ *
+ * WordPress stores the Site Logo as a Media Library attachment. Seeding the
+ * bundled PNG once lets the core Site Logo block display, replace, crop, or
+ * remove it normally. The marker prevents a deliberately removed logo from
+ * being restored on a later request.
+ */
+function docspress_maybe_seed_default_site_logo() {
+	if ( get_option( 'docspress_default_site_logo_seeded' ) ) {
+		return;
+	}
+
+	$current_logo_id = absint( get_option( 'site_logo' ) );
+	if ( ! $current_logo_id ) {
+		$current_logo_id = absint( get_theme_mod( 'custom_logo' ) );
+	}
+
+	if ( $current_logo_id && wp_attachment_is_image( $current_logo_id ) ) {
+		update_option( 'docspress_default_site_logo_seeded', $current_logo_id );
+		return;
+	}
+
+	$existing_default = get_posts(
+		array(
+			'fields'         => 'ids',
+			'meta_key'       => '_docspress_default_site_logo',
+			'meta_value'     => '1',
+			'post_status'    => 'inherit',
+			'post_type'      => 'attachment',
+			'posts_per_page' => 1,
+		)
+	);
+
+	if ( $existing_default ) {
+		$logo_id = absint( $existing_default[0] );
+	} else {
+		$source = get_theme_file_path( 'assets/images/docspress-hybrid-logo.png' );
+		if ( ! is_readable( $source ) ) {
+			return;
+		}
+
+		$image = file_get_contents( $source );
+		if ( false === $image ) {
+			return;
+		}
+
+		$upload = wp_upload_bits( 'docspress-logo.png', null, $image );
+		if ( ! empty( $upload['error'] ) ) {
+			return;
+		}
+
+		$filetype = wp_check_filetype( $upload['file'], null );
+		$logo_id  = wp_insert_attachment(
+			array(
+				'guid'           => $upload['url'],
+				'post_mime_type' => $filetype['type'],
+				'post_status'    => 'inherit',
+				'post_title'     => __( 'DocsPress logo', 'docspress' ),
+			),
+			$upload['file']
+		);
+
+		if ( is_wp_error( $logo_id ) ) {
+			return;
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+		$metadata = wp_generate_attachment_metadata( $logo_id, $upload['file'] );
+		if ( $metadata ) {
+			wp_update_attachment_metadata( $logo_id, $metadata );
+		}
+		update_post_meta( $logo_id, '_wp_attachment_image_alt', __( 'DocsPress', 'docspress' ) );
+		update_post_meta( $logo_id, '_docspress_default_site_logo', '1' );
+	}
+
+	update_option( 'site_logo', $logo_id );
+	if ( ! absint( get_option( 'site_icon' ) ) ) {
+		update_option( 'site_icon', $logo_id );
+	}
+	update_option( 'docspress_default_site_logo_seeded', $logo_id );
+}
+add_action( 'init', 'docspress_maybe_seed_default_site_logo', 20 );
+
+/**
+ * Enqueue the shared theme runtime.
  */
 function docspress_assets() {
 	$theme = wp_get_theme();
+
 	wp_enqueue_style( 'docspress-style', get_stylesheet_uri(), array(), $theme->get( 'Version' ) );
 	wp_enqueue_script(
 		'docspress-navigation',
@@ -84,17 +318,8 @@ function docspress_assets() {
 			'strategy'  => 'defer',
 		)
 	);
-
-	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
-		wp_enqueue_script( 'comment-reply' );
-	}
 }
 add_action( 'wp_enqueue_scripts', 'docspress_assets' );
-
-require get_theme_file_path( 'inc/customizer.php' );
-require get_theme_file_path( 'inc/llms.php' );
-require get_theme_file_path( 'inc/performance.php' );
-require get_theme_file_path( 'inc/search.php' );
 
 /**
  * Return a small inline icon.
@@ -105,142 +330,110 @@ require get_theme_file_path( 'inc/search.php' );
 function docspress_icon( $name ) {
 	$icons = array(
 		'book'     => '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4.8c2.6-.7 4.9-.2 7 1.4v13c-2.1-1.6-4.4-2.1-7-1.4v-13Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M19 4.8c-2.6-.7-4.9-.2-7 1.4v13c2.1-1.6 4.4-2.1 7-1.4v-13Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
+		'github'   => '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.58 2 12.23c0 4.51 2.87 8.34 6.84 9.69.5.1.68-.22.68-.49 0-.24-.01-1.05-.01-1.9-2.78.62-3.37-1.2-3.37-1.2-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.35 1.12 2.92.85.09-.66.35-1.12.64-1.37-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.04 1.03-2.76-.1-.26-.45-1.3.1-2.72 0 0 .84-.28 2.75 1.05A9.36 9.36 0 0 1 12 6.92c.85 0 1.69.12 2.49.34 1.91-1.33 2.75-1.05 2.75-1.05.55 1.42.2 2.46.1 2.72.64.72 1.03 1.64 1.03 2.76 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.8 0 .27.18.59.69.49A10.25 10.25 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z"/></svg>',
 		'menu'     => '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
-		'search'   => '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
-		'sun'      => '<svg class="theme-icon-light" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="3.7" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
 		'moon'     => '<svg class="theme-icon-dark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 15.3A8.5 8.5 0 0 1 8.7 4a8.5 8.5 0 1 0 11.3 11.3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
 		'pencil'   => '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14.7 5.3 4 4M5 19l2.1-5.1L16.6 4.4a1.4 1.4 0 0 1 2 0l1 1a1.4 1.4 0 0 1 0 2L10.1 17 5 19Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-		'github'   => '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.58 2 12.23c0 4.51 2.87 8.34 6.84 9.69.5.1.68-.22.68-.49 0-.24-.01-1.05-.01-1.9-2.78.62-3.37-1.2-3.37-1.2-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.35 1.12 2.92.85.09-.66.35-1.12.64-1.37-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.04 1.03-2.76-.1-.26-.45-1.3.1-2.72 0 0 .84-.28 2.75 1.05A9.36 9.36 0 0 1 12 6.92c.85 0 1.69.12 2.49.34 1.91-1.33 2.75-1.05 2.75-1.05.55 1.42.2 2.46.1 2.72.64.72 1.03 1.64 1.03 2.76 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.8 0 .27.18.59.69.49A10.25 10.25 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z"/></svg>',
-		'external' => '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 5h5v5M19 5l-8 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
+		'search'   => '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+		'sun'      => '<svg class="theme-icon-light" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="3.7" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
 	);
 
 	return isset( $icons[ $name ] ) ? $icons[ $name ] : '';
 }
 
 /**
- * Whether the theme should render the native discussion for a singular post.
+ * Resolve a reusable documentation root slug to a Page ID.
  *
- * Core comment status, registration, moderation, threading, paging, and order
- * remain controlled by WordPress. These theme settings only control placement.
- *
- * @param int $post_id Post ID.
- * @return bool
- */
-function docspress_should_show_comments( $post_id = 0 ) {
-	$post_id   = $post_id ? absint( $post_id ) : get_the_ID();
-	$post_type = get_post_type( $post_id );
-	$enabled   = 'page' === $post_type
-		? get_theme_mod( 'docspress_comments_on_pages', true )
-		: get_theme_mod( 'docspress_comments_on_posts', true );
-
-	return (bool) $enabled && ( comments_open( $post_id ) || 0 < get_comments_number( $post_id ) );
-}
-
-/**
- * Render post metadata with the configured visibility controls.
- *
- * @param int  $post_id Post ID.
- * @param bool $compact Whether to render the compact archive-card variant.
- */
-function docspress_post_meta( $post_id = 0, $compact = false ) {
-	$post_id = $post_id ? absint( $post_id ) : get_the_ID();
-	if ( ! $post_id || ! get_theme_mod( 'docspress_show_post_meta', true ) ) {
-		return;
-	}
-
-	$parts = array();
-	if ( get_theme_mod( 'docspress_show_post_date', true ) ) {
-		$parts[] = sprintf(
-			'<time datetime="%1$s">%2$s</time>',
-			esc_attr( get_the_date( DATE_W3C, $post_id ) ),
-			esc_html( get_the_date( '', $post_id ) )
-		);
-	}
-
-	if ( get_theme_mod( 'docspress_show_post_author', true ) ) {
-		$author_id = (int) get_post_field( 'post_author', $post_id );
-		$parts[]   = sprintf(
-			'<span class="byline">%1$s <a href="%2$s">%3$s</a></span>',
-			esc_html__( 'By', 'docspress' ),
-			esc_url( get_author_posts_url( $author_id ) ),
-			esc_html( get_the_author_meta( 'display_name', $author_id ) )
-		);
-	}
-
-	if ( ! $compact && get_theme_mod( 'docspress_show_comment_count', true ) && ( comments_open( $post_id ) || get_comments_number( $post_id ) ) ) {
-		$parts[] = sprintf(
-			'<a href="%1$s">%2$s</a>',
-			esc_url( get_comments_link( $post_id ) ),
-			esc_html(
-				sprintf(
-					/* translators: %s: Number of comments. */
-					_n( '%s comment', '%s comments', get_comments_number( $post_id ), 'docspress' ),
-					number_format_i18n( get_comments_number( $post_id ) )
-				)
-			)
-		);
-	}
-
-	if ( $parts ) {
-		echo '<div class="entry-meta">' . implode( '<span aria-hidden="true">·</span>', $parts ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Each part is escaped while assembled.
-	}
-}
-
-/**
- * Resolve the root page for the documentation tree.
- *
+ * @param string $root_slug Page path or slug.
  * @return int
  */
-function docspress_get_docs_root_id() {
-	$root_id = absint( get_theme_mod( 'docspress_docs_root', 0 ) );
-
-	if ( $root_id ) {
-		return $root_id;
+function docspress_get_docs_root_id( $root_slug = 'docs' ) {
+	$root_slug = trim( sanitize_text_field( (string) $root_slug ), '/' );
+	if ( $root_slug ) {
+		$page = get_page_by_path( $root_slug, OBJECT, 'page' );
+		if ( $page instanceof WP_Post && 'publish' === $page->post_status ) {
+			return (int) $page->ID;
+		}
 	}
 
 	if ( is_page() ) {
 		$current_id = get_queried_object_id();
 		$ancestors  = get_post_ancestors( $current_id );
-		return $ancestors ? (int) end( $ancestors ) : $current_id;
+		return $ancestors ? (int) end( $ancestors ) : (int) $current_id;
 	}
 
 	return 0;
 }
 
 /**
- * Get pages belonging to the configured documentation tree.
- *
- * @return WP_Post[]
+ * Keep the Site Editor Styles canvas focused on the complete documentation
+ * template instead of an individual Page's content entity.
  */
-function docspress_get_docs_pages() {
-	static $page_cache = array();
-
-	$root_id = docspress_get_docs_root_id();
-	$sort     = get_theme_mod( 'docspress_sidebar_sort', 'menu_order' );
-	$sort     = in_array( $sort, array( 'menu_order', 'title', 'newest', 'oldest' ), true ) ? $sort : 'menu_order';
-	$cache_id = $root_id . ':' . $sort;
-
-	if ( isset( $page_cache[ $cache_id ] ) ) {
-		return $page_cache[ $cache_id ];
+function docspress_site_editor_preview_context() {
+	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+	if ( ! $screen || 'site-editor' !== $screen->id ) {
+		return;
 	}
 
-	$sort_options = array(
+	$theme       = wp_get_theme();
+	$script_path = get_theme_file_path( 'assets/js/site-editor-preview.js' );
+	$version     = is_readable( $script_path ) ? (string) filemtime( $script_path ) : $theme->get( 'Version' );
+
+	wp_enqueue_script(
+		'docspress-site-editor-preview',
+		get_theme_file_uri( 'assets/js/site-editor-preview.js' ),
+		array( 'wp-compose', 'wp-element', 'wp-hooks' ),
+		$version,
+		true
+	);
+	wp_add_inline_script(
+		'docspress-site-editor-preview',
+		'window.docspressSiteEditorPreview = ' . wp_json_encode(
+			array(
+				'archivePostId' => get_stylesheet() . '//archive',
+				'postId'        => get_stylesheet() . '//page',
+				'postType'      => 'wp_template',
+			)
+		) . ';',
+		'before'
+	);
+}
+add_action( 'enqueue_block_editor_assets', 'docspress_site_editor_preview_context' );
+
+/**
+ * Get published Pages within a documentation tree.
+ *
+ * @param string $root_slug Documentation root path.
+ * @param string $sort      menu_order, title, newest, or oldest.
+ * @return WP_Post[]
+ */
+function docspress_get_docs_pages( $root_slug = 'docs', $sort = 'menu_order' ) {
+	static $page_cache = array();
+
+	$root_id = docspress_get_docs_root_id( $root_slug );
+	$sort    = in_array( $sort, array( 'menu_order', 'title', 'newest', 'oldest' ), true ) ? $sort : 'menu_order';
+	$key     = $root_id . ':' . $sort;
+	if ( isset( $page_cache[ $key ] ) ) {
+		return $page_cache[ $key ];
+	}
+
+	$options = array(
 		'menu_order' => array( 'menu_order,post_title', 'ASC' ),
 		'title'      => array( 'post_title', 'ASC' ),
 		'newest'     => array( 'post_date', 'DESC' ),
 		'oldest'     => array( 'post_date', 'ASC' ),
 	);
-	$pages        = get_pages(
+	$pages   = get_pages(
 		array(
 			'post_status' => 'publish',
-			'sort_column' => $sort_options[ $sort ][0],
-			'sort_order'  => $sort_options[ $sort ][1],
+			'sort_column' => $options[ $sort ][0],
+			'sort_order'  => $options[ $sort ][1],
 		)
 	);
 
 	if ( ! $root_id ) {
-		$page_cache[ $cache_id ] = $pages;
-		return $page_cache[ $cache_id ];
+		$page_cache[ $key ] = $pages;
+		return $page_cache[ $key ];
 	}
 
 	$parents = array();
@@ -248,7 +441,7 @@ function docspress_get_docs_pages() {
 		$parents[ (int) $page->ID ] = (int) $page->post_parent;
 	}
 
-	$page_cache[ $cache_id ] = array_values(
+	$page_cache[ $key ] = array_values(
 		array_filter(
 			$pages,
 			static function ( $page ) use ( $root_id, $parents ) {
@@ -264,13 +457,13 @@ function docspress_get_docs_pages() {
 		)
 	);
 
-	return $page_cache[ $cache_id ];
+	return $page_cache[ $key ];
 }
 
 /**
- * Group Pages by parent once so large documentation trees render in linear time.
+ * Group Pages by parent for linear-time navigation rendering.
  *
- * @param WP_Post[] $pages Documentation pages.
+ * @param WP_Post[] $pages Documentation Pages.
  * @return array<int,WP_Post[]>
  */
 function docspress_group_pages_by_parent( $pages ) {
@@ -282,19 +475,59 @@ function docspress_group_pages_by_parent( $pages ) {
 		}
 		$grouped[ $parent ][] = $page;
 	}
-
 	return $grouped;
 }
 
 /**
- * Recursively render the docs page tree.
+ * Read DocsPress management metadata from a Page.
  *
- * @param WP_Post[] $pages     Pages to render.
- * @param int       $parent_id Parent page ID.
- * @param int       $root_id   Configured docs root.
- * @param int       $level     Current depth.
- * @param int       $max_depth Maximum depth, or zero for unlimited.
- * @param array     $grouped   Pages grouped by parent for recursion.
+ * @param int $post_id Page ID.
+ * @return array<string,mixed>
+ */
+function docspress_get_managed_metadata( $post_id = 0 ) {
+	static $cache = array();
+
+	$post_id = $post_id ? absint( $post_id ) : get_queried_object_id();
+	if ( ! $post_id ) {
+		return array();
+	}
+	if ( isset( $cache[ $post_id ] ) ) {
+		return $cache[ $post_id ];
+	}
+
+	$content = (string) get_post_field( 'post_content', $post_id, 'raw' );
+	$cache[ $post_id ] = array();
+	if ( $content && preg_match( '/<!--\s*docspress:(.*?)\s*-->/s', $content, $matches ) ) {
+		$parsed = json_decode( trim( $matches[1] ), true );
+		if ( is_array( $parsed ) && 1 === (int) ( isset( $parsed['version'] ) ? $parsed['version'] : 0 ) ) {
+			$cache[ $post_id ] = $parsed;
+		}
+	}
+	return $cache[ $post_id ];
+}
+
+/**
+ * Return a Page's requested initial sidebar state.
+ *
+ * @param int $post_id Page ID.
+ * @return bool|null
+ */
+function docspress_get_sidebar_collapsed( $post_id = 0 ) {
+	$metadata = docspress_get_managed_metadata( $post_id );
+	return array_key_exists( 'sidebarCollapsed', $metadata ) && is_bool( $metadata['sidebarCollapsed'] )
+		? $metadata['sidebarCollapsed']
+		: null;
+}
+
+/**
+ * Render a nested Page tree.
+ *
+ * @param WP_Post[] $pages      Documentation Pages.
+ * @param int       $parent_id  Parent ID.
+ * @param int       $root_id    Root ID.
+ * @param int       $level      Current level.
+ * @param int       $max_depth  Maximum level, zero for unlimited.
+ * @param array     $grouped    Pages grouped by parent.
  */
 function docspress_render_page_tree( $pages, $parent_id = 0, $root_id = 0, $level = 1, $max_depth = 0, $grouped = null ) {
 	if ( $max_depth && $level > $max_depth ) {
@@ -302,18 +535,16 @@ function docspress_render_page_tree( $pages, $parent_id = 0, $root_id = 0, $leve
 	}
 
 	$grouped = null === $grouped ? docspress_group_pages_by_parent( $pages ) : $grouped;
-	if ( $root_id && 0 === $parent_id ) {
-		$children = array_values(
+	$children = $root_id && 0 === $parent_id
+		? array_values(
 			array_filter(
 				$pages,
 				static function ( $page ) use ( $root_id ) {
 					return (int) $page->ID === $root_id;
 				}
 			)
-		);
-	} else {
-		$children = isset( $grouped[ $parent_id ] ) ? $grouped[ $parent_id ] : array();
-	}
+		)
+		: ( isset( $grouped[ $parent_id ] ) ? $grouped[ $parent_id ] : array() );
 
 	if ( ! $children ) {
 		return;
@@ -321,18 +552,15 @@ function docspress_render_page_tree( $pages, $parent_id = 0, $root_id = 0, $leve
 
 	echo '<ul>';
 	foreach ( $children as $page ) {
-		$is_current        = (int) get_queried_object_id() === (int) $page->ID;
-		$sidebar_collapsed = docspress_get_sidebar_collapsed( $page->ID );
-		$collapsed_attr    = null === $sidebar_collapsed
-			? ''
-			: ' data-sidebar-collapsed="' . ( $sidebar_collapsed ? 'true' : 'false' ) . '"';
+		$current   = (int) get_queried_object_id() === (int) $page->ID;
+		$collapsed = docspress_get_sidebar_collapsed( $page->ID );
 		printf(
-			'<li data-doc-title="%1$s"><a href="%2$s"%3$s%5$s><span class="nav-dot" aria-hidden="true"></span><span>%4$s</span></a>',
+			'<li data-doc-title="%1$s"><a href="%2$s"%3$s%4$s><span class="nav-dot" aria-hidden="true"></span><span>%5$s</span></a>',
 			esc_attr( wp_strip_all_tags( $page->post_title ) ),
 			esc_url( get_permalink( $page ) ),
-			$is_current ? ' aria-current="page"' : '',
-			esc_html( $page->post_title ),
-			$collapsed_attr // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Attribute is assembled from fixed boolean strings.
+			$current ? ' aria-current="page"' : '',
+			null === $collapsed ? '' : ' data-sidebar-collapsed="' . ( $collapsed ? 'true' : 'false' ) . '"',
+			esc_html( $page->post_title )
 		);
 		docspress_render_page_tree( $pages, (int) $page->ID, 0, $level + 1, $max_depth, $grouped );
 		echo '</li>';
@@ -341,55 +569,92 @@ function docspress_render_page_tree( $pages, $parent_id = 0, $root_id = 0, $leve
 }
 
 /**
- * Add stable IDs to article headings and build a table of contents.
+ * Flatten the Page tree in the same order used by navigation.
  *
- * @param string $content Rendered post content.
+ * @param WP_Post[] $pages      Documentation Pages.
+ * @param int       $root_id    Root ID.
+ * @param int       $parent     Parent ID.
+ * @param int       $level      Current level.
+ * @param int       $max_depth  Maximum level, zero for unlimited.
+ * @param array     $grouped    Pages grouped by parent.
+ * @return WP_Post[]
+ */
+function docspress_flatten_page_tree( $pages, $root_id = 0, $parent = 0, $level = 1, $max_depth = 0, $grouped = null ) {
+	if ( $max_depth && $level > $max_depth ) {
+		return array();
+	}
+
+	$flat     = array();
+	$grouped  = null === $grouped ? docspress_group_pages_by_parent( $pages ) : $grouped;
+	$children = $root_id && 0 === $parent
+		? array_values(
+			array_filter(
+				$pages,
+				static function ( $page ) use ( $root_id ) {
+					return (int) $page->ID === $root_id;
+				}
+			)
+		)
+		: ( isset( $grouped[ $parent ] ) ? $grouped[ $parent ] : array() );
+
+	foreach ( $children as $page ) {
+		$flat[] = $page;
+		$flat   = array_merge( $flat, docspress_flatten_page_tree( $pages, 0, (int) $page->ID, $level + 1, $max_depth, $grouped ) );
+	}
+	return $flat;
+}
+
+/**
+ * Add stable IDs to headings and build a table of contents.
+ *
+ * @param string $content   Rendered content.
+ * @param int    $min_level Lowest heading level.
+ * @param int    $max_level Highest heading level.
  * @return array{content:string,toc:array<int,array{level:int,id:string,title:string}>}
  */
-function docspress_prepare_content( $content ) {
-	$toc  = array();
-	$used = array();
+function docspress_prepare_content( $content, $min_level = 2, $max_level = 3 ) {
+	$toc       = array();
+	$used      = array();
+	$min_level = min( 6, max( 1, absint( $min_level ) ) );
+	$max_level = min( 6, max( $min_level, absint( $max_level ) ) );
 
 	$content = preg_replace_callback(
-		'/<h([2-3])([^>]*)>(.*?)<\/h\1>/is',
-		static function ( $matches ) use ( &$toc, &$used ) {
-			$level      = (int) $matches[1];
+		'/<h([1-6])([^>]*)>(.*?)<\/h\1>/is',
+		static function ( $matches ) use ( &$toc, &$used, $min_level, $max_level ) {
+			$level = (int) $matches[1];
+			if ( $level < $min_level || $level > $max_level ) {
+				return $matches[0];
+			}
+
 			$attributes = $matches[2];
 			$inner      = $matches[3];
 			$title      = trim( wp_strip_all_tags( $inner ) );
-
 			if ( '' === $title ) {
 				return $matches[0];
 			}
 
-			if ( preg_match( '/\sid=(["\'])(.*?)\1/i', $attributes, $id_match ) ) {
-				$id = sanitize_title( $id_match[2] );
-			} else {
-				$id = sanitize_title( $title );
-				$id = $id ? $id : 'section';
-			}
-
+			$id = preg_match( '/\sid=(["\'])(.*?)\1/i', $attributes, $id_match )
+				? sanitize_title( $id_match[2] )
+				: sanitize_title( $title );
+			$id = $id ? $id : 'section';
 			$base = $id;
-			$i    = 2;
+			$index = 2;
 			while ( isset( $used[ $id ] ) ) {
-				$id = $base . '-' . $i;
-				++$i;
+				$id = $base . '-' . $index++;
 			}
 			$used[ $id ] = true;
 
 			if ( ! preg_match( '/\sid=(["\'])(.*?)\1/i', $attributes ) ) {
 				$attributes .= ' id="' . esc_attr( $id ) . '"';
 			}
-
 			$toc[] = array(
 				'level' => $level,
 				'id'    => $id,
 				'title' => $title,
 			);
-
 			return '<h' . $level . $attributes . '>' . $inner . '</h' . $level . '>';
 		},
-		$content
+		(string) $content
 	);
 
 	return array(
@@ -399,140 +664,18 @@ function docspress_prepare_content( $content ) {
 }
 
 /**
- * Return the previous and next pages in sidebar order.
+ * Add heading anchors to the Post Content block used by documentation pages.
  *
- * @param int $current_id Current page ID.
- * @return array{previous:?WP_Post,next:?WP_Post}
+ * @param string $block_content Rendered block.
+ * @return string
  */
-function docspress_get_adjacent_pages( $current_id ) {
-	if ( 'custom_menu' === get_theme_mod( 'docspress_sidebar_source', 'page_tree' ) ) {
-		$pages = docspress_get_custom_menu_pages();
-		$ids   = wp_list_pluck( $pages, 'ID' );
-		$index = array_search( $current_id, $ids, true );
-
-		if ( false === $index ) {
-			return array( 'previous' => null, 'next' => null );
-		}
-
-		return array(
-			'previous' => $index > 0 ? $pages[ $index - 1 ] : null,
-			'next'     => $index < count( $pages ) - 1 ? $pages[ $index + 1 ] : null,
-		);
-	}
-
-	$root_id   = docspress_get_docs_root_id();
-	$show_root = get_theme_mod( 'docspress_sidebar_show_root', true );
-	$max_depth = absint( get_theme_mod( 'docspress_sidebar_depth', 0 ) );
-	$pages     = $root_id && ! $show_root
-		? docspress_flatten_page_tree( docspress_get_docs_pages(), 0, $root_id, 1, $max_depth )
-		: docspress_flatten_page_tree( docspress_get_docs_pages(), $root_id, 0, 1, $max_depth );
-	$ids   = wp_list_pluck( $pages, 'ID' );
-	$index = array_search( $current_id, $ids, true );
-
-	if ( false === $index ) {
-		return array( 'previous' => null, 'next' => null );
-	}
-
-	return array(
-		'previous' => $index > 0 ? $pages[ $index - 1 ] : null,
-		'next'     => $index < count( $pages ) - 1 ? $pages[ $index + 1 ] : null,
-	);
+function docspress_post_content_anchors( $block_content ) {
+	return is_page() ? docspress_prepare_content( $block_content, 2, 6 )['content'] : $block_content;
 }
+add_filter( 'render_block_core/post-content', 'docspress_post_content_anchors' );
 
 /**
- * Return Page objects in the configured custom sidebar menu order.
- *
- * @return WP_Post[]
- */
-function docspress_get_custom_menu_pages() {
-	$menu_id = absint( get_theme_mod( 'docspress_sidebar_menu', 0 ) );
-	if ( ! $menu_id ) {
-		$locations = get_nav_menu_locations();
-		$menu_id   = isset( $locations['docs_sidebar'] ) ? absint( $locations['docs_sidebar'] ) : 0;
-	}
-
-	if ( ! $menu_id ) {
-		return array();
-	}
-
-	$items     = wp_get_nav_menu_items( $menu_id );
-	$max_depth = absint( get_theme_mod( 'docspress_sidebar_depth', 0 ) );
-	if ( ! $items || is_wp_error( $items ) ) {
-		return array();
-	}
-
-	$parents = array();
-	foreach ( $items as $item ) {
-		$parents[ (int) $item->ID ] = (int) $item->menu_item_parent;
-	}
-
-	$pages = array();
-	foreach ( $items as $item ) {
-		if ( 'page' !== $item->object ) {
-			continue;
-		}
-
-		$depth  = 1;
-		$parent = (int) $item->menu_item_parent;
-		while ( $parent && isset( $parents[ $parent ] ) ) {
-			++$depth;
-			$parent = $parents[ $parent ];
-		}
-
-		if ( $max_depth && $depth > $max_depth ) {
-			continue;
-		}
-
-		$page = get_post( (int) $item->object_id );
-		if ( $page instanceof WP_Post && 'publish' === $page->post_status ) {
-			$pages[] = $page;
-		}
-	}
-
-	return $pages;
-}
-
-/**
- * Flatten the page hierarchy in the same depth-first order used by the sidebar.
- *
- * @param WP_Post[] $pages   Documentation pages.
- * @param int       $root_id Documentation root page.
- * @param int       $parent  Parent ID for recursion.
- * @param int       $level   Current depth.
- * @param int       $max_depth Maximum depth, or zero for unlimited.
- * @param array     $grouped Pages grouped by parent for recursion.
- * @return WP_Post[]
- */
-function docspress_flatten_page_tree( $pages, $root_id = 0, $parent = 0, $level = 1, $max_depth = 0, $grouped = null ) {
-	if ( $max_depth && $level > $max_depth ) {
-		return array();
-	}
-
-	$flat    = array();
-	$grouped = null === $grouped ? docspress_group_pages_by_parent( $pages ) : $grouped;
-	if ( $root_id && 0 === $parent ) {
-		$children = array_values(
-			array_filter(
-				$pages,
-				static function ( $page ) use ( $root_id ) {
-					return (int) $page->ID === $root_id;
-				}
-			)
-		);
-	} else {
-		$children = isset( $grouped[ $parent ] ) ? $grouped[ $parent ] : array();
-	}
-
-	foreach ( $children as $page ) {
-		$flat[] = $page;
-		$flat   = array_merge( $flat, docspress_flatten_page_tree( $pages, 0, (int) $page->ID, $level + 1, $max_depth, $grouped ) );
-	}
-
-	return $flat;
-}
-
-/**
- * Get Docspress version taxonomy terms when the site has registered them.
+ * Return version taxonomy terms when the site registers them.
  *
  * @return array{terms:WP_Term[],current:int}
  */
@@ -541,130 +684,15 @@ function docspress_get_versions() {
 		return array( 'terms' => array(), 'current' => 0 );
 	}
 
-	$terms = get_terms(
-		array(
-			'taxonomy'   => 'docspress_version',
-			'hide_empty' => true,
-		)
-	);
-
-	if ( is_wp_error( $terms ) ) {
-		$terms = array();
-	}
-
+	$terms = get_terms( array( 'taxonomy' => 'docspress_version', 'hide_empty' => true ) );
+	$terms = is_wp_error( $terms ) ? array() : $terms;
 	$current_terms = is_page() ? wp_get_post_terms( get_queried_object_id(), 'docspress_version' ) : array();
-	$current_id    = ( $current_terms && ! is_wp_error( $current_terms ) ) ? (int) $current_terms[0]->term_id : 0;
-
+	$current_id = ( $current_terms && ! is_wp_error( $current_terms ) ) ? (int) $current_terms[0]->term_id : 0;
 	return array( 'terms' => $terms, 'current' => $current_id );
 }
 
 /**
- * Output breadcrumb navigation for a page.
- */
-function docspress_breadcrumbs() {
-	if ( ! is_page() ) {
-		return;
-	}
-
-	$ancestors = array_reverse( get_post_ancestors( get_queried_object_id() ) );
-	if ( ! $ancestors ) {
-		return;
-	}
-
-	echo '<nav class="breadcrumbs" aria-label="' . esc_attr__( 'Breadcrumbs', 'docspress' ) . '"><ol>';
-	foreach ( $ancestors as $ancestor_id ) {
-		printf(
-			'<li><a href="%1$s">%2$s</a></li>',
-			esc_url( get_permalink( $ancestor_id ) ),
-			esc_html( get_the_title( $ancestor_id ) )
-		);
-	}
-	echo '<li aria-current="page">' . esc_html( get_the_title() ) . '</li></ol></nav>';
-}
-
-/**
- * Use a useful excerpt for documentation pages.
- *
- * @return string
- */
-function docspress_page_summary() {
-	if ( has_excerpt() ) {
-		return get_the_excerpt();
-	}
-
-	return '';
-}
-
-/**
- * Read DocsPress's hidden management metadata for a Page.
- *
- * @param int $post_id Page ID.
- * @return array<string,mixed>
- */
-function docspress_get_managed_metadata( $post_id = 0 ) {
-	static $metadata_cache = array();
-
-	$post_id = $post_id ? absint( $post_id ) : get_queried_object_id();
-	if ( ! $post_id ) {
-		return array();
-	}
-
-	if ( isset( $metadata_cache[ $post_id ] ) ) {
-		return $metadata_cache[ $post_id ];
-	}
-
-	$content  = (string) get_post_field( 'post_content', $post_id, 'raw' );
-	$metadata = array();
-	if ( $content && preg_match( '/<!--\s*docspress:(.*?)\s*-->/s', $content, $matches ) ) {
-		$parsed = json_decode( trim( $matches[1] ), true );
-		if ( is_array( $parsed ) && 1 === (int) ( isset( $parsed['version'] ) ? $parsed['version'] : 0 ) ) {
-			$metadata = $parsed;
-		}
-	}
-
-	$metadata_cache[ $post_id ] = $metadata;
-	return $metadata_cache[ $post_id ];
-}
-
-/**
- * Return a Page's explicit initial sidebar state.
- *
- * @param int $post_id Page ID.
- * @return bool|null
- */
-function docspress_get_sidebar_collapsed( $post_id = 0 ) {
-	$metadata = docspress_get_managed_metadata( $post_id );
-	if ( ! array_key_exists( 'sidebarCollapsed', $metadata ) || ! is_bool( $metadata['sidebarCollapsed'] ) ) {
-		return null;
-	}
-
-	return $metadata['sidebarCollapsed'];
-}
-
-/**
- * Add managed collapse metadata to Page links in the custom docs menu.
- *
- * @param array    $attributes Menu link attributes.
- * @param WP_Post  $item       Menu item.
- * @param stdClass $args       Menu arguments.
- * @return array
- */
-function docspress_sidebar_menu_link_attributes( $attributes, $item, $args ) {
-	if ( empty( $args->theme_location ) || 'docs_sidebar' !== $args->theme_location || 'page' !== $item->object ) {
-		return $attributes;
-	}
-
-	$collapsed = docspress_get_sidebar_collapsed( (int) $item->object_id );
-	if ( null !== $collapsed ) {
-		$attributes['data-sidebar-collapsed'] = $collapsed ? 'true' : 'false';
-	}
-
-	return $attributes;
-}
-add_filter( 'nav_menu_link_attributes', 'docspress_sidebar_menu_link_attributes', 10, 3 );
-
-/**
- * Normalize a file-backed Docspress source path.
+ * Normalize a repository-relative Markdown source path.
  *
  * @param mixed $source Untrusted source path.
  * @return string
@@ -678,26 +706,16 @@ function docspress_normalize_markdown_source_path( $source ) {
 	if ( '' === $source || '/' === $source[0] || false !== strpos( $source, ':' ) || false !== strpos( $source, "\0" ) ) {
 		return '';
 	}
-
-	$segments = explode( '/', $source );
-	foreach ( $segments as $segment ) {
+	foreach ( explode( '/', $source ) as $segment ) {
 		if ( '' === $segment || '.' === $segment || '..' === $segment ) {
 			return '';
 		}
 	}
-
-	if ( ! preg_match( '/\.(?:md|markdown|mdx)$/i', $source ) ) {
-		return '';
-	}
-
-	return implode( '/', $segments );
+	return preg_match( '/\.(?:md|markdown|mdx)$/i', $source ) ? $source : '';
 }
 
 /**
- * Read the exact Markdown path stored by Docspress.
- *
- * Managed Pages keep this in their hidden sentinel. The post meta fallback is
- * useful for hand-authored Pages and local demos.
+ * Read the exact synchronized Markdown source path.
  *
  * @param int $post_id Page ID.
  * @return string
@@ -706,60 +724,51 @@ function docspress_get_markdown_source_path( $post_id = 0 ) {
 	$post_id  = $post_id ? absint( $post_id ) : get_queried_object_id();
 	$metadata = docspress_get_managed_metadata( $post_id );
 	$source   = isset( $metadata['source'] ) ? $metadata['source'] : '';
-
 	if ( ! $source && $post_id ) {
 		$source = get_post_meta( $post_id, '_docspress_source_path', true );
 	}
-
-	/**
-	 * Filter the Markdown source path before validation.
-	 *
-	 * @param mixed $source   Source path from the sentinel or post meta.
-	 * @param int   $post_id  Page ID.
-	 * @param array $metadata Parsed sentinel metadata, when available.
-	 */
 	$source = apply_filters( 'docspress_markdown_source_path', $source, $post_id, $metadata );
-
 	return docspress_normalize_markdown_source_path( $source );
 }
 
 /**
- * Build a GitHub edit URL for the current Page's exact Markdown source.
+ * Build a GitHub editor URL for the current Markdown source.
  *
- * @param int $post_id Page ID.
+ * @param int    $post_id   Page ID.
+ * @param string $repository Repository URL.
+ * @param string $ref        Branch or tag.
  * @return string
  */
-function docspress_get_github_edit_url( $post_id = 0 ) {
+function docspress_get_github_edit_url( $post_id = 0, $repository = 'https://github.com/Automattic/docspress', $ref = 'main' ) {
 	$source = docspress_get_markdown_source_path( $post_id );
 	if ( ! $source ) {
 		return '';
 	}
 
-	$repository = get_theme_mod( 'docspress_github_edit_repository_url', '' );
-	$repository = $repository ? $repository : get_theme_mod( 'docspress_github_url', 'https://github.com/Automattic/docspress' );
-	$repository = untrailingslashit( esc_url_raw( $repository ) );
-	$repository = preg_replace( '/\.git$/i', '', $repository );
-	$repository_parts = wp_parse_url( $repository );
+	$repository = preg_replace( '/\.git$/i', '', untrailingslashit( esc_url_raw( $repository ) ) );
+	$parts      = wp_parse_url( $repository );
 	if (
 		! $repository ||
-		! is_array( $repository_parts ) ||
-		empty( $repository_parts['scheme'] ) ||
-		empty( $repository_parts['host'] ) ||
-		! in_array( strtolower( $repository_parts['scheme'] ), array( 'http', 'https' ), true ) ||
-		isset( $repository_parts['user'] ) ||
-		isset( $repository_parts['pass'] ) ||
-		isset( $repository_parts['query'] ) ||
-		isset( $repository_parts['fragment'] )
+		! is_array( $parts ) ||
+		empty( $parts['scheme'] ) ||
+		empty( $parts['host'] ) ||
+		! in_array( strtolower( $parts['scheme'] ), array( 'http', 'https' ), true ) ||
+		isset( $parts['user'] ) ||
+		isset( $parts['pass'] ) ||
+		isset( $parts['query'] ) ||
+		isset( $parts['fragment'] )
 	) {
 		return '';
 	}
 
-	$ref = trim( (string) get_theme_mod( 'docspress_github_edit_ref', 'main' ) );
+	$ref = trim( (string) $ref );
 	if ( ! preg_match( '#^[A-Za-z0-9._/-]+$#', $ref ) || false !== strpos( $ref, '..' ) ) {
 		$ref = 'main';
 	}
-
-	$encoded_source = implode( '/', array_map( 'rawurlencode', explode( '/', $source ) ) );
-
-	return $repository . '/edit/' . rawurlencode( $ref ) . '/' . $encoded_source;
+	$source = implode( '/', array_map( 'rawurlencode', explode( '/', $source ) ) );
+	return $repository . '/edit/' . rawurlencode( $ref ) . '/' . $source;
 }
+
+require get_theme_file_path( 'inc/blocks.php' );
+require get_theme_file_path( 'inc/llms.php' );
+require get_theme_file_path( 'inc/performance.php' );

@@ -12,7 +12,6 @@
 	border-radius: var(--dp-radius, 10px);
 	background: var(--db-tree-surface);
 	box-shadow: none;
-	color: var(--dp-copy, #2c3338);
 }
 
 .docspress-preset-docspress .wp-block-docspress-file-tree,

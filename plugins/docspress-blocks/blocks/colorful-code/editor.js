@@ -12,6 +12,7 @@
 		SelectControl,
 		TextControl,
 		__,
+		designSupports,
 		el,
 		languages,
 		presetClass,
@@ -39,7 +40,7 @@
 			showLineNumbers: { type: 'boolean', default: true },
 			caption: { type: 'string', default: '' }
 		},
-		supports: { anchor: true, html: false },
+		supports: designSupports,
 		edit: function ColorfulCodeEdit( { attributes, setAttributes } ) {
 			const blockProps = useBlockProps( {
 				className: `docspress-code docspress-code--editor ${ presetClass }`,

@@ -77,7 +77,7 @@ function docspress_blocks_register_result() {
 				'content' => array( 'type' => 'string', 'default' => '<p>All documentation pages are up to date.</p>' ),
 				'meta'    => array( 'type' => 'string', 'default' => '12 pages · 1.8s' ),
 			),
-			'supports'        => array( 'anchor' => true, 'html' => false ),
+			'supports'        => docspress_blocks_design_supports(),
 		)
 	);
 }

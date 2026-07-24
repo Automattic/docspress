@@ -3,8 +3,8 @@
  * Plugin Name:       DocsPress Blocks
  * Plugin URI:        https://github.com/Automattic/docspress/tree/main/plugins/docspress-blocks
  * Description:       Documentation-focused Gutenberg blocks for homepages, audience routing, code, prompts, API exchanges, terminal sessions, results, file trees, and semantic callouts.
- * Version:           0.6.6
- * Requires at least: 6.5
+ * Version:           0.7.0
+ * Requires at least: 6.6
  * Requires PHP:      7.4
  * Author:            Automattic
  * License:           GPL-2.0-or-later
@@ -16,10 +16,68 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DOCSPRESS_BLOCKS_VERSION', '0.6.6' );
+define( 'DOCSPRESS_BLOCKS_VERSION', '0.7.0' );
 define( 'DOCSPRESS_BLOCKS_FILE', __FILE__ );
 define( 'DOCSPRESS_BLOCKS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'DOCSPRESS_BLOCKS_URL', plugin_dir_url( __FILE__ ) );
+
+/**
+ * Design tools shared by every DocsPress block.
+ *
+ * These map directly to the Block Editor's Styles panel. Content-specific
+ * options remain in each block's inspector while colors, typography, spacing,
+ * borders, dimensions, and positioning use native WordPress controls.
+ *
+ * @param array<int,string>|false $align Optional supported alignments.
+ * @return array<string,mixed>
+ */
+function docspress_blocks_design_supports( $align = false ) {
+	$supports = array(
+		'anchor'     => true,
+		'html'       => false,
+		'className'  => true,
+		'color'      => array(
+			'background' => true,
+			'gradients'  => true,
+			'link'       => true,
+			'text'       => true,
+		),
+		'spacing'    => array(
+			'blockGap' => true,
+			'margin'   => true,
+			'padding'  => true,
+		),
+		'typography' => array(
+			'fontFamily'    => true,
+			'fontSize'      => true,
+			'fontStyle'     => true,
+			'fontWeight'    => true,
+			'letterSpacing' => true,
+			'lineHeight'    => true,
+			'textDecoration' => true,
+			'textTransform' => true,
+		),
+		'border'     => array(
+			'color'  => true,
+			'radius' => true,
+			'style'  => true,
+			'width'  => true,
+		),
+		'dimensions' => array(
+			'minHeight' => true,
+		),
+		'position'   => array(
+			'sticky' => true,
+		),
+		'shadow'     => true,
+	);
+
+	if ( $align ) {
+		$supports['align'] = $align;
+	}
+
+	return $supports;
+}
 
 require_once DOCSPRESS_BLOCKS_PATH . 'includes/code-surface.php';
 require_once DOCSPRESS_BLOCKS_PATH . 'blocks/hero/block.php';
@@ -48,52 +106,12 @@ function docspress_blocks_register_shared_assets() {
 		true
 	);
 
-	$theme_is_docspress = function_exists( 'docspress_get_design_setting' ) && function_exists( 'docspress_font_stacks' );
-	$default_preset     = $theme_is_docspress ? 'docspress' : 'custom';
-	$design_preset      = sanitize_key( (string) get_theme_mod( 'docspress_design_preset', $default_preset ) );
-	$editor_tokens      = array();
-
-	if ( $theme_is_docspress ) {
-		$fonts        = docspress_font_stacks();
-		$ui_key       = docspress_get_design_setting( 'docspress_ui_font', 'nunito' );
-		$content_key  = docspress_get_design_setting( 'docspress_content_font', 'sans' );
-		$heading_key  = docspress_get_design_setting( 'docspress_heading_font', 'interface' );
-		$ui_font      = isset( $fonts[ $ui_key ] ) ? $fonts[ $ui_key ] : $fonts['nunito'];
-		$content_font = 'sans' === $content_key ? $ui_font : ( isset( $fonts[ $content_key ] ) ? $fonts[ $content_key ] : $fonts['charter'] );
-		$heading_font = 'interface' === $heading_key ? $ui_font : ( isset( $fonts[ $heading_key ] ) ? $fonts[ $heading_key ] : $ui_font );
-		$color_tokens = array(
-			'--dp-blue'        => array( 'docspress_accent_color', '#3858e9' ),
-			'--dp-blue-dark'   => array( 'docspress_accent_strong', '#2145d8' ),
-			'--dp-blue-soft'   => array( 'docspress_accent_soft', '#eef1ff' ),
-			'--dp-paper'       => array( 'docspress_paper_color', '#ffffff' ),
-			'--dp-canvas'      => array( 'docspress_canvas_color', '#f8f9fb' ),
-			'--dp-ink'         => array( 'docspress_ink_color', '#171a22' ),
-			'--dp-copy'        => array( 'docspress_copy_color', '#3d4351' ),
-			'--dp-muted'       => array( 'docspress_muted_color', '#6f7685' ),
-			'--dp-line'        => array( 'docspress_line_color', '#e4e7ec' ),
-			'--dp-line-strong' => array( 'docspress_line_strong_color', '#cfd4dc' ),
-		);
-
-		$editor_tokens = array(
-			'--dp-radius'         => absint( docspress_get_design_setting( 'docspress_border_radius', 10 ) ) . 'px',
-			'--dp-heading-weight' => (string) absint( docspress_get_design_setting( 'docspress_heading_weight', 750 ) ),
-			'--dp-font-ui'        => $ui_font,
-			'--dp-font-copy'      => $content_font,
-			'--dp-font-heading'   => $heading_font,
-		);
-
-		foreach ( $color_tokens as $variable => $color ) {
-			$value                      = sanitize_hex_color( docspress_get_design_setting( $color[0], $color[1] ) );
-			$editor_tokens[ $variable ] = $value ? $value : $color[1];
-		}
-	}
-
 	wp_add_inline_script(
 		'docspress-blocks-editor-shared',
 		'window.docspressBlocksSettings = ' . wp_json_encode(
 			array(
-				'preset' => $design_preset ? $design_preset : 'custom',
-				'tokens' => $editor_tokens,
+				'preset' => 'site-editor',
+				'tokens' => array(),
 			)
 		) . ';',
 		'before'

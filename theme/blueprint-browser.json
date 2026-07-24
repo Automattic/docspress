@@ -3,7 +3,7 @@
 	"meta": {
 		"title": "DocsPress Theme Playground",
 		"author": "Automattic",
-		"description": "A browser-ready DocsPress site with a custom homepage, documentation, posts, threaded comments, menus, and Customizer controls."
+		"description": "A browser-ready DocsPress block-theme site with editable templates, style variations, documentation, posts, threaded comments, and Site Editor components."
 	},
 	"preferredVersions": {
 		"php": "8.3",
@@ -13,7 +13,7 @@
 		"JETPACK_DEV_DEBUG": true,
 		"WP_ENVIRONMENT_TYPE": "development"
 	},
-	"landingPage": "/wp-admin/customize.php?autofocus%5Bpanel%5D=docspress_theme",
+	"landingPage": "/wp-admin/site-editor.php",
 	"login": true,
 	"steps": [
 		{

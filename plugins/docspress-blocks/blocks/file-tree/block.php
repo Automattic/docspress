@@ -90,7 +90,7 @@ function docspress_blocks_register_file_tree() {
 				'tree'    => array( 'type' => 'string', 'default' => "docs/\n  getting-started.md\n  api/\n    endpoints.md\npackage.json" ),
 				'caption' => array( 'type' => 'string', 'default' => '' ),
 			),
-			'supports'        => array( 'anchor' => true, 'html' => false ),
+			'supports'        => docspress_blocks_design_supports(),
 		)
 	);
 }

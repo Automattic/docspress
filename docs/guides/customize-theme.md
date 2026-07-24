@@ -1,77 +1,105 @@
 ---
-title: Customize the theme in WordPress
+title: Customize the theme in the Site Editor
 ---
 
-DocsPress keeps the documentation shell configurable through WordPress. Open **Appearance → Customize → DocsPress Theme** to change the design while the documentation preview updates beside the controls.
+DocsPress is a native block theme. Open **Appearance → Editor** to change the complete documentation site with WordPress blocks and Global Styles. There is no separate Customizer panel or hidden theme-settings layer.
 
-![The DocsPress Theme panel in the WordPress Customizer](https://raw.githubusercontent.com/Automattic/docspress/main/theme/assets/images/customizer/theme-panel.jpg "The DocsPress Theme panel groups visual and behavioral settings by job.")
+## Choose a visual system
 
-## Choose a design preset
+Open **Design → Styles → Browse styles**. The default DocsPress style includes three parent visual systems modeled on WordPress.org, WordPress.com, and Jetpack.
 
-Open **Design presets** and choose DocsPress, WordPress.org, WordPress.com, or Jetpack. A preset applies a complete recipe for color, typography, spacing, and corner radius. Changing an individual recipe value afterward preserves the change and marks the configuration as Custom.
+After selecting a family, open **Styles → Colors → Palette** to choose its color variation:
 
-![The Design presets section with the Jetpack preset applied in live preview](https://raw.githubusercontent.com/Automattic/docspress/main/theme/assets/images/customizer/design-preset-jetpack.jpg "Selecting Jetpack immediately updates the preview's typography, colors, and interface details.")
+| Style family | Color variations |
+| --- | --- |
+| WordPress.org | Blueberry, Lemon, Purple |
+| WordPress.com | Blue, Ink, Warm |
+| Jetpack | Green, Electric, Forest |
 
-The DocsPress Blocks plugin follows the selected preset in the editor and on the published site. Every block surface inherits the preset’s corner radius, borders, light and dark colors, interface type, copy type, and heading type; changing those theme settings updates the blocks instead of leaving a second visual system behind. Documentation-block accents remain semantic so code, prompts, callouts, API exchanges, terminal sessions, results, and file trees stay legible. The design-focused Hero and Audience Paths blocks additionally offer intentional color and layout overrides.
+The parent style controls the family’s typography, corners, and component recipes. The Page heading is one example: DocsPress uses the outlined label with an offset shadow, WordPress.org uses an editorial rule, WordPress.com uses an underlined publishing label, and Jetpack uses a green signal bar with bold sans-serif type. Each palette variation replaces the full light and dark semantic color system without replacing that family recipe, updating the documentation shell and DocsPress content blocks together. Because these are native WordPress color-only style variations, editors can also mix a palette with another family when desired.
 
-## Build the site homepage
+To tune the result, open **Styles → Colors**, **Typography**, **Layout**, or **Blocks**. WordPress exposes the configured palettes, gradients, duotones, font families, fluid sizes, spacing scale, shadows, borders, minimum height, and layout widths without a theme build.
 
-First choose a static front Page and optional posts page under **Settings → Reading**. Edit that front Page, insert **DocsPress: Hero**, and customize it in the block editor. Add **DocsPress: Audience Paths** after it when different readers should enter dedicated documentation roots. The Playground Home page already contains both blocks.
+## Replace the site logo
 
-The block canvas edits the eyebrow, title, description, and action labels. Its clean default inherits the active theme’s type, colors, borders, and radius. The sidebar controls actions and URLs, artwork, alternative text, image placement, height, alignment, and optional presentation overrides. Grid, orbit, inverse styles, and custom colors are opt-in. Empty action labels or URLs hide that button; removing the image creates a text-only hero.
+Open the Header template part and select the **Site Logo** block. A new site starts with the bundled DocsPress icon as the single logo. Use **Replace** to upload or choose another image from the Media Library; WordPress updates that Site Logo everywhere. The block’s **Use as Site Icon** setting is enabled in the default header, so replacing it can also update the browser and app icon.
 
-Audience Paths edits every visible label directly in the canvas. Add up to six paths, then give each one a Page-root URL, semantic vector icon, accent, and optional new-tab behavior in the sidebar. The icon selector keeps the visual language consistent across sites, developers, agencies, contributors, tasks, tools, and support routes; legacy abbreviation values still render as the matching icon. Keep the spacious layout for the primary homepage choice; enable **Compact layout** for smaller task routers within documentation articles. The default split asks whether the repository already has Markdown docs: existing docs lead to `/docs/publish-existing-docs/`, while a source-only project leads to `/docs/create-docs-with-ai/`. Normal child Pages beneath those roots provide each path’s focused sidebar branch.
+## Edit templates and template parts
 
-Open **DocsPress Theme → Homepage** only to switch between the site landing template and the familiar documentation Page template, or to enable and configure the optional one-to-six-post recent grid. Recent posts are hidden by default so a documentation landing page stays focused. The landing template renders the front Page’s Gutenberg blocks directly, so the Hero and any following content remain normal editable Page content.
+Open **Design → Templates** to edit Page, Front Page, Single, Blog Home, Archive, Search, 404, Index, wide-content, and no-sidebar layouts.
 
-The [DocsPress browser Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground) opens directly in this logged-in customization environment with representative content already seeded.
+The normal Page template is a composition of independently editable blocks:
+
+1. Header template part
+2. Documentation navigation
+3. Breadcrumbs
+4. Post Title
+5. Page Summary
+6. Edit links
+7. Post Content
+8. Adjacent navigation
+9. Table of contents
+10. Footer template part
+
+Select a component to move, duplicate, replace, style, or delete it. Edit **Patterns → Manage all my patterns → Template parts** to change the Header, Footer, or Comments everywhere.
+
+<!-- wp:docspress/callout {"tone":"tip","title":"Keep layout changes portable","content":"<p>Make site-wide shell changes in Templates and Template Parts. Use a Page’s editor only for that Page’s content, and assign the Wide content or Page without documentation sidebar template when it needs a different shell.</p>","collapsible":false} /-->
 
 ## Configure documentation navigation
 
-Open **Navigation**, choose the synchronized documentation root, and select either the automatic Page hierarchy or a hand-built WordPress menu. The live preview shows the exact sidebar tree readers will receive.
+Select **Docs navigation** in the Page template and open Block Settings. You can change:
 
-![The Navigation section with the documentation root and automatic hierarchy controls](https://raw.githubusercontent.com/Automattic/docspress/main/theme/assets/images/customizer/navigation.jpg "Navigation can follow the managed Page hierarchy or a selected WordPress menu.")
+- sidebar title;
+- sidebar width;
+- synchronized Page root slug;
+- automatic Page hierarchy or classic-menu source;
+- menu name, slug, or ID;
+- Page sort order;
+- root Page visibility;
+- maximum nesting depth;
+- filter visibility and placeholder;
+- version selector visibility;
+- desktop collapse/expand control, initial state, and labels;
+- empty-state text.
 
-Use the remaining controls to choose Page ordering, include or hide the root Page, limit nesting depth, change the sidebar heading, and configure the filter or version selector.
+The default root slug is `docs`, matching the DocsPress Action’s default `root-slug`. `sidebar_position` maps to native Page order, while `sidebar_collapsed` controls a managed section’s initial disclosure state.
 
-Parent Pages keep their normal links and gain a separate disclosure button for their children. Inactive branches start collapsed, while the branch containing the current Page always opens. Use Markdown frontmatter `sidebar_collapsed: false` to keep a managed section expanded or `sidebar_collapsed: true` to make its default explicit. With **Page order, then title** selected, `sidebar_position` controls a managed Page's order among its siblings. Hand-built menus keep their WordPress menu-item order.
+## Configure command search
 
-<!-- wp:docspress/callout {"tone":"tip","title":"Keep the synchronized root selected","content":"<p>Set Documentation root to the root Page created by DocsPress. This keeps unrelated site Pages out of the sidebar, search results, breadcrumbs, and previous/next navigation.</p>","collapsible":false} /-->
+Select **Command search** in the Header. Its settings control the trigger label, input placeholder, suggested/no-results copy, Page root, result limit, window width, height, and corner radius, overlay opacity and blur, hierarchy paths, excerpts, and keyboard hints.
 
-## Shape command search
+Search remains keyboard accessible and uses the Page tree beneath that block’s root slug. The setting belongs to the block instance, so a second template can search another documentation root.
 
-Open **Command search** to configure the `⌘K` or `Ctrl+K` experience. Labels, messages, result count, popup dimensions, corner radius, backdrop, result paths, excerpts, and the keyboard legend can all be adjusted without code.
+## Configure reading tools
 
-![The Command search customization controls in WordPress](https://raw.githubusercontent.com/Automattic/docspress/main/theme/assets/images/customizer/command-search-settings.jpg "The Command search section controls labels, messages, result count, dimensions, backdrop, and result details.")
+Each reading component has its own Block Settings:
 
-Open command search in the live preview to inspect the resulting reader experience before publishing:
+- **Breadcrumbs:** home link, home label, separator.
+- **Table of contents:** title, column width, and heading range from H1 through H6.
+- **Page Summary:** optional fallback text; it prefers a manually written excerpt and never auto-generates a duplicate from the first content paragraph.
+- **Edit links:** WordPress/GitHub links, labels, repository, and Git ref.
+- **Adjacent navigation:** root, ordering, depth, labels, and Page titles.
+- **Color-mode toggle:** accessible label, optional visible label, and light, dark, or device-following default.
+- **Documentation menu toggle:** accessible mobile-menu label.
 
-![The DocsPress command search window open with results for customize](https://raw.githubusercontent.com/Automattic/docspress/main/theme/assets/images/customizer/command-search-open.jpg "The open command window ranks the new customization guide first and highlights matching text.")
+Every component also receives native color, gradient, typography, spacing, border, dimensions, position, shadow, anchor, and CSS-class controls from WordPress.
 
-When command search is enabled, readers can open it from the header, press `⌘K` or `Ctrl+K`, or press `/`. Disabling it removes both the visible control and its keyboard shortcuts.
+## Customize documentation blocks
 
-## Configure posts and discussion
+The DocsPress Blocks plugin inherits Global Styles in the editor and on the published site. Its ten blocks expose native design tools in addition to their semantic settings:
 
-Open **Posts & archives** to decide whether post metadata, dates, authors, featured images, categories, and tags appear. These choices apply across the posts page, archives, search cards, and individual posts.
+- Hero and Audience Paths provide content, actions, artwork, layout, and presentation controls.
+- Code, Code Tabs, API Request / Response, Terminal Session, Result, File Tree, Callout, and Prompt provide the settings appropriate to their content.
+- All ten can be tuned with color, typography, spacing, borders, minimum height, sticky positioning, shadow, alignment where applicable, anchors, and classes.
 
-Open **Discussion** to show or hide conversations separately on Pages and posts. You can also change the headings, comment count, avatar display and size, dates, and the message shown when an existing thread is closed.
+Use **Styles → Blocks** for a site-wide default or select an individual block for a local override.
 
-The theme does not replace WordPress’s discussion workflow. Use **Settings → Discussion** for default comment status, account requirements, moderation, threading, paging, ordering, notifications, avatars, and spam behavior. Use the editor’s **Discussion** panel to open or close comments on one Page or post. If a closed item already has replies, DocsPress can keep those replies visible without showing a new-comment form.
+## Build the homepage
 
-<!-- wp:docspress/callout {"tone":"note","title":"Documentation comments are optional","content":"<p>Keep reference Pages closed, enable comments only on guides that benefit from questions, or hide all Page discussions from the theme while retaining normal post conversations.</p>","collapsible":false} /-->
+Choose a static front Page under **Settings → Reading**, then edit that Page with normal blocks. The Playground example uses DocsPress Hero and Audience Paths in the Page content, followed by the Front Page template’s independently editable latest-posts Query.
 
-## Finish the reading experience
+To change or remove the updates grid, open **Design → Templates → Front Page** and select the Query block. The template and homepage Page content remain independent, so editors can change its query, card design, columns, labels, or visibility without touching the Page.
 
-Return to the DocsPress Theme panel for the remaining sections:
+## Try it without installing
 
-- **Header** controls the menu, brand suffix, repository link, custom logo, and color-mode switcher.
-- **Layout & reading tools** controls article, sidebar, and table-of-contents widths plus breadcrumbs, previous/next navigation, excerpts, and edit actions.
-- **Homepage** selects the front-page template and recent posts; edit the front Page’s DocsPress Hero and Audience Paths blocks for its content, routing, and design.
-- **Posts & archives** controls metadata and taxonomy presentation.
-- **Discussion** controls where conversations appear and how they are labeled.
-- **Light & dark colors** exposes independent semantic palettes for both modes.
-- **Typography** selects the interface, reading, and heading stacks and adjusts reading size and heading weight.
-- **Article labels & actions** changes the kicker, table-of-contents label, and WordPress or GitHub action buttons.
-- **Footer** controls visibility, text, link, and the `{year}` and `{site_title}` placeholders.
-
-Use **Publish** only after the desktop, tablet, and mobile previews look correct. See [DocsPress WordPress theme](../reference/theme.md) for the complete control reference and installation details.
+[Open the DocsPress browser Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground). It signs in and opens the Site Editor with representative Pages, posts, comments, blocks, templates, and style variations already available.

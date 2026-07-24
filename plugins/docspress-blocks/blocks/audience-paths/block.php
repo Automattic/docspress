@@ -192,11 +192,7 @@ function docspress_blocks_register_audience_paths() {
 				'textColor'    => array( 'type' => 'string', 'default' => '' ),
 				'accentColor'  => array( 'type' => 'string', 'default' => '' ),
 			),
-			'supports'        => array(
-				'align'  => array( 'wide', 'full' ),
-				'anchor' => true,
-				'html'   => false,
-			),
+			'supports'        => docspress_blocks_design_supports( array( 'wide', 'full' ) ),
 		)
 	);
 }

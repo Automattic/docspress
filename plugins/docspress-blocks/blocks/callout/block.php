@@ -105,7 +105,7 @@ function docspress_blocks_register_callout() {
 				'collapsible' => array( 'type' => 'boolean', 'default' => false ),
 				'open'        => array( 'type' => 'boolean', 'default' => true ),
 			),
-			'supports'        => array( 'anchor' => true, 'html' => false ),
+			'supports'        => docspress_blocks_design_supports(),
 		)
 	);
 }

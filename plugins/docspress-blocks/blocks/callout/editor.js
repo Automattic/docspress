@@ -10,6 +10,7 @@
 		SelectControl,
 		ToggleControl,
 		__,
+		designSupports,
 		el,
 		presetClass,
 		themeStyle,
@@ -35,7 +36,7 @@
 			collapsible: { type: 'boolean', default: false },
 			open: { type: 'boolean', default: true }
 		},
-		supports: { anchor: true, html: false },
+		supports: designSupports,
 		edit: function CalloutEdit( { attributes, setAttributes } ) {
 			const blockProps = useBlockProps( {
 				className: `docspress-callout docspress-callout--${ attributes.tone } docspress-callout--editor ${ presetClass }`,

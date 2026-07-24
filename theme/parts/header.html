@@ -1,0 +1,38 @@
+<!-- wp:group {"align":"full","className":"site-header","layout":{"type":"constrained"}} -->
+<div class="wp-block-group alignfull site-header">
+	<!-- wp:group {"align":"wide","className":"header-inner","layout":{"type":"flex","flexWrap":"nowrap"}} -->
+	<div class="wp-block-group alignwide header-inner">
+		<!-- wp:group {"className":"brand","layout":{"type":"flex","flexWrap":"nowrap"}} -->
+		<div class="wp-block-group brand">
+			<!-- wp:site-logo {"width":34,"shouldSyncIcon":true,"className":"brand-mark"} /-->
+			<!-- wp:paragraph {"className":"brand-title"} -->
+			<p class="brand-title"><a href="/">DocsPress</a></p>
+			<!-- /wp:paragraph -->
+			<!-- wp:paragraph {"className":"brand-wordpress"} -->
+			<p class="brand-wordpress">on WordPress</p>
+			<!-- /wp:paragraph -->
+		</div>
+		<!-- /wp:group -->
+
+		<!-- wp:navigation {"overlayMenu":"mobile","className":"primary-navigation","style":{"spacing":{"blockGap":"var:preset|spacing|50"}},"layout":{"type":"flex"}} -->
+			<!-- wp:navigation-link {"label":"Docs","url":"/docs/","kind":"custom","isTopLevelLink":true} /-->
+			<!-- wp:navigation-link {"label":"Kitchen Sink","url":"/docs/reference/kitchen-sink/","kind":"custom","isTopLevelLink":true} /-->
+			<!-- wp:navigation-link {"label":"GitHub","url":"https://github.com/Automattic/docspress","kind":"custom","isTopLevelLink":true,"opensInNewTab":true} /-->
+		<!-- /wp:navigation -->
+
+		<!-- wp:group {"className":"header-actions","layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"right"}} -->
+		<div class="wp-block-group header-actions">
+			<!-- wp:docspress/command-search /-->
+			<!-- wp:docspress/color-mode-toggle /-->
+			<!-- wp:social-links {"iconColor":"ink","iconColorValue":"#232323","openInNewTab":true,"showLabels":false,"size":"has-small-icon-size","className":"is-style-logos-only repository-link"} -->
+			<ul class="wp-block-social-links has-small-icon-size has-icon-color is-style-logos-only repository-link">
+				<!-- wp:social-link {"url":"https://github.com/Automattic/docspress","service":"github"} /-->
+			</ul>
+			<!-- /wp:social-links -->
+			<!-- wp:docspress/docs-menu-toggle /-->
+		</div>
+		<!-- /wp:group -->
+	</div>
+	<!-- /wp:group -->
+</div>
+<!-- /wp:group -->

@@ -156,7 +156,7 @@ function docspress_blocks_register_prompt() {
 				'context'  => array( 'type' => 'string', 'default' => '$docspress-install, @repository, src/sync.js, docs/' ),
 				'caption'  => array( 'type' => 'string', 'default' => 'Prompt example' ),
 			),
-			'supports'        => array( 'anchor' => true, 'html' => false ),
+			'supports'        => docspress_blocks_design_supports(),
 		)
 	);
 }

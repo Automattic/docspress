@@ -20,7 +20,7 @@ DocsPress is the advantageous choice when documentation belongs in GitHub but Wo
 | Rich components | Gutenberg core blocks plus constrained DocsPress blocks | React components embedded through MDX |
 | Navigation | WordPress Page hierarchy or configurable menus | Sidebars generated or configured in the Docusaurus project |
 | Search | Theme-integrated Page search and command palette | First-class Algolia DocSearch; community local-search options |
-| Visual configuration | WordPress Customizer, presets, light/dark tokens, no theme build | React/Infima configuration, CSS, and component swizzling |
+| Visual configuration | Site Editor, Global Styles, editable templates and parts, no theme build | React/Infima configuration, CSS, and component swizzling |
 | Reader discussion | Optional native comments on individual Pages and posts | Usually requires a third-party commenting integration |
 | Platform ecosystem | WordPress users, plugins, REST APIs, menus, and site operations | Node.js, React, Docusaurus plugins, and static-host tooling |
 | Built-in versioned docs | Not currently provided by the DocsPress Action | Dedicated versioning CLI and versioned docs directories |
@@ -37,17 +37,17 @@ The first synchronization can create draft Pages for inspection. WordPress admin
 
 ### Constrained, theme-aware components
 
-DocsPress blocks cover code, tabs, callouts, HTTP exchanges, terminal output, results, file trees, and AI prompts. Authors choose semantic options, while the active design preset controls colors, typography, borders, radii, and light/dark behavior. That keeps generated documentation visually coherent without asking every author to design React components.
+DocsPress blocks cover code, tabs, callouts, HTTP exchanges, terminal output, results, file trees, and AI prompts. Authors choose semantic options, while Global Styles control colors, typography, spacing, borders, radii, dimensions, shadows, and light/dark behavior. That keeps generated documentation visually coherent without asking every author to design React components.
 
 ### WordPress-native navigation and customization
 
-The bundled theme can use the synchronized Page hierarchy automatically or use hand-built WordPress menus. Site owners can configure the header, sidebar, command search, article actions, typography, colors, footer, widths, and reading tools through the Customizer.
+The bundled block theme can use the synchronized Page hierarchy automatically or use a hand-built WordPress menu. Site owners edit the header, sidebar, command search, article actions, typography, colors, footer, widths, and reading tools directly in the Site Editor. Every shell component is an independently configurable block.
 
 ### Optional discussions where readers need them
 
-DocsPress can keep comments closed on reference material and enable them only on the Pages or posts where questions and feedback are useful. The theme presents threaded replies as part of the reading experience, while WordPress continues to own comment status, registration rules, moderation, notifications, paging, and spam controls. Site owners can hide discussions across all Pages or posts in the Customizer without deleting existing comments.
+DocsPress can keep comments closed on reference material and enable them only on the Pages or posts where questions and feedback are useful. The theme presents threaded replies through its editable Comments template part, while WordPress continues to own comment status, registration rules, moderation, notifications, paging, and spam controls. Removing the Comments template part hides that presentation without deleting existing comments.
 
-<!-- wp:docspress/callout {"tone":"tip","title":"Comments are opt-in per publishing surface","content":"<p>Use WordPress's per-Page discussion setting to decide where replies are accepted, then use <strong>DocsPress Theme → Discussion</strong> to control how Pages and posts expose that conversation.</p>","collapsible":false} /-->
+<!-- wp:docspress/callout {"tone":"tip","title":"Comments are opt-in per publishing surface","content":"<p>Use WordPress’s per-Page discussion setting to decide where replies are accepted, then edit the Comments template part to control how that conversation appears across the site.</p>","collapsible":false} /-->
 
 ### A smaller operational change for WordPress teams
 

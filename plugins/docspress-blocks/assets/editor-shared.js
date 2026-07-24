@@ -12,6 +12,45 @@
 	const themeStyle = window.docspressBlocksSettings && window.docspressBlocksSettings.tokens
 		? window.docspressBlocksSettings.tokens
 		: {};
+	const designSupports = {
+		anchor: true,
+		html: false,
+		className: true,
+		color: {
+			background: true,
+			gradients: true,
+			link: true,
+			text: true
+		},
+		spacing: {
+			blockGap: true,
+			margin: true,
+			padding: true
+		},
+		typography: {
+			fontFamily: true,
+			fontSize: true,
+			fontStyle: true,
+			fontWeight: true,
+			letterSpacing: true,
+			lineHeight: true,
+			textDecoration: true,
+			textTransform: true
+		},
+		border: {
+			color: true,
+			radius: true,
+			style: true,
+			width: true
+		},
+		dimensions: {
+			minHeight: true
+		},
+		position: {
+			sticky: true
+		},
+		shadow: true
+	};
 
 	const languages = [
 		{ label: 'Bash', value: 'bash' },
@@ -71,6 +110,7 @@
 		TextControl,
 		ToggleControl,
 		__,
+		designSupports,
 		el,
 		languages,
 		presetClass,

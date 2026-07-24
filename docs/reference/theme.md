@@ -1,79 +1,102 @@
 ---
-title: DocsPress WordPress theme
+title: Theme reference
 ---
 
-The companion theme turns the managed Page hierarchy into a Docusaurus-inspired reading experience while keeping WordPress navigation and customization native.
+The DocsPress theme is a native WordPress block theme. It uses `theme.json` version 3, HTML templates and template parts, Global Style variations, block style variations, API v3 dynamic blocks, and native block supports.
 
-## Reading experience
+## Requirements
 
-- Sticky full-height documentation sidebar with independently collapsible branches.
-- Automatic Page-tree navigation or a selected WordPress menu.
-- Header navigation menu and repository link.
-- `⌘K` or `Ctrl+K` command search across the configured docs tree.
-- Sidebar filtering, breadcrumbs, right-hand table of contents, and previous/next navigation.
-- WordPress edit and exact GitHub Markdown proposal actions.
-- A block-built custom site homepage and dedicated post, archive, search, and singular templates.
-- Optional native WordPress discussions with threaded replies and accessible forms.
-- Responsive navigation, light/dark mode, copy buttons, and print styles.
+- WordPress 6.6 or newer
+- PHP 7.4 or newer
+- DocsPress Blocks for `docspress/*` content blocks
 
-## Install and configure
+## Templates
 
-1. Copy `theme/` to `wp-content/themes/docspress` and `plugins/docspress-blocks/` to `wp-content/plugins/docspress-blocks`.
-2. Activate **DocsPress Blocks**, then activate **DocsPress**.
-3. Open **Appearance → Customize → DocsPress Theme**.
-4. Choose the synchronized root Page under **Navigation → Documentation root**.
-5. Add **DocsPress: Hero** and optional **DocsPress: Audience Paths** blocks to the front Page selected in **Settings → Reading**.
-6. Keep the Action input `create-h1: false` because the documentation template renders the Page title.
-
-<!-- wp:docspress/callout {"tone":"note","title":"Theme and sync are independent","content":"<p>The Action can synchronize Pages without this theme. The theme can render hand-authored Page trees without the Action. Use both for the complete workflow.</p>","collapsible":false} /-->
-
-## Customizer sections
-
-| Section | Controls |
+| Template | Purpose |
 | --- | --- |
-| Design presets | DocsPress, WordPress.org, WordPress.com, Jetpack, or individually customized tokens. |
-| Navigation | Docs root, Page tree or menu, order, depth, root visibility, filter, version-selector visibility. |
-| Homepage | Landing or documentation layout and the optional recent-post section. Hero content and audience routing live in the front Page’s DocsPress blocks. |
-| Header | Menu, brand suffix, color switcher/default mode, repository link, custom logo. |
-| Command search | Labels, dimensions, radius, backdrop, count, paths, excerpts, keyboard legend. |
-| Layout and reading tools | Article/sidebar/TOC widths, density, TOC, breadcrumbs, previous/next, excerpt, edit actions. |
-| Posts and archives | Metadata, date, author, featured image, categories, and tags. |
-| Discussion | Page/post visibility, headings, count, avatars, dates, and closed message. |
-| Light and dark colors | Independent accent, surface, text, muted, and border tokens. |
-| Typography | Interface, reading, and heading stacks, reading size, heading weight. |
-| Article labels and actions | Kicker, TOC heading, WordPress/GitHub action labels, source repository and ref. |
-| Footer | Visibility, text, optional link, `{year}` and `{site_title}` placeholders. |
+| Page | Documentation sidebar, article tools, content, adjacent links, and table of contents |
+| Page without documentation sidebar | Centered Page with article tools but no docs navigation |
+| Wide content | Wide Page or post content |
+| Front Page | Editable front Page content followed by an independently editable latest-posts Query |
+| Single | Post content, taxonomy, navigation, and comments |
+| Blog Home | Posts-page Query |
+| Archive | Inherited archive Query |
+| Search | Search-results Query |
+| 404 | Editable not-found layout and search |
+| Index | Required block-theme fallback |
 
-The default footer is `Documentation powered by WordPress and {site_title} · {year}`. The theme also registers native footer navigation and footer widget locations.
+Header, Footer, and Comments are editable template parts.
 
-## Homepage, posts, and discussion
+## Global style families and color variations
 
-Choose the front Page and posts page in **Settings → Reading**. Add **DocsPress: Hero** to the front Page and customize its text, actions, image, layout, decorations, and colors in the block editor. Add **DocsPress: Audience Paths** when readers with different starting states should enter distinct Page roots. The DocsPress **Homepage** theme section can render that Page’s Gutenberg blocks as a site landing page with optional recent posts, or preserve the standard three-column documentation layout.
+The theme includes three complete global style families under `theme/styles/theme/` and nine color-only variations under `theme/styles/color/`:
 
-Posts, archives, categories, tags, authors, search results, feeds, featured images, and previous/next post navigation use native WordPress data and dedicated templates. Their visible metadata is configurable under **Posts & archives**.
+| Style family | Color variations |
+| --- | --- |
+| WordPress.org | Blueberry, Lemon, Purple |
+| WordPress.com | Blue, Ink, Warm |
+| Jetpack | Green, Electric, Forest |
 
-Discussions are optional. The theme can independently expose them on Pages and posts, including existing replies after a thread closes. WordPress **Settings → Discussion** remains responsible for default status, registration, moderation, threading, paging, ordering, notifications, avatars, and spam handling; the per-post Discussion panel decides whether one specific item accepts replies.
+The parent family defines typography, corner treatment, component recipes, and a default palette. The Page heading recipe changes its label, marker, title scale, and divider between DocsPress, WordPress.org, WordPress.com, and Jetpack instead of recoloring the DocsPress treatment. Each child variation is color-only, so WordPress presents it under **Styles → Colors → Palette** instead of as another top-level style. Every palette defines the same light and dark semantic color slugs. Components consume those slugs, so switching palettes updates the entire system while preserving the selected family.
 
-Try these surfaces in the [browser-ready DocsPress Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground). It opens the logged-in Customizer with seeded homepage, post, and threaded-comment examples.
+The theme also ships JSON block style variations for Soft panel, Outline card, and Signal band, plus registered styles for Navigation, Button, and Post Template.
 
-## LLM-friendly endpoints
+## Site Editor blocks
 
-The theme generates `/llms.txt` with the site title, description, and absolute links to source-backed documentation Pages. Each normal Page route also has a clean Markdown representation by replacing its trailing slash with `.md`; for example, `/docs/guides/continuous-sync/` becomes `/docs/guides/continuous-sync.md`.
+| Block | Attributes |
+| --- | --- |
+| `docspress/docs-navigation` | `title`, `width`, `rootSlug`, `source`, `menuSlug`, `sort`, `showRoot`, `maxDepth`, `showFilter`, `filterPlaceholder`, `showVersions`, `emptyMessage`, `showCollapse`, `startCollapsed`, `collapseLabel`, `expandLabel` |
+| `docspress/command-search` | `label`, `placeholder`, `suggestedLabel`, `noResultsLabel`, `resultsLimit`, `rootSlug`, `width`, `height`, `radius`, `overlayOpacity`, `overlayBlur`, `showPaths`, `showExcerpts`, `showHints` |
+| `docspress/breadcrumbs` | `showHome`, `homeLabel`, `separator` |
+| `docspress/table-of-contents` | `title`, `width`, `minLevel`, `maxLevel` |
+| `docspress/page-summary` | `fallbackText` |
+| `docspress/edit-links` | `showWordPress`, `wordpressLabel`, `showGitHub`, `githubLabel`, `repositoryUrl`, `ref` |
+| `docspress/adjacent-navigation` | `rootSlug`, `sort`, `showRoot`, `maxDepth`, `previousLabel`, `nextLabel`, `showTitles` |
+| `docspress/color-mode-toggle` | `label`, `showLabel`, `defaultMode` |
+| `docspress/docs-menu-toggle` | `label` |
 
-Markdown responses preserve the exact synchronized source, including frontmatter, and use the `text/markdown` content type. Only published, file-backed DocsPress Pages are exposed. Generated placeholders and hand-authored WordPress Pages return `404`. Pages synchronized before this feature become available after the next DocsPress run refreshes their management metadata.
+All nine support native color, background, link color, gradients, typography, spacing, borders, minimum height, sticky positioning, shadow, anchor, and CSS-class controls. Their server renderers ensure the editor-facing parameters control live Page, navigation, heading, and source-path data. Page Summary displays a manually written Page excerpt or its optional fallback, preventing WordPress from generating a duplicate summary from the first paragraph.
 
-See [Make documentation AI-friendly](../guides/ai-friendly-documentation.md) for the discovery workflow, response examples, verification commands, and publishing boundaries.
+## `theme.json` controls
 
-## Sidebar frontmatter
+Site editors receive:
 
-Markdown-backed Pages can set `sidebar_position` to a signed integer and `sidebar_collapsed` to a boolean. Position maps to native WordPress Page order and applies to the automatic Page tree when **Page order, then title** is selected. Collapse defaults apply to both automatic navigation and Page-backed items in a custom sidebar menu; custom menu ordering remains controlled in WordPress.
+- custom colors, gradients, and duotones;
+- six font families and seven fluid size presets;
+- eight spacing presets;
+- border color, radius, style, and width;
+- two shadow presets;
+- aspect ratio and minimum height;
+- sticky positioning;
+- content and wide layout widths;
+- per-block and per-element styles.
 
-Parent Page links and disclosure buttons are separate controls. Inactive branches start collapsed, `sidebar_collapsed: false` keeps a branch open, and the current Page's ancestor path always opens. Filtering temporarily expands the tree to reveal matches, then restores the prior state. Without JavaScript, all links remain visible.
+Theme-specific CSS variables under `settings.custom` cover the header, sidebar, table-of-contents, article and search dimensions, heading weight, typography roles, radius, and family-specific Page heading recipe. Global Style families can replace these values; color-only variations replace the semantic light/dark palette.
 
-For a screenshot-led walkthrough of the native controls and live preview, see [Customize the theme in WordPress](../guides/customize-theme.md).
+## Content integration
 
-## Design presets
+The Docs Navigation, Command Search, and Adjacent Navigation blocks resolve a synchronized root by Page path, defaulting to `docs`. The Edit Links block combines `_docspress_source_path` metadata with its repository and ref attributes. Table of Contents uses the rendered current post content and assigns stable anchors to H1–H6 headings.
 
-Preset code is organized under `theme/inc/design-presets/{preset}/`. Each preset owns its setting recipe and optional scoped stylesheet, so new presets do not require a central registry edit.
+`sidebar_position` maps to `menu_order`; `sidebar_collapsed` is stored as managed Page metadata. Version navigation reads the taxonomy registered by the DocsPress synchronization plugin when available.
 
-The blocks plugin inherits the same preset, typography, borders, radii, and light/dark tokens. Authors choose semantics rather than arbitrary colors.
+## File layout
+
+```text
+theme/
+├── templates/*.html
+├── parts/*.html
+├── styles/
+│   ├── theme/*.json
+│   ├── color/*/*.json
+│   └── block/*.json
+├── assets/js/block-components.js
+├── assets/js/docs.js
+├── inc/blocks.php
+├── inc/llms.php
+├── inc/performance.php
+├── functions.php
+├── style.css
+└── theme.json
+```
+
+Use [Customize the theme in the Site Editor](../guides/customize-theme.md) for the editing workflow and [Gutenberg blocks](gutenberg-blocks.md) for content-block attributes.

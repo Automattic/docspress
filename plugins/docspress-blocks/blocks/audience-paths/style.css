@@ -66,7 +66,7 @@
 	content: "";
 }
 
-.docspress-audience-paths .docspress-audience-paths__title {
+:where(.docspress-audience-paths .docspress-audience-paths__title) {
 	margin: 0;
 	color: var(--db-paths-heading);
 	font-family: var(--dp-font-heading, var(--dp-font-ui, "Nunito Sans", "Trebuchet MS", sans-serif));
@@ -240,7 +240,7 @@ a.docspress-audience-paths__card:focus-visible {
 	margin-bottom: 8px;
 }
 
-.docspress-audience-paths--compact .docspress-audience-paths__title {
+:where(.docspress-audience-paths--compact .docspress-audience-paths__title) {
 	font-size: clamp(24px, 3vw, 32px);
 	line-height: 1.1;
 }

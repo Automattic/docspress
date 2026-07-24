@@ -76,7 +76,7 @@ function docspress_blocks_register_colorful_code() {
 				'showLineNumbers'   => array( 'type' => 'boolean', 'default' => true ),
 				'caption'           => array( 'type' => 'string', 'default' => '' ),
 			),
-			'supports'        => array( 'anchor' => true, 'html' => false ),
+			'supports'        => docspress_blocks_design_supports(),
 		)
 	);
 }

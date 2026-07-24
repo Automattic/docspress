@@ -13,7 +13,6 @@
 	border-radius: var(--dp-radius, 10px);
 	background: var(--db-prompt-surface);
 	box-shadow: none;
-	color: var(--dp-copy, #2c3338);
 }
 
 .docspress-preset-docspress .wp-block-docspress-prompt,
@@ -95,7 +94,6 @@
 
 .docspress-prompt__text {
 	min-height: 3.1em;
-	color: var(--dp-ink, #171a22);
 	font: 520 0.96rem/1.65 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
 	white-space: pre-wrap;
 	word-break: break-word;

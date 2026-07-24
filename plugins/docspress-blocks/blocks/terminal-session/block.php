@@ -73,7 +73,7 @@ function docspress_blocks_register_terminal_session() {
 				'command' => array( 'type' => 'string', 'default' => 'npx docspress publish ./docs' ),
 				'output'  => array( 'type' => 'string', 'default' => "✓ Read 12 documents\n✓ Published 12 WordPress pages" ),
 			),
-			'supports'        => array( 'anchor' => true, 'html' => false ),
+			'supports'        => docspress_blocks_design_supports(),
 		)
 	);
 }
