@@ -28,7 +28,7 @@
 		},
 		{
 			"step": "runPHP",
-			"code": "<?php require_once '/wordpress/wp-load.php'; require_once ABSPATH . 'wp-admin/includes/plugin.php'; $blocks = 'docspress-blocks/docspress-blocks.php'; if ( file_exists( WP_PLUGIN_DIR . '/' . $blocks ) && ! is_plugin_active( $blocks ) ) { activate_plugin( $blocks ); } wp_clean_themes_cache(); foreach ( wp_get_themes() as $slug => $theme ) { if ( 'DocsPress' === $theme->get( 'Name' ) ) { switch_theme( $slug ); require get_theme_root( $slug ) . '/' . $slug . '/playground/setup.php'; break; } }"
+			"code": "<?php require_once '/wordpress/wp-load.php'; require_once ABSPATH . 'wp-admin/includes/plugin.php'; $blocks = 'docspress-blocks/docspress-blocks.php'; if ( file_exists( WP_PLUGIN_DIR . '/' . $blocks ) && ! is_plugin_active( $blocks ) ) { activate_plugin( $blocks ); } wp_clean_themes_cache(); $slug = 'theme'; $theme = wp_get_theme( $slug ); if ( ! $theme->exists() || 'DocsPress' !== $theme->get( 'Name' ) ) { foreach ( wp_get_themes() as $candidate_slug => $candidate_theme ) { if ( 'DocsPress' === $candidate_theme->get( 'Name' ) ) { $slug = $candidate_slug; $theme = $candidate_theme; break; } } } if ( $theme->exists() && 'DocsPress' === $theme->get( 'Name' ) ) { switch_theme( $slug ); require get_theme_root( $slug ) . '/' . $slug . '/playground/setup.php'; }"
 		}
 	]
 }

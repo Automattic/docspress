@@ -48,7 +48,7 @@ Usage:
 Commands:
   token    Create and optionally store a WordPress.com OAuth token.
 
-Run "docspress token --help" for token options.
+Run "docspress <command> --help" for command options.
 `);
 }
 

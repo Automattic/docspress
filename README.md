@@ -18,6 +18,23 @@
   One link creates an editable WordPress site, converts the documentation tree into native Pages, and opens <code>/docs/</code>.
 </p>
 
+## One command from docs to WordPress
+
+Run this from any repository that contains a `docs/` directory:
+
+```bash
+npx @wp-playground/cli@latest start \
+  --blueprint=https://raw.githubusercontent.com/Automattic/docspress/main/theme/blueprint-local-docs.json \
+  --mount="$PWD/docs:/wordpress/docspress-source-docs" \
+  --no-auto-mount
+```
+
+That single official WordPress Playground command is the complete local preview workflow—there is no DocsPress executable to run first. The Blueprint reads every Markdown file from the mounted `docs/` directory, converts the hierarchy and content into native Gutenberg Pages, installs the DocsPress theme and blocks, signs you in, and opens `/docs/`. Headings, paragraphs, links, images, lists, quotes, tables, code fences, and existing Gutenberg or DocsPress block comments are carried into WordPress.
+
+The WordPress site is temporary and editable, so you can immediately explore the Pages, Site Editor, Global Styles, navigation, search, and custom documentation blocks without configuring a server or database. Add any native Playground option to the same command when needed—for example, `--port=9401` or `--skip-browser`.
+
+In other words: one command converts a repository’s `docs/` folder into a working WordPress documentation site.
+
 ## Install with an AI coding agent
 
 DocsPress includes two repository-aware skills. Choose the path that matches the target project:
@@ -62,9 +79,9 @@ Docspress is early software. The core sync loop works, and the first-class targe
 
 ## Repository layout
 
-- `src/`, `bin/`, and `scripts/` contain the GitHub Action, npm package, and Playground docs generator.
+- `src/`, `bin/`, and `scripts/` contain the GitHub Action, npm package, and generated documentation tooling.
 - [`docs/`](docs/) contains the source-backed DocsPress product documentation published by the Action and previewed in Playground.
-- [`theme/`](theme/) contains the installable DocsPress WordPress theme, the one-link documentation Blueprint, and the complete Site Editor demo Blueprint.
+- [`theme/`](theme/) contains the installable DocsPress WordPress theme, the mounted-docs importer, the one-link documentation Blueprint, and the complete Site Editor demo Blueprint.
 - [`plugins/docspress-blocks/`](plugins/docspress-blocks/) provides documentation-focused Gutenberg blocks and starter patterns.
 
 The WordPress theme and plugin directories are distributed through this GitHub repository. They are intentionally excluded from the `docspress` npm tarball, which remains focused on the Action and CLI runtime.
@@ -73,14 +90,13 @@ The WordPress theme and plugin directories are distributed through this GitHub r
 
 [Open the complete Site Editor demo](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground) to edit the seeded Hero and Audience Paths blocks, switch among ten complete visual systems, customize templates and shell components, and explore posts and threaded comments. Both experiences are temporary and require no installation.
 
-Run the complete WordPress experience from the repository root:
+Convert this repository's `docs/` directory and open the resulting WordPress site:
 
 ```bash
 npx @wp-playground/cli@latest start \
-  --path=theme \
-  --mount="$(pwd)/plugins/docspress-blocks:/wordpress/wp-content/plugins/docspress-blocks" \
-  --blueprint=theme/blueprint.json \
-  --port=9400
+  --blueprint=https://raw.githubusercontent.com/Automattic/docspress/main/theme/blueprint-local-docs.json \
+  --mount="$PWD/docs:/wordpress/docspress-source-docs" \
+  --no-auto-mount
 ```
 
 ## Quick start

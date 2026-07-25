@@ -1195,33 +1195,33 @@ body.command-search-open {
 	margin-top: 0;
 }
 
-:where(.entry-content) :where(h2),
-:where(.entry-content) :where(h3),
-:where(.entry-content) :where(h4) {
+.entry-content :where(h2),
+.entry-content :where(h3),
+.entry-content :where(h4) {
 	position: relative;
 	font-weight: 750;
 	letter-spacing: -0.026em;
 	line-height: 1.25;
 }
 
-:where(.entry-content) :where(h2),
-:where(.entry-content) :where(h3),
-:where(.entry-content) :where(h4) {
+.entry-content :where(h2),
+.entry-content :where(h3),
+.entry-content :where(h4) {
 	font-weight: var(--dp-heading-weight);
 }
 
-:where(.entry-content) :where(h2) {
+.entry-content :where(h2) {
 	margin: 2.25em 0 0.72em;
 	padding-top: 0.2em;
 	font-size: 29px;
 }
 
-:where(.entry-content) :where(h3) {
+.entry-content :where(h3) {
 	margin: 1.85em 0 0.65em;
 	font-size: 22px;
 }
 
-:where(.entry-content) :where(h4) {
+.entry-content :where(h4) {
 	margin: 1.6em 0 0.55em;
 	font-size: 18px;
 }
@@ -2507,7 +2507,7 @@ body.command-search-open {
 		font-size: 39px;
 	}
 
-	:where(.entry-content) :where(h2) {
+	.entry-content :where(h2) {
 		font-size: 25px;
 	}
 

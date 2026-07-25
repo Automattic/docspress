@@ -1,0 +1,51 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"meta": {
+		"title": "Local docs in DocsPress",
+		"author": "DocsPress",
+		"description": "Mount a repository docs directory, convert its Markdown files into native WordPress Pages, and open the editable DocsPress site."
+	},
+	"preferredVersions": {
+		"php": "8.3",
+		"wp": "latest"
+	},
+	"constants": {
+		"WP_ENVIRONMENT_TYPE": "development"
+	},
+	"landingPage": "/docs/",
+	"login": true,
+	"steps": [
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "git:directory",
+				"url": "https://github.com/Automattic/docspress",
+				"ref": "main",
+				"refType": "branch",
+				"path": "plugins/docspress-blocks"
+			},
+			"options": {
+				"activate": true,
+				"targetFolderName": "docspress-blocks"
+			}
+		},
+		{
+			"step": "installTheme",
+			"themeData": {
+				"resource": "git:directory",
+				"url": "https://github.com/Automattic/docspress",
+				"ref": "main",
+				"refType": "branch",
+				"path": "theme"
+			},
+			"options": {
+				"activate": true,
+				"targetFolderName": "docspress"
+			}
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php require_once '/wordpress/wp-load.php'; wp_clean_themes_cache(); $slug = 'docspress'; foreach ( array( 'theme', 'docspress' ) as $candidate_slug ) { $candidate = wp_get_theme( $candidate_slug ); $importer = get_theme_root( $candidate_slug ) . '/' . $candidate_slug . '/playground/import-local-docs.php'; if ( $candidate->exists() && 'DocsPress' === $candidate->get( 'Name' ) && file_exists( $importer ) ) { $slug = $candidate_slug; break; } } $theme = wp_get_theme( $slug ); $importer = get_theme_root( $slug ) . '/' . $slug . '/playground/import-local-docs.php'; if ( ! $theme->exists() || 'DocsPress' !== $theme->get( 'Name' ) || ! file_exists( $importer ) ) { wp_die( 'DocsPress local documentation importer is unavailable.' ); } switch_theme( $slug ); require $importer;"
+		}
+	]
+}

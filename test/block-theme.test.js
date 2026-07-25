@@ -232,12 +232,19 @@ describe("DocsPress block theme constraints", () => {
   it("provides a standard one-link Playground documentation experience", async () => {
     const docsBlueprintPath = path.join(root, "theme", "blueprint-docs.json");
     const docsBlueprint = JSON.parse(await fs.readFile(docsBlueprintPath, "utf8"));
+    const localDocsBlueprint = JSON.parse(
+      await fs.readFile(path.join(root, "theme", "blueprint-local-docs.json"), "utf8")
+    );
     const generated = JSON.parse(
       await fs.readFile(path.join(root, "theme", "playground", "generated-docs.json"), "utf8")
     );
     const readme = await fs.readFile(path.join(root, "README.md"), "utf8");
     const setup = await fs.readFile(
       path.join(root, "theme", "playground", "setup.php"),
+      "utf8"
+    );
+    const localDocsImporter = await fs.readFile(
+      path.join(root, "theme", "playground", "import-local-docs.php"),
       "utf8"
     );
 
@@ -275,6 +282,34 @@ describe("DocsPress block theme constraints", () => {
     expect(readme).toContain(
       "https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-docs.json"
     );
+    expect(localDocsBlueprint.landingPage).toBe("/docs/");
+    expect(localDocsBlueprint.login).toBe(true);
+    expect(localDocsBlueprint.steps).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          step: "runPHP",
+          code: expect.stringContaining("/playground/import-local-docs.php"),
+        }),
+      ])
+    );
+    expect(localDocsImporter).toContain("DOCSPRESS_LOCAL_DOCS_SOURCE");
+    expect(localDocsImporter).toContain("docspress_local_docs_markdown_to_blocks");
+    expect(localDocsImporter).toContain("_docspress_source_path");
+    expect(readme).toContain("npx @wp-playground/cli@latest start");
+    expect(readme).toContain("--mount=\"$PWD/docs:/wordpress/docspress-source-docs\"");
+    expect(readme).not.toContain("npx docspress@latest playground");
+    expect(readme).toContain("One command from docs to WordPress");
+  });
+
+  it("prefers the current mounted theme when reseeding the local Playground", async () => {
+    const blueprint = JSON.parse(
+      await fs.readFile(path.join(root, "theme", "blueprint.json"), "utf8")
+    );
+    const setupStep = blueprint.steps.find((step) => step.step === "runPHP");
+
+    expect(setupStep.code).toContain("$slug = 'theme'");
+    expect(setupStep.code).toContain("wp_get_theme( $slug )");
+    expect(setupStep.code).toContain("require get_theme_root( $slug )");
   });
 
   it("uses the exact theme radius instead of independent minimums or pills", async () => {
@@ -803,7 +838,7 @@ describe("DocsPress block theme constraints", () => {
     );
 
     expect(styles).toContain(":where(.entry-title) {");
-    expect(styles).toContain(":where(.entry-content) :where(h2)");
+    expect(styles).toContain(".entry-content :where(h2)");
     expect(styles).toContain(":where(.entry-content) :where(.wp-block-button__link)");
     expect(styles).toContain(":where(.page-action) {");
     expect(styles).toContain(".page-action-github.wp-element-button {");

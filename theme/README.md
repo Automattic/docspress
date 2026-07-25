@@ -6,6 +6,17 @@ DocsPress is a native WordPress block theme for documentation sites. Templates, 
 
 [Launch the complete Site Editor demo](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground) to seed the same documentation plus posts and discussion examples, then open the Site Editor.
 
+To convert any repository's local `docs/` directory into editable WordPress Pages, run the official Playground CLI from that repository:
+
+```bash
+npx @wp-playground/cli@latest start \
+  --blueprint=https://raw.githubusercontent.com/Automattic/docspress/main/theme/blueprint-local-docs.json \
+  --mount="$PWD/docs:/wordpress/docspress-source-docs" \
+  --no-auto-mount
+```
+
+The mounted-docs Blueprint performs the import inside WordPress; it does not require a DocsPress CLI wrapper.
+
 ## Requirements
 
 - WordPress 6.6 or newer
