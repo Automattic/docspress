@@ -715,6 +715,7 @@ describe("DocsPress block theme constraints", () => {
     expect(header).not.toContain('"blockGap"');
     expect(header).not.toContain('"justifyContent":"space-between"');
     expect(header).not.toContain('"fontSize":"small"');
+    expect(header).toContain('"fontSize":"16px"');
     expect(header).toContain('"fontSize":"17px"');
     expect(header).toContain('"fontSize":"14px"');
     expect(header).toContain('"fontWeight":"650"');
@@ -737,6 +738,9 @@ describe("DocsPress block theme constraints", () => {
     );
     expect(styles).toMatch(
       /@media \(max-width: 1024px\)\s*\{[\s\S]*?\.header-inner > \.primary-navigation,[\s\S]*?\.search-shortcut span,[\s\S]*?\.search-shortcut kbd[\s\S]*?display:\s*none;[\s\S]*?\.menu-toggle[\s\S]*?display:\s*inline-flex;[\s\S]*?\}/
+    );
+    expect(styles).toMatch(
+      /\.docspress-menu-toggle\s*\{[^}]*display:\s*none;[^}]*\}[\s\S]*?@media \(max-width: 1024px\)\s*\{[\s\S]*?\.docspress-menu-toggle\s*\{[^}]*display:\s*block;/s
     );
     expect(styles).toMatch(
       /\.brand\.wp-block-group\s*\{[^}]*gap:\s*11px;[^}]*\}/s
