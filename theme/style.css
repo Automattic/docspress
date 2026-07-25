@@ -3,7 +3,7 @@ Theme Name: DocsPress
 Theme URI: https://github.com/Automattic/docspress
 Author: Fatih Kadir Akın
 Description: A Site Editor-first documentation block theme for WordPress and DocsPress.
-Version: 0.8.2
+Version: 0.8.4
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 7.4
@@ -206,6 +206,7 @@ a {
 	top: 0;
 	z-index: 100;
 	height: var(--dp-header-height);
+	min-height: var(--dp-header-height);
 	border-bottom: 1px solid var(--dp-line);
 	backdrop-filter: blur(14px) saturate(140%);
 }
@@ -217,8 +218,9 @@ a {
 .header-inner {
 	display: flex;
 	align-items: center;
-	gap: 24px;
+	gap: clamp(12px, 2vw, 24px);
 	height: 100%;
+	min-height: var(--dp-header-height);
 	width: 100%;
 	padding: 0 16px;
 }
@@ -228,6 +230,7 @@ a {
 	align-items: center;
 	gap: 11px;
 	flex-shrink: 0;
+	line-height: 1.1;
 	text-decoration: none;
 }
 
@@ -264,35 +267,57 @@ a {
 	font-weight: var(--wp--custom--heading-weight, 700);
 }
 
+.brand-title,
+.brand-wordpress {
+	line-height: 1.1;
+	white-space: nowrap;
+}
+
 .brand-wordpress {
 	opacity: 0.72;
 }
 
 .primary-navigation {
 	display: flex;
+	flex: 0 1 auto;
 	align-items: center;
+	min-width: 0;
 	margin-left: 18px;
 }
 
 .primary-navigation ul {
 	display: flex;
+	flex-wrap: nowrap;
 	align-items: center;
-	gap: 4px;
+	gap: 4px !important;
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
 
 .primary-navigation a {
-	display: block;
+	display: flex;
+	align-items: center;
+	min-height: 36px;
 	padding: 8px 10px;
 	border-radius: 7px;
+	line-height: 1.1;
 	text-decoration: none;
+	white-space: nowrap;
 }
 
-.primary-navigation a:hover,
-.primary-navigation .current-menu-item > a {
+.primary-navigation a:hover {
 	background: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.primary-navigation a.is-current-page,
+.primary-navigation .is-current-page > a,
+.primary-navigation .current-menu-item > a,
+.primary-navigation .current_page_item > a,
+.primary-navigation a[aria-current="page"] {
+	background: var(--dp-highlight);
+	box-shadow: none;
+	color: var(--dp-ink);
 }
 
 .header-actions {
@@ -2692,7 +2717,8 @@ body .wp-site-blocks > header.wp-block-template-part > .site-header.wp-block-gro
 }
 
 .primary-navigation .wp-block-navigation__container {
-	gap: 4px;
+	flex-wrap: nowrap;
+	gap: 4px !important;
 }
 
 .header-inner > .primary-navigation {
@@ -2703,9 +2729,14 @@ body .wp-site-blocks > header.wp-block-template-part > .site-header.wp-block-gro
 	padding: 8px 10px;
 }
 
+.primary-navigation .is-current-page > .wp-block-navigation-item__content,
+.primary-navigation .wp-block-navigation-item__content.is-current-page,
 .primary-navigation .current-menu-item > .wp-block-navigation-item__content,
-.primary-navigation .current_page_item > .wp-block-navigation-item__content {
-	background: color-mix(in srgb, currentColor 8%, transparent);
+.primary-navigation .current_page_item > .wp-block-navigation-item__content,
+.primary-navigation .wp-block-navigation-item__content[aria-current="page"] {
+	background: var(--dp-highlight);
+	box-shadow: none;
+	color: var(--dp-ink);
 }
 
 .search-shortcut kbd {

@@ -4,9 +4,37 @@ sidebar_position: 0
 sidebar_collapsed: false
 ---
 
-DocsPress keeps documentation beside the code that explains it, then publishes that Markdown as native WordPress Pages and Gutenberg blocks.
+DocsPress is an AI-first documentation system for teams that want people and coding agents reading the same source. Markdown stays beside the code it explains; WordPress turns it into a branded, editable documentation experience made of native Pages and Gutenberg blocks.
 
 <!-- wp:docspress/callout {"tone":"success","title":"This entire documentation site fits in one Playground link","content":"<p><a href=\"https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-docs.json&amp;page-title=DocsPress%20Documentation\">Open the complete DocsPress documentation in WordPress Playground</a>. The Blueprint creates a temporary editable WordPress site, imports this converter-generated Page tree, and lands on <code>/docs/</code>.</p>","collapsible":false} /-->
+
+## AI-first from discovery to maintenance
+
+DocsPress gives text-first clients a native path through the documentation. The root [`/llms.txt`](guides/ai-friendly-documentation.md) file indexes every published, source-backed Page. Replace a Page route’s trailing slash with `.md` to fetch its exact reviewed Markdown with the `text/markdown` content type—no HTML shell to parse and no reconstructed source.
+
+<!-- wp:docspress/flow {"start":1,"steps":[{"title":"Discover with llms.txt","content":"<p>An agent reads one small index of absolute links instead of crawling navigation HTML or guessing routes.</p>"},{"title":"Read exact Markdown","content":"<p>Every source-backed Page has a <code>.md</code> representation with its frontmatter, examples, tables, and supported block comments intact.</p>"},{"title":"Improve the source","content":"<p>Repository-aware DocsPress skills help coding agents generate or update documentation from verified code evidence, ready for review.</p>"}]} /-->
+
+<!-- wp:docspress/result {"status":"success","title":"One corpus for people and agents","content":"<p>Readers get the complete WordPress experience. Agents and retrieval systems get discoverable, stable Markdown from the same reviewed source.</p>","meta":"llms.txt · text/markdown · source-owned Pages"} /-->
+
+Read [Make documentation AI-friendly](guides/ai-friendly-documentation.md) for the endpoint contract, permissions, and verification commands.
+
+## Make the complete site yours
+
+DocsPress includes a native block theme rather than a fixed documentation frontend. Use the WordPress Site Editor to change the header, documentation navigation, article tools, table of contents, footer, homepage, posts, archives, search results, comments, and alternate Page layouts.
+
+Global Styles can switch the whole system—not only its colors. The default DocsPress design and the WordPress.org, WordPress.com, and Jetpack families each define coordinated typography, color, spacing, corner, heading, and component treatments. Nine additional palettes provide light and dark brand directions, while native per-block controls let one surface differ without breaking the site-wide system.
+
+<!-- wp:docspress/callout {"tone":"success","title":"Fully customizable in the WordPress Site Editor","content":"<p>Apply your brand without maintaining a separate frontend or opening a legacy Customizer panel. The same Global Styles update the documentation shell, normal content, comments, core blocks, and DocsPress blocks.</p>","collapsible":false} /-->
+
+Follow [Customize the theme in the Site Editor](guides/customize-theme.md) for the complete editing map, or read [Why DocsPress?](why-docspress.md) to compare this WordPress-native model with a separately built documentation site.
+
+## Use blocks made for technical documentation
+
+Markdown stays portable, but technical explanations do not have to look like plain prose. DocsPress adds editable Gutenberg blocks for connected flows, file trees, prompts, terminal sessions, code tabs, API requests, callouts, results, audience paths, and more.
+
+Use Markdown syntax when it communicates clearly, then add a structured block when sequence, hierarchy, commands, or outcomes deserve a stronger visual treatment. The converter preserves the supported block comments in source, so the GitHub and WordPress representations stay aligned.
+
+Read [Gutenberg blocks](reference/gutenberg-blocks.md) for the full schema or open the [block kitchen sink](reference/kitchen-sink.md) to see every component together.
 
 ## Choose a starting point
 
@@ -47,16 +75,6 @@ Then follow [Publish existing docs](publish-existing-docs/index.md) or [Create d
 Read [Publish existing docs](publish-existing-docs/index.md) for the safe synchronization sequence, [Create docs with AI](create-docs-with-ai/index.md) when documentation must be generated first, or [Authoring documentation](authoring/index.md) for the Markdown contract.
 
 See [Why DocsPress?](why-docspress.md) for a practical comparison with Docusaurus and the cases where keeping WordPress as the publishing surface removes an entire parallel docs stack.
-
-## Build a highly customizable WordPress documentation site
-
-DocsPress includes a native block theme rather than a fixed documentation frontend. Use the WordPress Site Editor to change the complete header, documentation sidebar, article tools, table of contents, footer, homepage, posts, archives, search results, comments, and alternate page layouts.
-
-Global Styles provide complete visual presets plus site-wide controls for colors, typography, font sizes, spacing, borders, shadows, and layout. The default design and the WordPress.org, WordPress.com, and Jetpack families each define a full component and typography system, while nine color variations provide coordinated light and dark palettes. Native per-block controls let one template or component differ without breaking the site-wide system.
-
-<!-- wp:docspress/callout {"tone":"success","title":"Highly customizable and WordPress-native","content":"<p>The same Global Styles update the documentation shell, normal content, comments, core blocks, and DocsPress blocks. Editors can change the complete presentation without a theme build or legacy Customizer panel.</p>","collapsible":false} /-->
-
-Follow [Customize the theme in the Site Editor](guides/customize-theme.md) for the editing workflow, or read [Why DocsPress?](why-docspress.md) to compare this model with a separately built documentation site.
 
 ## Keep documentation synchronized
 

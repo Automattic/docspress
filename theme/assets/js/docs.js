@@ -48,6 +48,50 @@
 	const sidebarBranches = [];
 	let sidebarCollapsed = Boolean(sidebar && sidebar.dataset.sidebarStartCollapsed === 'true');
 
+	function normalizedPathname(value) {
+		try {
+			const pathname = decodeURIComponent(new URL(value, window.location.href).pathname)
+				.replace(/\/{2,}/g, '/')
+				.replace(/\/+$/, '');
+			return pathname || '/';
+		} catch (error) {
+			return '';
+		}
+	}
+
+	function enhanceCurrentNavigation(navigation) {
+		if (!navigation) return;
+		const currentPath = normalizedPathname(window.location.href);
+		if (!currentPath) return;
+
+		Array.from(navigation.querySelectorAll('a[href]')).forEach(function (link) {
+			let url;
+			try {
+				url = new URL(link.href, window.location.href);
+			} catch (error) {
+				return;
+			}
+			if (url.origin !== window.location.origin) return;
+
+			const linkPath = normalizedPathname(url.href);
+			const exact = linkPath === currentPath;
+			const ancestor = !exact && linkPath !== '/' && currentPath.startsWith(linkPath + '/');
+			const item = link.closest('li');
+
+			link.classList.toggle('is-current-page', exact);
+			link.classList.toggle('is-current-ancestor', ancestor);
+			if (item) {
+				item.classList.toggle('is-current-page', exact);
+				item.classList.toggle('is-current-ancestor', ancestor);
+			}
+			if (exact) {
+				link.setAttribute('aria-current', 'page');
+			} else if (link.getAttribute('aria-current') === 'page') {
+				link.removeAttribute('aria-current');
+			}
+		});
+	}
+
 	function setDrawer(open) {
 		body.classList.toggle('drawer-open', open);
 		if (drawerToggle) {
@@ -158,6 +202,8 @@
 		if (docsNav) docsNav.classList.toggle('is-filtering', filtering);
 	}
 
+	enhanceCurrentNavigation(document.querySelector('.primary-navigation'));
+	enhanceCurrentNavigation(docsNav);
 	enhanceSidebarNavigation();
 
 	if (sidebarCollapseToggle) {

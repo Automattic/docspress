@@ -711,10 +711,18 @@ describe("DocsPress block theme constraints", () => {
     expect(header).toContain('"label":"Kitchen Sink"');
     expect(header).toContain('"label":"GitHub"');
     expect(header).toContain('"width":34');
+    expect(header).not.toContain('"blockGap"');
     expect(header).not.toContain('"justifyContent":"space-between"');
     expect(header).not.toContain('"className":"brand-wordpress","fontSize":"small"');
     expect(styles).toContain(".wp-site-blocks > header.wp-block-template-part {");
     expect(styles).toContain("margin: 0 0 0 auto;");
+    expect(styles).toContain(".primary-navigation a.is-current-page");
+    expect(styles).toMatch(
+      /\.primary-navigation a\.is-current-page,[\s\S]*?background:\s*var\(--dp-highlight\);[\s\S]*?color:\s*var\(--dp-ink\);/
+    );
+    expect(styles).toMatch(
+      /\.primary-navigation \.wp-block-navigation__container\s*\{[^}]*flex-wrap:\s*nowrap;[^}]*gap:\s*4px !important;/s
+    );
     expect(styles).toMatch(
       /@media \(max-width: 1024px\)\s*\{[\s\S]*?\.header-inner > \.primary-navigation,[\s\S]*?\.search-shortcut span,[\s\S]*?\.search-shortcut kbd[\s\S]*?display:\s*none;[\s\S]*?\.menu-toggle[\s\S]*?display:\s*inline-flex;[\s\S]*?\}/
     );
@@ -1180,6 +1188,19 @@ describe("DocsPress block theme constraints", () => {
     expect(styles).toContain("inset: -5px");
     expect(styles).toContain(".editor-styles-wrapper .docs-sidebar.is-sidebar-collapsed .sidebar-collapse-label");
     expect(styles).toContain("left: calc(100% + 10px)");
+  });
+
+  it("keeps header and documentation navigation state in sync with the URL", async () => {
+    const runtime = await fs.readFile(path.join(root, "theme", "assets", "js", "docs.js"), "utf8");
+    const styles = await fs.readFile(path.join(root, "theme", "style.css"), "utf8");
+
+    expect(runtime).toContain("function enhanceCurrentNavigation(navigation)");
+    expect(runtime).toContain("link.classList.toggle('is-current-page', exact)");
+    expect(runtime).toContain("link.classList.toggle('is-current-ancestor', ancestor)");
+    expect(runtime).toContain("link.setAttribute('aria-current', 'page')");
+    expect(runtime).toContain("enhanceCurrentNavigation(document.querySelector('.primary-navigation'))");
+    expect(runtime).toContain("enhanceCurrentNavigation(docsNav)");
+    expect(styles).toContain('.docs-nav a[aria-current="page"]');
   });
 
   it("keeps command-search data and controls available in rendered block templates", async () => {
