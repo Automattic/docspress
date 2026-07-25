@@ -3,7 +3,7 @@ Theme Name: DocsPress
 Theme URI: https://github.com/Automattic/docspress
 Author: Fatih Kadir Akın
 Description: A Site Editor-first documentation block theme for WordPress and DocsPress.
-Version: 0.8.4
+Version: 0.8.5
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 7.4
@@ -230,7 +230,7 @@ a {
 	align-items: center;
 	gap: 11px;
 	flex-shrink: 0;
-	line-height: 1.1;
+	line-height: 1.65;
 	text-decoration: none;
 }
 
@@ -265,16 +265,18 @@ a {
 
 .brand-title {
 	font-weight: var(--wp--custom--heading-weight, 700);
+	letter-spacing: -0.045em;
 }
 
 .brand-title,
 .brand-wordpress {
-	line-height: 1.1;
+	line-height: inherit;
 	white-space: nowrap;
 }
 
 .brand-wordpress {
-	opacity: 0.72;
+	letter-spacing: -0.025em;
+	opacity: 1;
 }
 
 .primary-navigation {
@@ -301,7 +303,7 @@ a {
 	min-height: 36px;
 	padding: 8px 10px;
 	border-radius: 7px;
-	line-height: 1.1;
+	line-height: 1.65;
 	text-decoration: none;
 	white-space: nowrap;
 }
@@ -336,10 +338,10 @@ a {
 	min-width: 40px;
 	height: 40px;
 	padding: 0 11px;
-	border: 1px solid currentColor;
+	border: 1px solid var(--dp-line);
 	border-radius: 8px;
-	background: transparent;
-	color: inherit;
+	background: var(--dp-canvas);
+	color: var(--dp-muted);
 	cursor: pointer;
 	transition: border-color 160ms ease, color 160ms ease, transform 160ms ease, background 160ms ease;
 }
@@ -364,10 +366,10 @@ a {
 .search-shortcut kbd {
 	margin-left: auto;
 	padding: 1px 7px;
-	border: 1px solid currentColor;
+	border: 1px solid color-mix(in srgb, var(--dp-highlight-strong) 48%, var(--dp-line));
 	border-radius: 5px;
-	background: transparent;
-	color: inherit;
+	background: color-mix(in srgb, var(--dp-highlight) 22%, var(--dp-paper));
+	color: var(--dp-ink);
 	font: 12px/1.6 var(--dp-font-mono);
 }
 
@@ -2709,11 +2711,12 @@ body .wp-site-blocks > header.wp-block-template-part > .site-header.wp-block-gro
 
 .brand .wp-block-site-title a,
 .brand .brand-title a {
+	color: inherit;
 	text-decoration: none;
 }
 
 .brand .brand-wordpress {
-	opacity: 0.72;
+	opacity: 1;
 }
 
 .primary-navigation .wp-block-navigation__container {
@@ -2740,8 +2743,9 @@ body .wp-site-blocks > header.wp-block-template-part > .site-header.wp-block-gro
 }
 
 .search-shortcut kbd {
-	border-color: currentColor;
-	background: transparent;
+	border-color: color-mix(in srgb, var(--dp-highlight-strong) 48%, var(--dp-line));
+	background: color-mix(in srgb, var(--dp-highlight) 22%, var(--dp-paper));
+	color: var(--dp-ink);
 }
 
 .header-actions > *,
@@ -2757,8 +2761,13 @@ body .wp-site-blocks > header.wp-block-template-part > .site-header.wp-block-gro
 }
 
 .repository-link .wp-social-link {
+	box-sizing: border-box;
+	width: 42px;
+	height: 40px;
 	border: 1px solid var(--dp-line);
 	border-radius: 8px;
+	background: var(--dp-canvas);
+	color: var(--dp-muted);
 }
 
 .repository-link .wp-block-social-link-anchor {
@@ -2766,9 +2775,14 @@ body .wp-site-blocks > header.wp-block-template-part > .site-header.wp-block-gro
 	align-items: center;
 	justify-content: center;
 	box-sizing: border-box;
-	width: 38px;
+	width: 40px;
 	height: 38px;
 	padding: 10px;
+}
+
+.repository-link .wp-block-social-link-anchor svg {
+	width: 18px;
+	height: 18px;
 }
 
 .docs-shell.wp-block-group {

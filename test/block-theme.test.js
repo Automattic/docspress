@@ -681,8 +681,8 @@ describe("DocsPress block theme constraints", () => {
     expect(header.match(/<!-- wp:site-logo/g)).toHaveLength(1);
     expect(header).toContain('"shouldSyncIcon":true');
     expect(header).not.toContain("wp:site-title");
-    expect(header).toContain('wp:paragraph {"className":"brand-title"}');
-    expect(header).toContain('<p class="brand-title"><a href="/">DocsPress</a></p>');
+    expect(header).toContain('"className":"brand-title"');
+    expect(header).toContain('<a href="/">DocsPress</a>');
     expect(defaultLogo.byteLength).toBeGreaterThan(1000);
     expect(functions).toContain("function docspress_maybe_seed_default_site_logo()");
     expect(functions).toContain("update_option( 'site_logo', $logo_id );");
@@ -708,17 +708,29 @@ describe("DocsPress block theme constraints", () => {
     expect(styles).toContain("var(--wp--custom--entry-rule-background");
     expect(styles).toContain("var(--wp--preset--color--dark-accent, #62b5ff)");
     expect(header).toContain('"label":"Docs"');
+    expect(header).toContain('"label":"Why DocsPress?"');
     expect(header).toContain('"label":"Kitchen Sink"');
     expect(header).toContain('"label":"GitHub"');
     expect(header).toContain('"width":34');
     expect(header).not.toContain('"blockGap"');
     expect(header).not.toContain('"justifyContent":"space-between"');
-    expect(header).not.toContain('"className":"brand-wordpress","fontSize":"small"');
+    expect(header).not.toContain('"fontSize":"small"');
+    expect(header).toContain('"fontSize":"17px"');
+    expect(header).toContain('"fontSize":"14px"');
+    expect(header).toContain('"fontWeight":"650"');
+    expect(header).toContain('"textColor":"accent-strong"');
+    expect(header).toContain(
+      '"background":"color-mix(in srgb, var(--wp--preset--color--paper) 92%, transparent)"'
+    );
     expect(styles).toContain(".wp-site-blocks > header.wp-block-template-part {");
     expect(styles).toContain("margin: 0 0 0 auto;");
     expect(styles).toContain(".primary-navigation a.is-current-page");
     expect(styles).toMatch(
       /\.primary-navigation a\.is-current-page,[\s\S]*?background:\s*var\(--dp-highlight\);[\s\S]*?color:\s*var\(--dp-ink\);/
+    );
+    expect(styles).toMatch(/\.primary-navigation a\s*\{[^}]*line-height:\s*1\.65;/s);
+    expect(styles).toMatch(
+      /\.search-shortcut kbd\s*\{[^}]*background:\s*color-mix\(in srgb, var\(--dp-highlight\) 22%, var\(--dp-paper\)\);[^}]*color:\s*var\(--dp-ink\);/s
     );
     expect(styles).toMatch(
       /\.primary-navigation \.wp-block-navigation__container\s*\{[^}]*flex-wrap:\s*nowrap;[^}]*gap:\s*4px !important;/s
