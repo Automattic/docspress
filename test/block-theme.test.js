@@ -140,6 +140,7 @@ const blockNames = [
   "code-tabs",
   "colorful-code",
   "file-tree",
+  "flow",
   "hero",
   "prompt",
   "result",
@@ -333,6 +334,40 @@ describe("DocsPress block theme constraints", () => {
       expect(editor).toContain("themeStyle");
       expect(editor).toContain("designSupports");
     }
+  });
+
+  it("ships an editable Flow and native collapsible File Tree folders", async () => {
+    const plugin = await fs.readFile(
+      path.join(root, "plugins", "docspress-blocks", "docspress-blocks.php"),
+      "utf8"
+    );
+    const flowEditor = await fs.readFile(path.join(blocksRoot, "flow", "editor.js"), "utf8");
+    const flowRender = await fs.readFile(path.join(blocksRoot, "flow", "block.php"), "utf8");
+    const flowStyles = await fs.readFile(path.join(blocksRoot, "flow", "style.css"), "utf8");
+    const fileTreeEditor = await fs.readFile(path.join(blocksRoot, "file-tree", "editor.js"), "utf8");
+    const fileTreeRender = await fs.readFile(path.join(blocksRoot, "file-tree", "block.php"), "utf8");
+    const fileTreeStyles = await fs.readFile(path.join(blocksRoot, "file-tree", "style.css"), "utf8");
+
+    expect(plugin).toContain("blocks/flow/block.php");
+    expect(flowEditor).toContain("Starting number");
+    expect(flowEditor).toContain("Add step");
+    expect(flowEditor).toContain("Move up");
+    expect(flowRender).toContain("'docspress/flow'");
+    expect(flowRender).toContain("docspress-flow__marker");
+    expect(flowStyles).toContain(".wp-block-docspress-flow .docspress-flow__title {");
+    expect(flowStyles).not.toContain(".docspress-flow :where(.docspress-flow__title)");
+    expect(fileTreeEditor).toContain("Allow readers to collapse folders");
+    expect(fileTreeEditor).toContain("Expand folders by default");
+    expect(fileTreeRender).toContain("<details");
+    expect(fileTreeRender).toContain("<summary");
+    expect(fileTreeRender).not.toContain('role="tree"');
+    expect(fileTreeStyles).toContain(
+      ".wp-block-docspress-file-tree .docspress-file-tree__entries"
+    );
+    expect(fileTreeStyles).toContain(
+      ".wp-block-docspress-file-tree .docspress-file-tree__item"
+    );
+    expect(fileTreeStyles).toContain("min-height: 27px;");
   });
 
   it("is a block theme with editable templates and template parts", async () => {
@@ -821,6 +856,14 @@ describe("DocsPress block theme constraints", () => {
       path.join(blocksRoot, "audience-paths", "style.css"),
       "utf8"
     );
+    const audienceEditor = await fs.readFile(
+      path.join(blocksRoot, "audience-paths", "editor.js"),
+      "utf8"
+    );
+    const audienceRender = await fs.readFile(
+      path.join(blocksRoot, "audience-paths", "block.php"),
+      "utf8"
+    );
     const resultStyles = await fs.readFile(
       path.join(blocksRoot, "result", "style.css"),
       "utf8"
@@ -942,6 +985,16 @@ describe("DocsPress block theme constraints", () => {
     expect(audienceStyles).toContain(
       ":where(.docspress-audience-paths .docspress-audience-paths__title) {"
     );
+    expect(audienceStyles).toContain(
+      ".docspress-audience-paths--compact .docspress-audience-paths__title {"
+    );
+    expect(audienceStyles).toContain(
+      ".docspress-audience-paths.has-text-color :is("
+    );
+    expect(audienceStyles).toContain("container-type: inline-size;");
+    expect(audienceStyles).toContain("@container (max-width: 820px)");
+    expect(audienceEditor).not.toContain("textColor:");
+    expect(audienceRender).not.toContain("'textColor'");
     expect(functions).toContain(
       "function docspress_inherit_post_title_typography_from_headings"
     );
@@ -1091,7 +1144,7 @@ describe("DocsPress block theme constraints", () => {
     }
     for (const source of [audienceEditor, audienceRender]) {
       expect(source).toContain("docspress-audience-paths--has-panel-color");
-      expect(source).toContain("docspress-audience-paths--has-text-color");
+      expect(source).not.toContain("docspress-audience-paths--has-text-color");
     }
     expect(audienceEditor).toContain("tagName: 'h3'");
     expect(audienceEditor).toContain("tagName: 'p'");

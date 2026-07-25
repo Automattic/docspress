@@ -26,12 +26,12 @@
 
 .docspress-file-tree__bar {
 	display: grid;
-	min-height: 43px;
+	min-height: 39px;
 	grid-template-columns: auto minmax(0, 1fr) auto;
 	align-items: center;
-	gap: 8px;
+	gap: 7px;
 	box-sizing: border-box;
-	padding: 7px 13px;
+	padding: 6px 11px;
 	border-bottom: 1px solid var(--db-tree-border);
 	background: color-mix(in srgb, var(--db-tree-accent) 4%, var(--dp-paper, #fff));
 }
@@ -67,24 +67,67 @@
 
 .docspress-file-tree__root-icon svg,
 .docspress-file-tree__icon svg {
-	width: 17px;
-	height: 17px;
+	width: 15px;
+	height: 15px;
 }
 
-.docspress-file-tree__entries {
+.wp-block-docspress-file-tree .docspress-file-tree__entries,
+.wp-block-docspress-file-tree .docspress-file-tree__children {
 	box-sizing: border-box;
-	padding: 14px 14px 16px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.wp-block-docspress-file-tree .docspress-file-tree__entries {
+	padding: 8px 9px 9px;
 	background: var(--db-tree-panel);
+}
+
+.wp-block-docspress-file-tree .docspress-file-tree__children {
+	margin-left: 16px;
+	padding-left: 8px;
+	border-left: 1px solid color-mix(in srgb, var(--db-tree-accent) 24%, var(--db-tree-border));
+}
+
+.wp-block-docspress-file-tree .docspress-file-tree__item {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.docspress-file-tree__folder {
+	margin: 0;
 }
 
 .docspress-file-tree__entry {
 	display: grid;
-	position: relative;
-	min-height: 29px;
-	grid-template-columns: 15px 18px minmax(0, 1fr);
+	min-height: 27px;
+	grid-template-columns: 12px 16px minmax(0, 1fr);
 	align-items: center;
-	gap: 7px;
-	padding-left: calc(var(--db-tree-depth) * 22px);
+	gap: 5px;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 1px 6px 1px 2px;
+	transition: background-color 120ms ease;
+}
+
+summary.docspress-file-tree__entry {
+	cursor: pointer;
+	list-style: none;
+}
+
+summary.docspress-file-tree__entry::-webkit-details-marker {
+	display: none;
+}
+
+.docspress-file-tree__entry:hover {
+	background: color-mix(in srgb, var(--db-tree-accent) 7%, transparent);
+}
+
+.docspress-file-tree__entry:focus-visible {
+	outline: 2px solid var(--db-tree-accent);
+	outline-offset: -2px;
 }
 
 .docspress-file-tree__entry code,
@@ -97,33 +140,35 @@
 	background: transparent;
 	box-shadow: none;
 	color: var(--dp-copy, #2c3338);
-	font: 520 0.81rem/1.45 var(--dp-font-mono, "SFMono-Regular", Consolas, monospace);
+	font: 520 0.78rem/1.35 var(--dp-font-mono, "SFMono-Regular", Consolas, monospace);
 }
 
-.docspress-file-tree__entry.is-folder code {
+.docspress-file-tree__item.is-folder > .docspress-file-tree__entry code,
+.docspress-file-tree__item.is-folder > .docspress-file-tree__folder > summary code {
 	color: var(--dp-ink, #171a22);
 	font-weight: 670;
 }
 
-.docspress-file-tree__connector {
-	position: relative;
-	width: 14px;
-	height: 100%;
+.docspress-file-tree__toggle {
+	display: inline-grid;
+	width: 12px;
+	height: 12px;
+	place-items: center;
+	color: var(--dp-muted, #6f7685);
+	transition: transform 140ms ease;
 }
 
-.docspress-file-tree__entry:not(:first-child) .docspress-file-tree__connector::before {
-	position: absolute;
-	top: 0;
-	left: 6px;
-	width: 7px;
-	height: 50%;
-	border-bottom: 1px solid color-mix(in srgb, var(--db-tree-accent) 28%, var(--db-tree-border));
-	border-left: 1px solid color-mix(in srgb, var(--db-tree-accent) 28%, var(--db-tree-border));
-	content: "";
+.docspress-file-tree__toggle svg {
+	width: 10px;
+	height: 10px;
+}
+
+.docspress-file-tree__folder[open] > summary .docspress-file-tree__toggle {
+	transform: rotate(90deg);
 }
 
 .docspress-file-tree__caption {
-	padding: 9px 13px;
+	padding: 7px 11px;
 	border-top: 1px solid var(--db-tree-border);
 	color: var(--dp-muted, #6f7685);
 	font: 500 0.76rem/1.5 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
@@ -132,4 +177,11 @@
 html[data-theme="dark"] .wp-block-docspress-file-tree {
 	--db-tree-panel: color-mix(in srgb, var(--dp-canvas, #11141b) 82%, #000);
 	box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.docspress-file-tree__entry,
+	.docspress-file-tree__toggle {
+		transition: none;
+	}
 }

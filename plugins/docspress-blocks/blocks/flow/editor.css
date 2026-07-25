@@ -1,0 +1,32 @@
+.editor-styles-wrapper .docspress-flow--editor {
+	margin-block: 1.5rem;
+}
+
+.docspress-flow--editor .docspress-flow__list {
+	margin: 0;
+	padding: 0;
+}
+
+.docspress-flow--editor .docspress-flow__step-controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin-top: 10px;
+	opacity: 0;
+	transition: opacity 120ms ease;
+}
+
+.docspress-flow--editor .docspress-flow__step:focus-within .docspress-flow__step-controls,
+.docspress-flow--editor .docspress-flow__step:hover .docspress-flow__step-controls {
+	opacity: 1;
+}
+
+.docspress-flow--editor .docspress-flow__add {
+	margin: 18px 0 0 68px;
+}
+
+@media (max-width: 560px) {
+	.docspress-flow--editor .docspress-flow__add {
+		margin-left: 50px;
+	}
+}

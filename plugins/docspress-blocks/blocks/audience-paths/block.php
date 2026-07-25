@@ -92,7 +92,6 @@ function docspress_blocks_render_audience_paths( $attributes ) {
 
 	$custom_colors = array(
 		'panelColor'  => array( '--db-paths-panel', 'docspress-audience-paths--has-panel-color' ),
-		'textColor'   => array( '--db-paths-heading', 'docspress-audience-paths--has-text-color' ),
 		'accentColor' => array( '--db-paths-accent', 'docspress-audience-paths--has-accent-color' ),
 	);
 	foreach ( $custom_colors as $attribute_name => $color_config ) {
@@ -100,9 +99,6 @@ function docspress_blocks_render_audience_paths( $attributes ) {
 		if ( $color ) {
 			$styles[]  = $color_config[0] . ':' . $color;
 			$classes[] = $color_config[1];
-			if ( 'textColor' === $attribute_name ) {
-				$styles[] = '--db-paths-copy:' . $color;
-			}
 		}
 	}
 
@@ -190,7 +186,6 @@ function docspress_blocks_register_audience_paths() {
 				'compact'      => array( 'type' => 'boolean', 'default' => false ),
 				'showNumbers'  => array( 'type' => 'boolean', 'default' => false ),
 				'panelColor'   => array( 'type' => 'string', 'default' => '' ),
-				'textColor'    => array( 'type' => 'string', 'default' => '' ),
 				'accentColor'  => array( 'type' => 'string', 'default' => '' ),
 			),
 			'supports'        => docspress_blocks_design_supports( array( 'wide', 'full' ) ),

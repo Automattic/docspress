@@ -37,7 +37,7 @@ The first synchronization can create draft Pages for inspection. WordPress admin
 
 ### Constrained, theme-aware components
 
-DocsPress blocks cover code, tabs, callouts, HTTP exchanges, terminal output, results, file trees, and AI prompts. Authors choose semantic options, while Global Styles control colors, typography, spacing, borders, radii, dimensions, shadows, and light/dark behavior. That keeps generated documentation visually coherent without asking every author to design React components.
+DocsPress blocks cover code, tabs, callouts, connected flows, HTTP exchanges, terminal output, results, collapsible file trees, and AI prompts. Authors choose semantic options, while Global Styles control colors, typography, spacing, borders, radii, dimensions, shadows, and light/dark behavior. That keeps generated documentation visually coherent without asking every author to design React components.
 
 ### WordPress-native navigation and customization
 

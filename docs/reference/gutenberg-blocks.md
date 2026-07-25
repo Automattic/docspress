@@ -2,7 +2,7 @@
 title: DocsPress Gutenberg blocks
 ---
 
-The DocsPress Blocks plugin registers two landing-page blocks and eight documentation blocks. Their saved content is a self-closing Gutenberg comment whose attributes are valid JSON.
+The DocsPress Blocks plugin registers two landing-page blocks and nine documentation blocks. Their saved content is a self-closing Gutenberg comment whose attributes are valid JSON.
 
 ## Hero
 
@@ -62,6 +62,12 @@ Use `docspress/callout` with `tone` set to `note`, `tip`, `warning`, `danger`, o
 
 <!-- wp:docspress/callout {"tone":"tip","title":"Preview first","content":"<p>Use a dry run before allowing Page writes.</p>","collapsible":true,"open":true} /-->
 
+## Flow
+
+Use `docspress/flow` for a connected, automatically numbered procedure. `start` continues numbering from an earlier sequence. The `steps` array supports one to 20 items; each item has an inline-editable `title` and formatted `content`. Authors can add, remove, and reorder steps in the editor.
+
+<!-- wp:docspress/flow {"start":1,"steps":[{"title":"Choose","content":"<p>Select the option that matches your project.</p>"},{"title":"Configure","content":"<p>Set the values required by your environment.</p>"},{"title":"Verify","content":"<p>Run the check and confirm the expected result.</p>"}]} /-->
+
 ## API Request / Response
 
 Use `docspress/api-request` for one HTTP exchange. Supported methods are `GET`, `POST`, `PUT`, `PATCH`, and `DELETE`. Write headers as `Name: value` lines. `requestBodyFormat` and `responseBodyFormat` accept `json` or `raw`.
@@ -82,9 +88,9 @@ Use `docspress/result` after a procedure. `status` accepts `success`, `neutral`,
 
 ## File Tree
 
-Use `docspress/file-tree` with `root`, `tree`, and optional `caption`. Indent with two spaces per depth and end folder labels with `/`.
+Use `docspress/file-tree` with `root`, `tree`, and optional `caption`. Indent with two spaces per depth and end folder labels with `/`. Set `collapsible` to let readers toggle folders with native disclosure controls; `open` controls whether those folders begin expanded.
 
-<!-- wp:docspress/file-tree {"root":"repository/","tree":"docs/\n  index.md\n  guides/\n    continuous-sync.md\npackage.json","caption":"A relevant source tree."} /-->
+<!-- wp:docspress/file-tree {"root":"repository/","tree":"docs/\n  index.md\n  guides/\n    continuous-sync.md\npackage.json","caption":"A relevant source tree.","collapsible":true,"open":true} /-->
 
 ## Prompt
 

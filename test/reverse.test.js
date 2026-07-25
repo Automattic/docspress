@@ -82,7 +82,6 @@ const customBlockCases = [
       textAlign: "left",
       showNumbers: false,
       panelColor: "",
-      textColor: "",
       accentColor: ""
     }
   },
@@ -146,7 +145,22 @@ const customBlockCases = [
     attributes: {
       root: "project/",
       tree: "docs/\n  index.md",
-      caption: ""
+      caption: "",
+      collapsible: true,
+      open: true
+    }
+  },
+  {
+    name: "docspress/flow",
+    omit: "start",
+    change: ["start", 4],
+    attributes: {
+      start: 1,
+      steps: [
+        { title: "Choose", content: "<p>Select the option that matches your project.</p>" },
+        { title: "Configure", content: "<p>Set the values required by your environment.</p>" },
+        { title: "Verify", content: "<p>Run the check and confirm the expected result.</p>" }
+      ]
     }
   },
   {

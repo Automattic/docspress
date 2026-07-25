@@ -23,7 +23,7 @@ A typical project may need:
 
 <!-- wp:docspress/file-tree {"root":"docs/","tree":"index.md\ngetting-started/\n  index.md\n  installation.md\n  configuration.md\nguides/\n  first-workflow.md\nreference/\n  api.md\n  cli.md\ntroubleshooting.md","caption":"The source determines which pages exist; this is a shape, not a required template."} /-->
 
-Each page should have one clear outcome, verified examples, relative links, and a stable route. Use ordinary Markdown for ordinary prose. Use DocsPress blocks for prompts, terminal sessions, API exchanges, callouts, file trees, code alternatives, and verification results when those semantics are useful.
+Each page should have one clear outcome, verified examples, relative links, and a stable route. Use ordinary Markdown for ordinary prose. Use DocsPress blocks for prompts, connected flows, terminal sessions, API exchanges, callouts, collapsible file trees, code alternatives, and verification results when those semantics are useful.
 
 ## 4. Keep publication disabled
 
