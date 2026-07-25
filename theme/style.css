@@ -3,7 +3,7 @@ Theme Name: DocsPress
 Theme URI: https://github.com/Automattic/docspress
 Author: Fatih Kadir Akın
 Description: A Site Editor-first documentation block theme for WordPress and DocsPress.
-Version: 0.8.6
+Version: 0.8.7
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 7.4
@@ -85,6 +85,7 @@ Tags: documentation, block-patterns, block-styles, full-site-editing, accessibil
 	--dp-highlight: var(--wp--preset--color--highlight, #fec408);
 	--dp-highlight-strong: var(--wp--preset--color--highlight-strong, #fe8301);
 	--dp-ink: var(--wp--preset--color--ink, #232323);
+	--dp-active-ink: var(--wp--preset--color--ink, #232323);
 	--dp-copy: var(--wp--preset--color--copy, #3d4348);
 	--dp-muted: var(--wp--preset--color--muted, #6e7479);
 	--dp-line: var(--wp--preset--color--line, #d8e5ee);
@@ -230,6 +231,7 @@ a {
 	align-items: center;
 	gap: 11px;
 	flex-shrink: 0;
+	color: var(--dp-ink);
 	line-height: 1.65;
 	text-decoration: none;
 }
@@ -275,6 +277,7 @@ a {
 }
 
 .brand-wordpress {
+	color: var(--dp-blue-dark);
 	letter-spacing: -0.025em;
 	opacity: 1;
 }
@@ -285,6 +288,7 @@ a {
 	align-items: center;
 	min-width: 0;
 	margin-left: 18px;
+	color: var(--dp-copy);
 }
 
 .primary-navigation ul {
@@ -319,7 +323,7 @@ a {
 .primary-navigation a[aria-current="page"] {
 	background: var(--dp-highlight);
 	box-shadow: none;
-	color: var(--dp-ink);
+	color: var(--dp-active-ink);
 }
 
 .header-actions {
@@ -2747,7 +2751,7 @@ body .wp-site-blocks > header.wp-block-template-part > .site-header.wp-block-gro
 .primary-navigation .wp-block-navigation-item__content[aria-current="page"] {
 	background: var(--dp-highlight);
 	box-shadow: none;
-	color: var(--dp-ink);
+	color: var(--dp-active-ink);
 }
 
 .search-shortcut kbd {

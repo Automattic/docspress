@@ -719,15 +719,27 @@ describe("DocsPress block theme constraints", () => {
     expect(header).toContain('"fontSize":"17px"');
     expect(header).toContain('"fontSize":"14px"');
     expect(header).toContain('"fontWeight":"650"');
-    expect(header).toContain('"textColor":"accent-strong"');
+    expect(header).not.toContain('"textColor":"ink"');
+    expect(header).not.toContain('"textColor":"copy"');
+    expect(header).not.toContain('"textColor":"accent-strong"');
     expect(header).toContain(
-      '"background":"color-mix(in srgb, var(--wp--preset--color--paper) 92%, transparent)"'
+      '"background":"color-mix(in srgb, var(--dp-paper) 92%, transparent)"'
+    );
+    expect(styles).toContain(
+      "--dp-active-ink: var(--wp--preset--color--ink, #232323);"
+    );
+    expect(styles).toMatch(/\.brand\s*\{[^}]*color:\s*var\(--dp-ink\);/s);
+    expect(styles).toMatch(
+      /\.brand-wordpress\s*\{[^}]*color:\s*var\(--dp-blue-dark\);/s
+    );
+    expect(styles).toMatch(
+      /\.primary-navigation\s*\{[^}]*color:\s*var\(--dp-copy\);/s
     );
     expect(styles).toContain(".wp-site-blocks > header.wp-block-template-part {");
     expect(styles).toContain("margin: 0 0 0 auto;");
     expect(styles).toContain(".primary-navigation a.is-current-page");
     expect(styles).toMatch(
-      /\.primary-navigation a\.is-current-page,[\s\S]*?background:\s*var\(--dp-highlight\);[\s\S]*?color:\s*var\(--dp-ink\);/
+      /\.primary-navigation a\.is-current-page,[\s\S]*?background:\s*var\(--dp-highlight\);[\s\S]*?color:\s*var\(--dp-active-ink\);/
     );
     expect(styles).toMatch(/\.primary-navigation a\s*\{[^}]*line-height:\s*1\.65;/s);
     expect(styles).toMatch(
