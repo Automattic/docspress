@@ -26,7 +26,8 @@ Run this from any repository that contains a `docs/` directory:
 npx @wp-playground/cli@latest start \
   --blueprint=https://raw.githubusercontent.com/Automattic/docspress/main/theme/blueprint-local-docs.json \
   --mount="$PWD/docs:/wordpress/docspress-source-docs" \
-  --no-auto-mount
+  --no-auto-mount \
+  --reset
 ```
 
 That single official WordPress Playground command is the complete local preview workflow—there is no DocsPress executable to run first. The Blueprint reads every Markdown file from the mounted `docs/` directory, converts the hierarchy and content into native Gutenberg Pages, installs the DocsPress theme and blocks, signs you in, and opens `/docs/`. Headings, paragraphs, links, images, lists, quotes, tables, code fences, and existing Gutenberg or DocsPress block comments are carried into WordPress.
@@ -96,7 +97,8 @@ Convert this repository's `docs/` directory and open the resulting WordPress sit
 npx @wp-playground/cli@latest start \
   --blueprint=https://raw.githubusercontent.com/Automattic/docspress/main/theme/blueprint-local-docs.json \
   --mount="$PWD/docs:/wordpress/docspress-source-docs" \
-  --no-auto-mount
+  --no-auto-mount \
+  --reset
 ```
 
 ## Quick start

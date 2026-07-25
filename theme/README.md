@@ -12,10 +12,11 @@ To convert any repository's local `docs/` directory into editable WordPress Page
 npx @wp-playground/cli@latest start \
   --blueprint=https://raw.githubusercontent.com/Automattic/docspress/main/theme/blueprint-local-docs.json \
   --mount="$PWD/docs:/wordpress/docspress-source-docs" \
-  --no-auto-mount
+  --no-auto-mount \
+  --reset
 ```
 
-The mounted-docs Blueprint performs the import inside WordPress; it does not require a DocsPress CLI wrapper.
+The mounted-docs Blueprint performs the import inside WordPress; it does not require a DocsPress CLI wrapper. `--reset` gives every conversion a clean disposable WordPress site, so an interrupted or previously auto-mounted Playground cannot leave partial plugin or theme directories behind.
 
 ## Requirements
 

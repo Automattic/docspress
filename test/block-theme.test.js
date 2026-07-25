@@ -297,6 +297,7 @@ describe("DocsPress block theme constraints", () => {
     expect(localDocsImporter).toContain("_docspress_source_path");
     expect(readme).toContain("npx @wp-playground/cli@latest start");
     expect(readme).toContain("--mount=\"$PWD/docs:/wordpress/docspress-source-docs\"");
+    expect(readme).toContain("--reset");
     expect(readme).not.toContain("npx docspress@latest playground");
     expect(readme).toContain("One command from docs to WordPress");
   });
