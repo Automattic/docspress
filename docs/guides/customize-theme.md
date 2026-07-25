@@ -120,7 +120,7 @@ Every component also receives native color, gradient, typography, spacing, borde
 The DocsPress Blocks plugin inherits Global Styles in the editor and on the published site. Its ten blocks expose native design tools in addition to their semantic settings:
 
 - Hero and Audience Paths provide content, actions, artwork, layout, and presentation controls.
-- Code, Code Tabs, API Request / Response, Terminal Session, Result, File Tree, Callout, and Prompt provide the settings appropriate to their content.
+- Code, Code Tabs, API Request / Response, Flow, Terminal Session, Result, File Tree, Callout, and Prompt provide the settings appropriate to their content.
 - All ten can be tuned with color, typography, spacing, borders, minimum height, sticky positioning, shadow, alignment where applicable, anchors, and classes.
 
 Use **Styles → Blocks** for a site-wide default or select an individual block for a local override.

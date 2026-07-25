@@ -2,7 +2,7 @@
 title: Kitchen Sink
 ---
 
-This Page is the acceptance surface for the DocsPress theme and all ten DocsPress Blocks. Switch Global Style variations and light/dark mode while checking native color, typography, spacing, border, dimensions, interactions, and content controls.
+This Page is the acceptance surface for the DocsPress theme and all eleven DocsPress Blocks. Switch Global Style variations and light/dark mode while checking native color, typography, spacing, border, dimensions, interactions, and content controls.
 
 <!-- wp:docspress/callout {"tone":"note","title":"Playground acceptance page","content":"<p>The local Playground appends its live component inventory to this source-backed Page after seeding it.</p>","collapsible":false} /-->
 
@@ -36,6 +36,10 @@ This Page is the acceptance surface for the DocsPress theme and all ten DocsPres
 
 <!-- wp:docspress/callout {"tone":"tip","title":"Collapsible and closed","content":"<p>This content begins hidden and remains keyboard accessible.</p>","collapsible":true,"open":false} /-->
 
+## Flow
+
+<!-- wp:docspress/flow {"start":1,"steps":[{"title":"Template","content":"<p>Choose <code>full</code> or <code>empty</code> for the starting content.</p>"},{"title":"Deploy target","content":"<p>Select the host that matches the project environment.</p>"},{"title":"Install dependencies","content":"<p>Let the package manager finish, then verify the generated site.</p>"}]} /-->
+
 ## API Request / Response
 
 <!-- wp:docspress/api-request {"method":"GET","endpoint":"/wp-json/wp/v2/pages?per_page=2","headers":"Accept: application/json","requestBody":"","requestBodyFormat":"json","responseStatus":"200 OK","responseBody":"[{ \"id\": 41 }, { \"id\": 42 }]","responseBodyFormat":"json"} /-->
@@ -66,9 +70,9 @@ This Page is the acceptance surface for the DocsPress theme and all ten DocsPres
 
 ## File Tree
 
-<!-- wp:docspress/file-tree {"root":"Automattic/docspress/","tree":".claude/\n  skills/\ndocs/\n  index.md\n  publish-existing-docs/\n  create-docs-with-ai/\n  reference/\n    kitchen-sink.md\nplugins/\n  docspress-blocks/\ntheme/\npackage.json","caption":"Nested folders, files, a custom root label, and caption."} /-->
+<!-- wp:docspress/file-tree {"root":"Automattic/docspress/","tree":".claude/\n  skills/\ndocs/\n  index.md\n  publish-existing-docs/\n  create-docs-with-ai/\n  reference/\n    kitchen-sink.md\nplugins/\n  docspress-blocks/\ntheme/\npackage.json","caption":"Nested folders, files, a custom root label, and caption.","collapsible":true,"open":true} /-->
 
-<!-- wp:docspress/file-tree {"root":"docs/","tree":"index.md\nwhy-docspress.md\ntroubleshooting.md","caption":"A compact tree."} /-->
+<!-- wp:docspress/file-tree {"root":"docs/","tree":"index.md\nguides/\n  continuous-sync.md\nreference/\n  gutenberg-blocks.md\ntroubleshooting.md","caption":"A compact tree that begins collapsed.","collapsible":true,"open":false} /-->
 
 ## Prompt
 
@@ -80,4 +84,4 @@ This Page is the acceptance surface for the DocsPress theme and all ten DocsPres
 
 <!-- wp:docspress/prompt {"prompt":"Use $docspress-install to create a phased migration plan from a static documentation site to DocsPress.","model":"Planning agent","mode":"plan","thinking":true,"context":"$docspress-install, docs/, #architecture, https://example.com/current-docs","caption":"Migration plan with a skill reference"} /-->
 
-<!-- wp:docspress/result {"status":"success","title":"Kitchen Sink complete","content":"<p>Every DocsPress documentation block, semantic variant, and meaningful option is represented on this Page. Hero and Audience Paths are the design-focused landing blocks.</p>","meta":"8 documentation blocks · 2 landing blocks"} /-->
+<!-- wp:docspress/result {"status":"success","title":"Kitchen Sink complete","content":"<p>Every DocsPress documentation block, semantic variant, and meaningful option is represented on this Page. Hero and Audience Paths are the design-focused landing blocks.</p>","meta":"9 documentation blocks · 2 landing blocks"} /-->

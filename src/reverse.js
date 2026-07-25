@@ -63,7 +63,6 @@ const CUSTOM_BLOCK_DEFAULTS = {
     textAlign: "left",
     showNumbers: false,
     panelColor: "",
-    textColor: "",
     accentColor: ""
   },
   "docspress/callout": {
@@ -92,7 +91,17 @@ const CUSTOM_BLOCK_DEFAULTS = {
   "docspress/file-tree": {
     root: "project/",
     tree: "docs/\n  getting-started.md\n  api/\n    endpoints.md\npackage.json",
-    caption: ""
+    caption: "",
+    collapsible: true,
+    open: true
+  },
+  "docspress/flow": {
+    start: 1,
+    steps: [
+      { title: "Choose", content: "<p>Select the option that matches your project.</p>" },
+      { title: "Configure", content: "<p>Set the values required by your environment.</p>" },
+      { title: "Verify", content: "<p>Run the check and confirm the expected result.</p>" }
+    ]
   },
   "docspress/hero": {
     eyebrow: "Documentation, publishing, and community",

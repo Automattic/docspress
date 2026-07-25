@@ -1,0 +1,140 @@
+.wp-block-docspress-flow {
+	--db-flow-accent: var(--dp-blue, #3858e9);
+	--db-flow-border: color-mix(in srgb, var(--db-flow-accent) 28%, var(--dp-line-strong, #cfd4dc));
+	--db-flow-marker: color-mix(in srgb, var(--db-flow-accent) 8%, var(--dp-paper, #fff));
+	box-sizing: border-box;
+	width: 100%;
+	margin-block: clamp(1.5rem, 3vw, 2.5rem);
+	padding: 0;
+	list-style: none;
+}
+
+.docspress-preset-docspress .wp-block-docspress-flow,
+.docspress-blocks--preset-docspress.wp-block-docspress-flow {
+	--db-flow-accent: #005cb3;
+}
+
+.docspress-preset-jetpack .wp-block-docspress-flow,
+.docspress-blocks--preset-jetpack.wp-block-docspress-flow {
+	--db-flow-accent: #069e08;
+}
+
+.docspress-flow__list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.docspress-flow__step {
+	display: grid;
+	position: relative;
+	grid-template-columns: 46px minmax(0, 1fr);
+	gap: clamp(14px, 2.5vw, 22px);
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0 0 clamp(1.75rem, 4vw, 2.75rem);
+	list-style: none;
+}
+
+.docspress-flow__step:last-child {
+	padding-bottom: 0;
+}
+
+.docspress-flow__rail {
+	display: flex;
+	position: relative;
+	justify-content: center;
+	align-items: flex-start;
+	min-height: 100%;
+}
+
+.docspress-flow__step:not(:last-child) .docspress-flow__rail::after {
+	position: absolute;
+	z-index: 0;
+	top: 50px;
+	bottom: calc(-1 * clamp(1.75rem, 4vw, 2.75rem) + 8px);
+	left: 50%;
+	width: 1px;
+	background: var(--db-flow-border);
+	content: "";
+	transform: translateX(-50%);
+}
+
+.docspress-flow__marker {
+	display: inline-grid;
+	z-index: 1;
+	width: 42px;
+	height: 42px;
+	place-items: center;
+	box-sizing: border-box;
+	border: 1px solid var(--db-flow-border);
+	border-radius: var(--dp-radius, 10px);
+	background: var(--db-flow-marker);
+	color: var(--dp-ink, #171a22);
+	font: 720 0.82rem/1 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	font-variant-numeric: tabular-nums;
+}
+
+.docspress-flow__content {
+	min-width: 0;
+	padding-block: 8px 0;
+}
+
+.wp-block-docspress-flow .docspress-flow__title {
+	margin: 0;
+	color: var(--dp-ink, #171a22);
+	font-family: inherit;
+	font-size: clamp(1rem, 0.95rem + 0.15vw, 1.12rem);
+	font-weight: 720;
+	line-height: 1.35;
+}
+
+.docspress-flow__body {
+	margin-top: 0.42rem;
+	color: var(--dp-copy, #2c3338);
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
+}
+
+.docspress-flow__body > :first-child {
+	margin-top: 0;
+}
+
+.docspress-flow__body > :last-child {
+	margin-bottom: 0;
+}
+
+.docspress-flow__body code,
+.entry-content .docspress-flow__body code {
+	padding: 0.12em 0.32em;
+	border: 1px solid color-mix(in srgb, var(--db-flow-accent) 20%, var(--dp-line, #dcdcde));
+	border-radius: var(--dp-radius, 10px);
+	background: color-mix(in srgb, var(--db-flow-accent) 5%, var(--dp-paper, #fff));
+	color: inherit;
+	font-size: 0.88em;
+}
+
+html[data-theme="dark"] .wp-block-docspress-flow {
+	--db-flow-marker: color-mix(in srgb, var(--db-flow-accent) 14%, var(--dp-canvas, #11141b));
+}
+
+@media (max-width: 560px) {
+	.docspress-flow__step {
+		grid-template-columns: 38px minmax(0, 1fr);
+		gap: 12px;
+	}
+
+	.docspress-flow__marker {
+		width: 36px;
+		height: 36px;
+	}
+
+	.docspress-flow__content {
+		padding-block-start: 5px;
+	}
+
+	.docspress-flow__step:not(:last-child) .docspress-flow__rail::after {
+		top: 44px;
+	}
+}

@@ -2,7 +2,7 @@
 	'use strict';
 
 	const { InspectorControls, MediaUpload, MediaUploadCheck, PanelColorSettings, PlainText, RichText, useBlockProps } = blockEditor;
-	const { Button, ButtonGroup, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl } = components;
+	const { Button, ButtonGroup, PanelBody, RangeControl, SelectControl, TextareaControl, TextControl, ToggleControl } = components;
 	const { Fragment, createElement: el, useState } = element;
 	const { __ } = i18n;
 	const designPreset = window.docspressBlocksSettings && window.docspressBlocksSettings.preset
@@ -107,6 +107,7 @@
 		RangeControl,
 		RichText,
 		SelectControl,
+		TextareaControl,
 		TextControl,
 		ToggleControl,
 		__,

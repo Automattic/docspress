@@ -9,10 +9,11 @@ Documentation-focused Gutenberg blocks for the DocsPress theme. The plugin has n
 - **Colorful Code** — filename chrome, language-aware token colors, line numbers, highlighted ranges, captions, and copy-to-clipboard.
 - **Code Tabs** — up to eight keyboard-accessible examples with independent labels, languages, filenames, and code.
 - **Callout** — note, tip, warning, danger, and success tones, with an optional collapsible presentation.
+- **Flow** — a connected, automatically numbered procedure with inline step editing, add/remove/reorder controls, and a configurable starting number.
 - **API Request / Response** — one structured HTTP exchange with method, endpoint, bold/light header pairs, independently selectable JSON or raw request and response bodies, response status, and a copyable URL.
 - **Terminal Session** — a copyable command separated from its read-only output, with editable prompt, shell, and title labels.
 - **Result** — a compact success, neutral, warning, or error outcome for builds, checks, and verification steps.
-- **File Tree** — an indentation-aware repository view with accessible file and folder entries.
+- **File Tree** — an indentation-aware repository view with native collapsible folder disclosures and editable initial state.
 - **Prompt** — a first-class, copyable AI prompt with model, mode, optional Thinking state, highlighted `$skill-name` references, classified context chips, and an editable caption.
 
 The inserter also includes **Homepage hero**, **Documentation starting paths**, **Documentation page starter**, **API request example**, and **AI prompt example** patterns under the **DocsPress** category.
@@ -39,6 +40,7 @@ docspress-blocks/
 │   │   └── editor.css
 │   ├── code-tabs/
 │   ├── callout/
+│   ├── flow/
 │   ├── api-request/
 │   ├── terminal-session/
 │   ├── result/
@@ -93,6 +95,12 @@ Callouts can stay open or become collapsible:
 <!-- wp:docspress/callout {"tone":"warning","title":"Protect credentials","content":"<p>Never place access tokens in browser-side examples.</p>","collapsible":false} /-->
 ```
 
+Flows keep procedures connected while remaining concise Gutenberg comments:
+
+```html
+<!-- wp:docspress/flow {"start":1,"steps":[{"title":"Choose","content":"<p>Select the project option.</p>"},{"title":"Configure","content":"<p>Set the required values.</p>"},{"title":"Verify","content":"<p>Confirm the expected result.</p>"}]} /-->
+```
+
 API exchanges keep their request and response together:
 
 ```html
@@ -107,10 +115,10 @@ Terminal sessions distinguish commands from their output, while Result summarize
 <!-- wp:docspress/result {"status":"success","title":"Preview published","content":"<p>The page tree is ready to review.</p>","meta":"12 pages · 1.8s"} /-->
 ```
 
-File trees use two spaces per nesting level and a trailing slash for folders:
+File trees use two spaces per nesting level and a trailing slash for folders. Native folder disclosures can begin open or closed:
 
 ```html
-<!-- wp:docspress/file-tree {"root":"repository/","tree":"docs/\n  introduction.md\n  api/\n    endpoints.md","caption":"Documentation source tree."} /-->
+<!-- wp:docspress/file-tree {"root":"repository/","tree":"docs/\n  introduction.md\n  api/\n    endpoints.md","caption":"Documentation source tree.","collapsible":true,"open":true} /-->
 ```
 
 Prompts remain readable, crawlable HTML instead of screenshots or iframes:
@@ -119,7 +127,7 @@ Prompts remain readable, crawlable HTML instead of screenshots or iframes:
 <!-- wp:docspress/prompt {"prompt":"Use $docspress-install to review this synchronization logic and propose the smallest safe patch.","model":"GPT-5","mode":"code","thinking":true,"context":"$docspress-install, @repository, src/sync.js, test/sync.test.js","caption":"Synchronization review prompt"} /-->
 ```
 
-The theme's Playground seed at [`../../theme/playground/setup.php`](../../theme/playground/setup.php) creates every example Page as serialized Gutenberg block HTML. The Home page uses Hero and Audience Paths with working publish-existing and create-with-AI roots, while the Kitchen Sink covers every semantic state and meaningful configuration combination across all eight documentation blocks. Its live component table lists every plugin installed by the blueprint.
+The theme's Playground seed at [`../../theme/playground/setup.php`](../../theme/playground/setup.php) creates every example Page as serialized Gutenberg block HTML. The Home page uses Hero and Audience Paths with working publish-existing and create-with-AI roots, while the Kitchen Sink covers every semantic state and meaningful configuration combination across all nine documentation blocks. Its live component table lists every plugin installed by the blueprint.
 
 ## Run with the theme
 

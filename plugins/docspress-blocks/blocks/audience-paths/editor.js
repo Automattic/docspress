@@ -101,7 +101,6 @@
 			compact: { type: 'boolean', default: false },
 			showNumbers: { type: 'boolean', default: false },
 			panelColor: { type: 'string', default: '' },
-			textColor: { type: 'string', default: '' },
 			accentColor: { type: 'string', default: '' }
 		},
 		supports: { ...designSupports, align: [ 'wide', 'full' ] },
@@ -115,7 +114,6 @@
 				attributes.compact ? 'docspress-audience-paths--compact' : '',
 				attributes.showNumbers ? '' : 'docspress-audience-paths--no-numbers',
 				attributes.panelColor ? 'docspress-audience-paths--has-panel-color' : '',
-				attributes.textColor ? 'docspress-audience-paths--has-text-color' : '',
 				attributes.accentColor ? 'docspress-audience-paths--has-accent-color' : '',
 				'docspress-audience-paths--editor',
 				presetClass
@@ -123,10 +121,6 @@
 			const styles = { ...themeStyle };
 
 			if ( attributes.panelColor ) styles[ '--db-paths-panel' ] = attributes.panelColor;
-			if ( attributes.textColor ) {
-				styles[ '--db-paths-heading' ] = attributes.textColor;
-				styles[ '--db-paths-copy' ] = attributes.textColor;
-			}
 			if ( attributes.accentColor ) styles[ '--db-paths-accent' ] = attributes.accentColor;
 
 			const blockProps = useBlockProps( { className: classes, style: styles } );
@@ -258,7 +252,6 @@
 							initialOpen: false,
 							colorSettings: [
 								{ value: attributes.panelColor, onChange: ( panelColor ) => setAttributes( { panelColor: panelColor || '' } ), label: __( 'Panel', 'docspress-blocks' ) },
-								{ value: attributes.textColor, onChange: ( textColor ) => setAttributes( { textColor: textColor || '' } ), label: __( 'Text', 'docspress-blocks' ) },
 								{ value: attributes.accentColor, onChange: ( accentColor ) => setAttributes( { accentColor: accentColor || '' } ), label: __( 'Primary accent', 'docspress-blocks' ) }
 							]
 						}

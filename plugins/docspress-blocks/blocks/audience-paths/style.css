@@ -6,6 +6,7 @@
 	--db-paths-panel: var(--dp-paper, #fff);
 	--db-paths-columns: 2;
 	box-sizing: border-box;
+	container-type: inline-size;
 	width: 100%;
 	margin-block: clamp(2rem, 5vw, 4rem);
 	padding: clamp(32px, 5vw, 52px);
@@ -44,22 +45,37 @@
 	background: var(--db-paths-panel);
 }
 
-.docspress-audience-paths--ink:not(.has-text-color),
-.docspress-audience-paths--blueprint:not(.has-text-color),
-.docspress-audience-paths--has-text-color:not(.has-text-color) {
+.docspress-audience-paths:not(.has-text-color) {
 	color: var(--db-paths-copy);
 }
 
-.docspress-audience-paths--ink:not(.has-text-color) :where(.docspress-audience-paths__eyebrow, .docspress-audience-paths__description),
-.docspress-audience-paths--blueprint:not(.has-text-color) :where(.docspress-audience-paths__eyebrow, .docspress-audience-paths__description),
-.docspress-audience-paths--has-text-color:not(.has-text-color) :where(.docspress-audience-paths__eyebrow, .docspress-audience-paths__description) {
+.docspress-audience-paths:not(.has-text-color) :is(
+	.docspress-audience-paths__eyebrow,
+	.docspress-audience-paths__description,
+	.docspress-audience-paths__card-description,
+	.docspress-audience-paths__number
+) {
 	color: var(--db-paths-copy);
 }
 
-.docspress-audience-paths--ink:not(.has-text-color) :where(.docspress-audience-paths__title, .docspress-audience-paths__card-title),
-.docspress-audience-paths--blueprint:not(.has-text-color) :where(.docspress-audience-paths__title, .docspress-audience-paths__card-title),
-.docspress-audience-paths--has-text-color:not(.has-text-color) :where(.docspress-audience-paths__title, .docspress-audience-paths__card-title) {
+.docspress-audience-paths:not(.has-text-color) :is(
+	.docspress-audience-paths__title,
+	.docspress-audience-paths__card-title,
+	.docspress-audience-paths__cta-label
+) {
 	color: var(--db-paths-heading);
+}
+
+.docspress-audience-paths.has-text-color :is(
+	.docspress-audience-paths__eyebrow,
+	.docspress-audience-paths__title,
+	.docspress-audience-paths__description,
+	.docspress-audience-paths__card-title,
+	.docspress-audience-paths__card-description,
+	.docspress-audience-paths__number,
+	.docspress-audience-paths__cta-label
+) {
+	color: inherit;
 }
 
 .docspress-audience-paths__header {
@@ -236,6 +252,11 @@ a.docspress-audience-paths__card:focus-visible {
 	margin-bottom: 18px;
 }
 
+.docspress-audience-paths--compact .docspress-audience-paths__title {
+	font-size: clamp(24px, 3vw, 30px);
+	line-height: 1.15;
+}
+
 .docspress-audience-paths--compact .docspress-audience-paths__eyebrow {
 	margin-bottom: 8px;
 }
@@ -319,6 +340,26 @@ a.docspress-audience-paths__card:hover .docspress-audience-paths__cta-icon {
 @media (max-width: 860px) {
 	.docspress-audience-paths--columns-3 {
 		--db-paths-columns: 2;
+	}
+}
+
+@container (max-width: 820px) {
+	.docspress-audience-paths--compact.docspress-audience-paths--columns-3 .docspress-audience-paths__grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.docspress-audience-paths--compact.docspress-audience-paths--columns-3 .docspress-audience-paths__item:last-child:nth-child(odd) {
+		grid-column: 1 / -1;
+	}
+}
+
+@container (max-width: 480px) {
+	.docspress-audience-paths--compact .docspress-audience-paths__grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.docspress-audience-paths--compact .docspress-audience-paths__item:last-child {
+		grid-column: auto;
 	}
 }
 
