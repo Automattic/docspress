@@ -91,6 +91,11 @@ The WordPress theme and plugin directories are distributed through this GitHub r
 
 [Open the complete Site Editor demo](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground) to edit the seeded Hero and Audience Paths blocks, switch among ten complete visual systems, customize templates and shell components, and explore posts and threaded comments. Both experiences are temporary and require no installation.
 
+Install the current WordPress packages directly:
+
+- [Download DocsPress Theme 0.9.9](https://github.com/Automattic/docspress/releases/download/wordpress-0.9.9/docspress-theme-0.9.9.zip)
+- [Download DocsPress Blocks 0.9.12](https://github.com/Automattic/docspress/releases/download/wordpress-0.9.9/docspress-blocks-0.9.12.zip)
+
 Convert this repository's `docs/` directory and open the resulting WordPress site:
 
 ```bash

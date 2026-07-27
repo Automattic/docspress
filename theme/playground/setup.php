@@ -493,6 +493,110 @@ $home_content .= '<!-- wp:docspress/result ' . serialize_block_attributes( $sync
 $home_content .= <<<'HTML'
 </section>
 <!-- /wp:group -->
+
+<!-- wp:group {"align":"wide","anchor":"downloads","className":"home-download-section","layout":{"type":"default"}} -->
+<section class="wp-block-group alignwide home-download-section" id="downloads"><!-- wp:group {"className":"home-download-intro","layout":{"type":"default"}} -->
+<div class="wp-block-group home-download-intro"><!-- wp:group {"layout":{"type":"default"}} -->
+<div class="wp-block-group"><!-- wp:paragraph {"className":"home-section-kicker"} -->
+<p class="home-section-kicker">Installable WordPress packages</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":2} -->
+<h2 class="wp-block-heading">Two packages. One native documentation system.</h2>
+<!-- /wp:heading --></div>
+<!-- /wp:group -->
+
+<!-- wp:paragraph {"className":"home-download-intro__summary"} -->
+<p class="home-download-intro__summary">Install through the normal WordPress upload screens. No separate frontend, build service, or proprietary runtime required.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:group -->
+
+<!-- wp:group {"className":"home-download-grid","layout":{"type":"default"}} -->
+<div class="wp-block-group home-download-grid"><!-- wp:group {"tagName":"article","className":"home-download-card home-download-card--theme","layout":{"type":"default"}} -->
+<article class="wp-block-group home-download-card home-download-card--theme"><!-- wp:paragraph {"className":"home-download-card__meta"} -->
+<p class="home-download-card__meta"><span>Site experience</span><span>Theme 0.9.9</span></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Download DocsPress Theme</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>A Site Editor-first documentation shell with editable templates, navigation, search, reading tools, and complete visual style families.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"className":"home-download-card__features"} -->
+<ul class="wp-block-list home-download-card__features"><!-- wp:list-item -->
+<li>Site Editor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>10 visual systems</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Docs navigation</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:group {"className":"home-download-card__actions","layout":{"type":"flex","flexWrap":"wrap"}} -->
+<div class="wp-block-group home-download-card__actions"><!-- wp:buttons -->
+<div class="wp-block-buttons"><!-- wp:button -->
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://github.com/Automattic/docspress/releases/download/wordpress-0.9.9/docspress-theme-0.9.9.zip">Download theme .zip</a></div>
+<!-- /wp:button --></div>
+<!-- /wp:buttons --></div>
+<!-- /wp:group -->
+
+<!-- wp:paragraph {"className":"home-download-card__requirements"} -->
+<p class="home-download-card__requirements">WordPress 6.6+ · PHP 7.4+ · GPL-2.0-or-later</p>
+<!-- /wp:paragraph --></article>
+<!-- /wp:group -->
+
+<!-- wp:group {"tagName":"article","className":"home-download-card home-download-card--blocks","layout":{"type":"default"}} -->
+<article class="wp-block-group home-download-card home-download-card--blocks"><!-- wp:paragraph {"className":"home-download-card__meta"} -->
+<p class="home-download-card__meta"><span>Authoring toolkit</span><span>Blocks 0.9.12</span></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Download DocsPress Plugins</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Add the Gutenberg blocks demonstrated in Kitchen Sink: API requests, code tabs, file trees, diagrams, prompts, flows, results, and more.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"className":"home-download-card__features"} -->
+<ul class="wp-block-list home-download-card__features"><!-- wp:list-item -->
+<li>15 docs blocks</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Native controls</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Theme-aware</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:group {"className":"home-download-card__actions","layout":{"type":"flex","flexWrap":"wrap"}} -->
+<div class="wp-block-group home-download-card__actions"><!-- wp:buttons -->
+<div class="wp-block-buttons"><!-- wp:button -->
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://github.com/Automattic/docspress/releases/download/wordpress-0.9.9/docspress-blocks-0.9.12.zip">Download plugins .zip</a></div>
+<!-- /wp:button --></div>
+<!-- /wp:buttons -->
+
+<!-- wp:paragraph -->
+<p><a class="home-download-card__preview" href="/docs/reference/kitchen-sink/">Preview Kitchen Sink →</a></p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:group -->
+
+<!-- wp:paragraph {"className":"home-download-card__requirements"} -->
+<p class="home-download-card__requirements">WordPress 6.6+ · PHP 7.4+ · GPL-2.0-or-later</p>
+<!-- /wp:paragraph --></article>
+<!-- /wp:group --></div>
+<!-- /wp:group --></section>
+<!-- /wp:group -->
 HTML;
 $home_content .= "\n\n" . '<!-- wp:docspress/audience-paths ' . serialize_block_attributes( $audience_paths_attributes ) . ' /-->';
 

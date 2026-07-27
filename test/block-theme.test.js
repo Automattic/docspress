@@ -907,8 +907,20 @@ describe("DocsPress block theme constraints", () => {
     expect(setup).toContain("wp:docspress/flow");
     expect(setup).toContain("wp:docspress/result");
     expect(setup).toContain("Bring Markdown, or generate it from source.");
+    expect(setup).toContain("home-download-section");
+    expect(setup).toContain("Download DocsPress Theme");
+    expect(setup).toContain("Download DocsPress Plugins");
+    expect(setup).toContain("Preview Kitchen Sink");
+    expect(setup).toContain(
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.9/docspress-theme-0.9.9.zip"
+    );
+    expect(setup).toContain(
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.9/docspress-blocks-0.9.12.zip"
+    );
     expect(styles).toContain(".home-proof-strip {");
     expect(styles).toContain(".home-sync-section {");
+    expect(styles).toContain(".home-download-section {");
+    expect(styles).toContain(".home-download-card--theme {");
     expect(heroSeed).not.toContain("'visualLabel'");
     expect(heroSeed).not.toContain("'layout'");
     expect(heroSeed).not.toContain("'tone'");

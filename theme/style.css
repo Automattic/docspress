@@ -3,7 +3,7 @@ Theme Name: DocsPress
 Theme URI: https://github.com/Automattic/docspress
 Author: Fatih Kadir Akın
 Description: A Site Editor-first documentation block theme for WordPress and DocsPress.
-Version: 0.9.8
+Version: 0.9.9
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 7.4
@@ -2203,6 +2203,222 @@ body.command-search-open {
 	box-shadow: none;
 }
 
+.home-download-section {
+	position: relative;
+	box-sizing: border-box;
+	margin-top: clamp(84px, 11vw, 128px);
+	padding: clamp(30px, 5vw, 58px);
+	overflow: hidden;
+	border: 1px solid var(--dp-line);
+	border-radius: calc(var(--dp-radius) * 1.6);
+	background:
+		linear-gradient(135deg, color-mix(in srgb, var(--dp-blue) 7%, transparent), transparent 42%),
+		var(--dp-canvas);
+}
+
+.home-download-section::before {
+	position: absolute;
+	top: -74px;
+	right: -48px;
+	width: 210px;
+	height: 210px;
+	border: 1px solid color-mix(in srgb, var(--dp-blue) 20%, transparent);
+	border-radius: 50%;
+	box-shadow:
+		0 0 0 28px color-mix(in srgb, var(--dp-blue) 5%, transparent),
+		0 0 0 56px color-mix(in srgb, var(--dp-blue) 3%, transparent);
+	content: "";
+	pointer-events: none;
+}
+
+.home-download-intro {
+	position: relative;
+	z-index: 1;
+	display: grid;
+	grid-template-columns: minmax(0, 0.78fr) minmax(280px, 0.42fr);
+	gap: clamp(28px, 6vw, 76px);
+	align-items: end;
+	margin: 0 0 clamp(30px, 4vw, 44px);
+}
+
+.home-download-intro > * {
+	margin: 0;
+}
+
+.home-download-intro :where(h2) {
+	max-width: 790px;
+	font-size: clamp(38px, 5vw, 62px);
+	letter-spacing: -0.055em;
+	line-height: 0.96;
+	text-wrap: balance;
+}
+
+.home-download-intro__summary {
+	max-width: 42ch;
+	color: var(--dp-muted);
+	font-size: 15px;
+	line-height: 1.65;
+}
+
+.home-download-grid {
+	position: relative;
+	z-index: 1;
+	display: grid;
+	grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+	gap: 16px;
+	margin: 0;
+}
+
+.home-download-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	min-height: 390px;
+	padding: clamp(26px, 3.5vw, 42px);
+	overflow: hidden;
+	border: 1px solid var(--dp-line);
+	border-radius: var(--dp-radius);
+	background: var(--dp-paper);
+}
+
+.home-download-card::after {
+	position: absolute;
+	right: 24px;
+	bottom: -42px;
+	color: color-mix(in srgb, currentColor 7%, transparent);
+	content: "B";
+	font: 900 188px/1 var(--dp-font-ui);
+	letter-spacing: -0.1em;
+	pointer-events: none;
+}
+
+.home-download-card--theme {
+	border-color: color-mix(in srgb, var(--dp-ink) 84%, var(--dp-line));
+	background: var(--dp-ink);
+	color: var(--dp-paper);
+}
+
+.home-download-card--theme::after {
+	content: "T";
+}
+
+.home-download-card__meta {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+	margin: 0 0 48px;
+	font: 780 11px/1.2 var(--dp-font-mono);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.home-download-card__meta span:last-child {
+	opacity: 0.64;
+}
+
+.home-download-card :where(h3) {
+	position: relative;
+	z-index: 1;
+	max-width: 500px;
+	margin: 0;
+	font-size: clamp(28px, 3.5vw, 42px);
+	letter-spacing: -0.045em;
+	line-height: 1;
+	text-wrap: balance;
+}
+
+.home-download-card > p:not(.home-download-card__meta, .home-download-card__requirements) {
+	position: relative;
+	z-index: 1;
+	max-width: 54ch;
+	margin: 19px 0 0;
+	color: var(--dp-muted);
+	line-height: 1.6;
+}
+
+.home-download-card--theme > p:not(.home-download-card__meta, .home-download-card__requirements) {
+	color: color-mix(in srgb, var(--dp-paper) 72%, transparent);
+}
+
+.home-download-card__features {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 7px;
+	margin: 24px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.home-download-card__features li {
+	margin: 0;
+	padding: 5px 8px;
+	border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+	border-radius: 999px;
+	font: 720 10px/1.2 var(--dp-font-mono);
+	letter-spacing: 0.03em;
+}
+
+.home-download-card__actions {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px 18px;
+	align-items: center;
+	margin-top: auto;
+	padding-top: 34px;
+}
+
+.home-download-card__actions .wp-block-buttons,
+.home-download-card__actions .wp-block-button {
+	margin: 0;
+}
+
+.home-download-card__actions .wp-block-button__link {
+	min-height: 44px;
+	padding: 12px 17px;
+	border: 1px solid var(--dp-blue);
+	border-radius: var(--dp-radius);
+	background: var(--dp-blue);
+	color: #fff;
+	font-size: 13px;
+	font-weight: 800;
+	line-height: 1.2;
+	text-decoration: none;
+}
+
+.home-download-card--theme .home-download-card__actions .wp-block-button__link {
+	border-color: var(--dp-highlight);
+	background: var(--dp-highlight);
+	color: var(--dp-ink);
+}
+
+.home-download-card__actions .wp-block-button__link:hover {
+	filter: brightness(0.96);
+	transform: translateY(-1px);
+}
+
+.home-download-card__preview {
+	color: inherit;
+	font-size: 12px;
+	font-weight: 750;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 4px;
+}
+
+.home-download-card__requirements {
+	position: relative;
+	z-index: 1;
+	margin: 16px 0 0;
+	font: 680 10px/1.4 var(--dp-font-mono);
+	opacity: 0.62;
+}
+
 .homepage-content > .wp-block-docspress-audience-paths.alignwide {
 	width: 100%;
 	margin-top: clamp(84px, 11vw, 128px);
@@ -2789,7 +3005,9 @@ body.command-search-open {
 
 	.home-proof-grid,
 	.home-feature-grid,
-	.home-sync-grid {
+	.home-sync-grid,
+	.home-download-intro,
+	.home-download-grid {
 		grid-template-columns: minmax(0, 1fr);
 	}
 
@@ -2812,6 +3030,14 @@ body.command-search-open {
 
 	.home-sync-section {
 		padding: 40px 0 0;
+	}
+
+	.home-download-section {
+		padding: 30px;
+	}
+
+	.home-download-intro {
+		align-items: start;
 	}
 
 	.homepage-card-grid {
@@ -2852,6 +3078,20 @@ body.command-search-open {
 
 	.home-sync-section {
 		padding: 36px 0 0;
+	}
+
+	.home-download-section {
+		padding: 22px;
+		border-radius: var(--dp-radius);
+	}
+
+	.home-download-card {
+		min-height: 360px;
+		padding: 26px 22px;
+	}
+
+	.home-download-card__meta {
+		margin-bottom: 36px;
 	}
 
 	.search-dialog {
