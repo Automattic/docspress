@@ -4,8 +4,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 concurrency:
   group: docspress-sync
@@ -26,8 +25,9 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: ./
         with:
-          mode: reconcile
-          wordpress-site: fkadev.blog
+          mode: publish
+          wordpress-url: https://fkadocs.atomicsites.blog
+          wordpress-site: fkadocs.atomicsites.blog
           wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}
           docs-dir: docs
           root-slug: docs
@@ -37,4 +37,4 @@ jobs:
           edit-link: false
           status: publish
           delete-mode: trash
-          dry-run: false
+          dry-run: true
