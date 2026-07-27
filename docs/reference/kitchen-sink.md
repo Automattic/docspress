@@ -115,5 +115,5 @@ This inventory is generated from the running WordPress installation.
 | WordPress | Core | 7.0.2 | Running |
 | DocsPress | Theme | 0.9.8 | Active |
 | Akismet Anti-spam: Spam Protection | Plugin | 5.7 | Active |
-| DocsPress Blocks | Plugin | 0.9.10 | Active |
+| DocsPress Blocks | Plugin | 0.9.11 | Active |
 | Jetpack | Plugin | 16.1-a.3 | Active |
