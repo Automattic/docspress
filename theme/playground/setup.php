@@ -314,26 +314,30 @@ if ( ! $publish_existing_id || ! $create_docs_id ) {
 
 $updates_id = docspress_playground_upsert_content( 'page', 'updates', 'Updates', '' );
 $hero_attributes = array(
-	'eyebrow'         => 'Documentation, publishing, and community',
-	'title'           => 'Docs that stay connected to your GitHub repo',
-	'description'     => 'Write beside your code. Publish a WordPress experience that guides every reader to the docs written for them.',
-	'primaryLabel'    => 'Choose your path',
-	'primaryUrl'      => '#choose-your-path',
-	'secondaryLabel'  => 'Latest updates',
-	'secondaryUrl'    => $updates_id ? get_permalink( $updates_id ) : home_url( '/#latest-updates' ),
+	'eyebrow'         => 'AI-native documentation for WordPress',
+	'title'           => 'One source for readers, search, and agents.',
+	'description'     => 'Keep Markdown beside your code. DocsPress publishes native Gutenberg Pages, exposes exact .md twins and /llms.txt, and carries WordPress edits back to GitHub as reviewable pull requests.',
+	'primaryLabel'    => 'Explore AI-ready docs',
+	'primaryUrl'      => home_url( '/docs/guides/ai-friendly-documentation/' ),
+	'secondaryLabel'  => 'View on GitHub',
+	'secondaryUrl'    => 'https://github.com/Automattic/docspress',
+	'secondaryNewTab' => true,
 	'mediaUrl'        => get_theme_file_uri( 'assets/images/homepage-octocat-wapuu.webp' ),
-	'mediaAlt'        => 'The GitHub Octocat and WordPress Wapuu celebrating their documentation workflow together.',
+	'mediaAlt'        => 'Octocat and Wapuu high-five beside the DocsPress workflow.',
+	'visualVariant'   => 'sync-diagram',
+	'mediaWidth'      => 46,
+	'imageScale'      => 100,
 );
 $audience_paths_attributes = array(
 	'anchor'      => 'choose-your-path',
 	'align'       => 'wide',
-	'eyebrow'     => 'Choose a starting point',
-	'title'       => 'Where are your docs today?',
-	'description' => 'Follow the path that matches your repository.',
+	'eyebrow'     => 'Start with the repository you have',
+	'title'       => 'Bring Markdown, or generate it from source.',
+	'description' => 'Both paths end with reviewed documentation owned by your GitHub repository.',
 	'paths'       => array(
 		array(
-			'title'       => 'I already have Markdown docs',
-			'description' => 'Connect an existing docs folder to WordPress and begin with a safe draft sync.',
+			'title'       => 'My docs already live in GitHub',
+			'description' => 'Connect an existing Markdown tree, preview a safe draft sync, then publish it as native WordPress Pages.',
 			'url'         => get_permalink( $publish_existing_id ),
 			'cta'         => 'Publish existing docs',
 			'icon'        => 'document',
@@ -341,8 +345,8 @@ $audience_paths_attributes = array(
 			'newTab'      => false,
 		),
 		array(
-			'title'       => 'I need to create docs',
-			'description' => 'Generate source-grounded documentation with AI, review it, then publish it.',
+			'title'       => 'My code needs documentation',
+			'description' => 'Give a coding agent the DocsPress skills, generate source-grounded Markdown, review it, and publish.',
 			'url'         => get_permalink( $create_docs_id ),
 			'cta'         => 'Create docs with AI',
 			'icon'        => 'sparkles',
@@ -355,46 +359,150 @@ $audience_paths_attributes = array(
 	'textAlign'   => 'left',
 	'showNumbers' => false,
 );
+$ai_index_code_attributes = array(
+	'language'        => 'markdown',
+	'filename'        => '/llms.txt',
+	'code'            => "# Product documentation\n> Guides and API reference.\n\n## Documentation\n- [Quickstart](https://docs.example.com/docs/quickstart.md)\n- [API reference](https://docs.example.com/docs/reference/api.md)\n- [Continuous sync](https://docs.example.com/docs/guides/continuous-sync.md)",
+	'showLineNumbers' => false,
+	'caption'         => 'A small discovery index points agents to exact, reviewed Markdown pages.',
+);
+$sync_flow_attributes = array(
+	'start' => 1,
+	'steps' => array(
+		array(
+			'title'   => 'Edit Markdown with the code',
+			'content' => '<p>Authors and coding agents work in the repository they already review.</p>',
+		),
+		array(
+			'title'   => 'Publish through GitHub Actions',
+			'content' => '<p>DocsPress converts the tree into native Gutenberg Pages and stores the exact source beside each Page.</p>',
+		),
+		array(
+			'title'   => 'Edit in WordPress when it helps',
+			'content' => '<p>Editors can improve managed Pages with familiar blocks instead of learning a separate docs frontend.</p>',
+		),
+		array(
+			'title'   => 'Review the change back in GitHub',
+			'content' => '<p>WordPress-only edits become a focused pull request. Two-sided changes stop as explicit conflicts.</p>',
+		),
+	),
+);
+$sync_result_attributes = array(
+	'status'  => 'success',
+	'title'   => 'One reviewed documentation corpus',
+	'content' => '<p>The WordPress experience, <code>/llms.txt</code> index, and page-level <code>.md</code> routes stay aligned with the same source-owned Markdown.</p>',
+	'meta'    => 'Markdown → Gutenberg → Markdown',
+);
 $home_content = '<!-- wp:docspress/hero ' . serialize_block_attributes( $hero_attributes ) . ' /-->'
 	. "\n\n"
-	. '<!-- wp:docspress/audience-paths ' . serialize_block_attributes( $audience_paths_attributes ) . ' /-->'
-	. "\n\n"
 	. <<<'HTML'
-<!-- wp:heading {"level":2} -->
-<h2 class="wp-block-heading">One WordPress site, every publishing surface</h2>
-<!-- /wp:heading -->
-
-<!-- wp:paragraph -->
-<p>DocsPress keeps product documentation in a focused reading shell without switching off the rest of WordPress. Publish updates, invite discussion, build menus, add widgets, and customize the whole experience from the familiar admin.</p>
+<!-- wp:group {"align":"wide","className":"home-proof-strip","layout":{"type":"default"}} -->
+<div class="wp-block-group alignwide home-proof-strip"><!-- wp:columns {"className":"home-proof-grid"} -->
+<div class="wp-block-columns home-proof-grid"><!-- wp:column {"className":"home-proof-item"} -->
+<div class="wp-block-column home-proof-item"><!-- wp:paragraph {"className":"home-proof-token"} -->
+<p class="home-proof-token"><code>/llms.txt</code></p>
 <!-- /wp:paragraph -->
-
-<!-- wp:columns -->
-<div class="wp-block-columns"><!-- wp:column -->
-<div class="wp-block-column"><!-- wp:heading {"level":3} -->
-<h3 class="wp-block-heading">Documentation</h3>
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Agent discovery</h3>
 <!-- /wp:heading -->
 <!-- wp:paragraph -->
-<p>Source-backed Pages gain navigation, search, Markdown routes, and an <code>llms.txt</code> index.</p>
+<p>A small index points to every published, source-backed Markdown page.</p>
 <!-- /wp:paragraph --></div>
 <!-- /wp:column -->
-<!-- wp:column -->
-<div class="wp-block-column"><!-- wp:heading {"level":3} -->
-<h3 class="wp-block-heading">Community</h3>
+
+<!-- wp:column {"className":"home-proof-item"} -->
+<div class="wp-block-column home-proof-item"><!-- wp:paragraph {"className":"home-proof-token"} -->
+<p class="home-proof-token"><code>page.md</code></p>
+<!-- /wp:paragraph -->
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Exact source twins</h3>
 <!-- /wp:heading -->
 <!-- wp:paragraph -->
-<p>Native posts and threaded comments make release notes, ideas, and support conversations feel at home.</p>
+<p>Agents fetch reviewed Markdown directly—never reconstructed or scraped HTML.</p>
 <!-- /wp:paragraph --></div>
+<!-- /wp:column -->
+
+<!-- wp:column {"className":"home-proof-item"} -->
+<div class="wp-block-column home-proof-item"><!-- wp:paragraph {"className":"home-proof-token"} -->
+<p class="home-proof-token"><code>GitHub ↔ WordPress</code></p>
+<!-- /wp:paragraph -->
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Reviewable sync</h3>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>Commits publish Pages; Gutenberg edits return to the repository as pull requests.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns --></div>
+<!-- /wp:group -->
+
+<!-- wp:group {"align":"wide","className":"home-feature-section home-ai-ready","layout":{"type":"default"}} -->
+<section class="wp-block-group alignwide home-feature-section home-ai-ready" id="ai-ready"><!-- wp:columns {"verticalAlignment":"center","className":"home-feature-grid"} -->
+<div class="wp-block-columns are-vertically-aligned-center home-feature-grid"><!-- wp:column {"verticalAlignment":"center","className":"home-feature-copy"} -->
+<div class="wp-block-column is-vertically-aligned-center home-feature-copy"><!-- wp:paragraph {"className":"home-section-kicker"} -->
+<p class="home-section-kicker">Built for the agentic web</p>
+<!-- /wp:paragraph -->
+<!-- wp:heading {"level":2} -->
+<h2 class="wp-block-heading">HTML for people. Markdown for machines. No parallel docs stack.</h2>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>Every published source-backed Page has two deliberate surfaces. People get the complete WordPress reading experience; agents and retrieval tools get stable Markdown with a predictable content type.</p>
+<!-- /wp:paragraph -->
+<!-- wp:paragraph -->
+<p><a href="/docs/guides/ai-friendly-documentation/">See how AI discovery and Markdown routes work →</a></p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column -->
+
+<!-- wp:column {"verticalAlignment":"center","className":"home-feature-demo"} -->
+<div class="wp-block-column is-vertically-aligned-center home-feature-demo">
+HTML;
+$home_content .= '<!-- wp:docspress/colorful-code ' . serialize_block_attributes( $ai_index_code_attributes ) . ' /-->';
+$home_content .= <<<'HTML'
+</div>
+<!-- /wp:column --></div>
+<!-- /wp:columns --></section>
+<!-- /wp:group -->
+
+<!-- wp:group {"align":"wide","className":"home-feature-section home-sync-section","layout":{"type":"default"}} -->
+<section class="wp-block-group alignwide home-feature-section home-sync-section" id="github-sync"><!-- wp:columns {"verticalAlignment":"top","className":"home-sync-grid"} -->
+<div class="wp-block-columns are-vertically-aligned-top home-sync-grid"><!-- wp:column {"verticalAlignment":"top","className":"home-feature-copy"} -->
+<div class="wp-block-column is-vertically-aligned-top home-feature-copy"><!-- wp:paragraph {"className":"home-section-kicker"} -->
+<p class="home-section-kicker">GitHub stays authoritative</p>
+<!-- /wp:paragraph -->
+<!-- wp:heading {"level":2} -->
+<h2 class="wp-block-heading">Markdown moves both ways without losing review.</h2>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>DocsPress keeps documentation beside the product it explains, while WordPress remains a first-class editorial and publishing surface.</p>
+<!-- /wp:paragraph -->
+<!-- wp:paragraph -->
+<p><a href="/docs/guides/continuous-sync/">Follow the continuous synchronization guide →</a></p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column -->
+
+<!-- wp:column {"verticalAlignment":"top","className":"home-sync-flow"} -->
+<div class="wp-block-column is-vertically-aligned-top home-sync-flow">
+HTML;
+$home_content .= '<!-- wp:docspress/flow ' . serialize_block_attributes( $sync_flow_attributes ) . ' /-->';
+$home_content .= <<<'HTML'
+</div>
 <!-- /wp:column --></div>
 <!-- /wp:columns -->
 HTML;
+$home_content .= '<!-- wp:docspress/result ' . serialize_block_attributes( $sync_result_attributes ) . ' /-->';
+$home_content .= <<<'HTML'
+</section>
+<!-- /wp:group -->
+HTML;
+$home_content .= "\n\n" . '<!-- wp:docspress/audience-paths ' . serialize_block_attributes( $audience_paths_attributes ) . ' /-->';
 
 $home_id = docspress_playground_upsert_content(
 	'page',
 	'home',
-	'Docs connected to your GitHub repo',
+	'AI-native documentation from GitHub to WordPress',
 	$home_content,
 	array(
-		'post_excerpt' => 'Write beside your code and guide every reader to the documentation path written for them.',
+		'post_excerpt' => 'Keep Markdown in GitHub, publish native WordPress Pages, and serve exact AI-friendly documentation from the same reviewed source.',
 	)
 );
 

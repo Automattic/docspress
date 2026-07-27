@@ -31,3 +31,16 @@
 	min-height: 20px;
 	padding: 4px;
 }
+
+.docspress-code__annotation-editor {
+	margin-block: 12px;
+	padding: 12px;
+	border: 1px solid var(--dp-line, #d8e5ee);
+	border-radius: var(--dp-radius, 10px);
+	background: var(--dp-canvas, #f5faff);
+}
+
+.docspress-code__annotations--editor {
+	border: 1px solid var(--db-code-border);
+	border-top: 0;
+}

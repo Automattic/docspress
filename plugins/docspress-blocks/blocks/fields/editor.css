@@ -1,0 +1,17 @@
+.docspress-fields__field-editor {
+	margin-block: 12px;
+	padding: 12px;
+	border: 1px solid var(--dp-line, #d8e5ee);
+	border-radius: var(--dp-radius, 10px);
+	background: var(--dp-canvas, #f5faff);
+}
+
+.docspress-fields__field-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.docspress-fields--editor .docspress-fields__description {
+	min-height: 1.4em;
+}

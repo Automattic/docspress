@@ -34,7 +34,7 @@ Markdown stays portable, but technical explanations do not have to look like pla
 
 Use Markdown syntax when it communicates clearly, then add a structured block when sequence, hierarchy, commands, or outcomes deserve a stronger visual treatment. The converter preserves the supported block comments in source, so the GitHub and WordPress representations stay aligned.
 
-Read [Gutenberg blocks](reference/gutenberg-blocks.md) for the full schema or open the [block kitchen sink](reference/kitchen-sink.md) to see every component together.
+Read [Gutenberg blocks](reference/gutenberg-blocks/index.md) for the full schema or open the [block kitchen sink](reference/kitchen-sink.md) to see every component together.
 
 ## Choose a starting point
 

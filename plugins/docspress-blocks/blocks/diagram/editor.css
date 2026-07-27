@@ -1,0 +1,62 @@
+.docspress-diagram__editor-source {
+	display: grid;
+	gap: 6px;
+	padding: 12px 14px;
+	border-bottom: 1px solid var(--db-diagram-border);
+	background: var(--db-diagram-canvas);
+}
+
+.docspress-diagram__editor-source label {
+	color: var(--db-diagram-muted);
+	font: 620 0.66rem/1.3 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.docspress-diagram__editor-source textarea {
+	min-height: 110px;
+	padding: 9px;
+	border: 1px solid var(--db-diagram-border);
+	border-radius: var(--dp-radius, 10px);
+	background: var(--db-diagram-paper);
+	color: var(--db-diagram-copy);
+	font: 500 0.74rem/1.5 var(--dp-font-mono, "SFMono-Regular", Consolas, monospace);
+}
+
+.docspress-diagram__preview {
+	display: grid;
+	gap: 8px;
+	padding: 16px;
+	background: var(--db-diagram-canvas);
+}
+
+.docspress-diagram__preview-edge {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+	align-items: center;
+	gap: 8px;
+}
+
+.docspress-diagram__preview-edge span {
+	padding: 7px 9px;
+	border: 1px solid var(--db-diagram-border);
+	border-radius: var(--dp-radius, 10px);
+	background: var(--db-diagram-paper);
+	color: var(--db-diagram-ink);
+	font: 650 0.72rem/1.2 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	text-align: center;
+}
+
+.docspress-diagram__preview-edge i {
+	color: var(--db-diagram-accent);
+	font-style: normal;
+}
+
+.docspress-diagram__preview-edge b {
+	grid-column: 1 / -1;
+	color: var(--db-diagram-muted);
+	font: 580 0.66rem/1.2 var(--dp-font-mono, "SFMono-Regular", Consolas, monospace);
+	text-align: center;
+}
+
+.docspress-diagram--editor figcaption {
+	min-height: 1.4em;
+}

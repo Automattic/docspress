@@ -40,20 +40,17 @@
 }
 
 .docspress-hero--midnight:not(.has-text-color),
-.docspress-hero--brand:not(.has-text-color),
-.docspress-hero--has-text-color:not(.has-text-color) {
+.docspress-hero--brand:not(.has-text-color) {
 	color: var(--db-hero-copy);
 }
 
 .docspress-hero--midnight:not(.has-text-color) :where(.docspress-hero__eyebrow, .docspress-hero__description),
-.docspress-hero--brand:not(.has-text-color) :where(.docspress-hero__eyebrow, .docspress-hero__description),
-.docspress-hero--has-text-color:not(.has-text-color) :where(.docspress-hero__eyebrow, .docspress-hero__description) {
+.docspress-hero--brand:not(.has-text-color) :where(.docspress-hero__eyebrow, .docspress-hero__description) {
 	color: var(--db-hero-copy);
 }
 
 .docspress-hero--midnight:not(.has-text-color) .docspress-hero__title,
-.docspress-hero--brand:not(.has-text-color) .docspress-hero__title,
-.docspress-hero--has-text-color:not(.has-text-color) .docspress-hero__title {
+.docspress-hero--brand:not(.has-text-color) .docspress-hero__title {
 	color: var(--db-hero-heading);
 }
 
@@ -166,10 +163,8 @@ a.docspress-hero__button--secondary.wp-element-button:hover {
 }
 
 .docspress-hero:not(.docspress-hero--no-grid) .docspress-hero__visual {
-	background-image:
-		linear-gradient(color-mix(in srgb, var(--db-hero-heading) 5%, transparent) 1px, transparent 1px),
-		linear-gradient(90deg, color-mix(in srgb, var(--db-hero-heading) 5%, transparent) 1px, transparent 1px);
-	background-size: 28px 28px;
+	outline: 1px solid color-mix(in srgb, var(--db-hero-heading) 10%, transparent);
+	outline-offset: -16px;
 }
 
 .docspress-hero__visual::before {
@@ -198,6 +193,223 @@ a.docspress-hero__button--secondary.wp-element-button:hover {
 	display: block;
 	width: 100%;
 	height: auto;
+}
+
+.docspress-hero-diagram {
+	position: relative;
+	z-index: 1;
+	box-sizing: border-box;
+	width: min(100%, 420px);
+	padding: 18px;
+	border: 1px solid var(--dp-line, #dcdcde);
+	border-radius: 16px;
+	background: var(--dp-paper, #fff);
+	box-shadow: 0 16px 42px color-mix(in srgb, var(--db-hero-heading) 9%, transparent);
+	color: var(--db-hero-heading);
+	font-family: var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.docspress-hero-diagram__pipeline {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 24px;
+}
+
+.docspress-hero-diagram__source,
+.docspress-hero-diagram__surface {
+	box-sizing: border-box;
+	border: 1px solid var(--dp-line, #dcdcde);
+	border-radius: 11px;
+	background: var(--dp-canvas, #f6f7f7);
+}
+
+.docspress-hero-diagram__source {
+	position: relative;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 7px;
+	padding: 42px 12px 13px;
+	overflow: hidden;
+}
+
+.docspress-hero-diagram__bar {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	min-height: 30px;
+	padding: 0 10px;
+	background: var(--db-hero-heading);
+	color: var(--dp-paper, #fff);
+	font: 720 9px/1 var(--dp-font-mono, "SFMono-Regular", Consolas, monospace);
+}
+
+.docspress-hero-diagram__dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--dp-highlight, #ffb900);
+}
+
+.docspress-hero-diagram__folder,
+.docspress-hero-diagram__file {
+	display: block;
+	padding: 5px 7px;
+	border-radius: 5px;
+	font: 650 9px/1.2 var(--dp-font-mono, "SFMono-Regular", Consolas, monospace);
+}
+
+.docspress-hero-diagram__folder {
+	grid-column: 1 / -1;
+	border: 1px solid color-mix(in srgb, var(--db-hero-accent) 28%, var(--dp-line, #dcdcde));
+	background: color-mix(in srgb, var(--db-hero-accent) 8%, var(--dp-paper, #fff));
+	color: var(--db-hero-accent);
+}
+
+.docspress-hero-diagram__file {
+	position: relative;
+	padding-left: 17px;
+	background: var(--dp-paper, #fff);
+	color: var(--db-hero-copy);
+}
+
+.docspress-hero-diagram__file::before {
+	position: absolute;
+	top: 50%;
+	left: 7px;
+	width: 5px;
+	height: 7px;
+	border: 1px solid currentColor;
+	border-radius: 1px;
+	content: "";
+	opacity: 0.55;
+	transform: translateY(-50%);
+}
+
+.docspress-hero-diagram__hub {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-width: 0;
+	padding: 2px 4px;
+	text-align: center;
+}
+
+.docspress-hero-diagram__hub::before,
+.docspress-hero-diagram__hub::after {
+	position: absolute;
+	left: 50%;
+	color: var(--dp-line-strong, #c3c4c7);
+	content: "↓";
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1;
+	transform: translateX(-50%);
+}
+
+.docspress-hero-diagram__hub::before {
+	top: -21px;
+}
+
+.docspress-hero-diagram__hub::after {
+	bottom: -21px;
+}
+
+.docspress-hero-diagram__mascot {
+	display: grid;
+	width: 100%;
+	height: 112px;
+	place-items: center;
+	overflow: visible;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+}
+
+.docspress-hero-diagram__mascot .docspress-hero__image {
+	width: min(100%, 190px);
+	max-width: none;
+	filter: drop-shadow(0 8px 10px color-mix(in srgb, var(--db-hero-heading) 16%, transparent));
+}
+
+.docspress-hero-diagram__fallback {
+	color: var(--db-hero-accent);
+	font-size: 20px;
+	font-weight: 850;
+	letter-spacing: -0.05em;
+}
+
+.docspress-hero-diagram__hub > strong {
+	margin-top: 2px;
+	font-size: 12px;
+	line-height: 1.1;
+}
+
+.docspress-hero-diagram__hub > span {
+	margin-top: 3px;
+	color: var(--db-hero-copy);
+	font-size: 9px;
+	line-height: 1.25;
+}
+
+.docspress-hero-diagram__outputs {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 9px;
+}
+
+.docspress-hero-diagram__surface {
+	display: grid;
+	gap: 4px;
+	padding: 10px 10px 11px;
+}
+
+.docspress-hero-diagram__surface-label {
+	color: var(--db-hero-copy);
+	font-size: 8px;
+	font-weight: 780;
+	letter-spacing: 0.08em;
+	line-height: 1;
+	text-transform: uppercase;
+}
+
+.docspress-hero-diagram__surface > strong {
+	font-size: 11px;
+	line-height: 1.2;
+}
+
+.docspress-hero-diagram__surface > span:last-child {
+	color: var(--db-hero-copy);
+	font-size: 9px;
+	line-height: 1.3;
+}
+
+.docspress-hero-diagram__return {
+	display: grid;
+	grid-template-columns: auto auto minmax(0, 1fr);
+	gap: 7px;
+	align-items: center;
+	margin-top: 15px;
+	padding-top: 13px;
+	border-top: 1px solid var(--dp-line, #dcdcde);
+	color: var(--db-hero-copy);
+	font-size: 9px;
+	line-height: 1.3;
+}
+
+.docspress-hero-diagram__return > span:first-child {
+	color: var(--dp-highlight-dark, #b26200);
+	font-size: 16px;
+	line-height: 1;
+}
+
+.docspress-hero-diagram__return strong {
+	color: var(--db-hero-heading);
+	font-size: 9px;
 }
 
 .docspress-hero--media-left {
@@ -241,9 +453,6 @@ a.docspress-hero__button--secondary.wp-element-button:hover {
 	grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.55fr);
 	min-height: 500px;
 	border-color: color-mix(in srgb, var(--db-hero-heading) 14%, transparent);
-	background-image:
-		radial-gradient(circle at 76% 48%, color-mix(in srgb, var(--db-hero-accent) 16%, transparent) 0, transparent 27%),
-		linear-gradient(112deg, transparent 0 68%, color-mix(in srgb, var(--db-hero-heading) 3%, transparent) 68% 100%);
 	box-shadow: 0 28px 80px color-mix(in srgb, #000 20%, transparent);
 }
 
@@ -271,13 +480,8 @@ a.docspress-hero__button--secondary.wp-element-button:hover {
 .docspress-hero--layout-editorial:not(.docspress-hero--no-grid)::before {
 	position: absolute;
 	z-index: 0;
-	inset: 0;
-	background-image:
-		linear-gradient(90deg, color-mix(in srgb, var(--db-hero-heading) 5%, transparent) 1px, transparent 1px),
-		linear-gradient(color-mix(in srgb, var(--db-hero-heading) 4%, transparent) 1px, transparent 1px);
-	background-position: -1px -1px;
-	background-size: 54px 54px;
-	mask-image: linear-gradient(90deg, transparent, #000 62%, #000);
+	inset: 18px;
+	border: 1px solid color-mix(in srgb, var(--db-hero-heading) 8%, transparent);
 	content: "";
 	pointer-events: none;
 }
@@ -377,12 +581,8 @@ a.docspress-hero__button--secondary.wp-element-button:hover {
 
 .docspress-hero--layout-editorial .docspress-hero__visual::before {
 	width: min(110%, 430px);
-	border: 0;
-	background: repeating-radial-gradient(
-		circle,
-		color-mix(in srgb, var(--db-hero-heading) 10%, transparent) 0 1px,
-		transparent 1px 34px
-	);
+	border: 1px dashed color-mix(in srgb, var(--db-hero-heading) 16%, transparent);
+	background: transparent;
 }
 
 .docspress-hero--layout-editorial .docspress-hero__visual::after {
@@ -566,6 +766,26 @@ a.docspress-hero__button--secondary.wp-element-button:hover {
 
 	.docspress-hero--layout-editorial .docspress-hero__actions {
 		gap: 8px;
+	}
+
+	.docspress-hero-diagram {
+		padding: 16px;
+	}
+
+	.docspress-hero-diagram__pipeline {
+		gap: 24px;
+	}
+
+	.docspress-hero-diagram__outputs {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.docspress-hero-diagram__return {
+		grid-template-columns: auto minmax(0, 1fr);
+	}
+
+	.docspress-hero-diagram__return > span:last-child {
+		grid-column: 2;
 	}
 
 	:where(.docspress-hero--layout-editorial .docspress-hero__button--secondary) {

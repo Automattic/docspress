@@ -21,5 +21,5 @@ Write ordinary Markdown for ordinary content and use DocsPress blocks where docu
 
 - [Page structure and routes](page-structure.md) explains filenames, titles, parent Pages, links, manifests, and edit links.
 - [Markdown and Gutenberg](markdown-and-gutenberg.md) maps Markdown features and explains when to choose each DocsPress block.
-- [DocsPress block reference](../reference/gutenberg-blocks.md) lists exact attributes and allowed values.
+- [DocsPress block reference](../reference/gutenberg-blocks/index.md) lists exact attributes and allowed values.
 - [Kitchen Sink](../reference/kitchen-sink.md) exercises every custom block and semantic state.

@@ -2,7 +2,7 @@
 	'use strict';
 
 	const { registerBlockType } = blocks;
-	const { Fragment, InspectorControls, PanelBody, PlainText, SelectControl, TextControl, __, designSupports, el, presetClass, themeStyle, useBlockProps } = shared;
+	const { Fragment, InspectorControls, PanelBody, PlainText, RangeControl, SelectControl, TextControl, ToggleControl, __, designSupports, el, presetClass, themeStyle, useBlockProps } = shared;
 	const icon = el(
 		'svg',
 		{ viewBox: '0 0 24 24', width: 24, height: 24, fill: 'none', stroke: 'currentColor', strokeWidth: 1.8 },
@@ -39,7 +39,13 @@
 			requestBodyFormat: { type: 'string', default: 'json' },
 			responseStatus: { type: 'string', default: '200 OK' },
 			responseBody: { type: 'string', default: '{\n  "id": 42,\n  "slug": "getting-started"\n}' },
-			responseBodyFormat: { type: 'string', default: 'json' }
+			responseBodyFormat: { type: 'string', default: 'json' },
+			runnable: { type: 'boolean', default: false },
+			editable: { type: 'boolean', default: true },
+			allowUnsafe: { type: 'boolean', default: false },
+			baseUrl: { type: 'string', default: '' },
+			allowedOrigins: { type: 'string', default: '' },
+			timeout: { type: 'number', default: 10000 }
 		},
 		supports: designSupports,
 		edit: function ApiRequestEdit( { attributes, setAttributes } ) {
@@ -91,6 +97,47 @@
 								{ label: __( 'Raw — unformatted text', 'docspress-blocks' ), value: 'raw' }
 							],
 							onChange: ( responseBodyFormat ) => setAttributes( { responseBodyFormat } )
+						} ),
+						el( ToggleControl, {
+							label: __( 'Runnable request', 'docspress-blocks' ),
+							help: __( 'Let readers execute this request directly from their browser.', 'docspress-blocks' ),
+							checked: attributes.runnable,
+							onChange: ( runnable ) => setAttributes( { runnable } )
+						} )
+					),
+					attributes.runnable && el(
+						PanelBody,
+						{ title: __( 'Runner safety', 'docspress-blocks' ), initialOpen: true },
+						el( ToggleControl, {
+							label: __( 'Readers can edit inputs', 'docspress-blocks' ),
+							checked: attributes.editable,
+							onChange: ( editable ) => setAttributes( { editable } )
+						} ),
+						el( ToggleControl, {
+							label: __( 'Allow mutating methods', 'docspress-blocks' ),
+							help: __( 'POST, PUT, PATCH, and DELETE still require a second reader confirmation.', 'docspress-blocks' ),
+							checked: attributes.allowUnsafe,
+							onChange: ( allowUnsafe ) => setAttributes( { allowUnsafe } )
+						} ),
+						el( TextControl, {
+							label: __( 'Base URL', 'docspress-blocks' ),
+							help: __( 'Leave empty for the current site. Cross-origin hosts must also be allowlisted.', 'docspress-blocks' ),
+							value: attributes.baseUrl,
+							onChange: ( baseUrl ) => setAttributes( { baseUrl } )
+						} ),
+						el( TextControl, {
+							label: __( 'Allowed origins', 'docspress-blocks' ),
+							help: __( 'Comma-separated exact origins, for example https://api.example.com.', 'docspress-blocks' ),
+							value: attributes.allowedOrigins,
+							onChange: ( allowedOrigins ) => setAttributes( { allowedOrigins } )
+						} ),
+						el( RangeControl, {
+							label: __( 'Timeout in milliseconds', 'docspress-blocks' ),
+							value: attributes.timeout,
+							min: 1000,
+							max: 30000,
+							step: 1000,
+							onChange: ( timeout ) => setAttributes( { timeout } )
 						} )
 					)
 				),
@@ -120,6 +167,22 @@
 						format: attributes.requestBodyFormat,
 						onChange: ( requestBody ) => setAttributes( { requestBody } )
 					} ),
+					attributes.runnable && el(
+						'div',
+						{ className: 'docspress-api__runner docspress-api__runner--preview' },
+						el(
+							'div',
+							{ className: 'docspress-api__runner-heading' },
+							el( 'div', null, el( 'span', { className: 'docspress-api__eyebrow' }, __( 'Try it', 'docspress-blocks' ) ), el( 'strong', null, __( 'Run this request', 'docspress-blocks' ) ) ),
+							el( 'span', { className: 'docspress-api__runner-policy' }, __( 'Credentials omitted', 'docspress-blocks' ) )
+						),
+						el(
+							'div',
+							{ className: 'docspress-api__runner-actions' },
+							el( 'button', { className: 'docspress-api__run', type: 'button', disabled: true }, el( 'span', { className: 'docspress-api__run-dot', 'aria-hidden': true } ), el( 'b', null, `${ __( 'Run', 'docspress-blocks' ) } ${ attributes.method }` ) ),
+							el( 'span', { className: 'docspress-api__runner-status' }, __( 'Interactive on the published page', 'docspress-blocks' ) )
+						)
+					),
 					el(
 						'section',
 						{ className: 'docspress-api__response' },

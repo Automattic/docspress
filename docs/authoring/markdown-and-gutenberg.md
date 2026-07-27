@@ -61,4 +61,4 @@ Escape quotes, backslashes, control characters, and newlines within JSON strings
 
 <!-- wp:docspress/callout {"tone":"warning","title":"The plugin is required","content":"<p>WordPress must have the matching DocsPress Blocks plugin installed and active to render <code>wp:docspress/*</code> blocks.</p>","collapsible":false} /-->
 
-See the [complete block reference](../reference/gutenberg-blocks.md) and [Kitchen Sink](../reference/kitchen-sink.md).
+See the [complete block reference](../reference/gutenberg-blocks/index.md) and [Kitchen Sink](../reference/kitchen-sink.md).

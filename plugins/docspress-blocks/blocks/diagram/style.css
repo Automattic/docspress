@@ -1,0 +1,119 @@
+.wp-block-docspress-diagram {
+	--db-diagram-accent: var(--dp-blue, #3858e9);
+	--db-diagram-paper: var(--dp-paper, #fff);
+	--db-diagram-canvas: var(--dp-canvas, #f6f7f9);
+	--db-diagram-border: var(--dp-line-strong, #cfd4dc);
+	--db-diagram-ink: var(--dp-ink, #171a22);
+	--db-diagram-copy: var(--dp-copy, #2c3338);
+	--db-diagram-muted: var(--dp-muted, #6f7685);
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 0;
+	margin-block: clamp(1.5rem, 3vw, 2.25rem);
+	overflow: hidden;
+	border: 1px solid var(--db-diagram-border);
+	border-radius: var(--dp-radius, 10px);
+	background: var(--db-diagram-paper);
+	color: var(--db-diagram-copy);
+}
+
+.docspress-preset-docspress .wp-block-docspress-diagram,
+.docspress-blocks--preset-docspress.wp-block-docspress-diagram {
+	--db-diagram-accent: #005cb3;
+}
+
+.docspress-preset-jetpack .wp-block-docspress-diagram,
+.docspress-blocks--preset-jetpack.wp-block-docspress-diagram {
+	--db-diagram-accent: #069e08;
+}
+
+.docspress-diagram__header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 18px;
+	padding: 14px 16px;
+	border-bottom: 1px solid var(--db-diagram-border);
+	background: var(--db-diagram-paper);
+}
+
+.docspress-diagram__header > div {
+	display: grid;
+	gap: 3px;
+}
+
+.docspress-diagram__eyebrow {
+	color: var(--db-diagram-accent);
+	font: 760 0.64rem/1.2 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.docspress-diagram__header h3 {
+	margin: 0;
+	color: var(--db-diagram-ink);
+	font: 760 1rem/1.2 var(--dp-font-heading, var(--dp-font-ui, sans-serif));
+}
+
+.docspress-diagram__header > span {
+	color: var(--db-diagram-muted);
+	font: 600 0.66rem/1.3 var(--dp-font-mono, "SFMono-Regular", Consolas, monospace);
+}
+
+.docspress-diagram__canvas {
+	overflow-x: auto;
+	padding: 10px;
+	background: var(--db-diagram-canvas);
+}
+
+.docspress-diagram__svg {
+	display: block;
+	width: 100%;
+	min-width: 520px;
+	height: auto;
+}
+
+.docspress-diagram__svg marker path {
+	fill: var(--db-diagram-accent);
+}
+
+.docspress-diagram__edges path,
+.docspress-diagram__messages line {
+	fill: none;
+	stroke: var(--db-diagram-accent);
+	stroke-width: 2;
+}
+
+.docspress-diagram__lanes > line {
+	stroke: var(--db-diagram-border);
+	stroke-dasharray: 5 6;
+	stroke-width: 1.5;
+}
+
+.docspress-diagram__nodes rect,
+.docspress-diagram__lanes rect {
+	fill: var(--db-diagram-paper);
+	stroke: var(--db-diagram-border);
+	stroke-width: 1.5;
+}
+
+.docspress-diagram__nodes text,
+.docspress-diagram__lanes text {
+	fill: var(--db-diagram-ink);
+	font: 680 12px/1 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.docspress-diagram__edges text,
+.docspress-diagram__messages text {
+	fill: var(--db-diagram-muted);
+	font: 590 10px/1 var(--dp-font-mono, "SFMono-Regular", Consolas, monospace);
+}
+
+.docspress-diagram figcaption {
+	margin: 0;
+	padding: 9px 14px;
+	border-top: 1px solid var(--db-diagram-border);
+	color: var(--db-diagram-muted);
+	font: 500 0.75rem/1.45 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	text-align: center;
+}

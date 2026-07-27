@@ -36,6 +36,48 @@ function docspress_blocks_render_hero_action( $label, $url, $class, $new_tab ) {
 }
 
 /**
+ * Render the HTML-first GitHub to WordPress workflow diagram.
+ *
+ * @param string $mascot_image Optional mascot image markup.
+ * @return string
+ */
+function docspress_blocks_render_hero_sync_diagram( $mascot_image ) {
+	$mascot = $mascot_image
+		? $mascot_image
+		: '<span class="docspress-hero-diagram__fallback" aria-hidden="true">DP</span>';
+
+	return '<div class="docspress-hero-diagram" aria-label="GitHub Markdown flows through DocsPress to WordPress Pages and machine-readable documentation. WordPress edits return to GitHub as reviewable pull requests.">'
+		. '<div class="docspress-hero-diagram__pipeline">'
+		. '<section class="docspress-hero-diagram__source" aria-label="GitHub Markdown source">'
+		. '<div class="docspress-hero-diagram__bar"><span class="docspress-hero-diagram__dot"></span><strong>github.com/repo</strong></div>'
+		. '<div class="docspress-hero-diagram__folder">docs/</div>'
+		. '<span class="docspress-hero-diagram__file">index.md</span>'
+		. '<span class="docspress-hero-diagram__file">quickstart.md</span>'
+		. '<span class="docspress-hero-diagram__file">api.md</span>'
+		. '</section>'
+		. '<div class="docspress-hero-diagram__hub" aria-label="DocsPress">'
+		. '<div class="docspress-hero-diagram__mascot">' . $mascot . '</div>'
+		. '<strong>DocsPress</strong>'
+		. '<span>keeps one source</span>'
+		. '</div>'
+		. '<div class="docspress-hero-diagram__outputs" aria-label="Published documentation surfaces">'
+		. '<section class="docspress-hero-diagram__surface docspress-hero-diagram__surface--wordpress">'
+		. '<span class="docspress-hero-diagram__surface-label">For readers</span>'
+		. '<strong>WordPress Pages</strong>'
+		. '<span>Native Gutenberg</span>'
+		. '</section>'
+		. '<section class="docspress-hero-diagram__surface docspress-hero-diagram__surface--agents">'
+		. '<span class="docspress-hero-diagram__surface-label">For agents</span>'
+		. '<strong>/llms.txt</strong>'
+		. '<span>Exact page.md routes</span>'
+		. '</section>'
+		. '</div>'
+		. '</div>'
+		. '<div class="docspress-hero-diagram__return"><span aria-hidden="true">↑</span><strong>Reviewable pull request</strong><span>WordPress edits return to GitHub</span></div>'
+		. '</div>';
+}
+
+/**
  * Render the Hero block.
  *
  * @param array $attributes Block attributes.
@@ -53,6 +95,7 @@ function docspress_blocks_render_hero( $attributes ) {
 	$media_url     = isset( $attributes['mediaUrl'] ) ? esc_url( $attributes['mediaUrl'] ) : '';
 	$media_alt     = isset( $attributes['mediaAlt'] ) ? sanitize_text_field( $attributes['mediaAlt'] ) : '';
 	$visual_label  = isset( $attributes['visualLabel'] ) ? sanitize_text_field( $attributes['visualLabel'] ) : '';
+	$visual_variant = docspress_blocks_allowed_value( isset( $attributes['visualVariant'] ) ? $attributes['visualVariant'] : '', array( 'image', 'sync-diagram' ), 'image' );
 	$layout         = docspress_blocks_allowed_value( isset( $attributes['layout'] ) ? $attributes['layout'] : '', array( 'split', 'editorial' ), 'split' );
 	$media_position = docspress_blocks_allowed_value( isset( $attributes['mediaPosition'] ) ? $attributes['mediaPosition'] : '', array( 'left', 'right' ), 'right' );
 	$height         = docspress_blocks_allowed_value( isset( $attributes['height'] ) ? $attributes['height'] : '', array( 'compact', 'standard', 'tall' ), 'standard' );
@@ -64,10 +107,11 @@ function docspress_blocks_render_hero( $attributes ) {
 	$show_orbit     = ! empty( $attributes['showOrbit'] );
 	$primary_new_tab = ! empty( $attributes['primaryNewTab'] );
 	$secondary_new_tab = ! empty( $attributes['secondaryNewTab'] );
-	$has_visual     = (bool) ( $media_url || $media_id );
+	$has_visual     = 'sync-diagram' === $visual_variant || (bool) ( $media_url || $media_id );
 	$classes        = array(
 		'docspress-hero',
 		'docspress-hero--' . $tone,
+		'docspress-hero--visual-' . $visual_variant,
 		'docspress-hero--layout-' . $layout,
 		'docspress-hero--media-' . $media_position,
 		'docspress-hero--height-' . $height,
@@ -91,7 +135,6 @@ function docspress_blocks_render_hero( $attributes ) {
 	$custom_colors = array(
 		'panelColor'  => array( '--db-hero-panel', 'docspress-hero--has-panel-color' ),
 		'visualColor' => array( '--db-hero-visual', 'docspress-hero--has-visual-color' ),
-		'textColor'   => array( '--db-hero-heading', 'docspress-hero--has-text-color' ),
 		'accentColor' => array( '--db-hero-accent', 'docspress-hero--has-accent-color' ),
 	);
 	foreach ( $custom_colors as $attribute_name => $color_config ) {
@@ -99,9 +142,6 @@ function docspress_blocks_render_hero( $attributes ) {
 		if ( $color ) {
 			$styles[]  = $color_config[0] . ':' . $color;
 			$classes[] = $color_config[1];
-			if ( 'textColor' === $attribute_name ) {
-				$styles[] = '--db-hero-copy:' . $color;
-			}
 		}
 	}
 
@@ -129,6 +169,9 @@ function docspress_blocks_render_hero( $attributes ) {
 			esc_attr( $media_alt )
 		);
 	}
+	$visual = 'sync-diagram' === $visual_variant
+		? docspress_blocks_render_hero_sync_diagram( $image )
+		: ( $image ? '<figure class="docspress-hero__media">' . $image . '</figure>' : '' );
 
 	ob_start();
 	?>
@@ -144,7 +187,7 @@ function docspress_blocks_render_hero( $attributes ) {
 		<?php if ( $has_visual ) : ?>
 			<div class="docspress-hero__visual">
 				<?php if ( $visual_label ) : ?><span class="docspress-hero__visual-label" aria-hidden="true"><?php echo esc_html( $visual_label ); ?></span><?php endif; ?>
-				<?php if ( $image ) : ?><figure class="docspress-hero__media"><?php echo $image; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></figure><?php endif; ?>
+				<?php echo $visual; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 		<?php endif; ?>
 	</section>
@@ -190,6 +233,7 @@ function docspress_blocks_register_hero() {
 				'mediaUrl'      => array( 'type' => 'string', 'default' => '' ),
 				'mediaAlt'      => array( 'type' => 'string', 'default' => '' ),
 				'visualLabel'   => array( 'type' => 'string', 'default' => '' ),
+				'visualVariant' => array( 'type' => 'string', 'default' => 'image' ),
 				'layout'        => array( 'type' => 'string', 'default' => 'split' ),
 				'mediaPosition' => array( 'type' => 'string', 'default' => 'right' ),
 				'mediaWidth'    => array( 'type' => 'number', 'default' => 44 ),
@@ -201,7 +245,6 @@ function docspress_blocks_register_hero() {
 				'showOrbit'     => array( 'type' => 'boolean', 'default' => false ),
 				'panelColor'    => array( 'type' => 'string', 'default' => '' ),
 				'visualColor'   => array( 'type' => 'string', 'default' => '' ),
-				'textColor'     => array( 'type' => 'string', 'default' => '' ),
 				'accentColor'   => array( 'type' => 'string', 'default' => '' ),
 			),
 			'supports'        => docspress_blocks_design_supports( array( 'wide', 'full' ) ),

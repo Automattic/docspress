@@ -137,96 +137,18 @@ const blockNames = [
   "api-request",
   "audience-paths",
   "callout",
+  "code-playground",
   "code-tabs",
   "colorful-code",
+  "diagram",
+  "fields",
   "file-tree",
   "flow",
   "hero",
   "prompt",
   "result",
-  "terminal-session"
-];
-const legacyCustomizerSettings = [
-  "custom_logo",
-  "docspress_design_preset",
-  "docspress_docs_root",
-  "docspress_sidebar_source",
-  "docspress_sidebar_menu",
-  "docspress_sidebar_sort",
-  "docspress_sidebar_show_root",
-  "docspress_sidebar_depth",
-  "docspress_sidebar_title",
-  "docspress_show_sidebar_search",
-  "docspress_search_placeholder",
-  "docspress_show_version_selector",
-  "docspress_homepage_layout",
-  "docspress_homepage_show_latest_posts",
-  "docspress_homepage_posts_title",
-  "docspress_homepage_posts_count",
-  "docspress_header_menu",
-  "docspress_show_brand_suffix",
-  "docspress_brand_suffix",
-  "docspress_show_header_search",
-  "docspress_header_search_label",
-  "docspress_search_dialog_placeholder",
-  "docspress_search_suggested_label",
-  "docspress_search_no_results_label",
-  "docspress_search_results_limit",
-  "docspress_search_width",
-  "docspress_search_height",
-  "docspress_search_radius_mode",
-  "docspress_search_radius",
-  "docspress_search_overlay_opacity",
-  "docspress_search_overlay_blur",
-  "docspress_search_show_paths",
-  "docspress_search_show_excerpts",
-  "docspress_search_show_hints",
-  "docspress_show_color_toggle",
-  "docspress_default_color_mode",
-  "docspress_show_repository",
-  "docspress_github_url",
-  "docspress_article_width",
-  "docspress_sidebar_width",
-  "docspress_toc_width",
-  "docspress_border_radius",
-  "docspress_content_density",
-  "docspress_show_toc",
-  "docspress_show_breadcrumbs",
-  "docspress_show_pagination",
-  "docspress_show_post_meta",
-  "docspress_show_post_date",
-  "docspress_show_post_author",
-  "docspress_show_featured_images",
-  "docspress_show_post_categories",
-  "docspress_show_post_tags",
-  "docspress_comments_on_pages",
-  "docspress_comments_on_posts",
-  "docspress_show_comment_count",
-  "docspress_show_comment_avatars",
-  "docspress_comment_avatar_size",
-  "docspress_show_comment_dates",
-  "docspress_discussion_title",
-  "docspress_comment_form_title",
-  "docspress_comments_closed_message",
-  "docspress_show_edit_link",
-  "docspress_wordpress_edit_label",
-  "docspress_show_github_edit_link",
-  "docspress_github_edit_label",
-  "docspress_github_edit_repository_url",
-  "docspress_github_edit_ref",
-  "docspress_show_summary",
-  "docspress_ui_font",
-  "docspress_content_font",
-  "docspress_heading_font",
-  "docspress_content_font_size",
-  "docspress_heading_weight",
-  "docspress_show_kicker",
-  "docspress_kicker_label",
-  "docspress_toc_title",
-  "docspress_show_footer",
-  "docspress_footer_text",
-  "docspress_footer_link_label",
-  "docspress_footer_link_url"
+  "terminal-session",
+  "troubleshooter"
 ];
 
 describe("DocsPress block theme constraints", () => {
@@ -325,6 +247,31 @@ describe("DocsPress block theme constraints", () => {
     expect(styles).toContain("border-radius: var(--dp-radius, 10px);");
   });
 
+  it("uses compact schema rows and no default gradient backgrounds in companion blocks", async () => {
+    const blockStyles = await Promise.all(
+      blockNames.map((name) => fs.readFile(path.join(blocksRoot, name, "style.css"), "utf8"))
+    );
+    const fieldsStyles = blockStyles[blockNames.indexOf("fields")];
+
+    for (const styles of blockStyles) {
+      expect(styles).not.toMatch(
+        /(?:linear|radial|conic|repeating-linear|repeating-radial)-gradient/i
+      );
+    }
+    expect(fieldsStyles).toContain("container-type: inline-size;");
+    expect(fieldsStyles).toContain("grid-template-columns: minmax(9rem, 0.72fr) minmax(0, 1.6fr);");
+    expect(fieldsStyles).toContain("padding: 10px 16px;");
+    expect(fieldsStyles).toContain("min-height: 36px;");
+    expect(fieldsStyles).toContain(
+      ".wp-block-docspress-fields.is-compact .docspress-fields__item"
+    );
+    expect(fieldsStyles).toContain("padding-block: 8px;");
+    expect(fieldsStyles).toContain("@container (max-width: 560px)");
+    expect(fieldsStyles).toContain(".docspress-fields__metadata span + span::before");
+    expect(fieldsStyles).toContain(".wp-block-docspress-fields .docspress-fields__term > code");
+    expect(fieldsStyles).toContain(".wp-block-docspress-fields .docspress-fields__metadata code");
+  });
+
   it("gives every companion block native Site Editor design controls", async () => {
     const editors = await Promise.all(
       blockNames.map((name) => fs.readFile(path.join(blocksRoot, name, "editor.js"), "utf8"))
@@ -333,6 +280,19 @@ describe("DocsPress block theme constraints", () => {
     for (const editor of editors) {
       expect(editor).toContain("themeStyle");
       expect(editor).toContain("designSupports");
+    }
+  });
+
+  it("teaches every companion block with a focused guide and three rendered examples", async () => {
+    const guideRoot = path.join(root, "docs", "reference", "gutenberg-blocks");
+    const index = await fs.readFile(path.join(guideRoot, "index.md"), "utf8");
+
+    for (const name of blockNames) {
+      const guide = await fs.readFile(path.join(guideRoot, `${name}.md`), "utf8");
+
+      expect(index).toContain(`(${name}.md)`);
+      expect(guide).toContain("<!-- wp:docspress/fields ");
+      expect(guide.split(`<!-- wp:docspress/${name} `).length - 1).toBeGreaterThanOrEqual(3);
     }
   });
 
@@ -368,6 +328,64 @@ describe("DocsPress block theme constraints", () => {
       ".wp-block-docspress-file-tree .docspress-file-tree__item"
     );
     expect(fileTreeStyles).toContain("min-height: 27px;");
+  });
+
+  it("ships theme-native interactive reference blocks with safe browser defaults", async () => {
+    const plugin = await fs.readFile(
+      path.join(root, "plugins", "docspress-blocks", "docspress-blocks.php"),
+      "utf8"
+    );
+    const apiRender = await fs.readFile(path.join(blocksRoot, "api-request", "block.php"), "utf8");
+    const apiView = await fs.readFile(path.join(blocksRoot, "api-request", "view.js"), "utf8");
+    const apiStyles = await fs.readFile(path.join(blocksRoot, "api-request", "style.css"), "utf8");
+    const playgroundRender = await fs.readFile(
+      path.join(blocksRoot, "code-playground", "block.php"),
+      "utf8"
+    );
+    const playgroundView = await fs.readFile(
+      path.join(blocksRoot, "code-playground", "view.js"),
+      "utf8"
+    );
+    const diagramRender = await fs.readFile(path.join(blocksRoot, "diagram", "block.php"), "utf8");
+    const fieldsRender = await fs.readFile(path.join(blocksRoot, "fields", "block.php"), "utf8");
+    const codeSurface = await fs.readFile(
+      path.join(root, "plugins", "docspress-blocks", "includes", "code-surface.php"),
+      "utf8"
+    );
+    const troubleshooterView = await fs.readFile(
+      path.join(blocksRoot, "troubleshooter", "view.js"),
+      "utf8"
+    );
+
+    for (const name of ["fields", "code-playground", "diagram", "troubleshooter"]) {
+      expect(plugin).toContain(`blocks/${name}/block.php`);
+    }
+    for (const source of [apiRender, playgroundRender, diagramRender, fieldsRender]) {
+      expect(source).toContain("get_block_wrapper_attributes");
+    }
+
+    expect(apiRender).toContain("'allowUnsafe'");
+    expect(apiView).toContain("credentials: 'omit'");
+    expect(apiView).toContain("Origin not allowed");
+    expect(apiView).toContain("Click again to confirm the mutating request.");
+    expect(apiView).toContain("Scrollable API response body");
+    expect(apiView).toContain("pre.scrollHeight > pre.clientHeight + 1");
+    expect(apiStyles).toContain("max-height: clamp(16rem, 42vh, 26rem);");
+    expect(apiStyles).toContain("overscroll-behavior: contain;");
+    expect(apiStyles).toContain("scrollbar-gutter: stable;");
+    expect(playgroundRender).toContain('sandbox="allow-scripts"');
+    expect(playgroundRender).toContain('referrerpolicy="no-referrer"');
+    expect(playgroundView).toContain("connect-src 'none'");
+    expect(playgroundView).toContain("event.source !== playground.frame.contentWindow");
+    expect(diagramRender).toContain("role=\"img\"");
+    expect(diagramRender).not.toContain("mermaid");
+    expect(diagramRender).toContain("docspress_blocks_decode_source");
+    expect(playgroundRender).toContain("docspress_blocks_decode_source");
+    expect(codeSurface).toContain("html_entity_decode");
+    expect(codeSurface).toContain("'\\\\u003e'");
+    expect(fieldsRender).toContain("<dl");
+    expect(troubleshooterView).toContain("history.pop()");
+    expect(troubleshooterView).toContain("heading.focus");
   });
 
   it("is a block theme with editable templates and template parts", async () => {
@@ -440,12 +458,34 @@ describe("DocsPress block theme constraints", () => {
     }
 
     expect(comments).toContain('"tagName":"header","className":"comments-header"');
+    expect(comments).toContain(
+      'wp:comments-title {"showPostTitle":false,"level":2,"className":"comments-title"}'
+    );
+    expect(comments).toContain('<p class="comments-eyebrow">— Discussion</p>');
+    expect(comments).toContain(
+      '<p class="comments-intro has-small-font-size">Questions, corrections, and practical experience are welcome.</p>'
+    );
     expect(comments).toContain("comments-intro");
     expect(comments).toContain('"className":"comment-list"');
     expect(comments).toContain('"className":"comment-actions"');
     expect(comments).toContain("wp:comment-edit-link");
     expect(comments).toContain('"className":"comment-form-shell"');
     expect(styles).toContain(".comments-area .comments-header.wp-block-group");
+    expect(styles).toMatch(
+      /\.comments-area\.wp-block-comments\s*\{[^}]*padding-top:\s*0;[^}]*border-top:\s*0;/s
+    );
+    expect(styles).toMatch(
+      /\.comments-area \.comments-header\.wp-block-group\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\);[^}]*padding:\s*0;[^}]*border:\s*0;/s
+    );
+    expect(styles).toMatch(
+      /:where\(\.comments-area\) :where\(\.comments-title\)\s*\{[^}]*padding:\s*0;[^}]*border:\s*0;[^}]*background:\s*transparent;[^}]*font-size:\s*clamp\(22px, 3vw, 28px\);/s
+    );
+    expect(styles).toMatch(
+      /\.comments-area \.comments-intro\s*\{[^}]*justify-self:\s*start;[^}]*padding:\s*0;[^}]*text-align:\s*left;/s
+    );
+    expect(styles).toMatch(
+      /\.comments-area \.wp-block-comment-template\s*\{[^}]*border-top:\s*0;/s
+    );
     expect(styles).not.toContain(".comments-area .comment-body::before");
     expect(styles).toContain(".comments-area .comment-form-shell");
     expect(styles).toMatch(
@@ -626,7 +666,7 @@ describe("DocsPress block theme constraints", () => {
       expect(familyVariation.styles.elements.heading.typography.fontWeight).toBe(
         config.headingWeight
       );
-      expect(familyVariation.settings.color.palette).toHaveLength(24);
+      expect(familyVariation.settings.color.palette).toHaveLength(25);
       expectCompleteThemePreset(familyVariation);
 
       for (const variant of config.variants) {
@@ -641,9 +681,14 @@ describe("DocsPress block theme constraints", () => {
         expect(colorVariation.settings).toEqual({
           color: expect.objectContaining({ palette: expect.any(Array) })
         });
-        expect(colorVariation.settings.color.palette).toHaveLength(24);
+        expect(colorVariation.settings.color.palette).toHaveLength(25);
         expect(colorVariation.settings.color.palette.map(({ slug }) => slug)).toEqual(
-          expect.arrayContaining(["highlight-strong", "dark-accent", "dark-code"])
+          expect.arrayContaining([
+            "highlight-strong",
+            "header-surface",
+            "dark-accent",
+            "dark-code",
+          ])
         );
         expectCompleteColorPreset(colorVariation);
       }
@@ -737,8 +782,17 @@ describe("DocsPress block theme constraints", () => {
     expect(header).not.toContain('"textColor":"ink"');
     expect(header).not.toContain('"textColor":"copy"');
     expect(header).not.toContain('"textColor":"accent-strong"');
+    expect(header).not.toContain('"style":{"color":{"background":');
+    expect(header).not.toContain("background-color:color-mix(");
+    expect(header).toContain('"backgroundColor":"header-surface"');
     expect(header).toContain(
-      '"background":"color-mix(in srgb, var(--dp-paper) 92%, transparent)"'
+      "has-header-surface-background-color has-background"
+    );
+    expect(theme.settings.color.palette).toContainEqual(
+      expect.objectContaining({
+        slug: "header-surface",
+        color: "color-mix(in srgb, var(--dp-paper) 92%, transparent)",
+      })
     );
     expect(styles).toContain(
       "--dp-active-ink: var(--wp--preset--color--ink, #232323);"
@@ -790,14 +844,62 @@ describe("DocsPress block theme constraints", () => {
     expect(frontPage).toContain("homepage-card-grid");
   });
 
-  it("seeds the restrained fkadev.blog hero instead of an editorial treatment", async () => {
+  it("keeps homepage update cards compact and equal in height", async () => {
+    const styles = await fs.readFile(path.join(root, "theme", "style.css"), "utf8");
+
+    expect(styles).toMatch(
+      /\.homepage-card-grid\s*\{[^}]*align-items:\s*stretch;/s
+    );
+    expect(styles).toMatch(
+      /\.homepage-card-grid > li\s*\{[^}]*display:\s*flex;[^}]*min-width:\s*0;/s
+    );
+    expect(styles).toMatch(
+      /\.homepage-card-grid \.content-card\s*\{[^}]*grid-template-rows:\s*auto minmax\(0, 1fr\);[^}]*height:\s*100%;/s
+    );
+    expect(styles).toMatch(
+      /\.homepage-card-grid \.content-card-body\s*\{[^}]*display:\s*flex;[^}]*flex-direction:\s*column;[^}]*padding:\s*16px;/s
+    );
+    expect(styles).toMatch(
+      /\.homepage-card-grid \.content-card-body > \*\s*\{[^}]*margin-block-start:\s*0;/s
+    );
+    expect(styles).toMatch(
+      /:where\(\.homepage-card-grid\) :where\(\.result-card\) :where\(h2\)\s*\{[^}]*font-size:\s*18px;[^}]*line-height:\s*1\.22;/s
+    );
+    expect(styles).toMatch(
+      /\.homepage-card-grid \.content-card-excerpt\s*\{[^}]*font-size:\s*14px;[^}]*line-height:\s*1\.55;/s
+    );
+    expect(styles).toMatch(
+      /\.homepage-card-grid \.content-card-taxonomy\s*\{[^}]*margin:\s*0 0 5px;[^}]*line-height:\s*1\.35;/s
+    );
+    expect(styles).toMatch(
+      /\.homepage-card-grid \.content-card-link\s*\{[^}]*margin-top:\s*auto;/s
+    );
+  });
+
+  it("seeds an AI-native homepage with GitHub and Markdown discovery surfaces", async () => {
     const setup = await fs.readFile(
       path.join(root, "theme", "playground", "setup.php"),
       "utf8"
     );
+    const styles = await fs.readFile(path.join(root, "theme", "style.css"), "utf8");
     const heroSeed = setup.match(/\$hero_attributes = array\(([\s\S]*?)\n\);/)?.[1] || "";
 
     expect(heroSeed).toContain("'mediaUrl'");
+    expect(heroSeed).toContain("homepage-octocat-wapuu.webp");
+    expect(heroSeed).toContain("'visualVariant'");
+    expect(heroSeed).toContain("'sync-diagram'");
+    expect(heroSeed).toContain("AI-native documentation for WordPress");
+    expect(heroSeed).toContain("exact .md twins and /llms.txt");
+    expect(heroSeed).toContain("reviewable pull requests");
+    expect(setup).toContain('className":"home-proof-strip"');
+    expect(setup).toContain("<code>/llms.txt</code>");
+    expect(setup).toContain("<code>GitHub ↔ WordPress</code>");
+    expect(setup).toContain("wp:docspress/colorful-code");
+    expect(setup).toContain("wp:docspress/flow");
+    expect(setup).toContain("wp:docspress/result");
+    expect(setup).toContain("Bring Markdown, or generate it from source.");
+    expect(styles).toContain(".home-proof-strip {");
+    expect(styles).toContain(".home-sync-section {");
     expect(heroSeed).not.toContain("'visualLabel'");
     expect(heroSeed).not.toContain("'layout'");
     expect(heroSeed).not.toContain("'tone'");
@@ -1028,8 +1130,16 @@ describe("DocsPress block theme constraints", () => {
     expect(heroRender).toContain("docspress-hero__button--secondary wp-element-button");
     expect(heroEditor).toContain("docspress-hero__button--primary wp-element-button");
     expect(heroEditor).toContain("docspress-hero__button--secondary wp-element-button");
+    expect(heroRender).toContain("docspress_blocks_render_hero_sync_diagram");
+    expect(heroRender).toContain("docspress-hero-diagram__pipeline");
+    expect(heroEditor).toContain("syncDiagramPreview");
+    expect(heroEditor).toContain("GitHub sync diagram");
     expect(heroStyles).toContain(":where(.docspress-hero__title) {");
     expect(heroStyles).toContain(":where(.docspress-hero__button) {");
+    expect(heroStyles).toContain(".docspress-hero-diagram__pipeline {");
+    expect(heroStyles).toContain("grid-template-columns: minmax(0, 1fr);");
+    expect(heroStyles).toContain('content: "↓";');
+    expect(heroRender).toContain('<span aria-hidden="true">↑</span>');
     expect(heroStyles).toContain(
       ".docspress-hero__button--secondary.wp-element-button {"
     );
@@ -1105,7 +1215,6 @@ describe("DocsPress block theme constraints", () => {
 
     for (const selector of [
       ".site-header",
-      ".site-footer",
       ".result-card",
       ".result-card p",
       ".content-card-thumbnail",
@@ -1114,7 +1223,6 @@ describe("DocsPress block theme constraints", () => {
     }
     for (const selector of [
       ".brand-wordpress",
-      ".site-footer",
       ".result-card p",
       ".entry-meta",
       ".content-card-taxonomy",
@@ -1158,6 +1266,18 @@ describe("DocsPress block theme constraints", () => {
     expect(footer).toContain("<!-- wp:paragraph -->");
     expect(footer).not.toContain('"textColor"');
     expect(footer).not.toContain('"fontSize"');
+    expect(footer).not.toContain('"backgroundColor"');
+    expect(footer).toContain('"align":"full","className":"footer-inner"');
+    expect(footer).toContain('"flexWrap":"nowrap"');
+    expect(footer).toContain("Markdown → Gutenberg → WordPress");
+    expect(footer).toContain('"label":"Kitchen Sink"');
+    expect(cssRule(styles, ".site-footer")).toContain("background: var(--dp-canvas);");
+    expect(cssRule(styles, ".site-footer")).toContain("color: var(--dp-copy);");
+    expect(cssRule(styles, ".footer-inner")).toContain("max-width: none;");
+    expect(cssRule(styles, ".footer-inner")).toContain("min-height: 62px;");
+    expect(styles).not.toMatch(
+      /\.footer-[^{]*\{[^}]*(?:linear|radial|conic|repeating-linear|repeating-radial)-gradient/si
+    );
     expect(header).not.toContain('"iconColor"');
     expect(header).not.toContain("has-icon-color");
     expect(theme.styles.blocks?.["core/navigation"]).toBeUndefined();
@@ -1191,7 +1311,9 @@ describe("DocsPress block theme constraints", () => {
     );
     for (const source of [heroEditor, heroRender]) {
       expect(source).toContain("docspress-hero--has-panel-color");
-      expect(source).toContain("docspress-hero--has-text-color");
+      expect(source).not.toContain("docspress-hero--has-text-color");
+      expect(source).not.toContain("textColor:");
+      expect(source).not.toContain("'textColor'");
     }
     for (const source of [audienceEditor, audienceRender]) {
       expect(source).toContain("docspress-audience-paths--has-panel-color");
@@ -1310,14 +1432,4 @@ describe("DocsPress block theme constraints", () => {
     await expect(fs.access(path.join(root, "theme", "assets", "js", "customizer-preview.js"))).rejects.toThrow();
   });
 
-  it("documents a Site Editor destination for every retired Customizer setting", async () => {
-    const audit = await fs.readFile(
-      path.join(root, "docs", "reference", "site-editor-migration-audit.md"),
-      "utf8"
-    );
-
-    for (const setting of legacyCustomizerSettings) {
-      expect(audit).toContain(`\`${setting}\``);
-    }
-  });
 });

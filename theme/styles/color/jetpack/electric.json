@@ -11,6 +11,7 @@
 				{ "slug": "highlight", "color": "#ffffff", "name": "White" },
 				{ "slug": "highlight-strong", "color": "#0ced57", "name": "Highlight strong" },
 				{ "slug": "paper", "color": "#101517", "name": "Jetpack ink" },
+				{ "slug": "header-surface", "color": "color-mix(in srgb, var(--dp-paper) 92%, transparent)", "name": "Header surface" },
 				{ "slug": "canvas", "color": "#000000", "name": "Black" },
 				{ "slug": "ink", "color": "#ffffff", "name": "White" },
 				{ "slug": "copy", "color": "#d7dade", "name": "Light copy" },

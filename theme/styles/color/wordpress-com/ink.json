@@ -11,6 +11,7 @@
 				{ "slug": "highlight", "color": "#8dc716", "name": "Bright green" },
 				{ "slug": "highlight-strong", "color": "#ffffff", "name": "Highlight strong" },
 				{ "slug": "paper", "color": "#1d1d1d", "name": "Ink" },
+				{ "slug": "header-surface", "color": "color-mix(in srgb, var(--dp-paper) 92%, transparent)", "name": "Header surface" },
 				{ "slug": "canvas", "color": "#101517", "name": "Deep ink" },
 				{ "slug": "ink", "color": "#ffffff", "name": "White" },
 				{ "slug": "copy", "color": "#e2e2e7", "name": "Light copy" },

@@ -56,7 +56,7 @@ Confirm `rewrite-links: true` and use a relative link to a discovered documentat
 
 ## Custom blocks do not render
 
-Confirm the matching DocsPress Blocks plugin is installed and active. Validate the `wp:docspress/*` comment JSON, block name, attributes, enums, and escaped newlines against the [block reference](reference/gutenberg-blocks.md).
+Confirm the matching DocsPress Blocks plugin is installed and active. Validate the `wp:docspress/*` comment JSON, block name, attributes, enums, and escaped newlines against the [block reference](reference/gutenberg-blocks/index.md).
 
 ## The theme shows duplicate H1 headings
 

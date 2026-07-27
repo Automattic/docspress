@@ -111,4 +111,4 @@ theme/
 └── theme.json
 ```
 
-Use [Customize the theme in the Site Editor](../guides/customize-theme.md) for the editing workflow and [Gutenberg blocks](gutenberg-blocks.md) for content-block attributes.
+Use [Customize the theme in the Site Editor](../guides/customize-theme.md) for the editing workflow and [Gutenberg blocks](gutenberg-blocks/index.md) for content-block attributes.

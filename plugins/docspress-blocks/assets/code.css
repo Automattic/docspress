@@ -242,6 +242,100 @@ html[data-theme="dark"] .docspress-preset-jetpack {
 	box-shadow: inset 2px 0 0 var(--db-code-accent);
 }
 
+.docspress-code__line.is-diff-added {
+	background: color-mix(in srgb, #16883d 11%, transparent);
+	box-shadow: inset 3px 0 0 #16883d;
+}
+
+.docspress-code__line.is-diff-removed {
+	background: color-mix(in srgb, #c9352b 10%, transparent);
+	box-shadow: inset 3px 0 0 #c9352b;
+}
+
+.docspress-code__line.is-diff-meta {
+	background: color-mix(in srgb, var(--db-code-accent) 8%, transparent);
+	color: var(--db-code-muted);
+	font-style: italic;
+}
+
+.docspress-code__annotation-marker {
+	display: inline-flex;
+	width: 20px;
+	height: 20px;
+	align-items: center;
+	justify-content: center;
+	margin: 0 0 0 9px;
+	padding: 0;
+	vertical-align: middle;
+	border: 1px solid var(--db-code-accent);
+	border-radius: 50%;
+	background: var(--db-code-panel);
+	box-shadow: none;
+	color: var(--db-code-accent);
+	cursor: pointer;
+	font: 760 0.62rem/1 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.docspress-code__annotation-marker:hover,
+.docspress-code__annotation-marker:focus-visible,
+.docspress-code__annotation-marker[aria-expanded="true"] {
+	background: var(--db-code-accent);
+	color: var(--db-code-panel);
+}
+
+.docspress-code__annotations {
+	display: grid;
+	gap: 0;
+	margin: 0;
+	padding: 0;
+	border-top: 1px solid var(--db-code-border);
+	background: var(--db-code-panel);
+	list-style: none;
+}
+
+.docspress-code__annotation {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	gap: 10px;
+	margin: 0;
+	padding: 13px 16px;
+	color: var(--db-code-text);
+}
+
+.docspress-code__annotation + .docspress-code__annotation {
+	border-top: 1px solid var(--db-code-border);
+}
+
+.docspress-code__annotation-number {
+	display: inline-flex;
+	width: 22px;
+	height: 22px;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background: var(--db-code-accent);
+	color: var(--db-code-panel);
+	font: 760 0.65rem/1 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.docspress-code__annotation strong {
+	display: block;
+	margin-bottom: 3px;
+	color: var(--db-code-muted);
+	font: 680 0.64rem/1.2 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.docspress-code__annotation-content,
+.docspress-code__annotation-content p,
+.docspress-code__annotation p {
+	margin: 0;
+	color: var(--db-code-text);
+	font: 500 0.8rem/1.55 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	white-space: normal;
+}
+
 .docspress-code__line .token-comment {
 	color: var(--db-code-comment);
 	font-style: italic;

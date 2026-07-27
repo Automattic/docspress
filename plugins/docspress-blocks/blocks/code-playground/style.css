@@ -1,0 +1,277 @@
+.wp-block-docspress-code-playground {
+	--db-play-accent: var(--dp-blue, #3858e9);
+	--db-play-paper: var(--dp-paper, #fff);
+	--db-play-canvas: var(--dp-canvas, #f6f7f9);
+	--db-play-border: var(--dp-line-strong, #cfd4dc);
+	--db-play-ink: var(--dp-ink, #171a22);
+	--db-play-copy: var(--dp-copy, #2c3338);
+	--db-play-muted: var(--dp-muted, #6f7685);
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 0;
+	margin-block: clamp(1.5rem, 3vw, 2.25rem);
+	overflow: hidden;
+	border: 1px solid var(--db-play-border);
+	border-radius: var(--dp-radius, 10px);
+	background: var(--db-play-paper);
+	color: var(--db-play-copy);
+}
+
+.docspress-preset-docspress .wp-block-docspress-code-playground,
+.docspress-blocks--preset-docspress.wp-block-docspress-code-playground {
+	--db-play-accent: #005cb3;
+}
+
+.docspress-preset-jetpack .wp-block-docspress-code-playground,
+.docspress-blocks--preset-jetpack.wp-block-docspress-code-playground {
+	--db-play-accent: #069e08;
+}
+
+.docspress-playground__bar {
+	display: flex;
+	min-height: 52px;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 8px 10px 8px 14px;
+	border-bottom: 1px solid var(--db-play-border);
+	background: var(--db-play-paper);
+}
+
+.docspress-playground__identity {
+	display: flex;
+	min-width: 0;
+	align-items: center;
+	gap: 11px;
+}
+
+.docspress-playground__identity > div {
+	display: grid;
+	min-width: 0;
+	gap: 2px;
+}
+
+.docspress-playground__identity strong {
+	overflow: hidden;
+	color: var(--db-play-ink);
+	font: 720 0.82rem/1.2 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.docspress-playground__eyebrow,
+.docspress-playground__preview-label,
+.docspress-playground__console-label,
+.docspress-playground__editors label > span {
+	color: var(--db-play-muted);
+	font: 680 0.62rem/1.2 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.docspress-playground__lights {
+	display: flex;
+	gap: 4px;
+}
+
+.docspress-playground__lights i {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--db-play-border);
+}
+
+.docspress-playground__lights i:first-child {
+	background: color-mix(in srgb, #c9352b 72%, var(--db-play-border));
+}
+
+.docspress-playground__lights i:nth-child(2) {
+	background: color-mix(in srgb, #d99000 72%, var(--db-play-border));
+}
+
+.docspress-playground__lights i:last-child {
+	background: color-mix(in srgb, #16883d 72%, var(--db-play-border));
+}
+
+.docspress-playground__actions {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+}
+
+.docspress-playground__policy {
+	color: var(--db-play-muted);
+	font: 590 0.64rem/1.2 var(--dp-font-mono, "SFMono-Regular", Consolas, monospace);
+}
+
+.docspress-playground__actions button,
+.docspress-playground__console-label button {
+	min-height: 30px;
+	margin: 0;
+	padding: 4px 9px;
+	border: 1px solid var(--db-play-border);
+	border-radius: var(--dp-radius, 10px);
+	background: var(--db-play-paper);
+	box-shadow: none;
+	color: var(--db-play-ink);
+	cursor: pointer;
+	font: 660 0.68rem/1 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.docspress-playground__actions button:hover,
+.docspress-playground__actions button:focus-visible,
+.docspress-playground__console-label button:hover,
+.docspress-playground__console-label button:focus-visible {
+	border-color: var(--db-play-accent);
+	color: var(--db-play-accent);
+}
+
+.docspress-playground__actions button.is-primary {
+	border-color: var(--db-play-accent);
+	background: var(--db-play-accent);
+	color: var(--db-play-paper);
+}
+
+.docspress-playground__workspace {
+	display: grid;
+	grid-template-columns: minmax(17rem, 0.9fr) minmax(0, 1.1fr);
+	min-height: var(--docspress-playground-height, 320px);
+}
+
+.docspress-playground__editors {
+	display: grid;
+	min-width: 0;
+	grid-template-rows: repeat(3, minmax(0, 1fr));
+	border-right: 1px solid var(--db-play-border);
+	background: var(--db-play-canvas);
+}
+
+.docspress-playground__editors label {
+	display: grid;
+	min-height: 0;
+	grid-template-rows: auto minmax(0, 1fr);
+}
+
+.docspress-playground__editors label + label {
+	border-top: 1px solid var(--db-play-border);
+}
+
+.docspress-playground__editors label > span {
+	padding: 7px 10px 4px;
+}
+
+.docspress-playground__editors textarea {
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 0;
+	margin: 0;
+	padding: 7px 10px 10px;
+	resize: none;
+	border: 0;
+	outline: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--db-play-copy);
+	font: 500 0.72rem/1.5 var(--dp-font-mono, "SFMono-Regular", Consolas, monospace);
+	tab-size: 2;
+}
+
+.docspress-playground__editors textarea:focus {
+	box-shadow: inset 3px 0 0 var(--db-play-accent);
+}
+
+.docspress-playground__preview {
+	display: grid;
+	min-width: 0;
+	grid-template-rows: auto minmax(0, 1fr);
+	background: var(--db-play-paper);
+}
+
+.docspress-playground__preview-label,
+.docspress-playground__console-label {
+	display: flex;
+	min-height: 30px;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 5px 9px;
+	border-bottom: 1px solid var(--db-play-border);
+	background: color-mix(in srgb, var(--db-play-paper) 90%, transparent);
+}
+
+.docspress-playground__preview iframe {
+	width: 100%;
+	height: 100%;
+	min-height: 180px;
+	border: 0;
+	background: var(--db-play-paper);
+}
+
+.docspress-playground__console {
+	border-top: 1px solid var(--db-play-border);
+	background: color-mix(in srgb, var(--db-play-canvas) 82%, #000);
+}
+
+.docspress-playground__console-label button {
+	min-height: 24px;
+	padding-block: 2px;
+}
+
+.docspress-playground__console output {
+	display: grid;
+	max-height: 150px;
+	gap: 3px;
+	overflow: auto;
+	padding: 10px 12px 12px;
+	color: var(--db-play-copy);
+	font: 500 0.7rem/1.48 var(--dp-font-mono, "SFMono-Regular", Consolas, monospace);
+}
+
+.docspress-playground__console output > span::before {
+	margin-right: 7px;
+	color: var(--db-play-muted);
+	content: "›";
+}
+
+.docspress-playground__console output .is-warn {
+	color: color-mix(in srgb, #d99000 82%, var(--db-play-copy));
+}
+
+.docspress-playground__console output .is-error {
+	color: color-mix(in srgb, #c9352b 82%, var(--db-play-copy));
+}
+
+.docspress-playground__console output .is-muted {
+	color: var(--db-play-muted);
+}
+
+@media (max-width: 760px) {
+	.docspress-playground__workspace {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.docspress-playground__editors {
+		min-height: 420px;
+		border-right: 0;
+		border-bottom: 1px solid var(--db-play-border);
+	}
+
+	.docspress-playground__preview {
+		min-height: var(--docspress-playground-height, 320px);
+	}
+}
+
+@media (max-width: 560px) {
+	.docspress-playground__bar {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.docspress-playground__actions {
+		flex-wrap: wrap;
+	}
+
+	.docspress-playground__policy {
+		flex: 1;
+	}
+}

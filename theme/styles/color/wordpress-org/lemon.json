@@ -11,6 +11,7 @@
 				{ "slug": "highlight", "color": "#fff972", "name": "Lemon" },
 				{ "slug": "highlight-strong", "color": "#5300be", "name": "Highlight strong" },
 				{ "slug": "paper", "color": "#fffdd6", "name": "Lemon paper" },
+				{ "slug": "header-surface", "color": "color-mix(in srgb, var(--dp-paper) 92%, transparent)", "name": "Header surface" },
 				{ "slug": "canvas", "color": "#fffcb5", "name": "Lemon canvas" },
 				{ "slug": "ink", "color": "#1e1e1e", "name": "Charcoal" },
 				{ "slug": "copy", "color": "#40464d", "name": "Charcoal 3" },

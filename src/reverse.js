@@ -32,7 +32,13 @@ const CUSTOM_BLOCK_DEFAULTS = {
     requestBodyFormat: "json",
     responseStatus: "200 OK",
     responseBody: "{\n  \"id\": 42,\n  \"slug\": \"getting-started\"\n}",
-    responseBodyFormat: "json"
+    responseBodyFormat: "json",
+    runnable: false,
+    editable: true,
+    allowUnsafe: false,
+    baseUrl: "",
+    allowedOrigins: "",
+    timeout: 10000
   },
   "docspress/audience-paths": {
     eyebrow: "Choose a starting point",
@@ -80,13 +86,67 @@ const CUSTOM_BLOCK_DEFAULTS = {
     showLineNumbers: true,
     caption: ""
   },
+  "docspress/code-playground": {
+    title: "Live example",
+    html: "<button class=\"demo-button\">Publish docs</button>",
+    css: ".demo-button {\n  padding: 0.75rem 1rem;\n  border: 0;\n  border-radius: 0.4rem;\n  background: #3858e9;\n  color: white;\n  font: inherit;\n}",
+    javascript: "document.querySelector( '.demo-button' ).addEventListener( 'click', () => {\n  console.log( 'Documentation published' );\n} );",
+    height: 320,
+    autoRun: true,
+    showConsole: true,
+    allowNetwork: false
+  },
   "docspress/colorful-code": {
     language: "javascript",
     filename: "",
     code: "const hello = \"DocsPress\";\nconsole.log( hello );",
     highlightedLines: "",
     showLineNumbers: true,
+    caption: "",
+    diffMode: "none",
+    copyMode: "all",
+    annotations: []
+  },
+  "docspress/diagram": {
+    title: "Publishing flow",
+    type: "flow",
+    source: "Markdown -> DocsPress: collect\nDocsPress -> WordPress: publish\nWordPress -> Reader: serve",
     caption: ""
+  },
+  "docspress/fields": {
+    title: "Configuration fields",
+    description: "Typed options, defaults, and constraints in one scannable reference.",
+    fields: [
+      {
+        name: "site",
+        type: "string",
+        required: true,
+        defaultValue: "",
+        description: "WordPress site domain or numeric site ID.",
+        values: "",
+        deprecated: false
+      },
+      {
+        name: "status",
+        type: "string",
+        required: false,
+        defaultValue: "draft",
+        description: "Publication status for synchronized Pages.",
+        values: "draft, publish, private",
+        deprecated: false
+      },
+      {
+        name: "dryRun",
+        type: "boolean",
+        required: false,
+        defaultValue: "false",
+        description: "Preview reconciliation without writing changes.",
+        values: "true, false",
+        deprecated: false
+      }
+    ],
+    searchable: true,
+    compact: false
   },
   "docspress/file-tree": {
     root: "project/",
@@ -149,6 +209,50 @@ const CUSTOM_BLOCK_DEFAULTS = {
     prompt: "$",
     command: "npx docspress publish ./docs",
     output: "✓ Read 12 documents\n✓ Published 12 WordPress pages"
+  },
+  "docspress/troubleshooter": {
+    title: "Find the next step",
+    intro: "Answer two quick questions to get the right DocsPress workflow.",
+    startId: "source",
+    questions: [
+      {
+        id: "source",
+        question: "Do you already have Markdown documentation?",
+        yesLabel: "Yes, the docs exist",
+        yesNext: "connected",
+        noLabel: "Not yet",
+        noNext: "generate"
+      },
+      {
+        id: "connected",
+        question: "Is the repository connected to WordPress?",
+        yesLabel: "Yes, it is connected",
+        yesNext: "sync",
+        noLabel: "No, connect it",
+        noNext: "install"
+      }
+    ],
+    outcomes: [
+      {
+        id: "install",
+        status: "warning",
+        title: "Connect the publishing target",
+        content: "<p>Run the DocsPress installer, add the WordPress access token, and verify the repository connection before publishing.</p>"
+      },
+      {
+        id: "sync",
+        status: "success",
+        title: "Publish the documentation",
+        content: "<p>Run the sync command, review the proposed changes, and verify the rendered documentation on WordPress.</p>"
+      },
+      {
+        id: "generate",
+        status: "neutral",
+        title: "Generate a documentation starter",
+        content: "<p>Generate a small documentation tree from the source, then review every example against the implementation before publishing.</p>"
+      }
+    ],
+    showProgress: true
   }
 };
 

@@ -138,6 +138,81 @@ function docspress_blocks_register_patterns() {
 	);
 
 	register_block_pattern(
+		'docspress/runnable-api-console',
+		array(
+			'title'       => __( 'Runnable API console', 'docspress-blocks' ),
+			'description' => __( 'A safe same-origin GET request readers can edit, run, reset, and copy as cURL.', 'docspress-blocks' ),
+			'categories'  => array( 'docspress' ),
+			'content'     => docspress_blocks_serialize(
+				'docspress/api-request',
+				array(
+					'method'             => 'GET',
+					'endpoint'           => '/wp-json/',
+					'headers'            => 'Accept: application/json',
+					'requestBody'        => '',
+					'requestBodyFormat'  => 'json',
+					'responseStatus'     => '200 OK',
+					'responseBody'       => "{\n  \"name\": \"WordPress\",\n  \"namespaces\": [ \"wp/v2\" ]\n}",
+					'responseBodyFormat' => 'json',
+					'runnable'           => true,
+					'editable'           => true,
+					'allowUnsafe'        => false,
+					'timeout'            => 10000,
+				)
+			),
+		)
+	);
+
+	register_block_pattern(
+		'docspress/api-reference-toolkit',
+		array(
+			'title'       => __( 'API reference toolkit', 'docspress-blocks' ),
+			'description' => __( 'Typed fields, an annotated response diff, and a publishing sequence diagram.', 'docspress-blocks' ),
+			'categories'  => array( 'docspress' ),
+			'content'     => '<!-- wp:heading {"level":2} --><h2 class="wp-block-heading">Request fields</h2><!-- /wp:heading -->'
+				. docspress_blocks_serialize( 'docspress/fields' )
+				. '<!-- wp:heading {"level":2} --><h2 class="wp-block-heading">Response change</h2><!-- /wp:heading -->'
+				. docspress_blocks_serialize(
+					'docspress/colorful-code',
+					array(
+						'language'        => 'json',
+						'filename'        => 'response.diff',
+						'code'            => "@@ page @@\n-  \"status\": \"draft\"\n+  \"status\": \"publish\"",
+						'diffMode'        => 'unified',
+						'copyMode'        => 'final',
+						'annotations'     => array(
+							array(
+								'line'    => 3,
+								'content' => '<p>The final copied value omits the removed line and diff marker.</p>',
+							),
+						),
+						'showLineNumbers' => true,
+					)
+				)
+				. docspress_blocks_serialize(
+					'docspress/diagram',
+					array(
+						'title'   => 'Request lifecycle',
+						'type'    => 'sequence',
+						'source'  => "Client -> WordPress: POST page\nWordPress -> Database: save draft\nWordPress -> Client: 201 Created",
+						'caption' => 'A dependency-free sequence diagram generated from editable relationships.',
+					)
+				),
+		)
+	);
+
+	register_block_pattern(
+		'docspress/interactive-guide',
+		array(
+			'title'       => __( 'Interactive guide', 'docspress-blocks' ),
+			'description' => __( 'A sandboxed browser example followed by a guided decision tree.', 'docspress-blocks' ),
+			'categories'  => array( 'docspress' ),
+			'content'     => docspress_blocks_serialize( 'docspress/code-playground' )
+				. docspress_blocks_serialize( 'docspress/troubleshooter' ),
+		)
+	);
+
+	register_block_pattern(
 		'docspress/ai-prompt-example',
 		array(
 			'title'       => __( 'AI prompt example', 'docspress-blocks' ),

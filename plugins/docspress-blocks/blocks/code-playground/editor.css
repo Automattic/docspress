@@ -1,0 +1,22 @@
+.docspress-playground__editors--editor {
+	min-height: 390px;
+	border-right: 0;
+}
+
+.docspress-playground__editors--editor textarea {
+	resize: vertical;
+}
+
+.docspress-playground__editor-notice {
+	display: grid;
+	gap: 3px;
+	padding: 18px;
+	border-top: 1px solid var(--db-play-border);
+	background: var(--db-play-paper);
+	color: var(--db-play-muted);
+	font: 500 0.78rem/1.45 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.docspress-playground__editor-notice strong {
+	color: var(--db-play-ink);
+}

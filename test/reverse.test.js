@@ -97,7 +97,13 @@ const customBlockCases = [
       requestBodyFormat: "json",
       responseStatus: "200 OK",
       responseBody: "{\n  \"ok\": true\n}",
-      responseBodyFormat: "json"
+      responseBodyFormat: "json",
+      runnable: true,
+      editable: true,
+      allowUnsafe: false,
+      baseUrl: "",
+      allowedOrigins: "",
+      timeout: 10000
     }
   },
   {
@@ -135,7 +141,60 @@ const customBlockCases = [
       code: "const docs = \"DocsPress\";",
       highlightedLines: "1",
       showLineNumbers: true,
-      caption: ""
+      caption: "",
+      diffMode: "unified",
+      copyMode: "final",
+      annotations: [
+        { line: 1, content: "<p>Updated value.</p>" }
+      ]
+    }
+  },
+  {
+    name: "docspress/code-playground",
+    omit: "showConsole",
+    change: ["height", 420],
+    attributes: {
+      title: "Live example",
+      html: "<button>Publish</button>",
+      css: "button { color: blue; }",
+      javascript: "console.log( 'Ready' );",
+      height: 320,
+      autoRun: true,
+      showConsole: true,
+      allowNetwork: false
+    }
+  },
+  {
+    name: "docspress/diagram",
+    omit: "title",
+    change: ["type", "sequence"],
+    attributes: {
+      title: "Publishing flow",
+      type: "flow",
+      source: "Markdown -> DocsPress: collect\nDocsPress -> WordPress: publish",
+      caption: "Documentation pipeline."
+    }
+  },
+  {
+    name: "docspress/fields",
+    omit: "compact",
+    change: ["searchable", false],
+    attributes: {
+      title: "Configuration",
+      description: "Documented values.",
+      fields: [
+        {
+          name: "site",
+          type: "string",
+          required: true,
+          defaultValue: "",
+          description: "WordPress site domain.",
+          values: "",
+          deprecated: false
+        }
+      ],
+      searchable: true,
+      compact: false
     }
   },
   {
@@ -190,7 +249,6 @@ const customBlockCases = [
       showOrbit: false,
       panelColor: "",
       visualColor: "",
-      textColor: "",
       accentColor: ""
     }
   },
@@ -228,6 +286,31 @@ const customBlockCases = [
       prompt: "$",
       command: "npm test",
       output: "Tests passed"
+    }
+  },
+  {
+    name: "docspress/troubleshooter",
+    omit: "showProgress",
+    change: ["title", "Choose a workflow"],
+    attributes: {
+      title: "Find the next step",
+      intro: "Answer one question.",
+      startId: "source",
+      questions: [
+        {
+          id: "source",
+          question: "Do docs exist?",
+          yesLabel: "Yes",
+          yesNext: "sync",
+          noLabel: "No",
+          noNext: "generate"
+        }
+      ],
+      outcomes: [
+        { id: "sync", status: "success", title: "Publish", content: "<p>Run a draft sync.</p>" },
+        { id: "generate", status: "neutral", title: "Generate docs", content: "<p>Create Markdown first.</p>" }
+      ],
+      showProgress: true
     }
   }
 ];

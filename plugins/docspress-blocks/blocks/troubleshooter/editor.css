@@ -1,0 +1,30 @@
+.docspress-troubleshooter__branch-editor {
+	display: grid;
+	gap: 4px;
+	margin: 0 0 14px;
+	padding: 12px;
+	border: 1px solid #dcdcde;
+	border-radius: var(--dp-radius, 10px);
+	background: #f6f7f7;
+}
+
+.docspress-troubleshooter__editor-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.docspress-troubleshooter--editor .docspress-troubleshooter__choice {
+	pointer-events: none;
+}
+
+.docspress-troubleshooter--editor .docspress-troubleshooter__choice b {
+	color: var(--db-trouble-accent);
+	font-weight: 700;
+}
+
+.docspress-troubleshooter__editor-note {
+	margin: 4px 0 0;
+	color: var(--db-trouble-muted);
+	font: 600 0.68rem/1.4 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}

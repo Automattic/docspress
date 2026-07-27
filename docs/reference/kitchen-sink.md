@@ -2,7 +2,7 @@
 title: Kitchen Sink
 ---
 
-This Page is the acceptance surface for the DocsPress theme and all eleven DocsPress Blocks. Switch Global Style variations and light/dark mode while checking native color, typography, spacing, border, dimensions, interactions, and content controls.
+This Page is the acceptance surface for the DocsPress theme and all fifteen DocsPress Blocks. Switch Global Style variations and light/dark mode while checking native color, typography, spacing, border, dimensions, interactions, and content controls.
 
 <!-- wp:docspress/callout {"tone":"note","title":"Playground acceptance page","content":"<p>The local Playground appends its live component inventory to this source-backed Page after seeding it.</p>","collapsible":false} /-->
 
@@ -15,6 +15,8 @@ This Page is the acceptance surface for the DocsPress theme and all eleven DocsP
 <!-- wp:docspress/colorful-code {"language":"yaml","filename":".github/workflows/sync-docs.yml","code":"name: Sync docs\non:\n  push:\n    paths: [\"docs/**\"]\nsteps:\n  - uses: Automattic/docspress@COMMIT_SHA","highlightedLines":"2-4,6","showLineNumbers":true,"caption":"Filename, language, line numbers, highlighted ranges, caption, and copy."} /-->
 
 <!-- wp:docspress/colorful-code {"language":"plaintext","filename":"Without line numbers","code":"Markdown in.\nWordPress out.","highlightedLines":"","showLineNumbers":false,"caption":"Plain text with line numbers disabled."} /-->
+
+<!-- wp:docspress/colorful-code {"language":"json","filename":"page-response.diff","code":"@@ page 43 @@\n-  \"status\": \"draft\"\n+  \"status\": \"publish\"\n+  \"modified\": \"2026-07-27T07:40:00Z\"","highlightedLines":"","showLineNumbers":true,"caption":"Unified diff colors, final-state copy, and line-level explanations.","diffMode":"unified","copyMode":"final","annotations":[{"line":3,"content":"<p>The published status is the value retained by <strong>Copy</strong>.</p>"},{"line":4,"content":"<p>The modification time comes from the live response.</p>"}]} /-->
 
 ## Code Tabs
 
@@ -40,9 +42,15 @@ This Page is the acceptance surface for the DocsPress theme and all eleven DocsP
 
 <!-- wp:docspress/flow {"start":1,"steps":[{"title":"Template","content":"<p>Choose <code>full</code> or <code>empty</code> for the starting content.</p>"},{"title":"Deploy target","content":"<p>Select the host that matches the project environment.</p>"},{"title":"Install dependencies","content":"<p>Let the package manager finish, then verify the generated site.</p>"}]} /-->
 
+## Diagram
+
+<!-- wp:docspress/diagram {"title":"Documentation publishing flow","type":"flow","source":"Markdown -> DocsPress: collect\nDocsPress -> WordPress: publish\nWordPress -> Reader: serve","caption":"A flow diagram rendered as accessible, theme-native SVG without a third-party runtime."} /-->
+
+<!-- wp:docspress/diagram {"title":"Runnable request lifecycle","type":"sequence","source":"Reader -> API Console: run GET\nAPI Console -> WordPress: fetch without credentials\nWordPress -> API Console: JSON response\nAPI Console -> Reader: format status and body","caption":"Sequence mode uses the same compact, editable relationship syntax."} /-->
+
 ## API Request / Response
 
-<!-- wp:docspress/api-request {"method":"GET","endpoint":"/wp-json/wp/v2/pages?per_page=2","headers":"Accept: application/json","requestBody":"","requestBodyFormat":"json","responseStatus":"200 OK","responseBody":"[{ \"id\": 41 }, { \"id\": 42 }]","responseBodyFormat":"json"} /-->
+<!-- wp:docspress/api-request {"method":"GET","endpoint":"/wp-json/","headers":"Accept: application/json","requestBody":"","requestBodyFormat":"json","responseStatus":"200 OK","responseBody":"{\n  \"name\": \"DocsPress\",\n  \"namespaces\": [\"wp/v2\"]\n}","responseBodyFormat":"json","runnable":true,"editable":true,"allowUnsafe":false,"baseUrl":"","allowedOrigins":"","timeout":10000} /-->
 
 <!-- wp:docspress/api-request {"method":"POST","endpoint":"/wp-json/wp/v2/pages","headers":"Content-Type: application/json\nAuthorization: Bearer $WP_ACCESS_TOKEN","requestBody":"{\n  \"title\": \"API reference\",\n  \"status\": \"draft\"\n}","requestBodyFormat":"json","responseStatus":"201 Created","responseBody":"{\n  \"id\": 43,\n  \"status\": \"draft\"\n}","responseBodyFormat":"json"} /-->
 
@@ -52,11 +60,19 @@ This Page is the acceptance surface for the DocsPress theme and all eleven DocsP
 
 <!-- wp:docspress/api-request {"method":"DELETE","endpoint":"/wp-json/wp/v2/pages/43?force=true","headers":"Authorization: Bearer $WP_ACCESS_TOKEN","requestBody":"","requestBodyFormat":"raw","responseStatus":"204 No Content","responseBody":"","responseBodyFormat":"raw"} /-->
 
+## Fields / Schema
+
+<!-- wp:docspress/fields {"title":"Publish options","description":"Typed request fields, defaults, constraints, and lifecycle states remain scannable as the reference grows.","fields":[{"name":"site","type":"string","required":true,"defaultValue":"","description":"WordPress site domain or numeric site ID.","values":"","deprecated":false},{"name":"status","type":"enum","required":false,"defaultValue":"draft","description":"Publication status for synchronized Pages.","values":"draft, publish, private","deprecated":false},{"name":"dryRun","type":"boolean","required":false,"defaultValue":"false","description":"Preview reconciliation without writing changes.","values":"true, false","deprecated":false},{"name":"legacyMode","type":"boolean","required":false,"defaultValue":"","description":"Use the pre-block-theme publishing pipeline.","values":"true, false","deprecated":true}],"searchable":true,"compact":false} /-->
+
 ## Terminal Session
 
 <!-- wp:docspress/terminal-session {"title":"Run package verification","shell":"bash","prompt":"$","command":"npm run package","output":"Lint passed\nTests passed\nAction bundle rebuilt"} /-->
 
 <!-- wp:docspress/terminal-session {"title":"Inspect the site","shell":"wp-cli","prompt":">","command":"wp option get docspress_playground_runtime --format=json","output":""} /-->
+
+## Live Code Playground
+
+<!-- wp:docspress/code-playground {"title":"Interactive publish button","html":"<button class=\"demo-button\">Publish docs</button>\n<p class=\"status\" aria-live=\"polite\">Ready</p>","css":".demo-button {\n  padding: 0.75rem 1rem;\n  border: 0;\n  border-radius: 0.4rem;\n  background: #3858e9;\n  color: white;\n  font: inherit;\n}\n.status { font-family: ui-monospace, monospace; }","javascript":"const button = document.querySelector( '.demo-button' );\nbutton.addEventListener( 'click', () => {\n  document.querySelector( '.status' ).textContent = 'Published';\n  console.log( 'Documentation published' );\n} );","height":340,"autoRun":true,"showConsole":true,"allowNetwork":false} /-->
 
 ## Result
 
@@ -72,7 +88,7 @@ This Page is the acceptance surface for the DocsPress theme and all eleven DocsP
 
 <!-- wp:docspress/file-tree {"root":"Automattic/docspress/","tree":".claude/\n  skills/\ndocs/\n  index.md\n  publish-existing-docs/\n  create-docs-with-ai/\n  reference/\n    kitchen-sink.md\nplugins/\n  docspress-blocks/\ntheme/\npackage.json","caption":"Nested folders, files, a custom root label, and caption.","collapsible":true,"open":true} /-->
 
-<!-- wp:docspress/file-tree {"root":"docs/","tree":"index.md\nguides/\n  continuous-sync.md\nreference/\n  gutenberg-blocks.md\ntroubleshooting.md","caption":"A compact tree that begins collapsed.","collapsible":true,"open":false} /-->
+<!-- wp:docspress/file-tree {"root":"docs/","tree":"index.md\nguides/\n  continuous-sync.md\nreference/\n  gutenberg-blocks/\n    index.md\n    api-request.md\n    fields.md\ntroubleshooting.md","caption":"A compact tree that begins collapsed.","collapsible":true,"open":false} /-->
 
 ## Prompt
 
@@ -84,4 +100,8 @@ This Page is the acceptance surface for the DocsPress theme and all eleven DocsP
 
 <!-- wp:docspress/prompt {"prompt":"Use $docspress-install to create a phased migration plan from a static documentation site to DocsPress.","model":"Planning agent","mode":"plan","thinking":true,"context":"$docspress-install, docs/, #architecture, https://example.com/current-docs","caption":"Migration plan with a skill reference"} /-->
 
-<!-- wp:docspress/result {"status":"success","title":"Kitchen Sink complete","content":"<p>Every DocsPress documentation block, semantic variant, and meaningful option is represented on this Page. Hero and Audience Paths are the design-focused landing blocks.</p>","meta":"9 documentation blocks · 2 landing blocks"} /-->
+## Interactive Troubleshooter
+
+<!-- wp:docspress/troubleshooter {"title":"Choose the right publishing workflow","intro":"Answer two quick questions to reach a source-grounded next step.","startId":"source","questions":[{"id":"source","question":"Do you already have Markdown documentation?","yesLabel":"Yes, the docs exist","yesNext":"connected","noLabel":"Not yet","noNext":"generate"},{"id":"connected","question":"Is the repository connected to WordPress?","yesLabel":"Yes, it is connected","yesNext":"sync","noLabel":"No, connect it","noNext":"install"}],"outcomes":[{"id":"install","status":"warning","title":"Connect the publishing target","content":"<p>Run the DocsPress installer, add the WordPress access token, and verify the repository connection before publishing.</p>"},{"id":"sync","status":"success","title":"Publish the documentation","content":"<p>Run the sync command, review the proposed changes, and verify the rendered documentation on WordPress.</p>"},{"id":"generate","status":"neutral","title":"Generate a documentation starter","content":"<p>Generate a small documentation tree from the source, then review every example against the implementation before publishing.</p>"}],"showProgress":true} /-->
+
+<!-- wp:docspress/result {"status":"success","title":"Kitchen Sink complete","content":"<p>Every DocsPress documentation block, semantic variant, and meaningful option is represented on this Page. Hero and Audience Paths are the design-focused landing blocks.</p>","meta":"13 documentation blocks · 2 landing blocks"} /-->

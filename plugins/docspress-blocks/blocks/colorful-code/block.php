@@ -75,6 +75,9 @@ function docspress_blocks_register_colorful_code() {
 				'highlightedLines'  => array( 'type' => 'string', 'default' => '' ),
 				'showLineNumbers'   => array( 'type' => 'boolean', 'default' => true ),
 				'caption'           => array( 'type' => 'string', 'default' => '' ),
+				'diffMode'          => array( 'type' => 'string', 'default' => 'none' ),
+				'copyMode'          => array( 'type' => 'string', 'default' => 'all' ),
+				'annotations'       => array( 'type' => 'array', 'default' => array() ),
 			),
 			'supports'        => docspress_blocks_design_supports(),
 		)

@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       DocsPress Blocks
  * Plugin URI:        https://github.com/Automattic/docspress/tree/main/plugins/docspress-blocks
- * Description:       Documentation-focused Gutenberg blocks for homepages, audience routing, code, prompts, API exchanges, flows, terminal sessions, results, file trees, and semantic callouts.
- * Version:           0.8.0
+ * Description:       Documentation-focused Gutenberg blocks for interactive API examples, schemas, code playgrounds, diagrams, troubleshooting, prompts, flows, and polished documentation layouts.
+ * Version:           0.9.9
  * Requires at least: 6.6
  * Requires PHP:      7.4
  * Author:            Automattic
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DOCSPRESS_BLOCKS_VERSION', '0.8.0' );
+define( 'DOCSPRESS_BLOCKS_VERSION', '0.9.9' );
 define( 'DOCSPRESS_BLOCKS_FILE', __FILE__ );
 define( 'DOCSPRESS_BLOCKS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'DOCSPRESS_BLOCKS_URL', plugin_dir_url( __FILE__ ) );
@@ -91,6 +91,10 @@ require_once DOCSPRESS_BLOCKS_PATH . 'blocks/result/block.php';
 require_once DOCSPRESS_BLOCKS_PATH . 'blocks/flow/block.php';
 require_once DOCSPRESS_BLOCKS_PATH . 'blocks/file-tree/block.php';
 require_once DOCSPRESS_BLOCKS_PATH . 'blocks/prompt/block.php';
+require_once DOCSPRESS_BLOCKS_PATH . 'blocks/fields/block.php';
+require_once DOCSPRESS_BLOCKS_PATH . 'blocks/code-playground/block.php';
+require_once DOCSPRESS_BLOCKS_PATH . 'blocks/diagram/block.php';
+require_once DOCSPRESS_BLOCKS_PATH . 'blocks/troubleshooter/block.php';
 require_once DOCSPRESS_BLOCKS_PATH . 'includes/patterns.php';
 
 /**

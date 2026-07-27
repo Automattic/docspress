@@ -11,6 +11,7 @@
 				{ "slug": "highlight", "color": "#0ced57", "name": "Jetpack electric green" },
 				{ "slug": "highlight-strong", "color": "#101517", "name": "Highlight strong" },
 				{ "slug": "paper", "color": "#ffffff", "name": "White" },
+				{ "slug": "header-surface", "color": "color-mix(in srgb, var(--dp-paper) 92%, transparent)", "name": "Header surface" },
 				{ "slug": "canvas", "color": "#f6f7f7", "name": "Jetpack grey 0" },
 				{ "slug": "ink", "color": "#101517", "name": "Jetpack ink" },
 				{ "slug": "copy", "color": "#3c434a", "name": "Jetpack grey 70" },

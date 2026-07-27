@@ -43,7 +43,7 @@
 }
 
 .docspress-api__response-line {
-	grid-template-columns: auto minmax(0, 1fr);
+	grid-template-columns: auto minmax(0, 1fr) auto;
 	border-top: 1px solid var(--db-api-border);
 }
 
@@ -71,6 +71,12 @@
 
 .docspress-api__status {
 	justify-self: end;
+}
+
+.docspress-api__response-meta {
+	justify-self: end;
+	color: var(--db-api-muted);
+	font: 580 0.68rem/1.2 var(--dp-font-mono, "SFMono-Regular", Consolas, monospace);
 }
 
 .docspress-api__endpoint,
@@ -166,6 +172,23 @@
 	white-space: pre;
 }
 
+.wp-block-docspress-api-request.is-runnable [data-docspress-api-response-body] .docspress-api__payload--response pre {
+	max-height: clamp(16rem, 42vh, 26rem);
+	padding-inline-end: 0.75rem;
+	overflow: auto;
+	overscroll-behavior: contain;
+	scroll-padding-block: 1rem;
+	scrollbar-color: color-mix(in srgb, var(--db-api-accent) 48%, var(--db-api-border)) transparent;
+	scrollbar-gutter: stable;
+	scrollbar-width: thin;
+	-webkit-overflow-scrolling: touch;
+}
+
+.wp-block-docspress-api-request.is-runnable [data-docspress-api-response-body] .docspress-api__payload--response pre:focus-visible {
+	outline: 2px solid var(--db-api-accent);
+	outline-offset: 4px;
+}
+
 .docspress-api__payload code,
 .entry-content .docspress-api__payload code {
 	display: block;
@@ -212,6 +235,182 @@
 	font-weight: 650;
 }
 
+.docspress-api__runner {
+	padding: clamp(14px, 2.4vw, 20px);
+	border-top: 1px solid var(--db-api-border);
+	background: var(--dp-paper, #fff);
+}
+
+.docspress-api__runner-heading {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 18px;
+	margin-bottom: 14px;
+}
+
+.docspress-api__runner-heading > div {
+	display: grid;
+	gap: 3px;
+}
+
+.docspress-api__runner-heading strong {
+	color: var(--dp-ink, #171a22);
+	font: 760 0.94rem/1.2 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.docspress-api__runner-policy {
+	padding: 4px 7px;
+	border: 1px solid color-mix(in srgb, var(--db-api-accent) 28%, var(--db-api-border));
+	border-radius: var(--dp-radius, 10px);
+	background: color-mix(in srgb, var(--db-api-accent) 6%, var(--dp-paper, #fff));
+	color: var(--db-api-muted);
+	font: 650 0.64rem/1.2 var(--dp-font-mono, "SFMono-Regular", Consolas, monospace);
+	white-space: nowrap;
+}
+
+.docspress-api__runner-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+}
+
+.docspress-api__field {
+	display: grid;
+	min-width: 0;
+	gap: 6px;
+}
+
+.docspress-api__field--endpoint {
+	grid-column: 1 / -1;
+}
+
+.docspress-api__field > span {
+	color: var(--db-api-muted);
+	font: 680 0.66rem/1.2 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.docspress-api__field input,
+.docspress-api__field textarea {
+	box-sizing: border-box;
+	width: 100%;
+	margin: 0;
+	padding: 9px 10px;
+	resize: vertical;
+	border: 1px solid var(--db-api-border);
+	border-radius: var(--dp-radius, 10px);
+	outline: 0;
+	background: var(--db-api-panel);
+	box-shadow: none;
+	color: var(--dp-copy, #2c3338);
+	font: 500 0.76rem/1.55 var(--dp-font-mono, "SFMono-Regular", Consolas, monospace);
+}
+
+.docspress-api__field input:focus,
+.docspress-api__field textarea:focus {
+	border-color: var(--db-api-accent);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--db-api-accent) 12%, transparent);
+}
+
+.docspress-api__field input[readonly],
+.docspress-api__field textarea[readonly] {
+	cursor: default;
+	opacity: 0.78;
+}
+
+.docspress-api__runner-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 12px;
+}
+
+.docspress-api__run,
+.docspress-api__runner-button {
+	display: inline-flex;
+	min-height: 34px;
+	align-items: center;
+	justify-content: center;
+	gap: 7px;
+	margin: 0;
+	padding: 5px 11px;
+	border: 1px solid var(--db-api-border);
+	border-radius: var(--dp-radius, 10px);
+	background: var(--dp-paper, #fff);
+	box-shadow: none;
+	color: var(--dp-ink, #171a22);
+	cursor: pointer;
+	font: 680 0.72rem/1 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	transition: border-color 140ms ease, background 140ms ease, color 140ms ease, transform 140ms ease;
+}
+
+.docspress-api__run {
+	border-color: var(--db-api-accent);
+	background: var(--db-api-accent);
+	color: var(--dp-paper, #fff);
+}
+
+.docspress-api__run:hover,
+.docspress-api__run:focus-visible {
+	background: color-mix(in srgb, var(--db-api-accent) 86%, var(--dp-ink, #171a22));
+}
+
+.docspress-api__runner-button:hover,
+.docspress-api__runner-button:focus-visible {
+	border-color: var(--db-api-accent);
+	color: var(--db-api-accent);
+}
+
+.docspress-api__run:active,
+.docspress-api__runner-button:active {
+	transform: translateY(1px);
+}
+
+.docspress-api__run-dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: currentColor;
+	box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 18%, transparent);
+}
+
+.docspress-api__run.is-running .docspress-api__run-dot {
+	animation: docspress-api-pulse 900ms ease-in-out infinite;
+}
+
+.docspress-api__runner-status {
+	min-width: 0;
+	margin-left: auto;
+	color: var(--db-api-muted);
+	font: 580 0.68rem/1.35 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	text-align: right;
+}
+
+.docspress-api__runner-status[data-state="success"] {
+	color: color-mix(in srgb, #16883d 80%, var(--dp-ink, #171a22));
+}
+
+.docspress-api__runner-status[data-state="warning"] {
+	color: color-mix(in srgb, #b35c00 82%, var(--dp-ink, #171a22));
+}
+
+.docspress-api__runner-status[data-state="error"] {
+	color: color-mix(in srgb, #c9352b 82%, var(--dp-ink, #171a22));
+}
+
+.docspress-api__runner--preview .docspress-api__run {
+	opacity: 0.78;
+}
+
+@keyframes docspress-api-pulse {
+	50% {
+		opacity: 0.36;
+		transform: scale(0.78);
+	}
+}
+
 html[data-theme="dark"] .wp-block-docspress-api-request {
 	--db-api-panel: color-mix(in srgb, var(--dp-canvas, #11141b) 82%, #000);
 	--db-api-string: #a7e48d;
@@ -231,5 +430,35 @@ html[data-theme="dark"] .wp-block-docspress-api-request {
 
 	.docspress-api__copy b {
 		display: none;
+	}
+
+	.docspress-api__runner-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.docspress-api__field--endpoint {
+		grid-column: auto;
+	}
+
+	.docspress-api__runner-actions {
+		align-items: stretch;
+		flex-wrap: wrap;
+	}
+
+	.docspress-api__runner-status {
+		flex-basis: 100%;
+		margin-left: 0;
+		text-align: left;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.docspress-api__run,
+	.docspress-api__runner-button {
+		transition: none;
+	}
+
+	.docspress-api__run.is-running .docspress-api__run-dot {
+		animation: none;
 	}
 }

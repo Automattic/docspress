@@ -1,0 +1,288 @@
+.wp-block-docspress-fields {
+	--db-fields-accent: var(--dp-blue, #3858e9);
+	--db-fields-paper: var(--dp-paper, #fff);
+	--db-fields-canvas: var(--dp-canvas, #f6f7f9);
+	--db-fields-border: var(--dp-line-strong, #cfd4dc);
+	--db-fields-ink: var(--dp-ink, #171a22);
+	--db-fields-copy: var(--dp-copy, #2c3338);
+	--db-fields-muted: var(--dp-muted, #6f7685);
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 0;
+	margin-block: clamp(1.25rem, 2.5vw, 1.75rem);
+	overflow: hidden;
+	border: 1px solid var(--db-fields-border);
+	border-radius: var(--dp-radius, 10px);
+	background: var(--db-fields-paper);
+	color: var(--db-fields-copy);
+	container-type: inline-size;
+}
+
+.docspress-preset-docspress .wp-block-docspress-fields,
+.docspress-blocks--preset-docspress.wp-block-docspress-fields {
+	--db-fields-accent: #005cb3;
+}
+
+.docspress-preset-jetpack .wp-block-docspress-fields,
+.docspress-blocks--preset-jetpack.wp-block-docspress-fields {
+	--db-fields-accent: #069e08;
+}
+
+.docspress-fields__header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 13px 16px 12px;
+	border-bottom: 1px solid var(--db-fields-border);
+	background: var(--db-fields-paper);
+	box-shadow: inset 3px 0 0 var(--db-fields-accent);
+}
+
+.docspress-fields__eyebrow {
+	display: none;
+}
+
+.docspress-fields__title {
+	margin: 0;
+	color: var(--db-fields-ink);
+	font: 800 clamp(1rem, 1.8vw, 1.14rem)/1.2 var(--dp-font-heading, var(--dp-font-ui, sans-serif));
+	letter-spacing: -0.025em;
+}
+
+.docspress-fields__description,
+.docspress-fields__description p {
+	max-width: 52rem;
+	margin: 4px 0 0;
+	color: var(--db-fields-muted);
+	font: 500 0.77rem/1.42 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.docspress-fields__count {
+	flex: none;
+	padding: 3px 0;
+	color: var(--db-fields-muted);
+	font: 680 0.6rem/1.2 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.docspress-fields__search {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	padding: 0 14px;
+	border-bottom: 1px solid var(--db-fields-border);
+	background: color-mix(in srgb, var(--db-fields-canvas) 58%, var(--db-fields-paper));
+	transition: box-shadow 140ms ease;
+}
+
+.docspress-fields__search:focus-within {
+	box-shadow: inset 3px 0 0 var(--db-fields-accent);
+}
+
+.docspress-fields__search svg {
+	width: 14px;
+	fill: none;
+	stroke: var(--db-fields-muted);
+	stroke-width: 1.7;
+}
+
+.docspress-fields__search input {
+	min-height: 36px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--db-fields-ink);
+	font: 520 0.76rem/1.2 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.docspress-fields__list {
+	margin: 0;
+	padding: 0;
+}
+
+.docspress-fields__item {
+	display: grid;
+	grid-template-columns: minmax(9rem, 0.72fr) minmax(0, 1.6fr);
+	gap: 18px;
+	margin: 0;
+	padding: 10px 16px;
+	transition: background-color 120ms ease;
+}
+
+.docspress-fields__item + .docspress-fields__item {
+	border-top: 1px solid var(--db-fields-border);
+}
+
+.docspress-fields__item:hover {
+	background: color-mix(in srgb, var(--db-fields-accent) 2.5%, var(--db-fields-paper));
+}
+
+.docspress-fields__item[hidden] {
+	display: none;
+}
+
+.docspress-fields__item.is-deprecated {
+	background: color-mix(in srgb, #c9352b 3%, var(--db-fields-paper));
+}
+
+.docspress-fields__term {
+	display: flex;
+	align-items: baseline;
+	align-content: flex-start;
+	flex-wrap: wrap;
+	gap: 3px 7px;
+	margin: 0;
+}
+
+.wp-block-docspress-fields .docspress-fields__term > code {
+	padding: 0;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--db-fields-ink);
+	font: 720 0.8rem/1.35 var(--dp-font-mono, "SFMono-Regular", Consolas, monospace);
+	overflow-wrap: anywhere;
+}
+
+.docspress-fields__type,
+.docspress-fields__badge {
+	padding: 0 0 0 7px;
+	border: 0;
+	border-left: 1px solid var(--db-fields-border);
+	border-radius: 0;
+	background: transparent;
+	font: 700 0.56rem/1.2 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	letter-spacing: 0.035em;
+	text-transform: uppercase;
+}
+
+.docspress-fields__type {
+	color: var(--db-fields-accent);
+}
+
+.docspress-fields__badge {
+	color: var(--db-fields-muted);
+}
+
+.docspress-fields__badge.is-required {
+	color: var(--db-fields-accent);
+}
+
+.docspress-fields__badge.is-deprecated {
+	color: color-mix(in srgb, #c9352b 80%, var(--db-fields-ink));
+}
+
+.docspress-fields__definition {
+	min-width: 0;
+	margin: 0;
+}
+
+.docspress-fields__copy,
+.docspress-fields__copy p {
+	margin: 0;
+	color: var(--db-fields-copy);
+	font: 500 0.82rem/1.45 var(--dp-font-copy, var(--dp-font-ui, sans-serif));
+}
+
+.docspress-fields__metadata {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px 14px;
+	margin-top: 4px;
+}
+
+.docspress-fields__metadata span {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 5px;
+	min-width: 0;
+}
+
+.docspress-fields__metadata span + span::before {
+	width: 1px;
+	height: 0.7rem;
+	margin-right: 9px;
+	background: var(--db-fields-border);
+	content: "";
+}
+
+.docspress-fields__metadata b {
+	color: var(--db-fields-muted);
+	font: 720 0.55rem/1.2 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	letter-spacing: 0.055em;
+	text-transform: uppercase;
+}
+
+.wp-block-docspress-fields .docspress-fields__metadata code {
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--db-fields-ink);
+	font: 580 0.67rem/1.35 var(--dp-font-mono, "SFMono-Regular", Consolas, monospace);
+	overflow-wrap: anywhere;
+}
+
+.docspress-fields__empty {
+	margin: 0;
+	padding: 18px;
+	color: var(--db-fields-muted);
+	font: 550 0.76rem/1.4 var(--dp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	text-align: center;
+}
+
+.wp-block-docspress-fields.is-compact .docspress-fields__item {
+	padding-block: 8px;
+}
+
+.wp-block-docspress-fields.is-compact .docspress-fields__header {
+	padding-block: 10px;
+}
+
+.wp-block-docspress-fields.is-compact .docspress-fields__description,
+.wp-block-docspress-fields.is-compact .docspress-fields__description p {
+	margin-top: 3px;
+}
+
+@container (max-width: 560px) {
+	.docspress-fields__item {
+		grid-template-columns: minmax(7.5rem, 0.72fr) minmax(0, 1.6fr);
+		gap: 12px;
+		padding-inline: 12px;
+	}
+}
+
+@container (max-width: 420px) {
+	.docspress-fields__header {
+		display: grid;
+		gap: 6px;
+	}
+
+	.docspress-fields__count {
+		justify-self: start;
+	}
+
+	.docspress-fields__item {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 5px;
+	}
+
+	.docspress-fields__metadata span + span::before {
+		display: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.docspress-fields__item,
+	.docspress-fields__search {
+		transition: none;
+	}
+}

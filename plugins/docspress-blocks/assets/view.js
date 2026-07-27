@@ -96,9 +96,17 @@
 	}
 
 	function textFromSurface( surface ) {
-		return Array.from( surface.querySelectorAll( '.docspress-code__line-content' ) )
+		const finalOnly = surface.dataset.copyMode === 'final';
+		return Array.from( surface.querySelectorAll( '.docspress-code__line' ) )
+			.filter( function ( line ) {
+				return ! finalOnly || ( ! line.classList.contains( 'is-diff-removed' ) && ! line.classList.contains( 'is-diff-meta' ) );
+			} )
 			.map( function ( line ) {
-				return line.textContent;
+				let text = line.querySelector( '.docspress-code__line-content' ).textContent;
+				if ( finalOnly && line.classList.contains( 'is-diff-added' ) && text.startsWith( '+' ) ) {
+					text = text.slice( 1 );
+				}
+				return text;
 			} )
 			.join( '\n' );
 	}
@@ -221,10 +229,39 @@
 		} );
 	}
 
+	function enhanceAnnotations( root ) {
+		root.querySelectorAll( '.docspress-code__surface' ).forEach( function ( surface ) {
+			if ( surface.dataset.docspressAnnotationsReady ) {
+				return;
+			}
+			surface.dataset.docspressAnnotationsReady = 'true';
+			surface.addEventListener( 'click', function ( event ) {
+				const marker = event.target.closest( '[data-docspress-code-annotation]' );
+				if ( ! marker || ! surface.contains( marker ) ) {
+					return;
+				}
+				const panel = document.getElementById( marker.getAttribute( 'aria-controls' ) );
+				if ( ! panel || ! surface.contains( panel ) ) {
+					return;
+				}
+				const opening = panel.hidden;
+				surface.querySelectorAll( '[data-docspress-code-annotation-panel]' ).forEach( function ( item ) {
+					item.hidden = true;
+				} );
+				surface.querySelectorAll( '[data-docspress-code-annotation]' ).forEach( function ( item ) {
+					item.setAttribute( 'aria-expanded', 'false' );
+				} );
+				panel.hidden = ! opening;
+				marker.setAttribute( 'aria-expanded', opening ? 'true' : 'false' );
+			} );
+		} );
+	}
+
 	function initialize() {
 		enhanceCode( document );
 		enhanceApiPayloads( document );
 		enhanceTabs( document );
+		enhanceAnnotations( document );
 		document.addEventListener( 'click', function ( event ) {
 			const button = event.target.closest( '[data-docspress-copy]' );
 			if ( button ) {
@@ -232,6 +269,13 @@
 			}
 		} );
 	}
+
+	window.docspressBlocksView = {
+		enhanceApiPayloads,
+		enhanceCode,
+		enhanceAnnotations,
+		highlightJson
+	};
 
 	if ( document.readyState === 'loading' ) {
 		document.addEventListener( 'DOMContentLoaded', initialize );

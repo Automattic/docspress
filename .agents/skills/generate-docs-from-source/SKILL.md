@@ -81,7 +81,7 @@ Follow these constraints:
 
 ## 4. Use DocsPress Gutenberg blocks
 
-Always review all eight blocks before writing the docs and make a page-by-page block plan. Use every relevant block, but do not force a block where ordinary Markdown communicates the material better.
+Always review all thirteen documentation blocks before writing the docs and make a page-by-page block plan. Use every relevant block, but do not force a block where ordinary Markdown communicates the material better.
 
 DocsPress preserves serialized Gutenberg comments in Markdown and normalizes HTML-sensitive attribute characters to WordPress-safe Unicode escapes during conversion. These plugin blocks are dynamic, so write one self-closing comment with valid compact JSON and no rendered HTML body:
 
@@ -95,10 +95,15 @@ In generated Markdown, emit the comment directly, without the surrounding code f
 
 | Editor block | Serialized name | Use for | Supported attributes |
 | --- | --- | --- | --- |
-| DocsPress: Colorful Code | `docspress/colorful-code` | One source or configuration example that benefits from filename, highlighting, line numbers, caption, and copy | `language`, `filename`, `code`, `highlightedLines`, `showLineNumbers`, `caption` |
+| DocsPress: Colorful Code | `docspress/colorful-code` | One source, annotated example, or unified diff that benefits from filename, highlighting, line numbers, caption, and copy | `language`, `filename`, `code`, `highlightedLines`, `showLineNumbers`, `caption`, `diffMode`, `copyMode`, `annotations`; each annotation has `line`, `content` |
 | DocsPress: Code Tabs | `docspress/code-tabs` | Two to eight equivalent implementations, package managers, languages, or platforms | `tabs`, `showLineNumbers`, `caption`; each tab has `label`, `language`, `filename`, `code` |
 | DocsPress: Callout | `docspress/callout` | Important notes, tips, warnings, hazards, or success guidance | `tone`, `title`, `content`, `collapsible`, `open` |
-| DocsPress: API Request / Response | `docspress/api-request` | A verified HTTP request and its response as one unit | `method`, `endpoint`, `headers`, `requestBody`, `requestBodyFormat`, `responseStatus`, `responseBody`, `responseBodyFormat` |
+| DocsPress: Flow | `docspress/flow` | A connected, automatically numbered procedure | `start`, `steps`; each step has `title`, `content` |
+| DocsPress: API Request / Response | `docspress/api-request` | A verified HTTP request and its response as one unit, optionally runnable in the browser | `method`, `endpoint`, `headers`, `requestBody`, `requestBodyFormat`, `responseStatus`, `responseBody`, `responseBodyFormat`, `runnable`, `editable`, `allowUnsafe`, `baseUrl`, `allowedOrigins`, `timeout` |
+| DocsPress: Fields / Schema | `docspress/fields` | Typed API parameters, configuration keys, environment variables, CLI options, or response properties | `title`, `description`, `fields`, `searchable`, `compact`; each field has `name`, `type`, `required`, `defaultValue`, `description`, `values`, `deprecated` |
+| DocsPress: Live Code Playground | `docspress/code-playground` | A small self-contained HTML, CSS, and JavaScript example readers should edit and run | `title`, `html`, `css`, `javascript`, `height`, `autoRun`, `showConsole`, `allowNetwork` |
+| DocsPress: Diagram | `docspress/diagram` | A compact flow or sequence diagram without an external rendering dependency | `title`, `type`, `source`, `caption` |
+| DocsPress: Troubleshooter | `docspress/troubleshooter` | A short branching support or onboarding flow | `title`, `intro`, `startId`, `questions`, `outcomes`, `showProgress`; questions route by ID and outcomes have `status`, `title`, `content` |
 | DocsPress: Terminal Session | `docspress/terminal-session` | A copyable command with optional read-only output | `title`, `shell`, `prompt`, `command`, `output` |
 | DocsPress: Result | `docspress/result` | A concise verified outcome after a build, check, command, or procedure | `status`, `title`, `content`, `meta` |
 | DocsPress: File Tree | `docspress/file-tree` | A relevant project or generated-directory structure | `root`, `tree`, `caption` |
@@ -108,8 +113,13 @@ Use only these allowed values:
 
 - Code `language`: `bash`, `css`, `html`, `javascript`, `json`, `jsx`, `markdown`, `php`, `plaintext`, `python`, `shell`, `sql`, `tsx`, `typescript`, or `yaml`.
 - `highlightedLines`: comma-separated one-based lines and ranges such as `2,4-6`.
+- Colorful Code `diffMode`: `none` or `unified`; `copyMode`: `all` or `final`. Annotations use one-based line numbers and formatted content.
 - Callout `tone`: `note`, `tip`, `warning`, `danger`, or `success`. Set `open` only when `collapsible` is `true`.
-- API `method`: `GET`, `POST`, `PUT`, `PATCH`, or `DELETE`. Write headers as one `Name: value` pair per line. Body formats are `json` or `raw`.
+- API `method`: `GET`, `POST`, `PUT`, `PATCH`, or `DELETE`. Write headers as one `Name: value` pair per line. Body formats are `json` or `raw`. Runnable examples should default to a same-origin GET, must never contain real credentials, and may use an external origin only when `allowedOrigins` explicitly includes it. Mutating requests require `allowUnsafe: true` and still show reader confirmation.
+- Field `type`: `string`, `number`, `boolean`, `object`, `array`, `enum`, `url`, `date`, or `any`.
+- Playground `height`: 180–720. Keep `allowNetwork: false` unless the verified example requires network access; never put secrets in iframe source.
+- Diagram `type`: `flow` or `sequence`. Write one `Source -> Target: optional label` relationship per source line.
+- Troubleshooter outcome `status`: `success`, `neutral`, `warning`, or `error`. Every answer destination must match a question or outcome ID.
 - Result `status`: `success`, `neutral`, `warning`, or `error`.
 - Prompt `mode`: `chat`, `code`, `ask`, or `plan`. `context` is a comma-separated list of at most 12 items; `$` denotes an installed skill, `@` a mention, `#` an image, `http://` or `https://` a URL, and other values a file. Always invoke installed skills as `$skill-name`, never as a `SKILL.md` file path inside a user-facing prompt.
 - File trees use two spaces per depth level and a trailing slash for folders.
@@ -123,7 +133,17 @@ Use only these allowed values:
 
 <!-- wp:docspress/callout {"tone":"warning","title":"Protect credentials","content":"<p>Store the token in a secret manager.</p>","collapsible":false} /-->
 
-<!-- wp:docspress/api-request {"method":"POST","endpoint":"/v1/items","headers":"Content-Type: application/json\nAuthorization: Bearer $TOKEN","requestBody":"{\n  \"name\": \"example\"\n}","requestBodyFormat":"json","responseStatus":"201 Created","responseBody":"{\n  \"id\": 42\n}","responseBodyFormat":"json"} /-->
+<!-- wp:docspress/flow {"start":1,"steps":[{"title":"Configure","content":"<p>Set the verified options.</p>"},{"title":"Run","content":"<p>Execute the documented command.</p>"},{"title":"Verify","content":"<p>Confirm the expected result.</p>"}]} /-->
+
+<!-- wp:docspress/api-request {"method":"GET","endpoint":"/wp-json/","headers":"Accept: application/json","requestBody":"","requestBodyFormat":"json","responseStatus":"200 OK","responseBody":"{\n  \"name\": \"WordPress\"\n}","responseBodyFormat":"json","runnable":true,"editable":true,"allowUnsafe":false,"timeout":10000} /-->
+
+<!-- wp:docspress/fields {"title":"Configuration","fields":[{"name":"site","type":"string","required":true,"defaultValue":"","description":"WordPress site domain.","values":"","deprecated":false}],"searchable":true,"compact":false} /-->
+
+<!-- wp:docspress/code-playground {"title":"Live example","html":"<button>Run</button>","css":"button { color: blue; }","javascript":"console.log( 'Ready' );","height":320,"autoRun":true,"showConsole":true,"allowNetwork":false} /-->
+
+<!-- wp:docspress/diagram {"title":"Publishing flow","type":"flow","source":"Markdown -> DocsPress: collect\nDocsPress -> WordPress: publish","caption":"Verified system relationships."} /-->
+
+<!-- wp:docspress/troubleshooter {"title":"Find the next step","startId":"source","questions":[{"id":"source","question":"Do docs exist?","yesLabel":"Yes","yesNext":"sync","noLabel":"No","noNext":"generate"}],"outcomes":[{"id":"sync","status":"success","title":"Publish","content":"<p>Run a draft sync.</p>"},{"id":"generate","status":"neutral","title":"Generate docs","content":"<p>Create source-grounded Markdown first.</p>"}],"showProgress":true} /-->
 
 <!-- wp:docspress/terminal-session {"title":"Run the checks","shell":"bash","prompt":"$","command":"npm test","output":"Tests: 24 passed"} /-->
 

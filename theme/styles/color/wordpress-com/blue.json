@@ -11,6 +11,7 @@
 				{ "slug": "highlight", "color": "#212cff", "name": "Electric blue" },
 				{ "slug": "highlight-strong", "color": "#193acc", "name": "Highlight strong" },
 				{ "slug": "paper", "color": "#ffffff", "name": "White" },
+				{ "slug": "header-surface", "color": "color-mix(in srgb, var(--dp-paper) 92%, transparent)", "name": "Header surface" },
 				{ "slug": "canvas", "color": "#f6f7f7", "name": "Studio grey" },
 				{ "slug": "ink", "color": "#1d1d1d", "name": "WordPress.com ink" },
 				{ "slug": "copy", "color": "#1d2327", "name": "Copy" },

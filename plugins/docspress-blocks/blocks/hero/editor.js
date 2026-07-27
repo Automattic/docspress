@@ -54,6 +54,70 @@
 		);
 	}
 
+	function syncDiagramPreview( mascotImage ) {
+		return el(
+			'div',
+			{
+				className: 'docspress-hero-diagram',
+				'aria-label': __( 'GitHub Markdown flows through DocsPress to WordPress Pages and machine-readable documentation. WordPress edits return to GitHub as reviewable pull requests.', 'docspress-blocks' )
+			},
+			el(
+				'div',
+				{ className: 'docspress-hero-diagram__pipeline' },
+				el(
+					'section',
+					{ className: 'docspress-hero-diagram__source', 'aria-label': __( 'GitHub Markdown source', 'docspress-blocks' ) },
+					el(
+						'div',
+						{ className: 'docspress-hero-diagram__bar' },
+						el( 'span', { className: 'docspress-hero-diagram__dot' } ),
+						el( 'strong', null, 'github.com/repo' )
+					),
+					el( 'div', { className: 'docspress-hero-diagram__folder' }, 'docs/' ),
+					el( 'span', { className: 'docspress-hero-diagram__file' }, 'index.md' ),
+					el( 'span', { className: 'docspress-hero-diagram__file' }, 'quickstart.md' ),
+					el( 'span', { className: 'docspress-hero-diagram__file' }, 'api.md' )
+				),
+				el(
+					'div',
+					{ className: 'docspress-hero-diagram__hub', 'aria-label': 'DocsPress' },
+					el(
+						'div',
+						{ className: 'docspress-hero-diagram__mascot' },
+						mascotImage || el( 'span', { className: 'docspress-hero-diagram__fallback', 'aria-hidden': true }, 'DP' )
+					),
+					el( 'strong', null, 'DocsPress' ),
+					el( 'span', null, __( 'keeps one source', 'docspress-blocks' ) )
+				),
+				el(
+					'div',
+					{ className: 'docspress-hero-diagram__outputs', 'aria-label': __( 'Published documentation surfaces', 'docspress-blocks' ) },
+					el(
+						'section',
+						{ className: 'docspress-hero-diagram__surface docspress-hero-diagram__surface--wordpress' },
+						el( 'span', { className: 'docspress-hero-diagram__surface-label' }, __( 'For readers', 'docspress-blocks' ) ),
+						el( 'strong', null, __( 'WordPress Pages', 'docspress-blocks' ) ),
+						el( 'span', null, __( 'Native Gutenberg', 'docspress-blocks' ) )
+					),
+					el(
+						'section',
+						{ className: 'docspress-hero-diagram__surface docspress-hero-diagram__surface--agents' },
+						el( 'span', { className: 'docspress-hero-diagram__surface-label' }, __( 'For agents', 'docspress-blocks' ) ),
+						el( 'strong', null, '/llms.txt' ),
+						el( 'span', null, __( 'Exact page.md routes', 'docspress-blocks' ) )
+					)
+				)
+			),
+			el(
+				'div',
+				{ className: 'docspress-hero-diagram__return' },
+				el( 'span', { 'aria-hidden': true }, '↑' ),
+				el( 'strong', null, __( 'Reviewable pull request', 'docspress-blocks' ) ),
+				el( 'span', null, __( 'WordPress edits return to GitHub', 'docspress-blocks' ) )
+			)
+		);
+	}
+
 	registerBlockType( 'docspress/hero', {
 		apiVersion: 3,
 		title: __( 'DocsPress: Hero', 'docspress-blocks' ),
@@ -75,6 +139,7 @@
 			mediaUrl: { type: 'string', default: '' },
 			mediaAlt: { type: 'string', default: '' },
 			visualLabel: { type: 'string', default: '' },
+			visualVariant: { type: 'string', default: 'image' },
 			layout: { type: 'string', default: 'split' },
 			mediaPosition: { type: 'string', default: 'right' },
 			mediaWidth: { type: 'number', default: 44 },
@@ -86,15 +151,16 @@
 			showOrbit: { type: 'boolean', default: false },
 			panelColor: { type: 'string', default: '' },
 			visualColor: { type: 'string', default: '' },
-			textColor: { type: 'string', default: '' },
 			accentColor: { type: 'string', default: '' }
 		},
 		supports: { ...designSupports, align: [ 'wide', 'full' ] },
 		edit: function HeroEdit( { attributes, setAttributes } ) {
-			const hasVisual = Boolean( attributes.mediaUrl );
+			const visualVariant = attributes.visualVariant || 'image';
+			const hasVisual = visualVariant === 'sync-diagram' || Boolean( attributes.mediaUrl );
 			const classes = [
 				'docspress-hero',
 				`docspress-hero--${ attributes.tone }`,
+				`docspress-hero--visual-${ visualVariant }`,
 				`docspress-hero--layout-${ attributes.layout }`,
 				`docspress-hero--media-${ attributes.mediaPosition }`,
 				`docspress-hero--height-${ attributes.height }`,
@@ -104,7 +170,6 @@
 				hasVisual ? '' : 'docspress-hero--no-visual',
 				attributes.panelColor ? 'docspress-hero--has-panel-color' : '',
 				attributes.visualColor ? 'docspress-hero--has-visual-color' : '',
-				attributes.textColor ? 'docspress-hero--has-text-color' : '',
 				attributes.accentColor ? 'docspress-hero--has-accent-color' : '',
 				'docspress-hero--editor',
 				presetClass
@@ -117,24 +182,26 @@
 
 			if ( attributes.panelColor ) styles[ '--db-hero-panel' ] = attributes.panelColor;
 			if ( attributes.visualColor ) styles[ '--db-hero-visual' ] = attributes.visualColor;
-			if ( attributes.textColor ) {
-				styles[ '--db-hero-heading' ] = attributes.textColor;
-				styles[ '--db-hero-copy' ] = attributes.textColor;
-			}
 			if ( attributes.accentColor ) styles[ '--db-hero-accent' ] = attributes.accentColor;
 
 			const blockProps = useBlockProps( { className: classes, style: styles } );
-			const image = attributes.mediaUrl
+			const mascotImage = attributes.mediaUrl
+				? el( 'img', {
+					className: 'docspress-hero__image',
+					src: attributes.mediaUrl,
+					alt: attributes.mediaAlt || ''
+				} )
+				: null;
+			const image = mascotImage
 				? el(
 					'figure',
 					{ className: 'docspress-hero__media' },
-					el( 'img', {
-						className: 'docspress-hero__image',
-						src: attributes.mediaUrl,
-						alt: attributes.mediaAlt || ''
-					} )
+					mascotImage
 				)
 				: mediaPicker( attributes, setAttributes, false );
+			const visualContent = visualVariant === 'sync-diagram'
+				? syncDiagramPreview( mascotImage )
+				: image;
 			const visual = hasVisual || ! attributes.mediaUrl
 				? el(
 					'div',
@@ -144,7 +211,7 @@
 						{ className: 'docspress-hero__visual-label', 'aria-hidden': true },
 						attributes.visualLabel
 					),
-					image
+					visualContent
 				)
 				: null;
 
@@ -226,7 +293,16 @@
 					),
 					el(
 						PanelBody,
-						{ title: __( 'Image', 'docspress-blocks' ), initialOpen: true },
+						{ title: __( 'Visual', 'docspress-blocks' ), initialOpen: true },
+						el( SelectControl, {
+							label: __( 'Visual type', 'docspress-blocks' ),
+							value: visualVariant,
+							options: [
+								{ label: __( 'Image', 'docspress-blocks' ), value: 'image' },
+								{ label: __( 'GitHub sync diagram', 'docspress-blocks' ), value: 'sync-diagram' }
+							],
+							onChange: ( visualVariant ) => setAttributes( { visualVariant } )
+						} ),
 						mediaPicker( attributes, setAttributes, true ),
 						attributes.mediaUrl && el( Button, {
 							onClick: () => setAttributes( { mediaId: 0, mediaUrl: '', mediaAlt: '' } ),
@@ -308,7 +384,6 @@
 							colorSettings: [
 								{ value: attributes.panelColor, onChange: ( panelColor ) => setAttributes( { panelColor: panelColor || '' } ), label: __( 'Text panel', 'docspress-blocks' ) },
 								{ value: attributes.visualColor, onChange: ( visualColor ) => setAttributes( { visualColor: visualColor || '' } ), label: __( 'Visual panel', 'docspress-blocks' ) },
-								{ value: attributes.textColor, onChange: ( textColor ) => setAttributes( { textColor: textColor || '' } ), label: __( 'Text', 'docspress-blocks' ) },
 								{ value: attributes.accentColor, onChange: ( accentColor ) => setAttributes( { accentColor: accentColor || '' } ), label: __( 'Accent', 'docspress-blocks' ) }
 							]
 						}

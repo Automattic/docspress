@@ -1,16 +1,26 @@
 <!-- wp:group {"align":"full","className":"site-footer","layout":{"type":"constrained"}} -->
 <div class="wp-block-group alignfull site-footer">
-	<!-- wp:group {"align":"wide","className":"footer-inner","layout":{"type":"flex","flexWrap":"wrap","justifyContent":"space-between","verticalAlignment":"center"}} -->
-	<div class="wp-block-group alignwide footer-inner">
-		<!-- wp:group {"className":"footer-meta","layout":{"type":"flex","orientation":"vertical"}} -->
-		<div class="wp-block-group footer-meta">
+	<!-- wp:group {"align":"full","className":"footer-inner","layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"space-between","verticalAlignment":"center"}} -->
+	<div class="wp-block-group alignfull footer-inner">
+		<!-- wp:group {"className":"footer-signature","layout":{"type":"flex","flexWrap":"nowrap","verticalAlignment":"center"}} -->
+		<div class="wp-block-group footer-signature">
+			<!-- wp:site-logo {"width":28,"shouldSyncIcon":true} /-->
 			<!-- wp:site-title {"level":0} /-->
 			<!-- wp:paragraph -->
-			<p>Documentation powered by WordPress and DocsPress.</p>
+			<p>on WordPress</p>
 			<!-- /wp:paragraph -->
 		</div>
 		<!-- /wp:group -->
-		<!-- wp:navigation {"overlayMenu":"never","className":"footer-navigation","layout":{"type":"flex","justifyContent":"right"}} /-->
+
+		<!-- wp:paragraph {"className":"footer-publishing-note"} -->
+		<p class="footer-publishing-note">Markdown → Gutenberg → WordPress</p>
+		<!-- /wp:paragraph -->
+
+		<!-- wp:navigation {"overlayMenu":"never","className":"footer-navigation","layout":{"type":"flex","justifyContent":"right"}} -->
+			<!-- wp:navigation-link {"label":"Docs","url":"/docs/","kind":"custom","isTopLevelLink":true} /-->
+			<!-- wp:navigation-link {"label":"Kitchen Sink","url":"/docs/reference/kitchen-sink/","kind":"custom","isTopLevelLink":true} /-->
+			<!-- wp:navigation-link {"label":"GitHub","url":"https://github.com/Automattic/docspress","kind":"custom","isTopLevelLink":true,"opensInNewTab":true} /-->
+		<!-- /wp:navigation -->
 	</div>
 	<!-- /wp:group -->
 </div>
