@@ -913,10 +913,10 @@ describe("DocsPress block theme constraints", () => {
     expect(setup).toContain("Download DocsPress Plugins");
     expect(setup).toContain("Preview Kitchen Sink");
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.13/docspress-theme-0.9.13.zip"
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.14/docspress-theme-0.9.14.zip"
     );
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.13/docspress-blocks-0.9.12.zip"
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.14/docspress-blocks-0.9.12.zip"
     );
     expect(styles).toContain(".home-proof-strip {");
     expect(styles).toContain(".home-sync-section {");
@@ -937,7 +937,13 @@ describe("DocsPress block theme constraints", () => {
       /\.home-download-card\s*\{[^}]*min-height:\s*0;[^}]*height:\s*100%;[^}]*margin:\s*0;/s
     );
     expect(styles).toMatch(
-      /\.home-download-card__actions\s*\{[^}]*margin-top:\s*28px;[^}]*padding-top:\s*0;/s
+      /\.home-download-card__actions\s*\{[^}]*margin-top:\s*auto;[^}]*padding-top:\s*24px;/s
+    );
+    expect(styles).toMatch(
+      /\.home-download-card__requirements\s*\{[^}]*margin:\s*0;[^}]*padding-top:\s*14px;/s
+    );
+    expect(styles).toMatch(
+      /\.home-download-card__actions > p\s*\{[^}]*min-height:\s*44px;[^}]*margin:\s*0;/s
     );
     expect(runtime).toContain("function updateDownloadFiligree()");
     expect(runtime).toContain("'--home-download-wapuu-shift'");

@@ -3,7 +3,7 @@ Theme Name: DocsPress
 Theme URI: https://github.com/Automattic/docspress
 Author: Fatih Kadir Akın
 Description: A Site Editor-first documentation block theme for WordPress and DocsPress.
-Version: 0.9.13
+Version: 0.9.14
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 7.4
@@ -2421,12 +2421,19 @@ body.command-search-open {
 	flex-wrap: wrap;
 	gap: 12px 18px;
 	align-items: center;
-	margin-top: 28px;
-	padding-top: 0;
+	margin-top: auto;
+	padding-top: 24px;
 }
 
 .home-download-card__actions .wp-block-buttons,
 .home-download-card__actions .wp-block-button {
+	margin: 0;
+}
+
+.home-download-card__actions > p {
+	display: flex;
+	align-items: center;
+	min-height: 44px;
 	margin: 0;
 }
 
@@ -2475,7 +2482,8 @@ body.command-search-open {
 }
 
 .home-download-card__requirements {
-	margin: 12px 0 0;
+	margin: 0;
+	padding-top: 14px;
 	font: 680 10px/1.4 var(--dp-font-mono);
 	opacity: 0.62;
 }
