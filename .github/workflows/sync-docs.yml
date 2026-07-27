@@ -1,15 +1,6 @@
 name: Sync DocsPress documentation
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "docs/**/*.md"
-      - "docs/**/*.markdown"
-      - "docs/**/*.json"
-      - ".github/workflows/sync-docs.yml"
-  schedule:
-    - cron: "3/5 * * * *"
   workflow_dispatch:
 
 permissions:
