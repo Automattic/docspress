@@ -105,7 +105,7 @@ async function collectManifestPages(context, options) {
     }
 
     if (entry.source) {
-      const sourcePath = resolveManifestSource(entry.source, manifestDir, context.cwd);
+      const sourcePath = await resolveManifestSource(entry.source, manifestDir, context.cwd);
       const markdown = await fs.readFile(path.resolve(context.cwd, sourcePath), "utf8");
       byRoute.set(routeKey, {
         kind: "file",
@@ -168,11 +168,28 @@ function manifestRouteSegments(entry, byId, seen = new Set()) {
   return entry.slug ? [...parentSegments, entry.slug] : parentSegments;
 }
 
-function resolveManifestSource(source, manifestDir, cwd) {
-  const absolutePath = path.isAbsolute(source)
-    ? source
-    : path.resolve(manifestDir, source);
-  return toPosixPath(path.relative(cwd, absolutePath));
+async function resolveManifestSource(source, manifestDir, cwd) {
+  const raw = String(source || "");
+  if (!raw || raw.includes(":") || raw.includes("..") || path.isAbsolute(raw)) {
+    throw new Error(`Invalid Docspress manifest source: ${raw || "(empty)"}`);
+  }
+
+  const absolutePath = path.resolve(manifestDir, raw);
+  const relativePath = path.relative(cwd, absolutePath);
+  if (!relativePath || relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
+    throw new Error(`The Docspress manifest source must stay inside the checked-out repository: ${raw}`);
+  }
+
+  const [realCwd, realSourcePath] = await Promise.all([
+    fs.realpath(cwd),
+    fs.realpath(absolutePath)
+  ]);
+  const realRelativePath = path.relative(realCwd, realSourcePath);
+  if (!realRelativePath || realRelativePath.startsWith("..") || path.isAbsolute(realRelativePath)) {
+    throw new Error(`The Docspress manifest source must stay inside the checked-out repository: ${raw}`);
+  }
+
+  return toPosixPath(relativePath);
 }
 
 function convertMarkdownPages(byRoute, options, linkResolver) {

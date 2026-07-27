@@ -92603,7 +92603,7 @@ async function collectManifestPages(context, options) {
     }
 
     if (entry.source) {
-      const sourcePath = resolveManifestSource(entry.source, manifestDir, context.cwd);
+      const sourcePath = await resolveManifestSource(entry.source, manifestDir, context.cwd);
       const markdown = await promises_namespaceObject.readFile(external_node_path_namespaceObject.resolve(context.cwd, sourcePath), "utf8");
       byRoute.set(routeKey, {
         kind: "file",
@@ -92666,11 +92666,28 @@ function manifestRouteSegments(entry, byId, seen = new Set()) {
   return entry.slug ? [...parentSegments, entry.slug] : parentSegments;
 }
 
-function resolveManifestSource(source, manifestDir, cwd) {
-  const absolutePath = external_node_path_namespaceObject.isAbsolute(source)
-    ? source
-    : external_node_path_namespaceObject.resolve(manifestDir, source);
-  return utils_toPosixPath(external_node_path_namespaceObject.relative(cwd, absolutePath));
+async function resolveManifestSource(source, manifestDir, cwd) {
+  const raw = String(source || "");
+  if (!raw || raw.includes(":") || raw.includes("..") || external_node_path_namespaceObject.isAbsolute(raw)) {
+    throw new Error(`Invalid Docspress manifest source: ${raw || "(empty)"}`);
+  }
+
+  const absolutePath = external_node_path_namespaceObject.resolve(manifestDir, raw);
+  const relativePath = external_node_path_namespaceObject.relative(cwd, absolutePath);
+  if (!relativePath || relativePath.startsWith("..") || external_node_path_namespaceObject.isAbsolute(relativePath)) {
+    throw new Error(`The Docspress manifest source must stay inside the checked-out repository: ${raw}`);
+  }
+
+  const [realCwd, realSourcePath] = await Promise.all([
+    promises_namespaceObject.realpath(cwd),
+    promises_namespaceObject.realpath(absolutePath)
+  ]);
+  const realRelativePath = external_node_path_namespaceObject.relative(realCwd, realSourcePath);
+  if (!realRelativePath || realRelativePath.startsWith("..") || external_node_path_namespaceObject.isAbsolute(realRelativePath)) {
+    throw new Error(`The Docspress manifest source must stay inside the checked-out repository: ${raw}`);
+  }
+
+  return utils_toPosixPath(relativePath);
 }
 
 function convertMarkdownPages(byRoute, options, linkResolver) {

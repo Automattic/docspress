@@ -81,6 +81,10 @@ function docspress_get_markdown_source_content( $post_id ) {
 		return null;
 	}
 
+	if ( post_password_required( $post_id ) ) {
+		return null;
+	}
+
 	if ( ! docspress_get_markdown_source_path( $post_id ) ) {
 		return null;
 	}

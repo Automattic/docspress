@@ -275,7 +275,7 @@ function docspress_search_index( $pages ) {
 	$index = array();
 	$seen  = array();
 	foreach ( $pages as $page ) {
-		if ( ! $page instanceof WP_Post || isset( $seen[ $page->ID ] ) ) {
+		if ( ! $page instanceof WP_Post || isset( $seen[ $page->ID ] ) || post_password_required( $page ) ) {
 			continue;
 		}
 		$seen[ $page->ID ] = true;

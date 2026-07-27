@@ -1437,6 +1437,28 @@ describe("DocsPress block theme constraints", () => {
     expect(styles).not.toMatch(/^\.align(?:full|wide)\s*\{/m);
   });
 
+  it("keeps password-protected documentation out of public Markdown and search responses", async () => {
+    const llms = await fs.readFile(path.join(root, "theme", "inc", "llms.php"), "utf8");
+    const blocks = await fs.readFile(path.join(root, "theme", "inc", "blocks.php"), "utf8");
+    const markdownSourceFunction = llms.slice(
+      llms.indexOf("function docspress_get_markdown_source_content"),
+      llms.indexOf("function docspress_get_llms_pages")
+    );
+    const searchIndexFunction = blocks.slice(
+      blocks.indexOf("function docspress_search_index"),
+      blocks.indexOf("function docspress_render_command_search")
+    );
+
+    expect(markdownSourceFunction).toContain("post_password_required( $post_id )");
+    expect(markdownSourceFunction).toMatch(
+      /post_password_required\( \$post_id \)\s*\)\s*\{\s*return null;/
+    );
+    expect(searchIndexFunction).toContain("post_password_required( $page )");
+    expect(searchIndexFunction.indexOf("post_password_required( $page )")).toBeLessThan(
+      searchIndexFunction.indexOf("docspress_searchable_text( $page->post_content )")
+    );
+  });
+
   it("previews global styles against the complete documentation template", async () => {
     const functions = await fs.readFile(path.join(root, "theme", "functions.php"), "utf8");
     const preview = await fs.readFile(

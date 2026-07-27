@@ -210,6 +210,54 @@ describe("collectDesiredPages", () => {
     expect(pages.find((page) => page.key === "docs/guides/getting-started")?.content).not.toContain("Source Start");
   });
 
+  it.each([
+    ["absolute paths", (cwd) => path.join(cwd, "docs", "index.md")],
+    ["parent segments", () => "../outside.md"],
+    ["colons", () => "guide:secret.md"]
+  ])("rejects manifest sources with %s", async (_label, sourceFor) => {
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
+    await fs.mkdir(path.join(cwd, "docs"), { recursive: true });
+    await fs.writeFile(path.join(cwd, "docs", "index.md"), "# Docs");
+    await fs.writeFile(path.join(cwd, "outside.md"), "# Outside");
+    await fs.writeFile(path.join(cwd, "docs", "guide:secret.md"), "# Secret");
+    await fs.writeFile(path.join(cwd, "docs", "manifest.json"), JSON.stringify({
+      pages: [
+        { id: "root", slug: "", source: sourceFor(cwd) }
+      ]
+    }));
+
+    await expect(collectDesiredPages({
+      cwd,
+      docsDir: "docs",
+      manifestFile: "docs/manifest.json",
+      rootSlug: "docs",
+      rootTitle: "Docs",
+      status: "draft"
+    })).rejects.toThrow(/Invalid Docspress manifest source/);
+  });
+
+  it("rejects manifest source symlinks that leave the repository", async () => {
+    const parent = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-parent-"));
+    const cwd = path.join(parent, "checkout");
+    await fs.mkdir(path.join(cwd, "docs"), { recursive: true });
+    await fs.writeFile(path.join(parent, "outside.md"), "# Outside");
+    await fs.symlink(path.join(parent, "outside.md"), path.join(cwd, "docs", "linked.md"));
+    await fs.writeFile(path.join(cwd, "docs", "manifest.json"), JSON.stringify({
+      pages: [
+        { id: "root", slug: "", source: "linked.md" }
+      ]
+    }));
+
+    await expect(collectDesiredPages({
+      cwd,
+      docsDir: "docs",
+      manifestFile: "docs/manifest.json",
+      rootSlug: "docs",
+      rootTitle: "Docs",
+      status: "draft"
+    })).rejects.toThrow(/must stay inside the checked-out repository/);
+  });
+
   it("creates managed moved-page placeholders from a redirects file", async () => {
     const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
     await fs.mkdir(path.join(cwd, "docs", "guides"), { recursive: true });
