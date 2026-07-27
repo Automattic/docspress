@@ -6,6 +6,7 @@
 	const drawerToggle = document.querySelector('[data-drawer-toggle]');
 	const drawerClose = document.querySelector('[data-drawer-close]');
 	const sidebar = document.querySelector('#docs-sidebar, .docs-sidebar');
+	const primaryNavigation = document.querySelector('.primary-navigation');
 	const sidebarCollapseToggle = sidebar ? sidebar.querySelector('[data-sidebar-collapse-toggle]') : null;
 	const sidebarContent = sidebar ? sidebar.querySelector('[data-sidebar-content]') : null;
 	const docsShell = sidebar ? sidebar.closest('.docs-shell') : null;
@@ -220,6 +221,10 @@
 	}
 
 	if (drawerToggle) {
+		if (!sidebar && primaryNavigation) {
+			if (!primaryNavigation.id) primaryNavigation.id = 'primary-navigation';
+			drawerToggle.setAttribute('aria-controls', primaryNavigation.id);
+		}
 		drawerToggle.addEventListener('click', function () {
 			setDrawer(!body.classList.contains('drawer-open'));
 		});
