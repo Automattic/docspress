@@ -913,10 +913,10 @@ describe("DocsPress block theme constraints", () => {
     expect(setup).toContain("Download DocsPress Plugins");
     expect(setup).toContain("Preview Kitchen Sink");
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.12/docspress-theme-0.9.12.zip"
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.13/docspress-theme-0.9.13.zip"
     );
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.12/docspress-blocks-0.9.12.zip"
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.13/docspress-blocks-0.9.12.zip"
     );
     expect(styles).toContain(".home-proof-strip {");
     expect(styles).toContain(".home-sync-section {");
@@ -925,6 +925,11 @@ describe("DocsPress block theme constraints", () => {
     expect(styles).toContain("--home-download-wapuu-shift");
     expect(styles).toContain(".home-download-card__actions .wp-block-button__link::before");
     expect(styles).toContain('mask: url("data:image/svg+xml');
+    expect(styles).toContain("--home-download-accent");
+    expect(styles).toContain(".home-download-card--blocks::after");
+    expect(styles).toContain(
+      "background: color-mix(in srgb, var(--dp-paper) 97%, var(--home-download-accent));"
+    );
     expect(styles).toMatch(
       /\.home-download-intro :where\(h2\)\s*\{[^}]*margin:\s*0;/s
     );

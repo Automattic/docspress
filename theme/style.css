@@ -3,7 +3,7 @@ Theme Name: DocsPress
 Theme URI: https://github.com/Automattic/docspress
 Author: Fatih Kadir Akın
 Description: A Site Editor-first documentation block theme for WordPress and DocsPress.
-Version: 0.9.12
+Version: 0.9.13
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 7.4
@@ -2254,12 +2254,12 @@ body.command-search-open {
 }
 
 .home-download-section .home-section-kicker {
-	color: var(--dp-muted);
+	color: var(--dp-blue-dark);
 }
 
 .home-download-section .home-section-kicker::before {
-	background: currentColor;
-	opacity: 0.5;
+	background: var(--dp-highlight);
+	opacity: 1;
 }
 
 .home-download-intro,
@@ -2273,10 +2273,7 @@ body.command-search-open {
 }
 
 .home-download-intro {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(280px, 0.48fr);
-	gap: clamp(28px, 6vw, 76px);
-	align-items: end;
+	display: block;
 	margin-bottom: clamp(28px, 3vw, 36px);
 }
 
@@ -2285,16 +2282,17 @@ body.command-search-open {
 }
 
 .home-download-intro :where(h2) {
-	max-width: 680px;
+	max-width: 720px;
 	margin: 0;
-	font-size: clamp(36px, 4.5vw, 52px);
-	letter-spacing: -0.045em;
-	line-height: 1;
+	font-size: clamp(32px, 4vw, 46px);
+	letter-spacing: -0.035em;
+	line-height: 1.05;
 	text-wrap: balance;
 }
 
 .home-download-intro__summary {
-	max-width: 42ch;
+	max-width: 620px;
+	margin: 14px 0 0;
 	color: var(--dp-muted);
 	font-size: 15px;
 	line-height: 1.65;
@@ -2303,13 +2301,15 @@ body.command-search-open {
 .home-download-grid {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 0;
+	gap: 14px;
 	align-items: stretch;
 	margin-block-end: 0;
-	border-bottom: 1px solid var(--dp-line);
 }
 
 .home-download-card {
+	--home-download-accent: var(--dp-blue);
+	--home-download-button-text: #fff;
+	--home-download-card-padding: clamp(24px, 3vw, 30px);
 	position: relative;
 	display: flex;
 	flex-direction: column;
@@ -2317,25 +2317,55 @@ body.command-search-open {
 	min-height: 0;
 	height: 100%;
 	margin: 0;
-	padding: clamp(28px, 3vw, 36px) clamp(28px, 4vw, 56px) clamp(28px, 3vw, 36px) 0;
-	border: 0;
-	border-top: 1px solid var(--dp-line);
-	border-radius: 0;
-	background: transparent;
+	padding: var(--home-download-card-padding);
+	border: 1px solid var(--dp-line);
+	border-radius: var(--dp-radius);
+	background: color-mix(in srgb, var(--dp-paper) 97%, var(--home-download-accent));
 	color: inherit;
+	transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
 }
 
-.home-download-card + .home-download-card {
-	padding-right: 0;
-	padding-left: clamp(28px, 4vw, 56px);
-	border-left: 1px solid var(--dp-line);
+.home-download-card--blocks {
+	--home-download-accent: #d99f00;
+	--home-download-button-text: var(--dp-ink);
+}
+
+.home-download-card::before {
+	position: absolute;
+	top: var(--home-download-card-padding);
+	left: var(--home-download-card-padding);
+	box-sizing: border-box;
+	width: 44px;
+	height: 44px;
+	border: 1px solid color-mix(in srgb, var(--home-download-accent) 52%, var(--dp-line));
+	border-radius: var(--dp-radius);
+	background: color-mix(in srgb, var(--home-download-accent) 11%, var(--dp-paper));
+	content: "";
+}
+
+.home-download-card::after {
+	position: absolute;
+	top: calc(var(--home-download-card-padding) + 11px);
+	left: calc(var(--home-download-card-padding) + 11px);
+	width: 22px;
+	height: 22px;
+	background: color-mix(in srgb, var(--home-download-accent) 82%, var(--dp-ink));
+	content: "";
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3.5' y='4.5' width='17' height='12' rx='1.5'/%3E%3Cpath d='M8 20h8M12 16.5V20'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.home-download-card--blocks::after {
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round'%3E%3Crect x='3.5' y='3.5' width='7' height='7' rx='1.2'/%3E%3Crect x='13.5' y='3.5' width='7' height='7' rx='1.2'/%3E%3Crect x='3.5' y='13.5' width='7' height='7' rx='1.2'/%3E%3Crect x='13.5' y='13.5' width='7' height='7' rx='1.2'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
 .home-download-card__meta {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
 	gap: 16px;
+	min-height: 44px;
 	margin: 0 0 22px;
+	padding-left: 58px;
 	color: var(--dp-muted);
 	font: 750 11px/1.2 var(--dp-font-mono);
 	letter-spacing: 0.07em;
@@ -2406,10 +2436,10 @@ body.command-search-open {
 	align-items: center;
 	min-height: 44px;
 	padding: 11px 16px;
-	border: 1px solid currentColor;
-	border-radius: 999px;
-	background: transparent;
-	color: var(--dp-ink);
+	border: 1px solid var(--home-download-accent);
+	border-radius: 7px;
+	background: var(--home-download-accent);
+	color: var(--home-download-button-text);
 	font-size: 13px;
 	font-weight: 800;
 	line-height: 1.2;
@@ -2427,13 +2457,17 @@ body.command-search-open {
 }
 
 .home-download-card__actions .wp-block-button__link:hover {
-	background: var(--dp-ink);
-	color: var(--dp-paper);
+	filter: brightness(0.94);
 	transform: translateY(-1px);
 }
 
+.home-download-card__actions .wp-block-button__link:focus-visible {
+	outline: 2px solid var(--home-download-accent);
+	outline-offset: 3px;
+}
+
 .home-download-card__preview {
-	color: inherit;
+	color: color-mix(in srgb, var(--home-download-accent) 78%, var(--dp-ink));
 	font-size: 12px;
 	font-weight: 750;
 	text-decoration-thickness: 1px;
@@ -3069,16 +3103,16 @@ body.command-search-open {
 	}
 
 	.home-download-grid {
-		border-bottom: 0;
+		gap: 14px;
 	}
 
 	.home-download-card,
 	.home-download-card + .home-download-card {
+		--home-download-card-padding: 24px;
 		min-height: 0;
-		padding: 36px 0;
-		border-right: 0;
-		border-bottom: 1px solid var(--dp-line);
-		border-left: 0;
+		padding: var(--home-download-card-padding);
+		border: 1px solid var(--dp-line);
+		border-radius: var(--dp-radius);
 	}
 
 	.homepage-card-grid {
