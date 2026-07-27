@@ -334,7 +334,7 @@ a.docspress-hero__button--secondary.wp-element-button:hover {
 	width: min(100%, 190px);
 	max-width: none;
 	filter: drop-shadow(0 8px 10px color-mix(in srgb, var(--db-hero-heading) 16%, transparent));
-	transform: translateY(-24px);
+	transform: translateY(-34px);
 }
 
 .docspress-hero-diagram__fallback {

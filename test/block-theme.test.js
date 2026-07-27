@@ -881,6 +881,9 @@ describe("DocsPress block theme constraints", () => {
       path.join(root, "theme", "playground", "setup.php"),
       "utf8"
     );
+    const siteEditorBlueprint = JSON.parse(
+      await fs.readFile(path.join(root, "theme", "blueprint-browser.json"), "utf8")
+    );
     const styles = await fs.readFile(path.join(root, "theme", "style.css"), "utf8");
     const heroSeed = setup.match(/\$hero_attributes = array\(([\s\S]*?)\n\);/)?.[1] || "";
 
@@ -891,6 +894,12 @@ describe("DocsPress block theme constraints", () => {
     expect(heroSeed).toContain("AI-native documentation for WordPress");
     expect(heroSeed).toContain("exact .md twins and /llms.txt");
     expect(heroSeed).toContain("reviewable pull requests");
+    expect(heroSeed).toContain("Demonstrate Site Editor");
+    expect(heroSeed).toContain(
+      "https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground"
+    );
+    expect(siteEditorBlueprint.landingPage).toBe("/wp-admin/site-editor.php");
+    expect(siteEditorBlueprint.login).toBe(true);
     expect(setup).toContain('className":"home-proof-strip"');
     expect(setup).toContain("<code>/llms.txt</code>");
     expect(setup).toContain("<code>GitHub ↔ WordPress</code>");
