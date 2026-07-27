@@ -1,20 +1,10 @@
 name: Sync DocsPress documentation
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "docs/**/*.md"
-      - "docs/**/*.markdown"
-      - "docs/**/*.json"
-      - ".github/workflows/sync-docs.yml"
-  schedule:
-    - cron: "3/5 * * * *"
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 concurrency:
   group: docspress-sync
@@ -35,7 +25,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: ./
         with:
-          mode: reconcile
+          mode: publish
           wordpress-url: https://fkadocs.atomicsites.blog
           wordpress-site: fkadocs.atomicsites.blog
           wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}
