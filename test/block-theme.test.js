@@ -912,15 +912,16 @@ describe("DocsPress block theme constraints", () => {
     expect(setup).toContain("Download DocsPress Plugins");
     expect(setup).toContain("Preview Kitchen Sink");
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.9/docspress-theme-0.9.9.zip"
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.10/docspress-theme-0.9.10.zip"
     );
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.9/docspress-blocks-0.9.12.zip"
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.10/docspress-blocks-0.9.12.zip"
     );
     expect(styles).toContain(".home-proof-strip {");
     expect(styles).toContain(".home-sync-section {");
     expect(styles).toContain(".home-download-section {");
     expect(styles).toContain(".home-download-card--theme {");
+    expect(styles).toContain(".home-download-card--theme :where(h3) {");
     expect(heroSeed).not.toContain("'visualLabel'");
     expect(heroSeed).not.toContain("'layout'");
     expect(heroSeed).not.toContain("'tone'");
