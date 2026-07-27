@@ -913,7 +913,7 @@ describe("DocsPress block theme constraints", () => {
     expect(setup).toContain("Download Blocks");
     expect(setup).toContain("Preview Kitchen Sink");
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.18/docspress-theme-0.9.18.zip"
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.19/docspress-theme-0.9.19.zip"
     );
     expect(setup).toContain(
       "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.18/docspress-blocks-0.9.13.zip"
@@ -1328,11 +1328,19 @@ describe("DocsPress block theme constraints", () => {
     expect(footer).toContain('"align":"full","className":"footer-inner"');
     expect(footer).toContain('"flexWrap":"nowrap"');
     expect(footer).toContain("Markdown → Gutenberg → WordPress");
+    expect(footer).toContain("An <strong>Automattic</strong> project");
+    expect(footer).toContain(
+      "https://automattic.com/?utm_medium=automattic_referred&amp;utm_source=docspress_footer"
+    );
     expect(footer).toContain('"label":"Kitchen Sink"');
     expect(cssRule(styles, ".site-footer")).toContain("background: var(--dp-canvas);");
     expect(cssRule(styles, ".site-footer")).toContain("color: var(--dp-copy);");
     expect(cssRule(styles, ".footer-inner")).toContain("max-width: none;");
     expect(cssRule(styles, ".footer-inner")).toContain("min-height: 62px;");
+    expect(styles).toContain(".footer-automattic a:hover {");
+    expect(styles).toMatch(
+      /@media \(max-width: 520px\)[\s\S]*?\.footer-meta\.wp-block-group\s*\{[^}]*flex:\s*1 0 100%;/
+    );
     expect(styles).not.toMatch(
       /\.footer-[^{]*\{[^}]*(?:linear|radial|conic|repeating-linear|repeating-radial)-gradient/si
     );

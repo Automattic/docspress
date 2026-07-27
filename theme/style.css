@@ -3,7 +3,7 @@ Theme Name: DocsPress
 Theme URI: https://github.com/Automattic/docspress
 Author: Fatih Kadir Akın
 Description: A Site Editor-first documentation block theme for WordPress and DocsPress.
-Version: 0.9.18
+Version: 0.9.19
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 7.4
@@ -1621,16 +1621,43 @@ body.command-search-open {
 	white-space: nowrap;
 }
 
-.footer-publishing-note {
+.footer-meta.wp-block-group {
 	flex: 1 1 auto;
 	margin-right: auto !important;
 	padding-left: 18px;
 	border-left: 1px solid var(--dp-line-strong);
+	gap: 14px;
+}
+
+.footer-publishing-note {
 	color: var(--dp-muted);
 	font-size: 12px;
 	font-weight: 650;
 	letter-spacing: 0.015em;
 	white-space: nowrap;
+}
+
+.footer-automattic {
+	padding-left: 14px;
+	border-left: 1px solid var(--dp-line);
+	font-size: 12px;
+	white-space: nowrap;
+}
+
+.footer-automattic a {
+	color: var(--dp-copy);
+	text-decoration: none;
+	text-underline-offset: 3px;
+}
+
+.footer-automattic a:hover {
+	color: var(--dp-blue-dark);
+	text-decoration: underline;
+}
+
+.footer-automattic strong {
+	font-weight: 850;
+	letter-spacing: -0.02em;
 }
 
 .footer-navigation a {
@@ -2978,6 +3005,17 @@ body.command-search-open {
 		display: none;
 	}
 
+	.footer-meta.wp-block-group {
+		flex: 0 1 auto;
+		margin-right: 0 !important;
+		padding-left: 12px;
+	}
+
+	.footer-automattic {
+		padding-left: 0;
+		border-left: 0;
+	}
+
 	.docs-shell {
 		display: block;
 	}
@@ -3310,6 +3348,22 @@ body.command-search-open {
 
 	.footer-navigation .wp-block-navigation-item:nth-child(2) {
 		display: none;
+	}
+}
+
+@media (max-width: 520px) {
+	.footer-inner {
+		flex-wrap: wrap !important;
+		padding-block: 9px;
+	}
+
+	.footer-meta.wp-block-group {
+		order: 3;
+		flex: 1 0 100%;
+		justify-content: center;
+		padding: 8px 0 0;
+		border-top: 1px solid var(--dp-line);
+		border-left: 0;
 	}
 }
 

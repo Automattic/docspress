@@ -93,7 +93,7 @@ The WordPress theme and plugin directories are distributed through this GitHub r
 
 Install the current WordPress packages directly:
 
-- [Download DocsPress Theme 0.9.18](https://github.com/Automattic/docspress/releases/download/wordpress-0.9.18/docspress-theme-0.9.18.zip)
+- [Download DocsPress Theme 0.9.19](https://github.com/Automattic/docspress/releases/download/wordpress-0.9.19/docspress-theme-0.9.19.zip)
 - [Download DocsPress Blocks 0.9.13](https://github.com/Automattic/docspress/releases/download/wordpress-0.9.18/docspress-blocks-0.9.13.zip)
 
 Convert this repository's `docs/` directory and open the resulting WordPress site:
