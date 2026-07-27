@@ -11,7 +11,7 @@ Use WordPress-to-GitHub synchronization when an editor changes a managed Page in
 - **Allow GitHub Actions to create and approve pull requests** enabled under the repository's [Actions settings](https://github.com/Automattic/docspress/settings/actions).
 - A scheduled or manually dispatched workflow, because WordPress editor saves do not directly start a GitHub workflow.
 
-![GitHub Actions workflow permissions with Allow GitHub Actions to create and approve pull requests enabled](https://raw.githubusercontent.com/Automattic/docspress/main/theme/assets/images/github-actions/allow-actions-create-pull-requests.png "Enable the pull request setting and save it before asking DocsPress to create proposals.")
+![GitHub Actions workflow permissions with Allow GitHub Actions to create and approve pull requests enabled](http://fkadocs.atomicsites.blog/wp-content/themes/docspress/assets/images/github-actions/allow-actions-create-pull-requests.png "Enable the pull request setting and save it before asking DocsPress to create proposals.")
 
 ## Poll WordPress and propose Markdown
 

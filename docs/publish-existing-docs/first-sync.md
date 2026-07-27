@@ -14,7 +14,7 @@ Create a repository secret named `WP_ACCESS_TOKEN`. The [authentication guide](.
 
 Open [Settings → Actions → General for the repository](https://github.com/Automattic/docspress/settings/actions). Under **Workflow permissions**, enable **Allow GitHub Actions to create and approve pull requests**, then select **Save**. For another repository, use the equivalent page under its owner and repository name.
 
-![GitHub Actions workflow permissions with Allow GitHub Actions to create and approve pull requests enabled](https://raw.githubusercontent.com/Automattic/docspress/main/theme/assets/images/github-actions/allow-actions-create-pull-requests.png "Enable the pull request setting and save it before running WordPress-to-GitHub synchronization.")
+![GitHub Actions workflow permissions with Allow GitHub Actions to create and approve pull requests enabled](http://fkadocs.atomicsites.blog/wp-content/themes/docspress/assets/images/github-actions/allow-actions-create-pull-requests.png "Enable the pull request setting and save it before running WordPress-to-GitHub synchronization.")
 
 The workflow's `GITHUB_TOKEN` creates the proposal branch and pull request. You do not need another stored GitHub token.
 
@@ -47,7 +47,7 @@ You can also open **Actions → Sync DocsPress documentation → Run workflow** 
 
 The run overview should report **Success** and show a completed `sync` job. The screenshot below is cropped from a [real authenticated DocsPress run](https://github.com/Automattic/docspress/actions/runs/29799038783), so the important state remains readable.
 
-![The GitHub Actions run overview cropped to the successful status, duration, revision, and sync job](https://raw.githubusercontent.com/Automattic/docspress/main/theme/assets/images/github-actions/workflow-run-overview.jpg "Confirm Success, the expected revision, and a completed sync job before continuing.")
+![The GitHub Actions run overview cropped to the successful status, duration, revision, and sync job](http://fkadocs.atomicsites.blog/wp-content/themes/docspress/assets/images/github-actions/workflow-run-overview.jpg "Confirm Success, the expected revision, and a completed sync job before continuing.")
 
 This production example performed a real synchronization. Your first run remains safe because its workflow uses `status: draft` and `dry-run: true`.
 
@@ -55,7 +55,7 @@ This production example performed a real synchronization. Your first run remains
 
 Scroll to **Docspress Dry Run Summary** on the same run overview. This is the quickest way to decide whether the planned synchronization is correct.
 
-![The DocsPress Sync Summary cropped to the created, updated, deleted, unchanged, and conflict counters](https://raw.githubusercontent.com/Automattic/docspress/main/theme/assets/images/github-actions/sync-summary.jpg "Review every counter before allowing WordPress or GitHub writes.")
+![The DocsPress Sync Summary cropped to the created, updated, deleted, unchanged, and conflict counters](http://fkadocs.atomicsites.blog/wp-content/themes/docspress/assets/images/github-actions/sync-summary.jpg "Review every counter before allowing WordPress or GitHub writes.")
 
 | Counter | What to verify |
 | --- | --- |

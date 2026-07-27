@@ -32,7 +32,7 @@ If the source structure cannot be mapped safely to the live blocks, reverse sync
 A standalone Markdown image becomes a native `core/image` block. Write meaningful alternative text and add an optional quoted title when the image needs a visible caption:
 
 ```markdown
-![DocsPress Site Editor preview](https://raw.githubusercontent.com/Automattic/docspress/main/theme/screenshot.png "Preview the editable documentation shell.")
+![DocsPress Site Editor preview](http://fkadocs.atomicsites.blog/wp-content/themes/docspress/screenshot.png "Preview the editable documentation shell.")
 ```
 
 DocsPress preserves the image URL; it does not upload repository files to the WordPress Media Library. Use a stable HTTPS URL, or upload the asset separately before synchronization. Follow the [theme customization guide](../guides/customize-theme.md) for the Site Editor workflow.

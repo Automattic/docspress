@@ -105,3 +105,15 @@ This Page is the acceptance surface for the DocsPress theme and all fifteen Docs
 <!-- wp:docspress/troubleshooter {"title":"Choose the right publishing workflow","intro":"Answer two quick questions to reach a source-grounded next step.","startId":"source","questions":[{"id":"source","question":"Do you already have Markdown documentation?","yesLabel":"Yes, the docs exist","yesNext":"connected","noLabel":"Not yet","noNext":"generate"},{"id":"connected","question":"Is the repository connected to WordPress?","yesLabel":"Yes, it is connected","yesNext":"sync","noLabel":"No, connect it","noNext":"install"}],"outcomes":[{"id":"install","status":"warning","title":"Connect the publishing target","content":"<p>Run the DocsPress installer, add the WordPress access token, and verify the repository connection before publishing.</p>"},{"id":"sync","status":"success","title":"Publish the documentation","content":"<p>Run the sync command, review the proposed changes, and verify the rendered documentation on WordPress.</p>"},{"id":"generate","status":"neutral","title":"Generate a documentation starter","content":"<p>Generate a small documentation tree from the source, then review every example against the implementation before publishing.</p>"}],"showProgress":true} /-->
 
 <!-- wp:docspress/result {"status":"success","title":"Kitchen Sink complete","content":"<p>Every DocsPress documentation block, semantic variant, and meaningful option is represented on this Page. Hero and Audience Paths are the design-focused landing blocks.</p>","meta":"13 documentation blocks · 2 landing blocks"} /-->
+
+## Playground runtime
+
+This inventory is generated from the running WordPress installation.
+
+| Component | Type | Version | Status |
+| --- | --- | --- | --- |
+| WordPress | Core | 7.0.2 | Running |
+| DocsPress | Theme | 0.9.8 | Active |
+| Akismet Anti-spam: Spam Protection | Plugin | 5.7 | Active |
+| DocsPress Blocks | Plugin | 0.9.9 | Active |
+| Jetpack | Plugin | 16.1-a.3 | Active |
