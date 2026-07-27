@@ -909,14 +909,14 @@ describe("DocsPress block theme constraints", () => {
     expect(setup).toContain("wp:docspress/result");
     expect(setup).toContain("Bring Markdown, or generate it from source.");
     expect(setup).toContain("home-download-section");
-    expect(setup).toContain("Download DocsPress Theme");
-    expect(setup).toContain("Download DocsPress Plugins");
+    expect(setup).toContain("Download Theme");
+    expect(setup).toContain("Download Blocks");
     expect(setup).toContain("Preview Kitchen Sink");
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.14/docspress-theme-0.9.14.zip"
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.15/docspress-theme-0.9.15.zip"
     );
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.14/docspress-blocks-0.9.12.zip"
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.15/docspress-blocks-0.9.12.zip"
     );
     expect(styles).toContain(".home-proof-strip {");
     expect(styles).toContain(".home-sync-section {");
