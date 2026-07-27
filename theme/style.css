@@ -2845,6 +2845,26 @@ body .wp-site-blocks > header.wp-block-template-part > .site-header.wp-block-gro
 	background: var(--wp--custom--entry-kicker-marker-background, var(--dp-highlight-strong));
 }
 
+html[data-theme="dark"] .entry-kicker:not(.has-border-color) {
+	border: var(--wp--custom--entry-kicker-dark-border, var(--wp--custom--entry-kicker-border, 2px solid var(--dp-ink)));
+}
+
+html[data-theme="dark"] .entry-kicker:not(.has-background) {
+	background: var(--wp--custom--entry-kicker-dark-background, var(--wp--custom--entry-kicker-background, var(--dp-highlight)));
+}
+
+html[data-theme="dark"] .entry-kicker {
+	box-shadow: var(--wp--custom--entry-kicker-dark-shadow, var(--wp--custom--entry-kicker-shadow, 3px 3px 0 var(--dp-highlight-strong)));
+}
+
+html[data-theme="dark"] .entry-kicker:not(.has-text-color) {
+	color: var(--wp--custom--entry-kicker-dark-color, var(--wp--custom--entry-kicker-color, var(--dp-highlight)));
+}
+
+html[data-theme="dark"] .entry-kicker::before {
+	background: var(--wp--custom--entry-kicker-dark-marker-background, var(--wp--custom--entry-kicker-marker-background, var(--dp-highlight-strong)));
+}
+
 :where(.entry-title) {
 	font-size: var(--wp--custom--entry-title-size, clamp(42px, 5.6vw, 68px));
 	font-weight: var(--wp--custom--entry-title-weight, var(--dp-heading-weight));

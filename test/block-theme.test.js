@@ -697,6 +697,19 @@ describe("DocsPress block theme constraints", () => {
     expect(theme.settings.custom.entryKickerShadow).toBe(
       "3px 3px 0 var(--dp-highlight-strong)"
     );
+    expect(theme.settings.custom.entryKickerDarkBorder).toBe(
+      "2px solid color-mix(in srgb, var(--dp-highlight) 72%, var(--dp-line))"
+    );
+    expect(theme.settings.custom.entryKickerDarkBackground).toBe(
+      "color-mix(in srgb, var(--dp-highlight) 12%, var(--dp-paper))"
+    );
+    expect(theme.settings.custom.entryKickerDarkShadow).toBe(
+      "3px 3px 0 color-mix(in srgb, var(--dp-highlight-strong) 48%, var(--dp-paper))"
+    );
+    expect(theme.settings.custom.entryKickerDarkColor).toBe("var(--dp-highlight)");
+    expect(theme.settings.custom.entryKickerDarkMarkerBackground).toBe(
+      "var(--dp-highlight-strong)"
+    );
     expect(theme.settings.custom.entryTitleSize).toBe("clamp(42px, 5.6vw, 68px)");
     expect(theme.settings.custom.sidebarWidth).toBe("266px");
     expect(theme.settings.custom.tocWidth).toBe("226px");
@@ -704,6 +717,8 @@ describe("DocsPress block theme constraints", () => {
     expect(theme.settings.layout.contentSize).toBe("770px");
     expect(theme.settings.layout.wideSize).toBe("1100px");
     expect(styles).toContain("var(--wp--custom--entry-kicker-border");
+    expect(styles).toContain("var(--wp--custom--entry-kicker-dark-background");
+    expect(styles).toContain("var(--wp--custom--entry-kicker-dark-color");
     expect(styles).toContain("var(--wp--custom--entry-title-size");
     expect(styles).toContain("var(--wp--custom--entry-rule-background");
     expect(styles).toContain("var(--wp--preset--color--dark-accent, #62b5ff)");
