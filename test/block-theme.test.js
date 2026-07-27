@@ -885,6 +885,7 @@ describe("DocsPress block theme constraints", () => {
       await fs.readFile(path.join(root, "theme", "blueprint-browser.json"), "utf8")
     );
     const styles = await fs.readFile(path.join(root, "theme", "style.css"), "utf8");
+    const runtime = await fs.readFile(path.join(root, "theme", "assets", "js", "docs.js"), "utf8");
     const heroSeed = setup.match(/\$hero_attributes = array\(([\s\S]*?)\n\);/)?.[1] || "";
 
     expect(heroSeed).toContain("'mediaUrl'");
@@ -912,16 +913,22 @@ describe("DocsPress block theme constraints", () => {
     expect(setup).toContain("Download DocsPress Plugins");
     expect(setup).toContain("Preview Kitchen Sink");
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.10/docspress-theme-0.9.10.zip"
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.11/docspress-theme-0.9.11.zip"
     );
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.10/docspress-blocks-0.9.12.zip"
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.11/docspress-blocks-0.9.12.zip"
     );
     expect(styles).toContain(".home-proof-strip {");
     expect(styles).toContain(".home-sync-section {");
     expect(styles).toContain(".home-download-section {");
-    expect(styles).toContain(".home-download-card--theme {");
-    expect(styles).toContain(".home-download-card--theme :where(h3) {");
+    expect(styles).toContain('url("assets/images/docspress-hybrid-logo.png")');
+    expect(styles).toContain("--home-download-wapuu-shift");
+    expect(styles).toContain(".home-download-card__actions .wp-block-button__link::before");
+    expect(styles).toContain('mask: url("data:image/svg+xml');
+    expect(runtime).toContain("function updateDownloadFiligree()");
+    expect(runtime).toContain("'--home-download-wapuu-shift'");
+    expect(runtime).toContain("'--home-download-octocat-shift'");
+    expect(runtime).toContain("prefers-reduced-motion: reduce");
     expect(heroSeed).not.toContain("'visualLabel'");
     expect(heroSeed).not.toContain("'layout'");
     expect(heroSeed).not.toContain("'tone'");

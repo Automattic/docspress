@@ -629,6 +629,41 @@
 		pre.appendChild(button);
 	});
 
+	const downloadSection = document.querySelector('.home-download-section');
+	const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+	let downloadScrollFrame = 0;
+
+	function updateDownloadFiligree() {
+		downloadScrollFrame = 0;
+		if (!downloadSection) return;
+		if (reducedMotion.matches) {
+			downloadSection.style.setProperty('--home-download-wapuu-shift', '0px');
+			downloadSection.style.setProperty('--home-download-octocat-shift', '0px');
+			return;
+		}
+
+		const bounds = downloadSection.getBoundingClientRect();
+		const travel = window.innerHeight + bounds.height;
+		const progress = Math.max(0, Math.min(1, (window.innerHeight - bounds.top) / travel));
+		const shift = Math.round((progress - 0.5) * 15000) / 100;
+		downloadSection.style.setProperty('--home-download-wapuu-shift', shift + 'px');
+		downloadSection.style.setProperty('--home-download-octocat-shift', -shift + 'px');
+	}
+
+	function queueDownloadFiligreeUpdate() {
+		if (!downloadSection || downloadScrollFrame) return;
+		downloadScrollFrame = window.requestAnimationFrame(updateDownloadFiligree);
+	}
+
+	if (downloadSection) {
+		updateDownloadFiligree();
+		window.addEventListener('scroll', queueDownloadFiligreeUpdate, { passive: true });
+		window.addEventListener('resize', queueDownloadFiligreeUpdate);
+		if (typeof reducedMotion.addEventListener === 'function') {
+			reducedMotion.addEventListener('change', queueDownloadFiligreeUpdate);
+		}
+	}
+
 	const tocLinks = Array.from(document.querySelectorAll('[data-toc-link]'));
 	if ('IntersectionObserver' in window && tocLinks.length) {
 		const headingMap = new Map(tocLinks.map(function (link) {

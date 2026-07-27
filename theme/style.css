@@ -3,7 +3,7 @@ Theme Name: DocsPress
 Theme URI: https://github.com/Automattic/docspress
 Author: Fatih Kadir Akın
 Description: A Site Editor-first documentation block theme for WordPress and DocsPress.
-Version: 0.9.10
+Version: 0.9.11
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 7.4
@@ -2204,41 +2204,79 @@ body.command-search-open {
 }
 
 .home-download-section {
+	--home-download-face-size: clamp(240px, 26vw, 380px);
+	--home-download-wapuu-shift: 0px;
+	--home-download-octocat-shift: 0px;
 	position: relative;
 	box-sizing: border-box;
+	width: 100vw;
+	max-width: none;
+	margin-right: calc((100vw - 100%) / -2);
+	margin-left: calc((100vw - 100%) / -2);
 	margin-top: clamp(84px, 11vw, 128px);
-	padding: clamp(30px, 5vw, 58px);
-	overflow: hidden;
-	border: 1px solid var(--dp-line);
-	border-radius: calc(var(--dp-radius) * 1.6);
-	background:
-		linear-gradient(135deg, color-mix(in srgb, var(--dp-blue) 7%, transparent), transparent 42%),
-		var(--dp-canvas);
+	padding: clamp(72px, 9vw, 112px) 0;
+	overflow: clip;
+	border-top: 1px solid var(--dp-line);
+	border-bottom: 1px solid var(--dp-line);
+	background: transparent;
+	isolation: isolate;
+}
+
+.home-download-section::before,
+.home-download-section::after {
+	position: absolute;
+	z-index: 0;
+	top: 50%;
+	width: var(--home-download-face-size);
+	height: var(--home-download-face-size);
+	background: url("assets/images/docspress-hybrid-logo.png") center / contain no-repeat;
+	content: "";
+	filter: grayscale(1);
+	opacity: 0.055;
+	pointer-events: none;
+	will-change: transform;
 }
 
 .home-download-section::before {
-	position: absolute;
-	top: -74px;
-	right: -48px;
-	width: 210px;
-	height: 210px;
-	border: 1px solid color-mix(in srgb, var(--dp-blue) 20%, transparent);
-	border-radius: 50%;
-	box-shadow:
-		0 0 0 28px color-mix(in srgb, var(--dp-blue) 5%, transparent),
-		0 0 0 56px color-mix(in srgb, var(--dp-blue) 3%, transparent);
-	content: "";
-	pointer-events: none;
+	left: calc(var(--home-download-face-size) / -2);
+	transform: translate3d(0, calc(-50% + var(--home-download-wapuu-shift)), 0);
+}
+
+.home-download-section::after {
+	right: calc(var(--home-download-face-size) / -2);
+	transform: translate3d(0, calc(-50% + var(--home-download-octocat-shift)), 0);
+}
+
+:root[data-theme="dark"] .home-download-section::before,
+:root[data-theme="dark"] .home-download-section::after {
+	filter: grayscale(1) invert(1);
+	opacity: 0.07;
+}
+
+.home-download-section .home-section-kicker {
+	color: var(--dp-muted);
+}
+
+.home-download-section .home-section-kicker::before {
+	background: currentColor;
+	opacity: 0.5;
+}
+
+.home-download-intro,
+.home-download-grid {
+	position: relative;
+	z-index: 1;
+	width: min(100% - 48px, 1120px);
+	margin-right: auto;
+	margin-left: auto;
 }
 
 .home-download-intro {
-	position: relative;
-	z-index: 1;
 	display: grid;
-	grid-template-columns: minmax(0, 0.78fr) minmax(280px, 0.42fr);
+	grid-template-columns: minmax(0, 1fr) minmax(280px, 0.48fr);
 	gap: clamp(28px, 6vw, 76px);
 	align-items: end;
-	margin: 0 0 clamp(30px, 4vw, 44px);
+	margin-bottom: clamp(36px, 5vw, 56px);
 }
 
 .home-download-intro > * {
@@ -2246,10 +2284,10 @@ body.command-search-open {
 }
 
 .home-download-intro :where(h2) {
-	max-width: 790px;
-	font-size: clamp(38px, 5vw, 62px);
-	letter-spacing: -0.055em;
-	line-height: 0.96;
+	max-width: 680px;
+	font-size: clamp(36px, 4.5vw, 52px);
+	letter-spacing: -0.045em;
+	line-height: 1;
 	text-wrap: balance;
 }
 
@@ -2261,12 +2299,10 @@ body.command-search-open {
 }
 
 .home-download-grid {
-	position: relative;
-	z-index: 1;
 	display: grid;
-	grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
-	gap: 16px;
-	margin: 0;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0;
+	border-bottom: 1px solid var(--dp-line);
 }
 
 .home-download-card {
@@ -2274,102 +2310,77 @@ body.command-search-open {
 	display: flex;
 	flex-direction: column;
 	min-width: 0;
-	min-height: 390px;
-	padding: clamp(26px, 3.5vw, 42px);
-	overflow: hidden;
-	border: 1px solid var(--dp-line);
-	border-radius: var(--dp-radius);
-	background: var(--dp-paper);
+	min-height: 350px;
+	padding: clamp(34px, 4vw, 48px) clamp(28px, 4vw, 56px) clamp(34px, 4vw, 48px) 0;
+	border: 0;
+	border-top: 1px solid var(--dp-line);
+	border-radius: 0;
+	background: transparent;
+	color: inherit;
 }
 
-.home-download-card::after {
-	position: absolute;
-	right: 24px;
-	bottom: -42px;
-	color: color-mix(in srgb, currentColor 7%, transparent);
-	content: "B";
-	font: 900 188px/1 var(--dp-font-ui);
-	letter-spacing: -0.1em;
-	pointer-events: none;
-}
-
-.home-download-card--theme {
-	border-color: color-mix(in srgb, var(--dp-ink) 84%, var(--dp-line));
-	background: var(--dp-ink);
-	color: var(--dp-paper);
-}
-
-.home-download-card--theme::after {
-	content: "T";
-}
-
-.home-download-card--theme :where(h3) {
-	color: var(--dp-paper);
+.home-download-card + .home-download-card {
+	padding-right: 0;
+	padding-left: clamp(28px, 4vw, 56px);
+	border-left: 1px solid var(--dp-line);
 }
 
 .home-download-card__meta {
-	position: relative;
-	z-index: 1;
 	display: flex;
 	justify-content: space-between;
 	gap: 16px;
-	margin: 0 0 48px;
-	font: 780 11px/1.2 var(--dp-font-mono);
-	letter-spacing: 0.08em;
+	margin: 0 0 34px;
+	color: var(--dp-muted);
+	font: 750 11px/1.2 var(--dp-font-mono);
+	letter-spacing: 0.07em;
 	text-transform: uppercase;
 }
 
 .home-download-card__meta span:last-child {
-	opacity: 0.64;
+	opacity: 0.8;
 }
 
 .home-download-card :where(h3) {
-	position: relative;
-	z-index: 1;
 	max-width: 500px;
 	margin: 0;
-	font-size: clamp(28px, 3.5vw, 42px);
-	letter-spacing: -0.045em;
-	line-height: 1;
+	color: inherit;
+	font-size: clamp(28px, 3.2vw, 38px);
+	letter-spacing: -0.04em;
+	line-height: 1.04;
 	text-wrap: balance;
 }
 
 .home-download-card > p:not(.home-download-card__meta, .home-download-card__requirements) {
-	position: relative;
-	z-index: 1;
 	max-width: 54ch;
 	margin: 19px 0 0;
 	color: var(--dp-muted);
 	line-height: 1.6;
 }
 
-.home-download-card--theme > p:not(.home-download-card__meta, .home-download-card__requirements) {
-	color: color-mix(in srgb, var(--dp-paper) 72%, transparent);
-}
-
 .home-download-card__features {
-	position: relative;
-	z-index: 1;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 7px;
+	gap: 8px 0;
 	margin: 24px 0 0;
 	padding: 0;
+	color: var(--dp-muted);
 	list-style: none;
 }
 
 .home-download-card__features li {
 	margin: 0;
-	padding: 5px 8px;
-	border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
-	border-radius: 999px;
-	font: 720 10px/1.2 var(--dp-font-mono);
-	letter-spacing: 0.03em;
+	padding: 0;
+	font: 700 11px/1.4 var(--dp-font-mono);
+	letter-spacing: 0.015em;
+}
+
+.home-download-card__features li:not(:last-child)::after {
+	margin: 0 10px;
+	content: "·";
+	opacity: 0.55;
 }
 
 .home-download-card__actions {
-	position: relative;
-	z-index: 1;
 	display: flex;
 	flex-wrap: wrap;
 	gap: 12px 18px;
@@ -2384,26 +2395,34 @@ body.command-search-open {
 }
 
 .home-download-card__actions .wp-block-button__link {
+	display: inline-flex;
+	gap: 10px;
+	align-items: center;
 	min-height: 44px;
-	padding: 12px 17px;
-	border: 1px solid var(--dp-blue);
-	border-radius: var(--dp-radius);
-	background: var(--dp-blue);
-	color: #fff;
+	padding: 11px 16px;
+	border: 1px solid currentColor;
+	border-radius: 999px;
+	background: transparent;
+	color: var(--dp-ink);
 	font-size: 13px;
 	font-weight: 800;
 	line-height: 1.2;
 	text-decoration: none;
+	transition: background-color 150ms ease, color 150ms ease, transform 150ms ease;
 }
 
-.home-download-card--theme .home-download-card__actions .wp-block-button__link {
-	border-color: var(--dp-highlight);
-	background: var(--dp-highlight);
-	color: var(--dp-ink);
+.home-download-card__actions .wp-block-button__link::before {
+	width: 17px;
+	height: 17px;
+	flex: 0 0 auto;
+	background: currentColor;
+	content: "";
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12m0 0 4-4m-4 4-4-4M5 20h14'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
 .home-download-card__actions .wp-block-button__link:hover {
-	filter: brightness(0.96);
+	background: var(--dp-ink);
+	color: var(--dp-paper);
 	transform: translateY(-1px);
 }
 
@@ -2416,8 +2435,6 @@ body.command-search-open {
 }
 
 .home-download-card__requirements {
-	position: relative;
-	z-index: 1;
 	margin: 16px 0 0;
 	font: 680 10px/1.4 var(--dp-font-mono);
 	opacity: 0.62;
@@ -3037,11 +3054,25 @@ body.command-search-open {
 	}
 
 	.home-download-section {
-		padding: 30px;
+		--home-download-face-size: clamp(210px, 38vw, 300px);
+		padding: 72px 0;
 	}
 
 	.home-download-intro {
 		align-items: start;
+	}
+
+	.home-download-grid {
+		border-bottom: 0;
+	}
+
+	.home-download-card,
+	.home-download-card + .home-download-card {
+		min-height: 0;
+		padding: 36px 0;
+		border-right: 0;
+		border-bottom: 1px solid var(--dp-line);
+		border-left: 0;
 	}
 
 	.homepage-card-grid {
@@ -3085,17 +3116,21 @@ body.command-search-open {
 	}
 
 	.home-download-section {
-		padding: 22px;
-		border-radius: var(--dp-radius);
+		--home-download-face-size: 210px;
+		padding: 60px 0;
 	}
 
-	.home-download-card {
-		min-height: 360px;
-		padding: 26px 22px;
+	.home-download-intro,
+	.home-download-grid {
+		width: min(100% - 36px, 1120px);
+	}
+
+	.home-download-intro :where(h2) {
+		font-size: clamp(34px, 10vw, 44px);
 	}
 
 	.home-download-card__meta {
-		margin-bottom: 36px;
+		margin-bottom: 28px;
 	}
 
 	.search-dialog {
