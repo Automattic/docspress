@@ -146,6 +146,7 @@ body {
 	margin: 0;
 	overflow-x: clip;
 	-webkit-font-smoothing: antialiased;
+	cursor: default;
 }
 
 body.drawer-open {
@@ -167,9 +168,32 @@ select {
 	font: inherit;
 }
 
+a,
+button,
+summary,
+[role="button"],
+input[type="button"],
+input[type="checkbox"],
+input[type="radio"],
+input[type="submit"] {
+	cursor: pointer;
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+	cursor: text;
+}
+
 button,
 a {
 	-webkit-tap-highlight-color: transparent;
+}
+
+a,
+button,
+[role="button"] {
+	touch-action: manipulation;
 }
 
 :focus-visible {
@@ -346,7 +370,6 @@ a {
 	border-radius: 8px;
 	background: var(--dp-canvas);
 	color: var(--dp-muted);
-	cursor: pointer;
 	transition: border-color 160ms ease, color 160ms ease, transform 160ms ease, background 160ms ease;
 }
 
@@ -492,7 +515,6 @@ body.command-search-open {
 	background: var(--dp-canvas);
 	color: var(--dp-muted);
 	font: 22px/1 var(--dp-font-ui);
-	cursor: pointer;
 	transition: border-color 150ms ease, background 150ms ease, color 150ms ease;
 }
 
@@ -767,7 +789,6 @@ body.command-search-open {
 	border-radius: 50%;
 	background: var(--dp-paper);
 	color: var(--dp-muted);
-	cursor: pointer;
 	box-shadow: 0 2px 8px color-mix(in srgb, var(--dp-ink) 10%, transparent);
 	transform: translate(50%, -50%);
 	transition: border-color 140ms ease, background 140ms ease, color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
@@ -964,7 +985,6 @@ body.command-search-open {
 	border-radius: 6px;
 	background: transparent;
 	color: var(--dp-muted);
-	cursor: pointer;
 }
 
 .sidebar-search-clear.is-visible {
@@ -1034,7 +1054,6 @@ body.command-search-open {
 	border-radius: 7px;
 	background: transparent;
 	color: var(--dp-muted);
-	cursor: pointer;
 	transition: background 140ms ease, color 140ms ease, transform 140ms ease;
 }
 
@@ -1322,7 +1341,6 @@ body.command-search-open {
 	background: #202633;
 	color: #c6ccda;
 	font: 11px/1.3 var(--dp-font-ui);
-	cursor: pointer;
 	opacity: 0;
 	transition: opacity 140ms ease, background 140ms ease;
 }
@@ -2886,7 +2904,6 @@ body.command-search-open {
 .comment-form .submit,
 .post-password-form input[type="submit"] {
 	min-height: 44px;
-	cursor: pointer;
 }
 
 .alignleft {

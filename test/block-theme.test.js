@@ -1246,6 +1246,51 @@ describe("DocsPress block theme constraints", () => {
     }
   });
 
+  it("resolves interactive cursors from one base layer instead of per component", async () => {
+    const styles = await fs.readFile(path.join(root, "theme", "style.css"), "utf8");
+    const rule = (selector) => {
+      const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return styles.match(new RegExp(`\\n${escaped}\\s*\\{([^}]*)\\}`, "m"))?.[1] ?? "";
+    };
+
+    expect(rule("body")).toMatch(/cursor:\s*default;/);
+    expect(
+      rule(`a,
+button,
+summary,
+[role="button"],
+input[type="button"],
+input[type="checkbox"],
+input[type="radio"],
+input[type="submit"]`)
+    ).toMatch(/cursor:\s*pointer;/);
+    expect(
+      rule(`input,
+textarea,
+[contenteditable="true"]`)
+    ).toMatch(/cursor:\s*text;/);
+    expect(
+      rule(`a,
+button,
+[role="button"]`)
+    ).toMatch(/touch-action:\s*manipulation;/);
+
+    // Disabled-looking states still opt out, and .drawer-scrim is a div the base layer
+    // cannot reach.
+    expect(rule(".docs-nav.is-filtering .docs-nav-toggle")).toMatch(/cursor:\s*default;/);
+    expect(styles).toMatch(/\.drawer-scrim\s*\{[^}]*cursor:\s*pointer;/);
+
+    for (const selector of [
+      ".command-search-close",
+      ".copy-code",
+      ".docs-nav-toggle",
+      ".sidebar-collapse-toggle",
+      ".sidebar-search-clear",
+    ]) {
+      expect(rule(selector)).not.toMatch(/cursor:\s*pointer;/);
+    }
+  });
+
   it("lets Global Styles flow through the homepage shell and custom blocks", async () => {
     const theme = JSON.parse(await fs.readFile(path.join(root, "theme", "theme.json"), "utf8"));
     const styles = await fs.readFile(path.join(root, "theme", "style.css"), "utf8");
