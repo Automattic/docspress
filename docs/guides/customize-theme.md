@@ -66,9 +66,11 @@ The normal Page template is a composition of independently editable blocks:
 5. Page Summary
 6. Edit links
 7. Post Content
-8. Adjacent navigation
-9. Table of contents
-10. Footer template part
+8. Comments template part
+9. Was This Helpful
+10. Adjacent navigation
+11. Table of contents
+12. Footer template part
 
 Select a component to move, duplicate, replace, style, or delete it. Edit **Patterns → Manage all my patterns → Template parts** to change the Header, Footer, or Comments everywhere.
 
@@ -109,11 +111,14 @@ Each reading component has its own Block Settings:
 - **Table of contents:** title, column width, and heading range from H1 through H6.
 - **Page Summary:** optional fallback text; it prefers a manually written excerpt and never auto-generates a duplicate from the first content paragraph.
 - **Edit links:** WordPress/GitHub links, labels, repository, and Git ref.
+- **Was This Helpful:** enabled state, question, response labels, and thank-you message.
 - **Adjacent navigation:** root, ordering, depth, labels, and Page titles.
 - **Color-mode toggle:** accessible label, optional visible label, and light, dark, or device-following default.
 - **Documentation menu toggle:** accessible mobile-menu label.
 
 Every component also receives native color, gradient, typography, spacing, border, dimensions, position, shadow, anchor, and CSS-class controls from WordPress.
+
+The feedback block is enabled by default immediately before Adjacent Navigation. Each browser can submit one response per Page. WordPress stores the aggregate Helpful and Not helpful counts on that Page; open the Page editor and expand **Page feedback** in the details sidebar to review the counts, total, and helpful rate. Turn off **Show feedback on this Page** to hide the prompt on that Page while preserving its totals, or disable the block in the Page template to hide it site-wide.
 
 ## Customize documentation blocks
 

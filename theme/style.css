@@ -3,7 +3,7 @@ Theme Name: DocsPress
 Theme URI: https://github.com/Automattic/docspress
 Author: Fatih Kadir Akın
 Description: A Site Editor-first documentation block theme for WordPress and DocsPress.
-Version: 0.9.19
+Version: 0.9.20
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 7.4
@@ -1525,6 +1525,127 @@ body.command-search-open {
 	color: #fff;
 }
 
+.docspress-feedback {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 12px 20px;
+	margin-top: 48px;
+	padding: 20px 22px;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: var(--dp-radius);
+	font-family: var(--dp-font-ui);
+	font-size: 16px;
+}
+
+.docspress-feedback:not(.has-border-color) {
+	border-color: var(--dp-line);
+}
+
+.docspress-feedback:not(.has-background) {
+	background: var(--dp-paper);
+}
+
+.docspress-feedback:not(.has-text-color) {
+	color: var(--dp-ink);
+}
+
+.docspress-feedback-question {
+	margin: 0;
+	color: inherit;
+	font-family: inherit;
+	font-size: 1em;
+	font-weight: 780;
+	letter-spacing: -0.015em;
+}
+
+.docspress-feedback-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.docspress-feedback-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 7px;
+	min-width: 78px;
+	min-height: 40px;
+	padding: 8px 13px;
+	border: 1px solid var(--dp-line-strong);
+	border-radius: 999px;
+	background: var(--dp-canvas);
+	color: var(--dp-copy);
+	font-family: inherit;
+	font-size: 0.8125em;
+	font-weight: 700;
+	line-height: 1.2;
+	cursor: pointer;
+	transition: border-color 150ms ease, box-shadow 150ms ease, color 150ms ease, transform 150ms ease;
+}
+
+.docspress-feedback-button svg {
+	width: 17px;
+	height: 17px;
+	flex: 0 0 auto;
+}
+
+.docspress-feedback-button:hover:not(:disabled),
+.docspress-feedback-button:focus-visible {
+	border-color: var(--dp-blue);
+	box-shadow: 0 4px 14px color-mix(in srgb, var(--dp-blue) 14%, transparent);
+	color: var(--dp-blue-dark);
+	transform: translateY(-1px);
+}
+
+.docspress-feedback-button:focus-visible {
+	outline: 2px solid var(--dp-blue);
+	outline-offset: 2px;
+}
+
+.docspress-feedback-button.is-selected {
+	border-color: var(--dp-blue);
+	background: color-mix(in srgb, var(--dp-blue) 11%, var(--dp-canvas));
+	color: var(--dp-blue-dark);
+}
+
+.docspress-feedback-button:disabled {
+	cursor: default;
+}
+
+.docspress-feedback.is-submitting .docspress-feedback-button {
+	opacity: 0.58;
+}
+
+.docspress-feedback-status,
+.docspress-feedback-editor-note {
+	grid-column: 1 / -1;
+	margin: 0;
+	color: var(--dp-muted);
+	font-size: 0.75em;
+}
+
+.docspress-feedback-status:empty {
+	display: none;
+}
+
+.docspress-feedback.has-error .docspress-feedback-status {
+	color: color-mix(in srgb, #d63638 76%, var(--dp-ink));
+}
+
+.docspress-feedback.is-disabled {
+	border-style: dashed;
+	box-shadow: none;
+	opacity: 0.62;
+}
+
+.docspress-feedback-editor-icon {
+	font-size: 17px;
+	line-height: 1;
+}
+
 .docs-pagination {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2970,7 +3091,7 @@ body.command-search-open {
 		display: inline-flex;
 	}
 
-	.docspress-menu-toggle {
+	body.has-docs-sidebar .docspress-menu-toggle {
 		display: block;
 	}
 }
@@ -3300,6 +3421,19 @@ body.command-search-open {
 		width: 100%;
 	}
 
+	.docspress-feedback {
+		grid-template-columns: minmax(0, 1fr);
+		padding: 18px;
+	}
+
+	.docspress-feedback-actions {
+		width: 100%;
+	}
+
+	.docspress-feedback-button {
+		flex: 1;
+	}
+
 	.comment-list .children {
 		margin-left: 8px;
 		padding-left: 12px;
@@ -3385,6 +3519,7 @@ body.command-search-open {
 	.site-header,
 	.docs-sidebar,
 	.docs-toc,
+	.docspress-feedback,
 	.docs-pagination,
 	.search-dialog,
 	.site-footer {
@@ -4170,6 +4305,14 @@ html[data-theme="dark"] .entry-kicker::before {
 
 .docspress-component-editor--edit-links .page-action[aria-disabled="true"] {
 	pointer-events: none;
+}
+
+.docspress-component-editor--was-this-helpful .docspress-feedback {
+	margin: 0;
+}
+
+.docspress-component-editor--docs-menu-toggle .docspress-menu-toggle {
+	display: block;
 }
 
 .docspress-component-editor--docs-menu-toggle .menu-toggle {

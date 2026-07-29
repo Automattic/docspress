@@ -1,0 +1,103 @@
+.docspress-feedback-summary {
+	display: grid;
+	gap: 16px;
+	width: 100%;
+}
+
+.docspress-feedback-setting {
+	padding-bottom: 2px;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.docspress-feedback-setting .components-base-control {
+	margin-bottom: 12px;
+}
+
+.docspress-feedback-score {
+	display: flex;
+	align-items: baseline;
+	gap: 7px;
+}
+
+.docspress-feedback-score-value {
+	color: #1e1e1e;
+	font-size: 32px;
+	font-weight: 600;
+	letter-spacing: -0.045em;
+	line-height: 1;
+}
+
+.docspress-feedback-score-label {
+	color: #50575e;
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1.4;
+}
+
+.docspress-feedback-meter {
+	overflow: hidden;
+	height: 6px;
+	border-radius: 999px;
+	background: #dcdcde;
+}
+
+.docspress-feedback-meter span {
+	display: block;
+	height: 100%;
+	border-radius: inherit;
+	background: var(--wp-admin-theme-color, #3858e9);
+	transition: width 180ms ease;
+}
+
+.docspress-feedback-counts {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	border-top: 1px solid #dcdcde;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.docspress-feedback-count {
+	display: grid;
+	gap: 4px;
+	padding: 14px 0;
+}
+
+.docspress-feedback-count + .docspress-feedback-count {
+	margin-left: 16px;
+	padding-left: 16px;
+	border-left: 1px solid #dcdcde;
+}
+
+.docspress-feedback-count span,
+.docspress-feedback-total span {
+	color: #646970;
+	font-size: 11px;
+	line-height: 1.4;
+}
+
+.docspress-feedback-count strong {
+	color: #1e1e1e;
+	font-size: 20px;
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+.docspress-feedback-total {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.docspress-feedback-total strong {
+	color: #1e1e1e;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.docspress-feedback-detail-note {
+	margin: -4px 0 0;
+	color: #757575;
+	font-size: 12px;
+	line-height: 1.5;
+}

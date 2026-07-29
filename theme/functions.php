@@ -324,6 +324,23 @@ function docspress_assets() {
 add_action( 'wp_enqueue_scripts', 'docspress_assets' );
 
 /**
+ * Load styles for DocsPress controls rendered in the editor interface.
+ */
+function docspress_block_editor_ui_assets() {
+	$theme      = wp_get_theme();
+	$style_path = get_theme_file_path( 'assets/css/block-editor.css' );
+	$version    = is_readable( $style_path ) ? (string) filemtime( $style_path ) : $theme->get( 'Version' );
+
+	wp_enqueue_style(
+		'docspress-block-editor',
+		get_theme_file_uri( 'assets/css/block-editor.css' ),
+		array(),
+		$version
+	);
+}
+add_action( 'enqueue_block_editor_assets', 'docspress_block_editor_ui_assets' );
+
+/**
  * Return a small inline icon.
  *
  * @param string $name Icon name.
@@ -338,6 +355,8 @@ function docspress_icon( $name ) {
 		'pencil'   => '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14.7 5.3 4 4M5 19l2.1-5.1L16.6 4.4a1.4 1.4 0 0 1 2 0l1 1a1.4 1.4 0 0 1 0 2L10.1 17 5 19Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 		'search'   => '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
 		'sun'      => '<svg class="theme-icon-light" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="3.7" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
+		'thumbs-up' => '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8.5 10.2 12.1 3c.5-1 2-.6 2 .5v4.2h4.1c1.4 0 2.4 1.3 2 2.7l-1.6 6.5a2.5 2.5 0 0 1-2.4 1.9H8.5V10.2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M4 10.2h4.5v8.6H4v-8.6Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
+		'thumbs-down' => '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m8.5 13.8 3.6 7.2c.5 1 2 .6 2-.5v-4.2h4.1c1.4 0 2.4-1.3 2-2.7l-1.6-6.5a2.5 2.5 0 0 0-2.4-1.9H8.5v8.6Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M4 13.8h4.5V5.2H4v8.6Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
 	);
 
 	return isset( $icons[ $name ] ) ? $icons[ $name ] : '';

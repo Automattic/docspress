@@ -699,6 +699,10 @@ describe("DocsPress block theme constraints", () => {
     const theme = JSON.parse(await fs.readFile(path.join(root, "theme", "theme.json"), "utf8"));
     const styles = await fs.readFile(path.join(root, "theme", "style.css"), "utf8");
     const functions = await fs.readFile(path.join(root, "theme", "functions.php"), "utf8");
+    const runtime = await fs.readFile(
+      path.join(root, "theme", "assets", "js", "docs.js"),
+      "utf8"
+    );
     const header = await fs.readFile(path.join(root, "theme", "parts", "header.html"), "utf8");
     const defaultLogo = await fs.readFile(
       path.join(root, "theme", "assets", "images", "docspress-hybrid-logo.png")
@@ -821,7 +825,10 @@ describe("DocsPress block theme constraints", () => {
       /@media \(max-width: 1024px\)\s*\{[\s\S]*?\.header-inner > \.primary-navigation,[\s\S]*?\.search-shortcut span,[\s\S]*?\.search-shortcut kbd[\s\S]*?display:\s*none;[\s\S]*?\.menu-toggle[\s\S]*?display:\s*inline-flex;[\s\S]*?\}/
     );
     expect(styles).toMatch(
-      /\.docspress-menu-toggle\s*\{[^}]*display:\s*none;[^}]*\}[\s\S]*?@media \(max-width: 1024px\)\s*\{[\s\S]*?\.docspress-menu-toggle\s*\{[^}]*display:\s*block;/s
+      /\.docspress-menu-toggle\s*\{[^}]*display:\s*none;[^}]*\}[\s\S]*?@media \(max-width: 1024px\)\s*\{[\s\S]*?body\.has-docs-sidebar \.docspress-menu-toggle\s*\{[^}]*display:\s*block;/s
+    );
+    expect(runtime).toContain(
+      "body.classList.toggle('has-docs-sidebar', Boolean(sidebar));"
     );
     expect(styles).toMatch(
       /\.brand\.wp-block-group\s*\{[^}]*gap:\s*11px;[^}]*\}/s
@@ -913,7 +920,7 @@ describe("DocsPress block theme constraints", () => {
     expect(setup).toContain("Download Blocks");
     expect(setup).toContain("Preview Kitchen Sink");
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.19/docspress-theme-0.9.19.zip"
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.20/docspress-theme-0.9.20.zip"
     );
     expect(setup).toContain(
       "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.18/docspress-blocks-0.9.13.zip"
@@ -992,6 +999,7 @@ describe("DocsPress block theme constraints", () => {
       "page-summary",
       "edit-links",
       "adjacent-navigation",
+      "was-this-helpful",
       "color-mode-toggle",
       "docs-menu-toggle"
     ];
@@ -1040,6 +1048,61 @@ describe("DocsPress block theme constraints", () => {
     expect(php).toContain("'width'             => array( 'type' => 'number', 'default' => 266 )");
     expect(php).toContain("'width'    => array( 'type' => 'number', 'default' => 226 )");
     expect(php).toContain("docspress_component_supports()");
+  });
+
+  it("collects Page feedback above adjacent documentation navigation", async () => {
+    const php = await fs.readFile(path.join(root, "theme", "inc", "blocks.php"), "utf8");
+    const editor = await fs.readFile(
+      path.join(root, "theme", "assets", "js", "block-components.js"),
+      "utf8"
+    );
+    const runtime = await fs.readFile(
+      path.join(root, "theme", "assets", "js", "docs.js"),
+      "utf8"
+    );
+    const styles = await fs.readFile(path.join(root, "theme", "style.css"), "utf8");
+    const editorStyles = await fs.readFile(
+      path.join(root, "theme", "assets", "css", "block-editor.css"),
+      "utf8"
+    );
+    const functions = await fs.readFile(path.join(root, "theme", "functions.php"), "utf8");
+    const pageTemplate = await fs.readFile(
+      path.join(root, "theme", "templates", "page.html"),
+      "utf8"
+    );
+    const feedbackIndex = pageTemplate.indexOf("wp:docspress/was-this-helpful");
+    const adjacentIndex = pageTemplate.indexOf("wp:docspress/adjacent-navigation");
+
+    expect(feedbackIndex).toBeGreaterThan(-1);
+    expect(feedbackIndex).toBeLessThan(adjacentIndex);
+    expect(php).toContain("function docspress_register_feedback_meta()");
+    expect(php).toContain("'docspress_helpful_votes'");
+    expect(php).toContain("'docspress_unhelpful_votes'");
+    expect(php).toContain("'docspress_feedback_enabled'");
+    expect(php).toContain("metadata_exists( 'post', $post_id, 'docspress_feedback_enabled' )");
+    expect(php).toContain("register_rest_route(");
+    expect(php).toContain("'permission_callback' => 'docspress_can_submit_page_feedback'");
+    expect(php).toContain("'validate_callback' => static function ( $value )");
+    expect(php).toContain("'docspress_feedback_invalid_vote'");
+    expect(php).toContain("function docspress_render_was_this_helpful(");
+    expect(php).toContain("'enabled'        => array( 'type' => 'boolean', 'default' => true )");
+    expect(editor).toContain("registerComponent( 'was-this-helpful'");
+    expect(editor).toContain("registerPlugin( 'docspress-page-feedback'");
+    expect(editor).toContain("PluginDocumentSettingPanel");
+    expect(editor).toContain("docspress_helpful_votes");
+    expect(editor).toContain("Show feedback on this Page");
+    expect(editor).toContain("docspress_feedback_enabled: value");
+    expect(runtime).toContain("window.fetch(endpoint");
+    expect(runtime).toContain(
+      "window.localStorage.setItem(feedbackStorageKey(pageId), vote)"
+    );
+    expect(styles).toContain(".docspress-feedback {");
+    expect(styles).toContain(".docspress-feedback:not(.has-background) {");
+    expect(styles).toContain(".docspress-feedback:not(.has-text-color) {");
+    expect(editorStyles).toContain(".docspress-feedback-summary {");
+    expect(editorStyles).toContain(".docspress-feedback-meter {");
+    expect(functions).toContain("function docspress_block_editor_ui_assets()");
+    expect(functions).toContain("'assets/css/block-editor.css'");
   });
 
   it("lets Global Styles win for headings and content call-to-action buttons", async () => {

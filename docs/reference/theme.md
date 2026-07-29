@@ -57,11 +57,14 @@ The theme also ships JSON block style variations for Soft panel, Outline card, a
 | `docspress/table-of-contents` | `title`, `width`, `minLevel`, `maxLevel` |
 | `docspress/page-summary` | `fallbackText` |
 | `docspress/edit-links` | `showWordPress`, `wordpressLabel`, `showGitHub`, `githubLabel`, `repositoryUrl`, `ref` |
+| `docspress/was-this-helpful` | `enabled`, `question`, `helpfulLabel`, `unhelpfulLabel`, `thanksMessage` |
 | `docspress/adjacent-navigation` | `rootSlug`, `sort`, `showRoot`, `maxDepth`, `previousLabel`, `nextLabel`, `showTitles` |
 | `docspress/color-mode-toggle` | `label`, `showLabel`, `defaultMode` |
 | `docspress/docs-menu-toggle` | `label` |
 
-All nine support native color, background, link color, gradients, typography, spacing, borders, minimum height, sticky positioning, shadow, anchor, and CSS-class controls. Their server renderers ensure the editor-facing parameters control live Page, navigation, heading, and source-path data. Page Summary displays a manually written Page excerpt or its optional fallback, preventing WordPress from generating a duplicate summary from the first paragraph.
+All ten support native color, background, link color, gradients, typography, spacing, borders, minimum height, sticky positioning, shadow, anchor, and CSS-class controls. Their server renderers ensure the editor-facing parameters control live Page, navigation, heading, and source-path data. Page Summary displays a manually written Page excerpt or its optional fallback, preventing WordPress from generating a duplicate summary from the first paragraph.
+
+Was This Helpful is enabled by default in the Page template immediately before Adjacent Navigation. A visitor can record one Helpful or Not helpful response per Page in that browser. Aggregate counts are stored in the Page metadata fields `docspress_helpful_votes` and `docspress_unhelpful_votes`; editors can review the counts, total, and helpful rate in the Page editor’s **Page feedback** details panel. Use **Show feedback on this Page** in that panel to hide the prompt on one Page without deleting its existing data, or disable the template block to hide it site-wide.
 
 In a content-only Header view, **DocsPress: Command Search** includes a disclosure chevron. Select it to open the block's Search content and Dialog options without first entering the full Header block-editing mode.
 
@@ -87,7 +90,7 @@ The Site Editor’s root Design canvas and Styles canvas both preview the comple
 
 ## Content integration
 
-The Docs Navigation, Command Search, and Adjacent Navigation blocks resolve a synchronized root by Page path, defaulting to `docs`. The Edit Links block combines `_docspress_source_path` metadata with its repository and ref attributes. Table of Contents uses the rendered current post content and assigns stable anchors to H1–H6 headings.
+The Docs Navigation, Command Search, and Adjacent Navigation blocks resolve a synchronized root by Page path, defaulting to `docs`. The Edit Links block combines `_docspress_source_path` metadata with its repository and ref attributes. Table of Contents uses the rendered current post content and assigns stable anchors to H1–H6 headings. Was This Helpful stores its aggregate response counts as registered Page metadata and exposes them through the WordPress REST API.
 
 `sidebar_position` maps to `menu_order`; `sidebar_collapsed` is stored as managed Page metadata. Version navigation reads the taxonomy registered by the DocsPress synchronization plugin when available.
 

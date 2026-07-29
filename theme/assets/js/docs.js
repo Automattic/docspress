@@ -25,6 +25,8 @@
 	const themeToggle = document.querySelector('[data-theme-toggle]');
 	const versionSelect = document.querySelector('[data-version-select]');
 	const searchDataNode = document.querySelector('[data-docspress-search-data]');
+	const feedbackWidgets = document.querySelectorAll('[data-docspress-feedback]');
+	body.classList.toggle('has-docs-sidebar', Boolean(sidebar));
 	let searchData = {};
 	if (searchDataNode) {
 		try {
@@ -249,6 +251,94 @@
 			sidebarSearchInput.select();
 		}, 80);
 	}
+
+	function feedbackStorageKey(pageId) {
+		return 'docspress-feedback:' + pageId;
+	}
+
+	function savedFeedbackVote(pageId) {
+		try {
+			return window.localStorage.getItem(feedbackStorageKey(pageId));
+		} catch (error) {
+			return null;
+		}
+	}
+
+	function rememberFeedbackVote(pageId, vote) {
+		try {
+			window.localStorage.setItem(feedbackStorageKey(pageId), vote);
+		} catch (error) {
+			// The response is still stored on the Page when local storage is unavailable.
+		}
+	}
+
+	function completeFeedback(widget, vote) {
+		const status = widget.querySelector('[data-feedback-status]');
+		const buttons = Array.from(widget.querySelectorAll('[data-feedback-vote]'));
+
+		widget.classList.remove('is-submitting', 'has-error');
+		widget.classList.add('is-complete');
+		buttons.forEach(function (button) {
+			const selected = button.dataset.feedbackVote === vote;
+			button.disabled = true;
+			button.classList.toggle('is-selected', selected);
+			button.setAttribute('aria-pressed', String(selected));
+		});
+		if (status) status.textContent = widget.dataset.feedbackThanksMessage || 'Thanks for your feedback.';
+	}
+
+	function initializeFeedback(widget) {
+		const pageId = widget.dataset.feedbackPageId;
+		const endpoint = widget.dataset.feedbackEndpoint;
+		const status = widget.querySelector('[data-feedback-status]');
+		const buttons = Array.from(widget.querySelectorAll('[data-feedback-vote]'));
+		const previousVote = savedFeedbackVote(pageId);
+
+		if (!pageId || !endpoint || !buttons.length) return;
+		if (previousVote === 'helpful' || previousVote === 'unhelpful') {
+			completeFeedback(widget, previousVote);
+			return;
+		}
+
+		buttons.forEach(function (button) {
+			button.addEventListener('click', async function () {
+				const vote = button.dataset.feedbackVote;
+				widget.classList.remove('has-error');
+				widget.classList.add('is-submitting');
+				buttons.forEach(function (item) {
+					item.disabled = true;
+				});
+				if (status) status.textContent = widget.dataset.feedbackSavingMessage || 'Saving your response…';
+
+				try {
+					const response = await window.fetch(endpoint, {
+						method: 'POST',
+						credentials: 'same-origin',
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({ vote: vote })
+					});
+					if (!response.ok) throw new Error('Feedback request failed');
+					rememberFeedbackVote(pageId, vote);
+					completeFeedback(widget, vote);
+				} catch (error) {
+					widget.classList.remove('is-submitting');
+					widget.classList.add('has-error');
+					buttons.forEach(function (item) {
+						item.disabled = false;
+					});
+					if (status) {
+						status.textContent = widget.dataset.feedbackErrorMessage
+							|| 'We could not save that response. Please try again.';
+					}
+				}
+			});
+		});
+	}
+
+	Array.from(feedbackWidgets).forEach(initializeFeedback);
 
 	function normalizeSearchText(value) {
 		return String(value || '')

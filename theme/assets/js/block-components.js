@@ -1,11 +1,14 @@
-( function ( blocks, blockEditor, components, element, i18n, serverSideRender ) {
+( function ( blocks, blockEditor, components, data, editorPackage, element, i18n, plugins, serverSideRender ) {
 	'use strict';
 
 	const { registerBlockType } = blocks;
 	const { BlockControls, InspectorControls, useBlockProps } = blockEditor;
 	const { Disabled, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl, ToolbarButton } = components;
+	const { useDispatch, useSelect } = data;
+	const { PluginDocumentSettingPanel } = editorPackage;
 	const { Fragment, createElement: el, useEffect, useState } = element;
 	const { __ } = i18n;
+	const { registerPlugin } = plugins;
 	const ServerSideRender = serverSideRender.default || serverSideRender;
 	const designSupports = {
 		anchor: true,
@@ -56,7 +59,8 @@
 		github: el( 'svg', { viewBox: '0 0 24 24', fill: 'currentColor', 'aria-hidden': 'true' }, el( 'path', { d: 'M12 2C6.48 2 2 6.58 2 12.23c0 4.51 2.87 8.34 6.84 9.69.5.1.68-.22.68-.49 0-.24-.01-1.05-.01-1.9-2.78.62-3.37-1.2-3.37-1.2-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.35 1.12 2.92.85.09-.66.35-1.12.64-1.37-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.04 1.03-2.76-.1-.26-.45-1.3.1-2.72 0 0 .84-.28 2.75 1.05A9.36 9.36 0 0 1 12 6.92c.85 0 1.69.12 2.49.34 1.91-1.33 2.75-1.05 2.75-1.05.55 1.42.2 2.46.1 2.72.64.72 1.03 1.64 1.03 2.76 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.8 0 .27.18.59.69.49A10.25 10.25 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z' } ) ),
 		adjacent: el( 'svg', { viewBox: '0 0 24 24' }, el( 'path', { d: 'm8.4 5.6 1.4 1.4-4 4H20v2H5.8l4 4-1.4 1.4L2 12l6.4-6.4Z' } ) ),
 		mode: el( 'svg', { viewBox: '0 0 24 24' }, el( 'path', { d: 'M12 2v2a8 8 0 1 0 8 8h2A10 10 0 1 1 12 2Zm2 0a8 8 0 0 1 8 8h-8V2Z' } ) ),
-		menu: el( 'svg', { viewBox: '0 0 24 24' }, el( 'path', { d: 'M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z' } ) )
+		menu: el( 'svg', { viewBox: '0 0 24 24' }, el( 'path', { d: 'M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z' } ) ),
+		feedback: el( 'svg', { viewBox: '0 0 24 24' }, el( 'path', { d: 'M3 4h18v13H9l-5 4v-4H3V4Zm4 4v2h10V8H7Zm0 4v2h7v-2H7Z' } ) )
 	};
 
 	function text( label, key, attributes, setAttributes, help ) {
@@ -294,6 +298,147 @@
 			)
 		);
 	}
+
+	function FeedbackEditorPreview( { attributes } ) {
+		const className = `docspress-feedback${ attributes.enabled ? '' : ' is-disabled' }`;
+		const button = ( vote, label ) => el(
+			'button',
+			{
+				className: 'docspress-feedback-button',
+				type: 'button',
+				disabled: true,
+				'data-feedback-vote': vote,
+				'aria-pressed': 'false'
+			},
+			vote === 'helpful'
+				? el( 'span', { className: 'docspress-feedback-editor-icon', 'aria-hidden': 'true' }, '↑' )
+				: el( 'span', { className: 'docspress-feedback-editor-icon', 'aria-hidden': 'true' }, '↓' ),
+			el( 'span', null, label )
+		);
+
+		return el(
+			'section',
+			{ className },
+			el( 'p', { className: 'docspress-feedback-question' }, attributes.question ),
+			el(
+				'div',
+				{ className: 'docspress-feedback-actions' },
+				button( 'helpful', attributes.helpfulLabel ),
+				button( 'unhelpful', attributes.unhelpfulLabel )
+			),
+			el(
+				'p',
+				{ className: 'docspress-feedback-editor-note' },
+				attributes.enabled
+					? __( 'Responses are stored with each Page and summarized in Page feedback.', 'docspress' )
+					: __( 'Disabled on published Pages.', 'docspress' )
+			)
+		);
+	}
+
+	function PageFeedbackDetailsPanel() {
+		const details = useSelect( ( selectStore ) => {
+			const editorStore = selectStore( 'core/editor' );
+			return {
+				postType: editorStore?.getCurrentPostType?.(),
+				meta: editorStore?.getEditedPostAttribute?.( 'meta' ) || {}
+			};
+		}, [] );
+		const { editPost } = useDispatch( 'core/editor' );
+
+		if ( details.postType !== 'page' ) {
+			return null;
+		}
+
+		const feedbackEnabled = details.meta.docspress_feedback_enabled !== false;
+		const helpful = Number( details.meta.docspress_helpful_votes ) || 0;
+		const unhelpful = Number( details.meta.docspress_unhelpful_votes ) || 0;
+		const total = helpful + unhelpful;
+		const helpfulRate = total ? Math.round( ( helpful / total ) * 100 ) : 0;
+		const count = ( label, value ) => el(
+			'div',
+			{ className: 'docspress-feedback-count', key: label },
+			el( 'span', null, label ),
+			el( 'strong', null, String( value ) )
+		);
+
+		return el(
+			PluginDocumentSettingPanel,
+			{
+				name: 'page-feedback',
+				title: __( 'Page feedback', 'docspress' ),
+				className: 'docspress-feedback-details'
+			},
+			el(
+				'div',
+				{ className: 'docspress-feedback-summary' },
+				el(
+					'div',
+					{ className: 'docspress-feedback-setting' },
+					el( ToggleControl, {
+						label: __( 'Show feedback on this Page', 'docspress' ),
+						checked: feedbackEnabled,
+						onChange: ( value ) => editPost( {
+							meta: {
+								...details.meta,
+								docspress_feedback_enabled: value
+							}
+						} ),
+						help: __( 'Turning this off hides the prompt without deleting its response totals.', 'docspress' ),
+						__nextHasNoMarginBottom: true
+					} )
+				),
+				el(
+					'div',
+					{ className: 'docspress-feedback-score' },
+					el(
+						'strong',
+						{ className: 'docspress-feedback-score-value' },
+						total ? `${ helpfulRate }%` : '—'
+					),
+					el(
+						'span',
+						{ className: 'docspress-feedback-score-label' },
+						total ? __( 'helpful', 'docspress' ) : __( 'No responses yet', 'docspress' )
+					)
+				),
+				el(
+					'div',
+					{
+						className: 'docspress-feedback-meter',
+						role: 'progressbar',
+						'aria-label': __( 'Helpful response rate', 'docspress' ),
+						'aria-valuemin': '0',
+						'aria-valuemax': '100',
+						'aria-valuenow': String( helpfulRate )
+					},
+					el( 'span', { style: { width: `${ helpfulRate }%` } } )
+				),
+				el(
+					'div',
+					{ className: 'docspress-feedback-counts' },
+					count( __( 'Helpful', 'docspress' ), helpful ),
+					count( __( 'Not helpful', 'docspress' ), unhelpful )
+				),
+				el(
+					'div',
+					{ className: 'docspress-feedback-total' },
+					el( 'span', null, __( 'Total responses', 'docspress' ) ),
+					el( 'strong', null, String( total ) )
+				),
+				el(
+					'p',
+					{ className: 'docspress-feedback-detail-note' },
+					__( 'Stored with this Page. Feedback totals are read-only here.', 'docspress' )
+				)
+			)
+		);
+	}
+
+	registerPlugin( 'docspress-page-feedback', {
+		render: PageFeedbackDetailsPanel,
+		icon: icons.feedback
+	} );
 
 	function registerComponent( slug, config ) {
 		registerBlockType( `docspress/${ slug }`, {
@@ -684,6 +829,35 @@
 		]
 	} );
 
+	registerComponent( 'was-this-helpful', {
+		title: __( 'DocsPress: Was This Helpful?', 'docspress' ),
+		description: __( 'Collect helpful or not-helpful responses and store the totals with each Page.', 'docspress' ),
+		icon: icons.feedback,
+		EditorPreview: FeedbackEditorPreview,
+		attributes: {
+			enabled: { type: 'boolean', default: true },
+			question: { type: 'string', default: 'Was this helpful?', role: 'content' },
+			helpfulLabel: { type: 'string', default: 'Yes', role: 'content' },
+			unhelpfulLabel: { type: 'string', default: 'No', role: 'content' },
+			thanksMessage: { type: 'string', default: 'Thanks for your feedback.', role: 'content' }
+		},
+		controls: ( attributes, setAttributes ) => [
+			panel( __( 'Page feedback', 'docspress' ), [
+				toggle(
+					__( 'Enabled', 'docspress' ),
+					'enabled',
+					attributes,
+					setAttributes,
+					__( 'Show the prompt and collect responses on published Pages using this template.', 'docspress' )
+				),
+				text( __( 'Question', 'docspress' ), 'question', attributes, setAttributes ),
+				text( __( 'Helpful label', 'docspress' ), 'helpfulLabel', attributes, setAttributes ),
+				text( __( 'Not helpful label', 'docspress' ), 'unhelpfulLabel', attributes, setAttributes ),
+				text( __( 'Thank-you message', 'docspress' ), 'thanksMessage', attributes, setAttributes )
+			] )
+		]
+	} );
+
 	registerComponent( 'color-mode-toggle', {
 		title: __( 'DocsPress: Color Mode Toggle', 'docspress' ),
 		description: __( 'Let visitors switch between the active style and its dark palette.', 'docspress' ),
@@ -838,4 +1012,14 @@
 		} );
 		queueEditorNavigatorUpdate();
 	}
-} )( window.wp.blocks, window.wp.blockEditor, window.wp.components, window.wp.element, window.wp.i18n, window.wp.serverSideRender );
+} )(
+	window.wp.blocks,
+	window.wp.blockEditor,
+	window.wp.components,
+	window.wp.data,
+	window.wp.editor,
+	window.wp.element,
+	window.wp.i18n,
+	window.wp.plugins,
+	window.wp.serverSideRender
+);

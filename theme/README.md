@@ -64,7 +64,7 @@ Core Navigation adds **Underline** and **Framed**, Button adds **Text with arrow
 
 ## Site Editor components
 
-The theme registers nine dynamic shell blocks. They render live WordPress data on the front end and expose their parameters in Block Settings:
+The theme registers ten dynamic shell blocks. They render live WordPress data on the front end and expose their parameters in Block Settings:
 
 | Block | Component parameters |
 | --- | --- |
@@ -74,11 +74,12 @@ The theme registers nine dynamic shell blocks. They render live WordPress data o
 | Table of contents | title, width, minimum heading level, maximum heading level |
 | Page Summary | editor fallback text; the live Page displays only a manually written excerpt |
 | Edit links | WordPress and GitHub visibility and labels, repository URL, Git ref |
+| Was This Helpful | enabled state, question, positive/negative labels, and thank-you message |
 | Adjacent navigation | docs root, sort order, root visibility, depth, previous/next labels, Page-title visibility |
 | Color-mode toggle | accessible label, visible-label option, and default mode |
 | Documentation menu toggle | accessible label |
 
-All nine also opt into native color, gradient, typography, spacing, border, dimensions, sticky positioning, shadow, anchor, and CSS-class tools. The ten blocks in DocsPress Blocks expose the same design supports; Hero and Audience Paths additionally expose their purpose-built content and composition controls.
+All ten also opt into native color, gradient, typography, spacing, border, dimensions, sticky positioning, shadow, anchor, and CSS-class tools. The ten blocks in DocsPress Blocks expose the same design supports; Hero and Audience Paths additionally expose their purpose-built content and composition controls.
 
 ## Templates
 
@@ -121,7 +122,7 @@ theme/
 └── theme.json
 ```
 
-The Page template composes the documentation navigation, breadcrumbs, title, manual Page summary, edit links, content, adjacent navigation, and table of contents as normal blocks. Remove, reorder, duplicate, or style any of them in the Site Editor. Page Summary avoids duplicating the first paragraph when a Page has no manual excerpt. Assign **Page without documentation sidebar** or **Wide content** per Page when the standard documentation shell is not appropriate.
+The Page template composes the documentation navigation, breadcrumbs, title, manual Page summary, edit links, content, Was This Helpful prompt, adjacent navigation, and table of contents as normal blocks. Remove, reorder, duplicate, or style any of them in the Site Editor. Page Summary avoids duplicating the first paragraph when a Page has no manual excerpt. Was This Helpful is enabled by default, stores aggregate response counts as Page metadata, and exposes those counts plus a per-Page visibility switch in the Page editor’s **Page feedback** details panel. Assign **Page without documentation sidebar** or **Wide content** per Page when the standard documentation shell is not appropriate.
 
 ## Documentation hierarchy
 

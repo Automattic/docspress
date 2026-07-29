@@ -10,6 +10,173 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Register aggregate documentation feedback as Page metadata.
+ */
+function docspress_register_feedback_meta() {
+	$auth_callback = static function ( $allowed, $meta_key, $post_id ) {
+		return current_user_can( 'edit_post', (int) $post_id );
+	};
+
+	register_post_meta(
+		'page',
+		'docspress_helpful_votes',
+		array(
+			'type'              => 'integer',
+			'description'       => __( 'Helpful responses collected by the DocsPress feedback block.', 'docspress' ),
+			'single'            => true,
+			'default'           => 0,
+			'sanitize_callback' => 'absint',
+			'auth_callback'     => $auth_callback,
+			'show_in_rest'      => true,
+		)
+	);
+	register_post_meta(
+		'page',
+		'docspress_unhelpful_votes',
+		array(
+			'type'              => 'integer',
+			'description'       => __( 'Unhelpful responses collected by the DocsPress feedback block.', 'docspress' ),
+			'single'            => true,
+			'default'           => 0,
+			'sanitize_callback' => 'absint',
+			'auth_callback'     => $auth_callback,
+			'show_in_rest'      => true,
+		)
+	);
+	register_post_meta(
+		'page',
+		'docspress_feedback_enabled',
+		array(
+			'type'              => 'boolean',
+			'description'       => __( 'Whether the DocsPress feedback prompt is shown on this Page.', 'docspress' ),
+			'single'            => true,
+			'default'           => true,
+			'sanitize_callback' => 'rest_sanitize_boolean',
+			'auth_callback'     => $auth_callback,
+			'show_in_rest'      => true,
+		)
+	);
+}
+add_action( 'init', 'docspress_register_feedback_meta', 9 );
+
+/**
+ * Return the aggregate feedback counts for a Page.
+ *
+ * @param int $post_id Page ID.
+ * @return array{helpful:int,unhelpful:int,total:int}
+ */
+function docspress_get_feedback_counts( $post_id ) {
+	$helpful   = absint( get_post_meta( $post_id, 'docspress_helpful_votes', true ) );
+	$unhelpful = absint( get_post_meta( $post_id, 'docspress_unhelpful_votes', true ) );
+
+	return array(
+		'helpful'   => $helpful,
+		'unhelpful' => $unhelpful,
+		'total'     => $helpful + $unhelpful,
+	);
+}
+
+/**
+ * Verify that a public Page can receive a feedback response.
+ *
+ * @param WP_REST_Request $request REST request.
+ * @return true|WP_Error
+ */
+function docspress_can_submit_page_feedback( $request ) {
+	$post = get_post( absint( $request['id'] ) );
+	if ( ! $post instanceof WP_Post || 'page' !== $post->post_type || 'publish' !== $post->post_status ) {
+		return new WP_Error(
+			'docspress_feedback_page_not_found',
+			__( 'That documentation Page is not available.', 'docspress' ),
+			array( 'status' => 404 )
+		);
+	}
+	if ( post_password_required( $post ) ) {
+		return new WP_Error(
+			'docspress_feedback_page_protected',
+			__( 'Feedback is unavailable for this protected Page.', 'docspress' ),
+			array( 'status' => 403 )
+		);
+	}
+
+	return true;
+}
+
+/**
+ * Store one aggregate feedback response on its Page.
+ *
+ * @param WP_REST_Request $request REST request.
+ * @return WP_REST_Response|WP_Error
+ */
+function docspress_submit_page_feedback( $request ) {
+	$post_id = absint( $request['id'] );
+	$vote    = sanitize_key( $request['vote'] );
+	if ( ! in_array( $vote, array( 'helpful', 'unhelpful' ), true ) ) {
+		return new WP_Error(
+			'docspress_feedback_invalid_vote',
+			__( 'Choose helpful or not helpful.', 'docspress' ),
+			array( 'status' => 400 )
+		);
+	}
+
+	$meta_key = 'helpful' === $vote ? 'docspress_helpful_votes' : 'docspress_unhelpful_votes';
+	$current = absint( get_post_meta( $post_id, $meta_key, true ) );
+	$updated = update_post_meta( $post_id, $meta_key, $current + 1 );
+
+	if ( false === $updated ) {
+		return new WP_Error(
+			'docspress_feedback_not_saved',
+			__( 'The feedback response could not be saved.', 'docspress' ),
+			array( 'status' => 500 )
+		);
+	}
+
+	$counts = docspress_get_feedback_counts( $post_id );
+	do_action( 'docspress_page_feedback_recorded', $post_id, $vote, $counts );
+
+	$response = rest_ensure_response(
+		array(
+			'saved'  => true,
+			'vote'   => $vote,
+			'counts' => $counts,
+		)
+	);
+	$response->header( 'Cache-Control', 'no-store' );
+	return $response;
+}
+
+/**
+ * Register the public documentation feedback endpoint.
+ */
+function docspress_register_feedback_route() {
+	register_rest_route(
+		'docspress/v1',
+		'/feedback/(?P<id>\d+)',
+		array(
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => 'docspress_submit_page_feedback',
+			'permission_callback' => 'docspress_can_submit_page_feedback',
+			'args'                => array(
+				'id'   => array(
+					'required'          => true,
+					'sanitize_callback' => 'absint',
+				),
+				'vote' => array(
+					'required'          => true,
+					'type'              => 'string',
+					'enum'              => array( 'helpful', 'unhelpful' ),
+					'sanitize_callback' => 'sanitize_key',
+					'validate_callback' => static function ( $value ) {
+						return in_array( sanitize_key( $value ), array( 'helpful', 'unhelpful' ), true );
+					},
+				),
+			),
+		)
+	);
+}
+add_action( 'rest_api_init', 'docspress_register_feedback_route' );
+
+/**
  * Native design supports shared by every shell component.
  *
  * @param array<int,string>|false $align Optional alignments.
@@ -592,6 +759,60 @@ function docspress_render_adjacent_navigation( $attributes ) {
 }
 
 /**
+ * Render the visitor-facing documentation feedback prompt.
+ *
+ * @param array $attributes Block attributes.
+ * @return string
+ */
+function docspress_render_was_this_helpful( $attributes ) {
+	$enabled      = (bool) docspress_component_attribute( $attributes, 'enabled', true );
+	$post_id      = get_queried_object_id();
+	$page_enabled = $post_id && (
+		! metadata_exists( 'post', $post_id, 'docspress_feedback_enabled' ) ||
+		rest_sanitize_boolean( get_post_meta( $post_id, 'docspress_feedback_enabled', true ) )
+	);
+	if ( ! $enabled || ! $page_enabled || ! is_page() || ! $post_id || post_password_required( $post_id ) ) {
+		return '';
+	}
+
+	$question        = sanitize_text_field( docspress_component_attribute( $attributes, 'question', __( 'Was this helpful?', 'docspress' ) ) );
+	$helpful_label   = sanitize_text_field( docspress_component_attribute( $attributes, 'helpfulLabel', __( 'Yes', 'docspress' ) ) );
+	$unhelpful_label = sanitize_text_field( docspress_component_attribute( $attributes, 'unhelpfulLabel', __( 'No', 'docspress' ) ) );
+	$thanks_message  = sanitize_text_field( docspress_component_attribute( $attributes, 'thanksMessage', __( 'Thanks for your feedback.', 'docspress' ) ) );
+	$question_id     = wp_unique_id( 'docspress-feedback-question-' );
+	$wrapper         = get_block_wrapper_attributes(
+		array(
+			'class'                        => 'docspress-feedback',
+			'data-docspress-feedback'      => '',
+			'data-feedback-page-id'        => (string) $post_id,
+			'data-feedback-endpoint'       => esc_url_raw( rest_url( 'docspress/v1/feedback/' . $post_id ) ),
+			'data-feedback-thanks-message' => $thanks_message,
+			'data-feedback-saving-message' => __( 'Saving your response…', 'docspress' ),
+			'data-feedback-error-message'  => __( 'We could not save that response. Please try again.', 'docspress' ),
+		)
+	);
+
+	ob_start();
+	?>
+	<section <?php echo $wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+		<p class="docspress-feedback-question" id="<?php echo esc_attr( $question_id ); ?>"><?php echo esc_html( $question ); ?></p>
+		<div class="docspress-feedback-actions" role="group" aria-labelledby="<?php echo esc_attr( $question_id ); ?>">
+			<button class="docspress-feedback-button" type="button" data-feedback-vote="helpful" aria-pressed="false">
+				<?php echo docspress_icon( 'thumbs-up' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<span><?php echo esc_html( $helpful_label ); ?></span>
+			</button>
+			<button class="docspress-feedback-button" type="button" data-feedback-vote="unhelpful" aria-pressed="false">
+				<?php echo docspress_icon( 'thumbs-down' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<span><?php echo esc_html( $unhelpful_label ); ?></span>
+			</button>
+		</div>
+		<p class="docspress-feedback-status" data-feedback-status aria-live="polite"></p>
+	</section>
+	<?php
+	return ob_get_clean();
+}
+
+/**
  * Render the visitor color-mode switch.
  *
  * @param array $attributes Block attributes.
@@ -640,7 +861,7 @@ function docspress_register_blocks() {
 	wp_register_script(
 		'docspress-theme-blocks-editor',
 		get_theme_file_uri( 'assets/js/block-components.js' ),
-		array( 'wp-block-editor', 'wp-blocks', 'wp-components', 'wp-data', 'wp-element', 'wp-i18n', 'wp-server-side-render' ),
+		array( 'wp-block-editor', 'wp-blocks', 'wp-components', 'wp-data', 'wp-editor', 'wp-element', 'wp-i18n', 'wp-plugins', 'wp-server-side-render' ),
 		$editor_script_version,
 		true
 	);
@@ -736,6 +957,17 @@ function docspress_register_blocks() {
 				'previousLabel' => array( 'type' => 'string', 'default' => '← Previous', 'role' => 'content' ),
 				'nextLabel'     => array( 'type' => 'string', 'default' => 'Next →', 'role' => 'content' ),
 				'showTitles'    => array( 'type' => 'boolean', 'default' => true ),
+			),
+			'supports'        => docspress_component_supports(),
+		),
+		'was-this-helpful' => array(
+			'render_callback' => 'docspress_render_was_this_helpful',
+			'attributes'      => array(
+				'enabled'        => array( 'type' => 'boolean', 'default' => true ),
+				'question'       => array( 'type' => 'string', 'default' => 'Was this helpful?', 'role' => 'content' ),
+				'helpfulLabel'   => array( 'type' => 'string', 'default' => 'Yes', 'role' => 'content' ),
+				'unhelpfulLabel' => array( 'type' => 'string', 'default' => 'No', 'role' => 'content' ),
+				'thanksMessage'  => array( 'type' => 'string', 'default' => 'Thanks for your feedback.', 'role' => 'content' ),
 			),
 			'supports'        => docspress_component_supports(),
 		),
