@@ -5,7 +5,9 @@ sidebar_position: 35
 
 The **DocsPress: Was This Helpful?** block gives every documentation Page a small Helpful or Not helpful prompt. WordPress stores aggregate totals with the Page, while editors can review the score and hide the prompt without deleting earlier responses.
 
-![Published documentation Page showing the Was This Helpful prompt with Yes and No choices](https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/was-this-helpful/frontend.jpg "The default Page template places the feedback prompt after the article actions and before adjacent navigation.")
+<!-- wp:image {"url":"https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/was-this-helpful/frontend.jpg","alt":"Published documentation Page showing the Was This Helpful prompt with Yes and No choices","width":"570px","sizeSlug":"full","linkDestination":"none"} -->
+<figure class="wp-block-image size-full is-resized"><img src="https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/was-this-helpful/frontend.jpg" alt="Published documentation Page showing the Was This Helpful prompt with Yes and No choices" style="width:570px"/><figcaption class="wp-element-caption">The default Page template places the feedback prompt after the article actions and before adjacent navigation.</figcaption></figure>
+<!-- /wp:image -->
 
 ## Understand the response flow
 
@@ -39,7 +41,9 @@ Use the block’s **Styles** panel for native text, background, link, and gradie
 
 Open **Pages**, edit the documentation Page, show the editor’s Settings sidebar, and expand **Page feedback**. The panel displays the Helpful rate, Helpful and Not helpful counts, and total responses. Totals are read-only in the editor.
 
-![WordPress Page editor with the Page feedback panel showing the per-Page visibility control and response totals](https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/was-this-helpful/page-editor.jpg "Editors can review the aggregate score and hide the prompt for this Page without erasing its counts.")
+<!-- wp:image {"url":"https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/was-this-helpful/page-editor.jpg","alt":"WordPress Page editor with the Page feedback panel showing the per-Page visibility control and response totals","width":"215px","sizeSlug":"full","linkDestination":"none"} -->
+<figure class="wp-block-image size-full is-resized"><img src="https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/was-this-helpful/page-editor.jpg" alt="WordPress Page editor with the Page feedback panel showing the per-Page visibility control and response totals" style="width:215px"/><figcaption class="wp-element-caption">Editors can review the aggregate score and hide the prompt for this Page without erasing its counts.</figcaption></figure>
+<!-- /wp:image -->
 
 Turn off **Show feedback on this Page** when a particular Page should not ask for feedback. Save the Page to apply the change. Turning the setting back on restores the prompt with its earlier totals intact.
 
