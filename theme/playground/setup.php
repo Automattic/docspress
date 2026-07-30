@@ -433,6 +433,48 @@ $home_content = '<!-- wp:docspress/hero ' . serialize_block_attributes( $hero_at
 <p>Commits publish Pages; Gutenberg edits return to the repository as pull requests.</p>
 <!-- /wp:paragraph --></div>
 <!-- /wp:column --></div>
+<!-- /wp:columns -->
+
+<!-- wp:separator {"backgroundColor":"line","className":"is-style-wide home-proof-row-divider","style":{"spacing":{"margin":{"top":"30px","bottom":"30px"}}}} -->
+<hr class="wp-block-separator has-text-color has-line-color has-alpha-channel-opacity has-line-background-color has-background is-style-wide home-proof-row-divider" style="margin-top:30px;margin-bottom:30px"/>
+<!-- /wp:separator -->
+
+<!-- wp:columns {"className":"home-proof-grid home-proof-grid--secondary"} -->
+<div class="wp-block-columns home-proof-grid home-proof-grid--secondary"><!-- wp:column {"className":"home-proof-item"} -->
+<div class="wp-block-column home-proof-item"><!-- wp:paragraph {"className":"home-proof-token"} -->
+<p class="home-proof-token"><code>Site Editor</code></p>
+<!-- /wp:paragraph -->
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Fully customizable</h3>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>Change templates, navigation, styles, and every DocsPress block with native WordPress controls.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column -->
+
+<!-- wp:column {"className":"home-proof-item"} -->
+<div class="wp-block-column home-proof-item"><!-- wp:paragraph {"className":"home-proof-token"} -->
+<p class="home-proof-token"><code>v1 → v2 → v3</code></p>
+<!-- /wp:paragraph -->
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">API versioning</h3>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>Publish current and historical releases with version-aware URLs, switching, and notices.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column -->
+
+<!-- wp:column {"className":"home-proof-item"} -->
+<div class="wp-block-column home-proof-item"><!-- wp:paragraph {"className":"home-proof-token"} -->
+<p class="home-proof-token"><code>Threaded replies</code></p>
+<!-- /wp:paragraph -->
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Built-in discussions</h3>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>Open comments where feedback helps, with moderation and spam controls provided by WordPress.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column --></div>
 <!-- /wp:columns --></div>
 <!-- /wp:group -->
 
@@ -514,7 +556,7 @@ $home_content .= <<<'HTML'
 <!-- wp:group {"className":"home-download-grid","layout":{"type":"default"}} -->
 <div class="wp-block-group home-download-grid"><!-- wp:group {"tagName":"article","className":"home-download-card home-download-card--theme","layout":{"type":"default"}} -->
 <article class="wp-block-group home-download-card home-download-card--theme"><!-- wp:paragraph {"className":"home-download-card__meta"} -->
-<p class="home-download-card__meta"><span>Site experience</span><span>Theme 0.10.0</span></p>
+<p class="home-download-card__meta"><span>Site experience</span><span>Theme 0.10.1</span></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":3} -->
@@ -542,7 +584,7 @@ $home_content .= <<<'HTML'
 <!-- wp:group {"className":"home-download-card__actions","layout":{"type":"flex","flexWrap":"wrap"}} -->
 <div class="wp-block-group home-download-card__actions"><!-- wp:buttons -->
 <div class="wp-block-buttons"><!-- wp:button -->
-<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://github.com/Automattic/docspress/releases/download/wordpress-0.10.0/docspress-theme-0.10.0.zip">Download theme .zip</a></div>
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://github.com/Automattic/docspress/releases/download/wordpress-0.10.1/docspress-theme-0.10.1.zip">Download theme .zip</a></div>
 <!-- /wp:button --></div>
 <!-- /wp:buttons --></div>
 <!-- /wp:group -->
@@ -554,7 +596,7 @@ $home_content .= <<<'HTML'
 
 <!-- wp:group {"tagName":"article","className":"home-download-card home-download-card--blocks","layout":{"type":"default"}} -->
 <article class="wp-block-group home-download-card home-download-card--blocks"><!-- wp:paragraph {"className":"home-download-card__meta"} -->
-<p class="home-download-card__meta"><span>Authoring toolkit</span><span>Blocks 0.10.0</span></p>
+<p class="home-download-card__meta"><span>Authoring toolkit</span><span>Blocks 0.10.1</span></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":3} -->
@@ -582,7 +624,7 @@ $home_content .= <<<'HTML'
 <!-- wp:group {"className":"home-download-card__actions","layout":{"type":"flex","flexWrap":"wrap"}} -->
 <div class="wp-block-group home-download-card__actions"><!-- wp:buttons -->
 <div class="wp-block-buttons"><!-- wp:button -->
-<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://github.com/Automattic/docspress/releases/download/wordpress-0.10.0/docspress-blocks-0.10.0.zip">Download plugins .zip</a></div>
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://github.com/Automattic/docspress/releases/download/wordpress-0.10.1/docspress-blocks-0.10.1.zip">Download plugins .zip</a></div>
 <!-- /wp:button --></div>
 <!-- /wp:buttons -->
 
