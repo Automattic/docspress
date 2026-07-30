@@ -148,6 +148,61 @@ function docspress_playground_upsert_content( $post_type, $slug, $title, $conten
 }
 
 /**
+ * Copy a bundled theme illustration into the Media Library once.
+ *
+ * @param string $slug          Stable attachment slug.
+ * @param string $relative_path Theme-relative image path.
+ * @param string $title         Attachment title.
+ * @param string $alt           Accessible alternative text.
+ * @return int
+ */
+function docspress_playground_upsert_theme_image( $slug, $relative_path, $title, $alt ) {
+	$existing = get_page_by_path( $slug, OBJECT, 'attachment' );
+	if ( $existing instanceof WP_Post ) {
+		update_post_meta( $existing->ID, '_wp_attachment_image_alt', sanitize_text_field( $alt ) );
+		return (int) $existing->ID;
+	}
+
+	$source = get_theme_file_path( $relative_path );
+	if ( ! is_readable( $source ) ) {
+		return 0;
+	}
+
+	$contents = file_get_contents( $source );
+	if ( false === $contents ) {
+		return 0;
+	}
+
+	$upload = wp_upload_bits( basename( $source ), null, $contents );
+	if ( ! empty( $upload['error'] ) ) {
+		return 0;
+	}
+
+	$file_type     = wp_check_filetype( $upload['file'] );
+	$attachment_id = wp_insert_attachment(
+		array(
+			'post_title'     => sanitize_text_field( $title ),
+			'post_name'      => sanitize_title( $slug ),
+			'post_mime_type' => $file_type['type'],
+			'post_status'    => 'inherit',
+		),
+		$upload['file']
+	);
+	if ( ! $attachment_id || is_wp_error( $attachment_id ) ) {
+		return 0;
+	}
+
+	require_once ABSPATH . 'wp-admin/includes/image.php';
+	$metadata = wp_generate_attachment_metadata( $attachment_id, $upload['file'] );
+	if ( $metadata ) {
+		wp_update_attachment_metadata( $attachment_id, $metadata );
+	}
+	update_post_meta( $attachment_id, '_wp_attachment_image_alt', sanitize_text_field( $alt ) );
+
+	return (int) $attachment_id;
+}
+
+/**
  * Create or update one deterministic demo comment.
  *
  * @param int    $post_id   Post ID.
@@ -718,6 +773,40 @@ $community_post_id = docspress_playground_upsert_content(
 		'comment_status' => 'open',
 	)
 );
+
+$featured_images = array(
+	array(
+		$release_post_id,
+		'docspress-native-discussions',
+		'assets/images/blog/documentation-reader-feedback.webp',
+		'Documentation reader feedback',
+		'Two reader conversations circle a documentation page and a highlighted feedback signal.',
+	),
+	array(
+		$workflow_post_id,
+		'docspress-publishing-workflow',
+		'assets/images/blog/documentation-moves-with-code.webp',
+		'Documentation publishing workflow',
+		'Code and documentation travel along one publishing line into a native page.',
+	),
+	array(
+		$community_post_id,
+		'docspress-community-feedback',
+		'assets/images/blog/two-paths-documentation.webp',
+		'Community documentation paths',
+		'Source documentation and editorial feedback merge into one reviewed page.',
+	),
+);
+foreach ( $featured_images as $image ) {
+	$post_id = $image[0];
+	if ( ! $post_id ) {
+		continue;
+	}
+	$attachment_id = docspress_playground_upsert_theme_image( $image[1], $image[2], $image[3], $image[4] );
+	if ( $attachment_id ) {
+		set_post_thumbnail( $post_id, $attachment_id );
+	}
+}
 
 $updates_category = wp_create_category( 'Product updates' );
 $community_category = wp_create_category( 'Community' );

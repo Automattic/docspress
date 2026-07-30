@@ -638,6 +638,53 @@ describe("DocsPress block theme constraints", () => {
     );
   });
 
+  it("keeps featured post images in compact editorial crops", async () => {
+    const styles = await fs.readFile(path.join(root, "theme", "style.css"), "utf8");
+    const setup = await fs.readFile(
+      path.join(root, "theme", "playground", "setup.php"),
+      "utf8"
+    );
+    const frontPage = await fs.readFile(
+      path.join(root, "theme", "templates", "front-page.html"),
+      "utf8"
+    );
+    const single = await fs.readFile(
+      path.join(root, "theme", "templates", "single.html"),
+      "utf8"
+    );
+
+    expect(frontPage).toContain(
+      '"aspectRatio":"2/1","className":"content-card-thumbnail"'
+    );
+    expect(single).toContain(
+      '"aspectRatio":"16/7","className":"entry-featured-image post-featured-image"'
+    );
+    expect(styles).toMatch(
+      /\.content-card-thumbnail\s*\{[^}]*aspect-ratio:\s*2\s*\/\s*1;/s
+    );
+    expect(styles).toMatch(
+      /\.content-card-thumbnail img\s*\{[^}]*height:\s*100%;[^}]*object-fit:\s*cover;/s
+    );
+    expect(styles).toMatch(
+      /\.post-featured-image\s*\{[^}]*aspect-ratio:\s*16\s*\/\s*7;/s
+    );
+    expect(styles).toMatch(
+      /\.post-featured-image img\s*\{[^}]*height:\s*100%;[^}]*object-fit:\s*cover;/s
+    );
+    for (const image of [
+      "documentation-reader-feedback.webp",
+      "documentation-moves-with-code.webp",
+      "two-paths-documentation.webp",
+    ]) {
+      expect(setup).toContain(image);
+      await expect(
+        fs.access(path.join(root, "theme", "assets", "images", "blog", image))
+      ).resolves.toBeUndefined();
+    }
+    expect(setup).toContain("docspress_playground_upsert_theme_image");
+    expect(setup).toContain("set_post_thumbnail( $post_id, $attachment_id )");
+  });
+
   it("composes Blog Home from the same editable entry and card system", async () => {
     const template = await fs.readFile(
       path.join(root, "theme", "templates", "home.html"),
