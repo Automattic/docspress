@@ -25,6 +25,7 @@ DocsPress is a Node 20 GitHub Action configured entirely through `with` inputs.
 | `docs-dir` | `docs` | Directory containing `.md` and `.markdown` files. |
 | `manifest-file` | empty | Optional JSON manifest for explicit titles, slugs, parents, and source files. |
 | `redirects-file` | empty | Optional JSON redirects map that creates managed moved-page placeholders. |
+| `versions-file` | empty | Optional ordered API-version registry. Enables root, directory, suffix, and per-version manifest sources through DocsPress Blocks. |
 | `root-slug` | `docs` | Slug of the managed root Page. |
 | `root-title` | `Docs` | Fallback root title when no root document supplies one. |
 

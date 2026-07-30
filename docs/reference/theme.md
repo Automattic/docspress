@@ -61,8 +61,10 @@ The theme also ships JSON block style variations for Soft panel, Outline card, a
 | `docspress/adjacent-navigation` | `rootSlug`, `sort`, `showRoot`, `maxDepth`, `previousLabel`, `nextLabel`, `showTitles` |
 | `docspress/color-mode-toggle` | `label`, `showLabel`, `defaultMode` |
 | `docspress/docs-menu-toggle` | `label` |
+| `docspress/version-switcher` | `label`, `showLabel`, `presentation`, `showLatestBadge`, `showWhenSingle`, `missingPageText` |
+| `docspress/version-notice` | `message`, `latestLinkLabel`, `showIcon`, `dismissible` |
 
-All ten support native color, background, link color, gradients, typography, spacing, borders, minimum height, sticky positioning, shadow, anchor, and CSS-class controls. Their server renderers ensure the editor-facing parameters control live Page, navigation, heading, and source-path data. Page Summary displays a manually written Page excerpt or its optional fallback, preventing WordPress from generating a duplicate summary from the first paragraph.
+The ten theme blocks and two version blocks support native color, background, link color, gradients, typography, spacing, borders, minimum height, sticky positioning, shadow, anchor, and CSS-class controls. Their server renderers ensure the editor-facing parameters control live Page, navigation, heading, source-path, and version data. Page Summary displays a manually written Page excerpt or its optional fallback, preventing WordPress from generating a duplicate summary from the first paragraph.
 
 Was This Helpful is enabled by default in the Page template immediately before Adjacent Navigation. A visitor can record one Helpful or Not helpful response per Page in that browser. Aggregate counts are stored in the Page metadata fields `docspress_helpful_votes` and `docspress_unhelpful_votes`; editors can review the counts, total, and helpful rate in the Page editor’s **Page feedback** details panel. Use **Show feedback on this Page** in that panel to hide the prompt on one Page without deleting its existing data, or disable the template block to hide it site-wide.
 
@@ -92,7 +94,7 @@ The Site Editor’s root Design canvas and Styles canvas both preview the comple
 
 The Docs Navigation, Command Search, and Adjacent Navigation blocks resolve a synchronized root by Page path, defaulting to `docs`. The Edit Links block combines `_docspress_source_path` metadata with its repository and ref attributes. Table of Contents uses the rendered current post content and assigns stable anchors to H1–H6 headings. Was This Helpful stores its aggregate response counts as registered Page metadata and exposes them through the WordPress REST API.
 
-`sidebar_position` maps to `menu_order`; `sidebar_collapsed` is stored as managed Page metadata. Version navigation reads the taxonomy registered by the DocsPress synchronization plugin when available.
+`sidebar_position` maps to `menu_order`; `sidebar_collapsed` is stored as managed Page metadata. Version navigation reads the taxonomy registered by DocsPress Blocks. The Header template places a compact Version Switcher dropdown immediately before Command Search, while the Page template places the Version Notice as a full-width status bar directly below the Header; both remain ordinary, independently editable blocks. The duplicate selector control on Docs Navigation is retained in saved markup for compatibility but no longer renders a second switcher.
 
 ## File layout
 

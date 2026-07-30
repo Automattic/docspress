@@ -29,6 +29,10 @@ inputs:
     description: Optional JSON map of old docs paths to new docs paths or external URLs. Creates managed moved-page placeholders.
     required: false
     default: ""
+  versions-file:
+    description: Optional JSON registry defining ordered documentation versions and their root, directory, suffix, or manifest sources.
+    required: false
+    default: ""
   root-slug:
     description: Slug for the managed root page.
     required: false

@@ -1,0 +1,28 @@
+{
+  "latest": "v3",
+  "versions": [
+    {
+      "id": "v3",
+      "label": "v3",
+      "source": {
+        "type": "root"
+      }
+    },
+    {
+      "id": "v2",
+      "label": "v2",
+      "source": {
+        "type": "directory",
+        "path": "v2"
+      }
+    },
+    {
+      "id": "v1",
+      "label": "v1",
+      "source": {
+        "type": "suffix",
+        "suffix": ".v1"
+      }
+    }
+  ]
+}

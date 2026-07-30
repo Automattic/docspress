@@ -1,0 +1,79 @@
+.wp-block-docspress-version-notice {
+	--docspress-notice-accent: var(--dp-blue, var(--wp--preset--color--accent, #3858e9));
+	--docspress-notice-surface: var(--dp-paper, var(--wp--preset--color--surface, var(--wp--preset--color--base, #fff)));
+	--docspress-notice-border: var(--dp-line, var(--wp--preset--color--border, color-mix(in srgb, currentColor 18%, transparent)));
+	align-items: flex-start;
+	background: var(--docspress-notice-surface);
+	border: 1px solid var(--docspress-notice-border);
+	border-inline-start: .3rem solid var(--docspress-notice-accent);
+	border-radius: var(--wp--custom--radius--panel, .6rem);
+	display: flex;
+	gap: var(--wp--preset--spacing--30, .75rem);
+	padding: var(--wp--preset--spacing--40, 1rem);
+	position: relative;
+}
+
+.docspress-version-notice__icon {
+	align-items: center;
+	background: color-mix(in srgb, var(--docspress-notice-accent) 12%, transparent);
+	border-radius: 999px;
+	color: var(--docspress-notice-accent);
+	display: inline-flex;
+	flex: 0 0 auto;
+	height: 2rem;
+	justify-content: center;
+	width: 2rem;
+}
+
+.docspress-version-notice__icon svg {
+	height: 1.15rem;
+	width: 1.15rem;
+}
+
+.docspress-version-notice__content {
+	flex: 1;
+	min-width: 0;
+}
+
+.docspress-version-notice__content p {
+	margin: 0 0 .25rem;
+}
+
+.docspress-version-notice__content a {
+	font-weight: 700;
+}
+
+.docspress-version-notice__dismiss {
+	background: transparent;
+	border: 0;
+	border-radius: .25rem;
+	color: inherit;
+	cursor: pointer;
+	font: inherit;
+	font-size: 1.35rem;
+	line-height: 1;
+	padding: .15rem .35rem;
+}
+
+.docspress-version-notice :is(a, button):focus-visible {
+	outline: 3px solid var(--docspress-notice-accent);
+	outline-offset: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+	.wp-block-docspress-version-notice {
+		--docspress-notice-border: color-mix(in srgb, currentColor 28%, transparent);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.wp-block-docspress-version-notice {
+		scroll-behavior: auto;
+	}
+}
+
+@media (max-width: 480px) {
+	.wp-block-docspress-version-notice {
+		gap: .65rem;
+	}
+}

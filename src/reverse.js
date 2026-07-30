@@ -666,7 +666,8 @@ export async function createReverseChanges(options) {
     pages,
     desiredPages,
     manifestFile = "",
-    createH1 = false
+    createH1 = false,
+    effectiveLatest = ""
   } = options;
   const desiredByKey = new Map(desiredPages.map((page) => [page.key, page]));
   const pageByKey = new Map(pages.map(({ page }) => [page.sentinel.key, page]));
@@ -692,19 +693,23 @@ export async function createReverseChanges(options) {
     });
 
     if (content !== existing) {
-      changes.set(sourcePath, content);
+      changes.set(sourcePath, reverseChange(sourcePath, content, desired, effectiveLatest));
     }
 
     if (desired.titleOverride && desired.manifestId && desired.title !== page.title) {
-      manifestTitles.set(desired.manifestId, page.title);
+      const desiredManifest = desired.manifestFile || manifestFile;
+      if (!desiredManifest) {
+        throw new Error("A manifest-backed WordPress title changed, but its version manifest is not configured.");
+      }
+      if (!manifestTitles.has(desiredManifest)) {
+        manifestTitles.set(desiredManifest, new Map());
+      }
+      manifestTitles.get(desiredManifest).set(desired.manifestId, page.title);
     }
   }
 
-  if (manifestTitles.size > 0) {
-    if (!manifestFile) {
-      throw new Error("A manifest-backed WordPress title changed, but manifest-file is not configured.");
-    }
-    const manifestPath = validateRepositoryPath(manifestFile, cwd, "manifest-file");
+  for (const [configuredManifest, titles] of manifestTitles) {
+    const manifestPath = validateRepositoryPath(configuredManifest, cwd, "manifest-file");
     const absoluteManifest = path.resolve(cwd, manifestPath);
     const existingManifest = await fs.readFile(absoluteManifest, "utf8");
     const manifest = JSON.parse(existingManifest);
@@ -712,7 +717,7 @@ export async function createReverseChanges(options) {
     if (!Array.isArray(entries)) {
       throw new Error(`Docspress manifest must contain a pages array: ${manifestPath}`);
     }
-    for (const [id, title] of manifestTitles.entries()) {
+    for (const [id, title] of titles.entries()) {
       const entry = entries.find((candidate) => String(candidate?.id || candidate?.slug || "") === id);
       if (!entry) {
         throw new Error(`Docspress could not find manifest entry ${id} while applying a WordPress title change.`);
@@ -721,11 +726,27 @@ export async function createReverseChanges(options) {
     }
     const serialized = `${JSON.stringify(manifest, null, 2)}\n`;
     if (serialized !== existingManifest) {
-      changes.set(manifestPath, serialized);
+      const desired = desiredPages.find((page) => page.manifestFile === configuredManifest);
+      changes.set(manifestPath, reverseChange(manifestPath, serialized, desired, effectiveLatest));
     }
   }
 
-  return Array.from(changes, ([filePath, content]) => ({ path: filePath, content }));
+  return Array.from(changes.values());
+}
+
+function reverseChange(filePath, content, desired = {}, effectiveLatest = "") {
+  const versionId = desired?.docsVersion?.id || "";
+  const latestId = effectiveLatest || (desired?.docsVersion?.latest ? versionId : "");
+  return {
+    path: filePath,
+    content,
+    versionId,
+    versionLabel: desired?.docsVersion?.label || desired?.docsVersion?.id || "",
+    latest: Boolean(versionId && latestId === versionId),
+    effectiveLatest: latestId,
+    logicalRoute: desired?.logicalRoute || "",
+    sourceType: desired?.sourceType || ""
+  };
 }
 
 function createTurndownService(resolveLink) {

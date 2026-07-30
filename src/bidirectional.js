@@ -11,9 +11,13 @@ export async function syncBidirectional(options) {
     dryRun = false,
     deleteMode = "trash",
     rootSlug = "docs",
+    versionsRegistry = null,
     cwd = process.cwd(),
     manifestFile = "",
     createH1 = false,
+    githubRepository = "",
+    githubRef = "main",
+    githubServerUrl = "https://github.com",
     logger = console
   } = options;
   const existingPages = await client.listPages();
@@ -29,6 +33,10 @@ export async function syncBidirectional(options) {
       dryRun: true,
       deleteMode,
       rootSlug,
+      versionsRegistry,
+      githubRepository,
+      githubRef,
+      githubServerUrl,
       skipUpdateKeys: wordpressChangeKeys,
       logger: { info() {} }
     });
@@ -49,14 +57,28 @@ export async function syncBidirectional(options) {
     };
   }
 
+  let effectiveLatest = versionsRegistry?.latest || "";
+  if (versionsRegistry) {
+    const settings = await client.getSettings();
+    const configured = new Set(versionsRegistry.versions.map(({ id }) => id));
+    const override = String(settings.docspress_version_override || "");
+    if (configured.has(override)) {
+      effectiveLatest = override;
+    }
+  }
   const changes = await createReverseChanges({
     cwd,
     pages: plan.wordpressChanges,
     desiredPages,
     manifestFile,
-    createH1
+    createH1,
+    effectiveLatest
   });
-  const proposedOperations = changes.map((change) => ({ action: "propose", path: change.path }));
+  const proposedOperations = changes.map((change) => ({
+    action: "propose",
+    path: change.path,
+    version: change.versionId || ""
+  }));
 
   if (dryRun) {
     const preview = mode === "reconcile" ? publishPreview : emptyResult(true);
@@ -67,6 +89,7 @@ export async function syncBidirectional(options) {
       classifications: plan.classifications,
       proposed: changes.length,
       proposedFiles: changes.map((change) => change.path),
+      proposedFileDetails: changes.map(proposedFileDetail),
       pullRequest: null,
       operations: [...preview.operations, ...proposedOperations]
     };
@@ -82,6 +105,10 @@ export async function syncBidirectional(options) {
       dryRun: false,
       deleteMode,
       rootSlug,
+      versionsRegistry,
+      githubRepository,
+      githubRef,
+      githubServerUrl,
       skipUpdateKeys: wordpressChangeKeys,
       logger
     });
@@ -93,6 +120,10 @@ export async function syncBidirectional(options) {
       dryRun: false,
       deleteMode,
       rootSlug,
+      versionsRegistry,
+      githubRepository,
+      githubRef,
+      githubServerUrl,
       allowDeletions: false,
       logger
     });
@@ -106,8 +137,18 @@ export async function syncBidirectional(options) {
     classifications: plan.classifications,
     proposed: changes.length,
     proposedFiles: changes.map((change) => change.path),
+    proposedFileDetails: changes.map(proposedFileDetail),
     pullRequest,
     operations: [...wordpressResult.operations, ...proposedOperations]
+  };
+}
+
+function proposedFileDetail(change) {
+  return {
+    path: change.path,
+    version: change.versionId || "",
+    logicalRoute: change.logicalRoute || "",
+    effectiveLatest: change.effectiveLatest || ""
   };
 }
 

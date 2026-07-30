@@ -4,7 +4,7 @@ sidebar_position: 30
 sidebar_collapsed: true
 ---
 
-DocsPress Blocks adds two landing-page blocks and thirteen documentation blocks to Gutenberg. Use these guides to choose a block, configure it in the editor, or serialize it directly in Markdown for DocsPress publishing.
+DocsPress Blocks adds two landing-page blocks, thirteen documentation blocks, and two version interface blocks to Gutenberg. Use these guides to choose a block, configure it in the editor, or serialize it directly in Markdown for DocsPress publishing.
 
 Every component guide includes at least three rendered examples: a practical baseline plus creative variations that exercise different content, presentation, or interaction states.
 
@@ -27,6 +27,8 @@ Every component guide includes at least three rendered examples: a practical bas
 | [File Tree](file-tree.md) | A compact, optionally collapsible project structure |
 | [Prompt](prompt.md) | A reusable AI prompt with model, mode, and context |
 | [Interactive Troubleshooter](troubleshooter.md) | A short branching decision tree |
+| [Version Switcher](../../guides/versioning.md#customize-the-version-interface) | Moving between API versions while preserving the current logical Page |
+| [Version Notice](../../guides/versioning.md#customize-the-version-interface) | Warning readers when they are viewing historical documentation |
 
 Open the [Kitchen Sink](../kitchen-sink.md) to see all blocks together and compare their visual states.
 

@@ -143,6 +143,10 @@ function docspress_llms_escape_text( $value ) {
  * @return string
  */
 function docspress_get_markdown_url( $page ) {
+	if ( function_exists( 'docspress_blocks_versions_page_url' ) && get_post_meta( $page->ID, '_docspress_version_id', true ) ) {
+		return untrailingslashit( docspress_blocks_versions_page_url( $page->ID ) ) . '.md';
+	}
+
 	$path = trim( get_page_uri( $page ), '/' );
 	if ( ! $path ) {
 		return '';

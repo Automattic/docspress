@@ -6,6 +6,7 @@ import { githubContext, GitHubPullRequestClient } from "./github.js";
 import { syncPages } from "./sync.js";
 import { normalizeBoolean } from "./utils.js";
 import { WordPressClient } from "./wordpress.js";
+import { readVersionsRegistry } from "./versions.js";
 
 async function main() {
   const mode = normalizeMode(core.getInput("mode") || "publish");
@@ -17,6 +18,7 @@ async function main() {
     docsDir: core.getInput("docs-dir") || "docs",
     manifestFile: core.getInput("manifest-file") || "",
     redirectsFile: core.getInput("redirects-file") || "",
+    versionsFile: core.getInput("versions-file") || "",
     rootSlug: core.getInput("root-slug") || "docs",
     rootTitle: core.getInput("root-title") || "Docs",
     createH1: normalizeBoolean(core.getInput("create-h1") || "false"),
@@ -48,11 +50,16 @@ async function main() {
     return;
   }
 
+  const versionsRegistry = config.versionsFile
+    ? await readVersionsRegistry({ cwd: process.cwd(), versionsFile: config.versionsFile })
+    : null;
   const desiredPages = await collectDesiredPages({
     cwd: process.cwd(),
     docsDir: config.docsDir,
     manifestFile: config.manifestFile,
     redirectsFile: config.redirectsFile,
+    versionsFile: config.versionsFile,
+    versionsRegistry,
     rootSlug: config.rootSlug,
     rootTitle: config.rootTitle,
     createH1: config.createH1,
@@ -70,7 +77,8 @@ async function main() {
   const client = new WordPressClient({
     baseUrl: config.baseUrl,
     site: config.site,
-    token: config.token
+    token: config.token,
+    taxonomies: versionsRegistry ? ["docspress_versions"] : []
   });
 
   const result = config.mode === "publish"
@@ -80,6 +88,10 @@ async function main() {
       dryRun: config.dryRun,
       deleteMode: config.deleteMode,
       rootSlug: config.rootSlug,
+      versionsRegistry,
+      githubRepository: config.githubRepository,
+      githubRef: config.githubRef,
+      githubServerUrl: config.githubServerUrl,
       logger: core
     })
     : await syncBidirectional({
@@ -96,9 +108,13 @@ async function main() {
       dryRun: config.dryRun,
       deleteMode: config.deleteMode,
       rootSlug: config.rootSlug,
+      versionsRegistry,
       cwd: process.cwd(),
       manifestFile: config.manifestFile,
       createH1: config.createH1,
+      githubRepository: config.githubRepository,
+      githubRef: config.githubRef,
+      githubServerUrl: config.githubServerUrl,
       logger: core
     });
 
@@ -147,10 +163,24 @@ async function writeSummary(result) {
     core.summary.addLink(`Pull request #${result.pullRequest.number}`, result.pullRequest.url);
   }
 
+  if (result.effectiveLatest) {
+    core.summary.addRaw(`\nEffective latest version: \`${result.effectiveLatest}\`\n`);
+  }
+
+  if (result.proposedFileDetails?.length > 0) {
+    core.summary.addHeading("Proposed files", 2);
+    for (const file of result.proposedFileDetails) {
+      const version = file.version ? ` (${file.version})` : "";
+      core.summary.addRaw(`- \`${file.path}\`${version}\n`);
+    }
+  }
+
   if (result.conflictDetails.length > 0) {
     core.summary.addHeading("Conflicts", 2);
     for (const conflict of result.conflictDetails) {
-      core.summary.addRaw(`- \`${conflict.key}\`: ${conflict.reason}\n`);
+      const version = conflict.version ? ` (${conflict.version})` : "";
+      const source = conflict.sourcePath ? ` → \`${conflict.sourcePath}\`` : "";
+      core.summary.addRaw(`- \`${conflict.key}\`${version}${source}: ${conflict.reason}\n`);
     }
   }
 

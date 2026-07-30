@@ -409,6 +409,39 @@
 						"left": "var:preset|spacing|50"
 					}
 				}
+			},
+			"docspress/version-switcher": {
+				"border": {
+					"color": "var:preset|color|line",
+					"radius": "4px",
+					"style": "solid",
+					"width": "1px"
+				},
+				"typography": {
+					"fontFamily": "var:preset|font-family|inter",
+					"fontSize": "0.9375rem",
+					"fontWeight": "600"
+				}
+			},
+			"docspress/version-notice": {
+				"border": {
+					"color": "var:preset|color|line",
+					"radius": "4px",
+					"style": "solid",
+					"width": "1px"
+				},
+				"color": {
+					"background": "var:preset|color|accent-soft",
+					"text": "var:preset|color|ink"
+				},
+				"spacing": {
+					"padding": {
+						"bottom": "var:preset|spacing|40",
+						"left": "var:preset|spacing|40",
+						"right": "var:preset|spacing|40",
+						"top": "var:preset|spacing|40"
+					}
+				}
 			}
 		}
 	}

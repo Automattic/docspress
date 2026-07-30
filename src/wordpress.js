@@ -6,6 +6,7 @@ export class WordPressClient {
     this.site = options.site;
     this.token = options.token;
     this.fetchImpl = options.fetchImpl || fetch;
+    this.taxonomies = options.taxonomies || [];
   }
 
   restEndpoint(collection) {
@@ -44,17 +45,17 @@ export class WordPressClient {
       page += 1;
     } while (page <= totalPages);
 
-    return pages.map(normalizePage);
+    return pages.map((pageData) => normalizePage(pageData, this.taxonomies));
   }
 
   async createPage(payload) {
     const response = await this.request("POST", this.pagesEndpoint(), { body: payload });
-    return normalizePage(response.data);
+    return normalizePage(response.data, this.taxonomies);
   }
 
   async updatePage(id, payload) {
     const response = await this.request("POST", `${this.pagesEndpoint()}/${id}`, { body: payload });
-    return normalizePage(response.data);
+    return normalizePage(response.data, this.taxonomies);
   }
 
   async deletePage(id, options = {}) {
@@ -62,6 +63,54 @@ export class WordPressClient {
       query: options.force ? { force: "true" } : {}
     });
     return response.data;
+  }
+
+  termsEndpoint(taxonomy) {
+    return this.restEndpoint(taxonomy);
+  }
+
+  async listTerms(taxonomy) {
+    const terms = [];
+    let page = 1;
+    let totalPages = 1;
+
+    do {
+      const response = await this.request("GET", this.termsEndpoint(taxonomy), {
+        query: {
+          per_page: "100",
+          page: String(page),
+          context: "edit",
+          hide_empty: "false"
+        }
+      });
+      terms.push(...response.data);
+      totalPages = Number(response.headers.get("x-wp-totalpages") || totalPages || 1);
+      page += 1;
+    } while (page <= totalPages);
+
+    return terms.map(normalizeTerm);
+  }
+
+  async createTerm(taxonomy, payload) {
+    const response = await this.request("POST", this.termsEndpoint(taxonomy), { body: payload });
+    return normalizeTerm(response.data);
+  }
+
+  async updateTerm(taxonomy, id, payload) {
+    const response = await this.request("POST", `${this.termsEndpoint(taxonomy)}/${id}`, { body: payload });
+    return normalizeTerm(response.data);
+  }
+
+  async getSettings() {
+    const response = await this.request("GET", this.restEndpoint("settings"), {
+      query: { context: "edit" }
+    });
+    return response.data || {};
+  }
+
+  async updateSettings(payload) {
+    const response = await this.request("POST", this.restEndpoint("settings"), { body: payload });
+    return response.data || {};
   }
 
   async request(method, url, options = {}) {
@@ -114,12 +163,16 @@ function formatApiError(data, method, requestUrl, status) {
   return message;
 }
 
-export function normalizePage(page) {
+export function normalizePage(page, taxonomies = []) {
   const id = page.id ?? page.ID;
   const rawContent = typeof page.content === "string" ? page.content : page.content?.raw ?? page.content?.rendered ?? "";
   const renderedTitle = typeof page.title === "string" ? page.title : page.title?.raw ?? page.title?.rendered ?? "";
   const parent = typeof page.parent === "number" ? page.parent : page.parent?.ID ?? page.parent?.id ?? 0;
   const menuOrder = page.menu_order ?? page.menuOrder ?? 0;
+  const terms = {};
+  for (const taxonomy of taxonomies) {
+    terms[taxonomy] = Array.isArray(page[taxonomy]) ? page[taxonomy].map(Number) : [];
+  }
 
   return {
     id,
@@ -129,6 +182,18 @@ export function normalizePage(page) {
     title: renderedTitle,
     content: rawContent,
     status: page.status,
-    link: page.link ?? page.URL ?? ""
+    link: page.link ?? page.URL ?? "",
+    meta: page.meta && typeof page.meta === "object" ? page.meta : {},
+    terms
+  };
+}
+
+export function normalizeTerm(term) {
+  return {
+    id: Number(term.id ?? term.ID),
+    name: String(term.name || ""),
+    slug: String(term.slug || ""),
+    count: Number(term.count || 0),
+    meta: term.meta && typeof term.meta === "object" ? term.meta : {}
   };
 }

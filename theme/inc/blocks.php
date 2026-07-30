@@ -305,7 +305,6 @@ function docspress_render_docs_navigation( $attributes ) {
 	$max_depth   = min( 8, absint( docspress_component_attribute( $attributes, 'maxDepth', 0 ) ) );
 	$show_filter = (bool) docspress_component_attribute( $attributes, 'showFilter', true );
 	$placeholder = sanitize_text_field( docspress_component_attribute( $attributes, 'filterPlaceholder', __( 'Filter pages…', 'docspress' ) ) );
-	$show_versions = (bool) docspress_component_attribute( $attributes, 'showVersions', true );
 	$empty       = sanitize_text_field( docspress_component_attribute( $attributes, 'emptyMessage', __( 'Publish Pages to populate this navigation.', 'docspress' ) ) );
 	$show_collapse = (bool) docspress_component_attribute( $attributes, 'showCollapse', true );
 	$start_collapsed = $show_collapse && (bool) docspress_component_attribute( $attributes, 'startCollapsed', false );
@@ -314,7 +313,6 @@ function docspress_render_docs_navigation( $attributes ) {
 	$content_id  = wp_unique_id( 'docspress-sidebar-content-' );
 	$root_id     = docspress_get_docs_root_id( $root_slug );
 	$pages       = 'menu' === $source ? docspress_get_menu_pages( $menu_slug, $max_depth ) : docspress_get_docs_pages( $root_slug, $sort );
-	$versions    = docspress_get_versions();
 	$wrapper     = get_block_wrapper_attributes(
 		array(
 			'class'      => 'docs-sidebar' . ( $start_collapsed ? ' is-sidebar-collapsed' : '' ),
@@ -355,19 +353,6 @@ function docspress_render_docs_navigation( $attributes ) {
 					<input id="docspress-filter" type="search" placeholder="<?php echo esc_attr( $placeholder ); ?>" autocomplete="off" data-docs-filter>
 					<button class="sidebar-search-clear" type="button" data-search-clear aria-label="<?php esc_attr_e( 'Clear filter', 'docspress' ); ?>">×</button>
 				</div>
-			<?php endif; ?>
-
-			<?php if ( $show_versions && $versions['terms'] ) : ?>
-				<label class="screen-reader-text" for="docspress-version"><?php esc_html_e( 'Documentation version', 'docspress' ); ?></label>
-				<select class="version-select" id="docspress-version" data-version-select>
-					<option value=""><?php esc_html_e( 'Choose a version', 'docspress' ); ?></option>
-					<?php foreach ( $versions['terms'] as $version ) : ?>
-						<?php $version_url = get_term_link( $version ); ?>
-						<?php if ( ! is_wp_error( $version_url ) ) : ?>
-							<option value="<?php echo esc_url( $version_url ); ?>" <?php selected( $versions['current'], $version->term_id ); ?>><?php echo esc_html( $version->name ); ?></option>
-						<?php endif; ?>
-					<?php endforeach; ?>
-				</select>
 			<?php endif; ?>
 
 			<nav class="docs-nav<?php echo 'menu' === $source ? ' docs-nav-custom' : ''; ?>" data-docs-nav>
@@ -423,7 +408,11 @@ function docspress_searchable_text( $content ) {
  */
 function docspress_search_page_path( $page ) {
 	$labels = array();
+	$version = sanitize_key( (string) get_post_meta( $page->ID, '_docspress_version_id', true ) );
 	foreach ( array_reverse( get_post_ancestors( $page ) ) as $ancestor_id ) {
+		if ( $version && $version !== sanitize_key( (string) get_post_meta( $ancestor_id, '_docspress_version_id', true ) ) ) {
+			continue;
+		}
 		$title = wp_strip_all_tags( get_the_title( $ancestor_id ) );
 		if ( $title ) {
 			$labels[] = $title;
@@ -567,6 +556,19 @@ function docspress_render_breadcrumbs( $attributes ) {
 	$home_label = sanitize_text_field( docspress_component_attribute( $attributes, 'homeLabel', __( 'Home', 'docspress' ) ) );
 	$separator = sanitize_text_field( docspress_component_attribute( $attributes, 'separator', '›' ) );
 	$ancestors = array_reverse( get_post_ancestors( get_queried_object_id() ) );
+	if ( function_exists( 'docspress_blocks_versions_page_context' ) ) {
+		$context = docspress_blocks_versions_page_context();
+		if ( $context ) {
+			$ancestors = array_values(
+				array_filter(
+					$ancestors,
+					static function ( $ancestor_id ) use ( $context ) {
+						return $context['version'] === sanitize_key( (string) get_post_meta( $ancestor_id, '_docspress_version_id', true ) );
+					}
+				)
+			);
+		}
+	}
 	if ( ! $show_home && ! $ancestors ) {
 		return '';
 	}
