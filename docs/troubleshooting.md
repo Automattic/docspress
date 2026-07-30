@@ -28,7 +28,26 @@ Choose one safe resolution:
 
 Never inject a fake sentinel merely to bypass the conflict.
 
-<!-- wp:docspress/result {"status":"warning","title":"Conflict requires a content decision","content":"<p>The Action leaves the manual Page untouched and reports the exact key in conflict details.</p>","meta":"0 writes to conflicting path"} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/result",
+  "attrs": {
+    "status": "warning",
+    "title": "Conflict requires a content decision",
+    "content": "\u003cp\u003eThe Action leaves the manual Page untouched and reports the exact key in conflict details.\u003c/p\u003e",
+    "meta": "0 writes to conflicting path"
+  }
+}
+-->
+> [!WARNING]
+>
+> **Conflict requires a content decision**
+>
+> The Action leaves the manual Page untouched and reports the exact key in conflict details.
+>
+> _0 writes to conflicting path_
+<!-- /docspress:block -->
 
 ## A parent Page is unavailable
 
@@ -56,7 +75,7 @@ Confirm `rewrite-links: true` and use a relative link to a discovered documentat
 
 ## Custom blocks do not render
 
-Confirm the matching DocsPress Blocks plugin is installed and active. Validate the `wp:docspress/*` comment JSON, block name, attributes, enums, and escaped newlines against the [block reference](reference/gutenberg-blocks/index.md).
+Confirm the matching DocsPress Blocks plugin is installed and active. Validate the `docspress:block` config version, block name, attributes, enums, and escaped newlines against the [block reference](reference/gutenberg-blocks/index.md). Legacy `wp:docspress/*` comment JSON is still accepted.
 
 ## The theme shows duplicate H1 headings
 
@@ -70,6 +89,26 @@ The theme searches and lists published Pages in the configured documentation roo
 
 Review package scripts before executing them, then run:
 
-<!-- wp:docspress/terminal-session {"title":"Verify DocsPress","shell":"bash","prompt":"$","command":"npm test\nnpm run lint\nnpm run build","output":""} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/terminal-session",
+  "attrs": {
+    "title": "Verify DocsPress",
+    "shell": "bash",
+    "prompt": "$",
+    "command": "npm test\nnpm run lint\nnpm run build",
+    "output": ""
+  }
+}
+-->
+#### Verify DocsPress
+
+```bash
+$ npm test
+$ npm run lint
+$ npm run build
+```
+<!-- /docspress:block -->
 
 `dist/index.js` is committed. Rebuild it whenever Action source changes, but do not rebuild it for documentation-only edits unless the package process requires it.

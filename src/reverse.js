@@ -7,6 +7,11 @@ import remarkParse from "remark-parse";
 import TurndownService from "turndown";
 import { gfm } from "turndown-plugin-gfm";
 import { unified } from "unified";
+import {
+  coreBlockToMarkdownEnvelope,
+  customBlockToMarkdown,
+  findMarkdownBlockRanges
+} from "./block-markdown.js";
 import { markdownToBlocks, titleFromMarkdown } from "./markdown.js";
 import { stripSentinel } from "./sentinel.js";
 import { stableJson, toPosixPath } from "./utils.js";
@@ -67,6 +72,7 @@ const CUSTOM_BLOCK_DEFAULTS = {
     columns: 2,
     tone: "theme",
     textAlign: "left",
+    compact: false,
     showNumbers: false,
     panelColor: "",
     accentColor: ""
@@ -176,6 +182,9 @@ const CUSTOM_BLOCK_DEFAULTS = {
     mediaId: 0,
     mediaUrl: "",
     mediaAlt: "",
+    visualLabel: "",
+    visualVariant: "image",
+    layout: "split",
     mediaPosition: "right",
     mediaWidth: 44,
     imageScale: 100,
@@ -186,7 +195,6 @@ const CUSTOM_BLOCK_DEFAULTS = {
     showOrbit: false,
     panelColor: "",
     visualColor: "",
-    textColor: "",
     accentColor: ""
   },
   "docspress/prompt": {
@@ -253,6 +261,20 @@ const CUSTOM_BLOCK_DEFAULTS = {
       }
     ],
     showProgress: true
+  },
+  "docspress/version-notice": {
+    message: "You are viewing {current}. The latest version is {latest}.",
+    latestLinkLabel: "Switch to latest",
+    showIcon: true,
+    dismissible: false
+  },
+  "docspress/version-switcher": {
+    label: "Version",
+    showLabel: true,
+    presentation: "select",
+    showLatestBadge: true,
+    hideSingle: true,
+    unavailableLabel: "Page unavailable"
   }
 };
 
@@ -267,6 +289,58 @@ export function blocksToMarkdown(content, options = {}) {
     .trim();
 
   return rendered ? `${rendered}\n` : "";
+}
+
+export function upgradeLegacyBlockSyntax(markdown, options = {}) {
+  const source = String(markdown || "");
+  const service = createTurndownService(options.resolveLink);
+  const tree = markdownParser.parse(source);
+  const protectedRanges = [];
+  collectNodeRanges(tree, (node) => node.type === "code" || node.type === "inlineCode", protectedRanges);
+  const ranges = findSpecialMarkdownRanges(source)
+    .filter((range) => range.type === "gutenberg");
+  const selfClosingLine = /^<!--\s*wp:[a-z][a-z0-9_-]*(?:\/[a-z][a-z0-9_-]*)?[^\r\n]*\/-->[ \t]*$/gm;
+  let match;
+  while ((match = selfClosingLine.exec(source))) {
+    const candidate = { start: match.index, end: selfClosingLine.lastIndex, type: "gutenberg" };
+    if (rangeContains(protectedRanges, candidate.start)) {
+      continue;
+    }
+    const candidateChunks = migrationBlockChunks(source.slice(candidate.start, candidate.end));
+    if (candidateChunks.length === 1 && candidateChunks[0].block) {
+      for (let index = ranges.length - 1; index >= 0; index -= 1) {
+        if (overlaps(ranges[index], candidate)) {
+          ranges.splice(index, 1);
+        }
+      }
+      ranges.push(candidate);
+    }
+  }
+  const replacements = [];
+
+  for (const range of ranges) {
+    const raw = source.slice(range.start, range.end);
+    const chunks = migrationBlockChunks(raw);
+    if (chunks.length !== 1 || !chunks[0].block) {
+      continue;
+    }
+    const rendered = blockChunkToMarkdown(chunks[0], service);
+    if (rendered && rendered !== raw.trim()) {
+      replacements.push({ ...range, rendered });
+    }
+  }
+
+  let result = source;
+  for (const replacement of replacements.sort((left, right) => right.start - left.start)) {
+    result = `${result.slice(0, replacement.start)}${replacement.rendered}${result.slice(replacement.end)}`;
+  }
+  return result;
+}
+
+function migrationBlockChunks(raw) {
+  const normalized = markdownToBlocks(raw, { fallbackTitle: "Docs" }).blocks;
+  return splitSerializedBlocks(normalized)
+    .filter((chunk) => chunk.block || chunk.raw.trim());
 }
 
 export function mergeWordPressIntoSource(options) {
@@ -427,7 +501,7 @@ function blockFingerprint(chunk) {
 
   const block = normalizeBlockForComparison(chunk.block);
   const name = block.blockName;
-  if (Object.hasOwn(CUSTOM_BLOCK_DEFAULTS, name)) {
+  if (name.startsWith("docspress/")) {
     return stableJson({ name, attrs: effectiveCustomAttributes(name, block.attrs) });
   }
 
@@ -472,8 +546,8 @@ function effectiveCustomAttributes(name, attributes) {
 
 function blockChunkToSourceMarkdown(chunk, service, originalChunk) {
   const name = chunk.block?.blockName || "";
-  if (Object.hasOwn(CUSTOM_BLOCK_DEFAULTS, name)) {
-    return serializeCustomBlockForMarkdown(chunk.block, originalChunk?.block);
+  if (name.startsWith("docspress/")) {
+    return serializeCustomBlockForMarkdown(chunk.block, originalChunk?.block, service);
   }
 
   const normalized = chunk.block ? normalizeBlockForComparison(chunk.block) : null;
@@ -488,14 +562,13 @@ function blockChunkToSourceMarkdown(chunk, service, originalChunk) {
   return serializeRawBlockForMarkdown(chunk);
 }
 
-function serializeCustomBlockForMarkdown(block, originalBlock) {
+function serializeCustomBlockForMarkdown(block, originalBlock, service) {
   const attrs = mergeCustomAttributes(
     block.blockName,
     originalBlock?.attrs || {},
     block.attrs || {}
   );
-  const serialized = Object.keys(attrs).length > 0 ? ` ${JSON.stringify(attrs)}` : "";
-  return `<!-- wp:${block.blockName}${serialized} /-->`;
+  return customBlockToMarkdown(block.blockName, attrs, service);
 }
 
 function mergeCustomAttributes(name, original, live) {
@@ -590,7 +663,7 @@ function findSpecialMarkdownRanges(source) {
   const rawTree = markdownParser.parse(source);
   const codeRanges = [];
   collectNodeRanges(rawTree, (node) => node.type === "code" || node.type === "inlineCode", codeRanges);
-  const ranges = [];
+  const ranges = findMarkdownBlockRanges(source, codeRanges);
   const tokens = new RegExp(BLOCK_TOKEN_PATTERN.source, "g");
   let depth = 0;
   let start = -1;
@@ -776,7 +849,13 @@ function blockChunkToMarkdown(chunk, service, options = {}) {
   }
 
   const name = chunk.block.blockName;
+  if (name.startsWith("docspress/")) {
+    return customBlockToMarkdown(name, chunk.block.attrs || {}, service);
+  }
   if (!canConvertBlock(chunk.block)) {
+    if (name.startsWith("core/")) {
+      return coreBlockToMarkdownEnvelope(chunk.block, chunk.raw, service);
+    }
     return chunk.raw.trim();
   }
   if (name === "core/separator") {
@@ -816,24 +895,54 @@ function imageBlockToMarkdown(raw, service) {
 }
 
 function canConvertBlock(block) {
-  if (!block?.blockName?.startsWith("core/") || block.innerBlocks?.length > 0) {
+  if (!block?.blockName?.startsWith("core/")) {
     return false;
   }
-  const allowedAttrs = {
+  const portableTopLevel = REVERSE_BLOCKS.has(block.blockName) ||
+    block.blockName === "core/separator" ||
+    block.blockName === "core/html";
+  if (!portableTopLevel || !String(block.innerHTML || "").trim()) {
+    return false;
+  }
+  const allowedAttrs = allowedCoreAttributes(block.blockName);
+  if (block.blockName === "core/table" && /text-align\s*:/i.test(block.innerHTML)) {
+    return false;
+  }
+  if (!Array.isArray(allowedAttrs) || !Object.keys(block.attrs || {}).every((key) => allowedAttrs.includes(key))) {
+    return false;
+  }
+  return (block.innerBlocks || []).every((innerBlock) => canConvertNestedCoreBlock(block.blockName, innerBlock));
+}
+
+function allowedCoreAttributes(name) {
+  return {
     "core/paragraph": [],
     "core/heading": ["level"],
     "core/list": ["ordered"],
+    "core/list-item": [],
     "core/quote": [],
     "core/code": [],
     "core/image": ["url", "alt"],
     "core/table": [],
     "core/separator": [],
     "core/html": []
-  }[block.blockName];
-  if (block.blockName === "core/table" && /text-align\s*:/i.test(block.innerHTML)) {
+  }[name];
+}
+
+function canConvertNestedCoreBlock(parentName, block) {
+  const allowedChildren = {
+    "core/list": ["core/list-item"],
+    "core/list-item": ["core/list"],
+    "core/quote": ["core/paragraph", "core/heading", "core/list", "core/code", "core/image"]
+  }[parentName] || [];
+  if (!allowedChildren.includes(block.blockName)) {
     return false;
   }
-  return Array.isArray(allowedAttrs) && Object.keys(block.attrs || {}).every((key) => allowedAttrs.includes(key));
+  const allowedAttrs = allowedCoreAttributes(block.blockName);
+  if (!Array.isArray(allowedAttrs) || !Object.keys(block.attrs || {}).every((key) => allowedAttrs.includes(key))) {
+    return false;
+  }
+  return (block.innerBlocks || []).every((innerBlock) => canConvertNestedCoreBlock(block.blockName, innerBlock));
 }
 
 function codeBlockToMarkdown(raw, service, fallbackLanguage = "") {

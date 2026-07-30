@@ -331,7 +331,9 @@ describe("blocksToMarkdown", () => {
     expect(markdown).toContain("Hello **world** and [guide](guide.md).");
     expect(markdown).toContain("## Next");
     expect(markdown).toContain("One");
-    expect(markdown).toContain('<!-- wp:docspress/callout {"tone":"tip"');
+    expect(markdown).toContain('"name": "docspress/callout"');
+    expect(markdown).toContain("> [!TIP]");
+    expect(markdown).not.toContain("<!-- wp:docspress/callout");
   });
 
   it("removes generated title and source-link blocks", () => {
@@ -352,7 +354,9 @@ describe("blocksToMarkdown", () => {
 
     expect(markdownToBlocks(blocksToMarkdown(readable), { fallbackTitle: "Docs" }).blocks).toBe(readable);
     const attributedMarkdown = blocksToMarkdown(attributed);
-    expect(attributedMarkdown).toContain('<!-- wp:paragraph {"style"');
+    expect(attributedMarkdown).toContain('"name": "core/paragraph"');
+    expect(attributedMarkdown).toContain("Colored.");
+    expect(attributedMarkdown).not.toContain("<!-- wp:paragraph");
     expect(markdownToBlocks(attributedMarkdown, { fallbackTitle: "Docs" }).blocks).toBe(attributed);
   });
 
@@ -386,7 +390,9 @@ console.log("hi");
 
     const markdown = blocksToMarkdown(content);
 
-    expect(markdown).toContain('<!-- wp:preformatted -->\n<pre class="wp-block-preformatted">plain text</pre>\n<!-- /wp:preformatted -->');
+    expect(markdown).toContain('"name": "core/preformatted"');
+    expect(markdown).toContain("plain text");
+    expect(markdown).not.toContain("<!-- wp:preformatted");
     expect(markdown).toContain("---");
     expect(markdown).toContain("<details><summary>Raw</summary><p>HTML</p></details>");
     expect(markdownToBlocks(markdown, { fallbackTitle: "Docs" }).blocks).toContain("wp:preformatted");
@@ -618,7 +624,10 @@ The source stays readable.
       page: pageFromBody(desired, changedLive)
     });
     const expectedAttributes = { ...attributes, [changedKey]: changedValue };
-    const expected = source.replace(original, `<!-- wp:${name} ${JSON.stringify(expectedAttributes)} /-->`);
+    const expected = source.replace(
+      original,
+      blocksToMarkdown(`<!-- wp:${name} ${JSON.stringify(expectedAttributes)} /-->`).trim()
+    );
     const roundTrippedBlock = parse(markdownToBlocks(merged, { fallbackTitle: "Docs" }).blocks)
       .find((block) => block.blockName === name);
 

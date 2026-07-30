@@ -196,7 +196,7 @@ jobs:
 
 `publish` remains the default. `propose` only prepares WordPress changes and refreshes synchronization metadata; `reconcile` also publishes non-conflicting GitHub changes. If the same Page changes on both sides, the run reports a conflict before writing either side.
 
-Reverse synchronization compares Gutenberg blocks semantically and changes only the matching Markdown source regions. WordPress editor metadata and omitted default attributes do not create diff noise; unchanged frontmatter, code fences, tables, and custom-block comments remain untouched. When a block cannot be represented safely as readable Markdown, DocsPress preserves its serialized Gutenberg form.
+Reverse synchronization compares Gutenberg blocks semantically and changes only the matching Markdown source regions. WordPress editor metadata and omitted default attributes do not create diff noise; unchanged frontmatter, code fences, tables, and readable block envelopes remain untouched. Plain core blocks return as ordinary Markdown. DocsPress blocks and non-portable core blocks use semantic, lossless envelopes instead of exposing raw `wp:*` comments.
 
 `reconcile` leaves each WordPress-only Page unchanged while its pull request is open. Once the pull request merges, the next run refreshes the synchronization sentinel; GitHub-only changes to other Pages still publish normally.
 

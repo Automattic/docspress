@@ -44,20 +44,42 @@ All DocsPress blocks support an HTML anchor, additional CSS classes, Global Styl
 
 ## Author blocks in Markdown
 
-DocsPress preserves a dynamic block as one self-closing Gutenberg comment:
+DocsPress preserves a dynamic block as a versioned config envelope with a block-specific Markdown preview:
 
-```text
-<!-- wp:docspress/block-name {"attribute":"value"} /-->
-```
+````markdown
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/callout",
+  "attrs": {
+    "tone": "note",
+    "title": "Good to know",
+    "content": "<p>Readable in both places.</p>"
+  }
+}
+-->
+> [!NOTE]
+>
+> **Good to know**
+>
+> Readable in both places.
+<!-- /docspress:block -->
+````
 
-Follow these rules when generating or editing the comment:
+Follow these rules when generating or editing an envelope:
 
-- Put the comment directly in Markdown. Do not wrap the actual block in a code fence.
-- Use compact, valid JSON. Escape quotes, newlines, backslashes, and control characters.
+- Keep the boundary comments outside code fences for an actual block.
+- Use valid JSON config. Escape quotes, newlines, backslashes, and control characters.
 - Use only attributes registered by that block and only documented enum values.
-- Do not add rendered HTML after a dynamic block comment.
+- Update config and its Markdown preview together; config is authoritative during conversion.
 - Keep rich-text attributes as safe HTML fragments, such as `<p>Helpful detail.</p>`.
 - Install and activate a matching version of DocsPress Blocks on the WordPress site.
+
+Legacy self-closing syntax remains accepted and can be migrated with `npm run migrate:markdown-blocks`:
+
+```html
+<!-- wp:docspress/block-name {"attribute":"value"} /-->
+```
 
 DocsPress converts HTML-sensitive attribute characters to WordPress-safe Unicode escapes during publishing. This prevents the block editor from treating otherwise equivalent JSON as invalid content.
 

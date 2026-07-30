@@ -4,7 +4,24 @@ title: Customize the theme in the Site Editor
 
 DocsPress is a highly customizable native block theme. Open **Appearance → Editor** to change the complete documentation site with WordPress blocks and Global Styles. There is no separate Customizer panel or hidden theme-settings layer.
 
-<!-- wp:docspress/callout {"tone":"success","title":"Highly customizable without a theme build","content":"<p>Global colors, typography, spacing, borders, shadows, and layout flow through the documentation shell, homepage, posts, archives, comments, and DocsPress content blocks. Templates, template parts, and individual block settings remain available when a particular surface needs a different treatment.</p>","collapsible":false} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/callout",
+  "attrs": {
+    "tone": "success",
+    "title": "Highly customizable without a theme build",
+    "content": "\u003cp\u003eGlobal colors, typography, spacing, borders, shadows, and layout flow through the documentation shell, homepage, posts, archives, comments, and DocsPress content blocks. Templates, template parts, and individual block settings remain available when a particular surface needs a different treatment.\u003c/p\u003e",
+    "collapsible": false
+  }
+}
+-->
+> [!TIP]
+>
+> **Highly customizable without a theme build**
+>
+> Global colors, typography, spacing, borders, shadows, and layout flow through the documentation shell, homepage, posts, archives, comments, and DocsPress content blocks. Templates, template parts, and individual block settings remain available when a particular surface needs a different treatment.
+<!-- /docspress:block -->
 
 ## Understand the editing layers
 
@@ -74,7 +91,24 @@ The normal Page template is a composition of independently editable blocks:
 
 Select a component to move, duplicate, replace, style, or delete it. Edit **Patterns → Manage all my patterns → Template parts** to change the Header, Footer, or Comments everywhere.
 
-<!-- wp:docspress/callout {"tone":"tip","title":"Keep layout changes portable","content":"<p>Make site-wide shell changes in Templates and Template Parts. Use a Page’s editor only for that Page’s content, and assign the Wide content or Page without documentation sidebar template when it needs a different shell.</p>","collapsible":false} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/callout",
+  "attrs": {
+    "tone": "tip",
+    "title": "Keep layout changes portable",
+    "content": "\u003cp\u003eMake site-wide shell changes in Templates and Template Parts. Use a Page’s editor only for that Page’s content, and assign the Wide content or Page without documentation sidebar template when it needs a different shell.\u003c/p\u003e",
+    "collapsible": false
+  }
+}
+-->
+> [!TIP]
+>
+> **Keep layout changes portable**
+>
+> Make site-wide shell changes in Templates and Template Parts. Use a Page’s editor only for that Page’s content, and assign the Wide content or Page without documentation sidebar template when it needs a different shell.
+<!-- /docspress:block -->
 
 ## Configure documentation navigation
 

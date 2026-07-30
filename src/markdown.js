@@ -3,6 +3,7 @@ import { toString as mdastToString } from "mdast-util-to-string";
 import remarkGfm from "remark-gfm";
 import remarkParse from "remark-parse";
 import { unified } from "unified";
+import { markdownBlockSyntaxToGutenberg } from "./block-markdown.js";
 import {
   codeBlock,
   codetabsBlock,
@@ -22,7 +23,15 @@ const parser = unified().use(remarkParse).use(remarkGfm);
 
 export function parseMarkdown(markdown) {
   const parsed = matter(markdown);
-  const content = normalizeGutenbergBlockComments(transformCodetabs(parsed.content));
+  const rawTree = parser.parse(parsed.content);
+  const protectedRanges = [];
+  collectNodeRanges(
+    rawTree,
+    (node) => node.type === "code" || node.type === "inlineCode",
+    protectedRanges
+  );
+  const expanded = markdownBlockSyntaxToGutenberg(parsed.content, protectedRanges);
+  const content = normalizeGutenbergBlockComments(transformCodetabs(expanded));
   const tree = parser.parse(content);
 
   return {
@@ -30,6 +39,15 @@ export function parseMarkdown(markdown) {
     tree,
     content
   };
+}
+
+function collectNodeRanges(node, predicate, ranges) {
+  if (predicate(node) && node.position?.start?.offset !== undefined && node.position?.end?.offset !== undefined) {
+    ranges.push({ start: node.position.start.offset, end: node.position.end.offset });
+  }
+  for (const child of node.children || []) {
+    collectNodeRanges(child, predicate, ranges);
+  }
 }
 
 export function titleFromMarkdown(markdown, fallbackTitle) {

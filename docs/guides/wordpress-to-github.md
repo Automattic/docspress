@@ -17,7 +17,55 @@ Use WordPress-to-GitHub synchronization when an editor changes a managed Page in
 
 Use `mode: propose` when this workflow should only import WordPress changes:
 
-<!-- wp:docspress/colorful-code {"language":"yaml","filename":".github/workflows/sync-docs.yml","code":"name: Propose WordPress documentation changes\n\non:\n  schedule:\n    - cron: \"3/5 * * * *\"\n  workflow_dispatch:\n\npermissions:\n  contents: write\n  pull-requests: write\n\nconcurrency:\n  group: docspress-sync\n  cancel-in-progress: false\n\njobs:\n  sync:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n      - uses: Automattic/docspress@14d318924a81fb95ce4d3aaa9c3b547bf76b7768\n        with:\n          mode: propose\n          wordpress-site: example.wordpress.com\n          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n          docs-dir: docs\n          root-slug: docs\n          pull-request-base: main\n          pull-request-branch: docspress/wordpress-sync\n          dry-run: false","highlightedLines":"3-6,8-10,23-24,28-31","showLineNumbers":true,"caption":"A scheduled proposal workflow reads Gutenberg changes and maintains one rolling pull request."} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/colorful-code",
+  "attrs": {
+    "language": "yaml",
+    "filename": ".github/workflows/sync-docs.yml",
+    "code": "name: Propose WordPress documentation changes\n\non:\n  schedule:\n    - cron: \"3/5 * * * *\"\n  workflow_dispatch:\n\npermissions:\n  contents: write\n  pull-requests: write\n\nconcurrency:\n  group: docspress-sync\n  cancel-in-progress: false\n\njobs:\n  sync:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n      - uses: Automattic/docspress@14d318924a81fb95ce4d3aaa9c3b547bf76b7768\n        with:\n          mode: propose\n          wordpress-site: example.wordpress.com\n          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n          docs-dir: docs\n          root-slug: docs\n          pull-request-base: main\n          pull-request-branch: docspress/wordpress-sync\n          dry-run: false",
+    "highlightedLines": "3-6,8-10,23-24,28-31",
+    "showLineNumbers": true,
+    "caption": "A scheduled proposal workflow reads Gutenberg changes and maintains one rolling pull request."
+  }
+}
+-->
+**.github/workflows/sync-docs.yml — A scheduled proposal workflow reads Gutenberg changes and maintains one rolling pull request.**
+
+```yaml
+name: Propose WordPress documentation changes
+
+on:
+  schedule:
+    - cron: "3/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: docspress-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: Automattic/docspress@14d318924a81fb95ce4d3aaa9c3b547bf76b7768
+        with:
+          mode: propose
+          wordpress-site: example.wordpress.com
+          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}
+          docs-dir: docs
+          root-slug: docs
+          pull-request-base: main
+          pull-request-branch: docspress/wordpress-sync
+          dry-run: false
+```
+<!-- /docspress:block -->
 
 GitHub schedules can start later than the exact cron minute. Run `workflow_dispatch` when an editor needs an immediate proposal.
 
@@ -31,7 +79,7 @@ Review the Markdown diff exactly like any other documentation change. When it is
 
 ## Preserve the Markdown structure
 
-DocsPress compares Gutenberg blocks semantically and rewrites only matching Markdown regions. Unchanged frontmatter, spacing, code-fence languages, tables, and custom-block comments stay intact. Supported core blocks become readable Markdown; attributed, preformatted, and unrecognized blocks stay as serialized Gutenberg comments when that is the only lossless representation.
+DocsPress compares Gutenberg blocks semantically and rewrites only matching Markdown regions. Unchanged frontmatter, spacing, code-fence languages, tables, and readable block envelopes stay intact. Plain core blocks become ordinary Markdown. DocsPress blocks become semantic Markdown previews with hidden config; attributed, structural, dynamic, and unrecognized core blocks use a lossless envelope rather than exposing raw `wp:*` comments.
 
 Reverse synchronization updates the title and content of an existing managed Page. WordPress-created or deleted Pages and editor changes to slug, parent, or publication status remain outside reverse-sync scope.
 
@@ -50,6 +98,23 @@ if: >-
 
 If `pull-request-branch` changes, use the same branch name in the condition. The Action also recognizes a managed merge internally and exits successfully with `skipped=true` when a caller omits the job condition.
 
-<!-- wp:docspress/callout {"tone":"warning","title":"Two-sided edits require a decision","content":"<p>If Markdown and the WordPress Page both changed differently since their shared synchronization marker, DocsPress reports a conflict and writes neither side. Choose the intended version, align the other side, and run again.</p>","collapsible":false} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/callout",
+  "attrs": {
+    "tone": "warning",
+    "title": "Two-sided edits require a decision",
+    "content": "\u003cp\u003eIf Markdown and the WordPress Page both changed differently since their shared synchronization marker, DocsPress reports a conflict and writes neither side. Choose the intended version, align the other side, and run again.\u003c/p\u003e",
+    "collapsible": false
+  }
+}
+-->
+> [!WARNING]
+>
+> **Two-sided edits require a decision**
+>
+> If Markdown and the WordPress Page both changed differently since their shared synchronization marker, DocsPress reports a conflict and writes neither side. Choose the intended version, align the other side, and run again.
+<!-- /docspress:block -->
 
 The complete combined example lives in [Keep documentation synchronized](continuous-sync.md).

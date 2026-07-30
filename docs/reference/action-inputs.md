@@ -60,7 +60,24 @@ Reverse sync requires `contents: write` and `pull-requests: write`. The reposito
 | `delete-mode` | `trash` | `trash` moves removed managed Pages to Trash; `force` permanently deletes them. |
 | `dry-run` | `false` | Plans operations without WordPress or GitHub writes. Start with `true`. |
 
-<!-- wp:docspress/callout {"tone":"warning","title":"Override the write-capable defaults","content":"<p>The Action metadata defaults to <code>status: publish</code> and <code>dry-run: false</code>. New installations should explicitly set <code>status: draft</code>, <code>delete-mode: trash</code>, and <code>dry-run: true</code>.</p>","collapsible":false} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/callout",
+  "attrs": {
+    "tone": "warning",
+    "title": "Override the write-capable defaults",
+    "content": "\u003cp\u003eThe Action metadata defaults to \u003ccode\u003estatus: publish\u003c/code\u003e and \u003ccode\u003edry-run: false\u003c/code\u003e. New installations should explicitly set \u003ccode\u003estatus: draft\u003c/code\u003e, \u003ccode\u003edelete-mode: trash\u003c/code\u003e, and \u003ccode\u003edry-run: true\u003c/code\u003e.\u003c/p\u003e",
+    "collapsible": false
+  }
+}
+-->
+> [!WARNING]
+>
+> **Override the write-capable defaults**
+>
+> The Action metadata defaults to `status: publish` and `dry-run: false`. New installations should explicitly set `status: draft`, `delete-mode: trash`, and `dry-run: true`.
+<!-- /docspress:block -->
 
 ## Outputs
 

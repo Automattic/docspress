@@ -17,4 +17,21 @@ Move from a reviewed manual draft to maintainable synchronization in either dire
 - [Use manifests and redirects](manifests-and-redirects.md) covers stable routes, explicit parents, virtual section Pages, and moved-page placeholders.
 - [Version API documentation](versioning.md) publishes root, directory, suffix, or manifest-backed API releases with native WordPress management, clean latest routes, customizable switching, and exact reverse-sync destinations.
 
-<!-- wp:docspress/callout {"tone":"tip","title":"Prefer the directory tree","content":"<p>Use normal files and folders until you need a stable route independent of a source filename. Manifests add control, but also add another mapping to maintain.</p>","collapsible":false} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/callout",
+  "attrs": {
+    "tone": "tip",
+    "title": "Prefer the directory tree",
+    "content": "\u003cp\u003eUse normal files and folders until you need a stable route independent of a source filename. Manifests add control, but also add another mapping to maintain.\u003c/p\u003e",
+    "collapsible": false
+  }
+}
+-->
+> [!TIP]
+>
+> **Prefer the directory tree**
+>
+> Use normal files and folders until you need a stable route independent of a source filename. Manifests add control, but also add another mapping to maintain.
+<!-- /docspress:block -->
