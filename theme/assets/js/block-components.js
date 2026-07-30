@@ -483,7 +483,7 @@
 
 	registerComponent( 'docs-navigation', {
 		title: __( 'DocsPress: Documentation Navigation', 'docspress' ),
-		description: __( 'A hierarchy-aware Page tree or selected classic menu with filtering and versions.', 'docspress' ),
+		description: __( 'A hierarchy-aware Page tree or selected classic menu with filtering.', 'docspress' ),
 		icon: icons.navigation,
 		empty: __( 'Documentation navigation preview', 'docspress' ),
 		attributes: {
@@ -526,7 +526,6 @@
 				text( __( 'Heading', 'docspress' ), 'title', attributes, setAttributes ),
 				toggle( __( 'Show Page filter', 'docspress' ), 'showFilter', attributes, setAttributes ),
 				attributes.showFilter && text( __( 'Filter placeholder', 'docspress' ), 'filterPlaceholder', attributes, setAttributes ),
-				toggle( __( 'Show version selector', 'docspress' ), 'showVersions', attributes, setAttributes ),
 				text( __( 'Empty state', 'docspress' ), 'emptyMessage', attributes, setAttributes )
 			], false ),
 			panel( __( 'Sidebar collapse button', 'docspress' ), [

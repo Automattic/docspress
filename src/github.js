@@ -197,12 +197,25 @@ export class GitHubPullRequestClient {
 }
 
 function pullRequestBody(changes) {
-  const files = changes.map((change) => `- \`${change.path}\``).join("\n");
+  const versioned = changes.some((change) => change.versionId);
+  const files = versioned
+    ? versionedFileList(changes)
+    : changes.map((change) => `- \`${change.path}\``).join("\n");
   const fileLabel = `${changes.length} Markdown ${changes.length === 1 ? "file" : "files"}`;
-  return `${DOCSPRESS_PR_MARKER}\n\n## Summary\n\nSynchronizes documentation edits made in WordPress back to their Markdown sources. This rolling pull request is maintained automatically by DocsPress.\n\n| Direction | Changes |\n| --- | ---: |\n| WordPress → GitHub | ${fileLabel} |\n\n## Changed files\n\n${files}\n\n## Review and merge\n\nReview these as normal documentation changes. After this pull request merges, the next DocsPress reconcile run refreshes the WordPress synchronization baseline.\n\n> This branch is owned by DocsPress and may be force-refreshed on every synchronization run.\n`;
+  const effectiveLatest = changes.find((change) => change.effectiveLatest)?.effectiveLatest || "";
+  const latestLine = effectiveLatest ? `\n\nEffective latest version: \`${effectiveLatest}\`.` : "";
+  return `${DOCSPRESS_PR_MARKER}\n\n## Summary\n\nSynchronizes documentation edits made in WordPress back to their Markdown sources. This rolling pull request is maintained automatically by DocsPress.${latestLine}\n\n| Direction | Changes |\n| --- | ---: |\n| WordPress → GitHub | ${fileLabel} |\n\n## Changed files\n\n${files}\n\n## Review and merge\n\nReview these as normal documentation changes. After this pull request merges, the next DocsPress reconcile run refreshes the WordPress synchronization baseline.\n\n> This branch is owned by DocsPress and may be force-refreshed on every synchronization run.\n`;
 }
 
 function pullRequestTitle(changes) {
+  const versionIds = [...new Set(changes.map((change) => change.versionId).filter(Boolean))];
+  if (versionIds.length === 1) {
+    return `docs(${versionIds[0]}): sync changes from WordPress`;
+  }
+  if (versionIds.length > 1) {
+    return `docs(versions): sync ${changes.length} files from WordPress`;
+  }
+
   if (changes.length !== 1) {
     return `docs(wordpress): sync ${changes.length} files from WordPress`;
   }
@@ -223,4 +236,32 @@ function pullRequestTitle(changes) {
     .slice(0, 40)
     .replace(/-+$/g, "") || "wordpress";
   return `docs(${scope}): sync changes from WordPress`;
+}
+
+function versionedFileList(changes) {
+  const byVersion = new Map();
+  for (const change of changes) {
+    const id = change.versionId || "Unversioned";
+    if (!byVersion.has(id)) {
+      byVersion.set(id, {
+        label: change.versionLabel || id,
+        latest: false,
+        changes: []
+      });
+    }
+    const group = byVersion.get(id);
+    group.latest ||= Boolean(change.latest);
+    group.changes.push(change);
+  }
+
+  return Array.from(byVersion, ([id, group]) => {
+    const latest = group.latest ? " — Latest" : "";
+    const idLabel = group.label !== id ? ` (\`${id}\`)` : "";
+    const heading = `### ${group.label}${idLabel}${latest}`;
+    const files = group.changes
+      .sort((left, right) => left.path.localeCompare(right.path))
+      .map((change) => `- \`${change.path}\`${change.sourceType ? ` — ${change.sourceType}` : ""}`)
+      .join("\n");
+    return `${heading}\n\n${files}`;
+  }).join("\n\n");
 }

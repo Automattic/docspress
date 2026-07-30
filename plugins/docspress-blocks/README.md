@@ -19,6 +19,8 @@ Documentation-focused Gutenberg blocks for the DocsPress theme. The plugin has n
 - **Result** — a compact success, neutral, warning, or error outcome for builds, checks, and verification steps.
 - **File Tree** — an indentation-aware repository view with native collapsible folder disclosures and editable initial state.
 - **Prompt** — a first-class, copyable AI prompt with model, mode, optional Thinking state, highlighted `$skill-name` references, classified context chips, and an editable caption.
+- **Version Switcher** — a template-ready select or link list that keeps the current logical Page when a counterpart exists and explains unavailable counterparts before falling back to that version's documentation root.
+- **Version Notice** — a historical-version warning with customizable `{current}` and `{latest}` placeholders, an optional icon, a latest-version action, and dismissible behavior.
 
 The inserter also includes **Homepage hero**, **Documentation starting paths**, **Documentation page starter**, **API request example**, **Runnable API console**, **API reference toolkit**, **Interactive guide**, and **AI prompt example** patterns under the **DocsPress** category.
 
@@ -53,7 +55,9 @@ docspress-blocks/
 │   ├── terminal-session/
 │   ├── result/
 │   ├── file-tree/
-│   └── prompt/
+│   ├── prompt/
+│   ├── version-switcher/
+│   └── version-notice/
 ├── assets/
 │   ├── editor-shared.js
 │   ├── code.css
@@ -61,7 +65,8 @@ docspress-blocks/
 │   └── view.js
 ├── includes/
 │   ├── code-surface.php
-│   └── patterns.php
+│   ├── patterns.php
+│   └── versioning.php
 └── docspress-blocks.php
 ```
 
@@ -133,6 +138,14 @@ Prompts remain readable, crawlable HTML instead of screenshots or iframes:
 
 ```html
 <!-- wp:docspress/prompt {"prompt":"Use $docspress-install to review this synchronization logic and propose the smallest safe patch.","model":"GPT-5","mode":"code","thinking":true,"context":"$docspress-install, @repository, src/sync.js, test/sync.test.js","caption":"Synchronization review prompt"} /-->
+```
+
+The Header template places a compact Version Switcher dropdown immediately before Command Search. The Page template places the historical-version notice as a full-width status bar directly below the Header. Both remain independently movable, removable, and editable in the Site Editor:
+
+```html
+<!-- wp:docspress/version-switcher {"label":"Documentation version","showLabel":false,"presentation":"select","showLatestBadge":false,"className":"header-version-switcher"} /-->
+
+<!-- wp:docspress/version-notice {"align":"full","className":"header-version-notice","message":"You're viewing {current}. The latest documentation is {latest}.","latestLinkLabel":"Switch to latest","showIcon":true,"dismissible":true} /-->
 ```
 
 Typed fields, native diagrams, browser sandboxes, and troubleshooting trees remain concise dynamic block comments:

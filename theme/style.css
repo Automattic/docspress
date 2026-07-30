@@ -3,7 +3,7 @@ Theme Name: DocsPress
 Theme URI: https://github.com/Automattic/docspress
 Author: Fatih Kadir Akın
 Description: A Site Editor-first documentation block theme for WordPress and DocsPress.
-Version: 0.9.20
+Version: 0.10.0
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 7.4
@@ -331,6 +331,98 @@ a {
 	align-items: center;
 	gap: 8px;
 	margin-left: auto;
+}
+
+.site-header .header-version-switcher {
+	flex: 0 0 auto;
+	gap: 0;
+	inline-size: auto;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+}
+
+.site-header .header-version-switcher .docspress-version-switcher__control {
+	inline-size: auto;
+}
+
+.site-header .header-version-switcher select {
+	box-sizing: border-box;
+	inline-size: auto;
+	min-inline-size: 82px;
+	max-inline-size: 128px;
+	block-size: 40px;
+	min-block-size: 40px;
+	padding: 0 32px 0 12px;
+	border: 1px solid var(--dp-line);
+	border-radius: 8px;
+	background: var(--dp-canvas);
+	color: var(--dp-muted);
+	font: 700 14px/1 var(--dp-font-ui);
+	cursor: pointer;
+	transition: border-color 160ms ease, color 160ms ease, transform 160ms ease, background 160ms ease;
+}
+
+.site-header .header-version-switcher select:hover {
+	background: color-mix(in srgb, currentColor 8%, transparent);
+	color: var(--dp-ink);
+	transform: translateY(-1px);
+}
+
+.site-header .header-version-switcher .docspress-version-switcher__chevron {
+	inset-inline-end: 11px;
+	color: var(--dp-muted);
+}
+
+body .wp-site-blocks > .alignfull.header-version-notice,
+.editor-styles-wrapper .is-root-container > .alignfull.header-version-notice {
+	--docspress-notice-accent: var(--dp-blue);
+	--docspress-notice-surface: var(--dp-blue-soft);
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	gap: 10px;
+	inline-size: 100%;
+	max-inline-size: none;
+	min-block-size: 50px;
+	margin: 0;
+	padding: 9px max(16px, calc((100vw - var(--wp--style--global--wide-size, 1180px)) / 2 + 16px));
+	border: 0;
+	border-block-end: 1px solid var(--dp-line);
+	border-radius: 0;
+	background: var(--docspress-notice-surface);
+	color: var(--dp-ink);
+	font: 600 14px/1.45 var(--dp-font-ui);
+}
+
+.alignfull.header-version-notice .docspress-version-notice__icon {
+	inline-size: 24px;
+	block-size: 24px;
+}
+
+.alignfull.header-version-notice .docspress-version-notice__icon svg {
+	inline-size: 14px;
+	block-size: 14px;
+}
+
+.alignfull.header-version-notice .docspress-version-notice__content {
+	display: flex;
+	flex: 0 1 auto;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: center;
+	gap: 2px 8px;
+	min-inline-size: 0;
+}
+
+.alignfull.header-version-notice .docspress-version-notice__content p {
+	margin: 0;
+}
+
+.alignfull.header-version-notice .docspress-version-notice__content a {
+	white-space: nowrap;
 }
 
 .header-button,
@@ -3308,6 +3400,18 @@ body.command-search-open {
 		gap: 6px;
 	}
 
+	.site-header .header-version-switcher,
+	.site-header .header-version-switcher .docspress-version-switcher__control,
+	.site-header .header-version-switcher select {
+		inline-size: auto;
+	}
+
+	.site-header .header-version-switcher select {
+		min-inline-size: 70px;
+		max-inline-size: 86px;
+		padding-inline: 10px 28px;
+	}
+
 	.repository-link {
 		display: none;
 	}
@@ -3481,6 +3585,12 @@ body.command-search-open {
 	}
 
 	.footer-navigation .wp-block-navigation-item:nth-child(2) {
+		display: none;
+	}
+}
+
+@media (max-width: 400px) {
+	.brand-title {
 		display: none;
 	}
 }

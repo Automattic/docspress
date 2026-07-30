@@ -18,6 +18,11 @@
   One link creates an editable WordPress site, converts the documentation tree into native Pages, and opens <code>/docs/</code>.
 </p>
 
+<p align="center">
+  <a href="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-versioning.json&page-title=DocsPress%20Versioning%20Example"><strong>Run the versioning example →</strong></a><br>
+  Explore root, directory, and filename-suffix API versions, historical notices, missing counterparts, and version-filtered Page management.
+</p>
+
 ## One command from docs to WordPress
 
 Run this from any repository that contains a `docs/` directory:
@@ -70,6 +75,7 @@ Docspress keeps Markdown and WordPress documentation synchronized. It can publis
 - Protect manual WordPress content with managed-page sentinels.
 - Review planned changes with `dry-run` before writing to WordPress.
 - Support manifests, redirects, rewritten local links, and edit links.
+- Publish several API versions from root, directory, suffix, or manifest sources with native WordPress taxonomy management.
 - Propose WordPress editor changes as readable Markdown pull requests.
 - Serve a generated `/llms.txt` index and exact source Markdown at each Page path with `.md`.
 - Use the rest of WordPress too: a block-built homepage, editable templates and template parts, Global Styles, posts, archives, feeds, navigation, and optional threaded discussions.
@@ -93,8 +99,8 @@ The WordPress theme and plugin directories are distributed through this GitHub r
 
 Install the current WordPress packages directly:
 
-- [Download DocsPress Theme 0.9.20](https://github.com/Automattic/docspress/releases/download/wordpress-0.9.20/docspress-theme-0.9.20.zip)
-- [Download DocsPress Blocks 0.9.13](https://github.com/Automattic/docspress/releases/download/wordpress-0.9.18/docspress-blocks-0.9.13.zip)
+- [Download DocsPress Theme 0.10.0](https://github.com/Automattic/docspress/releases/download/wordpress-0.10.0/docspress-theme-0.10.0.zip)
+- [Download DocsPress Blocks 0.10.0](https://github.com/Automattic/docspress/releases/download/wordpress-0.10.0/docspress-blocks-0.10.0.zip)
 
 Convert this repository's `docs/` directory and open the resulting WordPress site:
 
@@ -240,6 +246,7 @@ The secret name is `WP_ACCESS_TOKEN`. Use it in your workflow as `${{ secrets.WP
 | `docs-dir` | `docs` | Markdown docs directory. |
 | `manifest-file` | empty | Optional JSON manifest that defines page slugs, parents, titles, and Markdown source files. |
 | `redirects-file` | empty | Optional JSON map of old docs paths to new docs paths or external URLs. Creates managed moved-page placeholders. |
+| `versions-file` | empty | Optional ordered API-version registry. Without it, synchronization remains unversioned. |
 | `root-slug` | `docs` | Managed root page slug. |
 | `root-title` | `Docs` | Managed root page title when no root `index.md` exists. |
 | `create-h1` | `false` | Add the page title as an H1 block at the top of generated content. |

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "meta": {
+    "title": "DocsPress Versioning Example",
+    "author": "Automattic",
+    "description": "Root, directory, and filename-suffix API documentation versions with native WordPress management and switching."
+  },
+  "preferredVersions": {
+    "php": "8.3",
+    "wp": "latest"
+  },
+  "constants": {
+    "WP_ENVIRONMENT_TYPE": "development"
+  },
+  "landingPage": "/docs/v1/hello/",
+  "login": true,
+  "steps": [
+    {
+      "step": "installPlugin",
+      "pluginData": {
+        "resource": "git:directory",
+        "url": "https://github.com/Automattic/docspress",
+        "ref": "main",
+        "refType": "branch",
+        "path": "plugins/docspress-blocks"
+      },
+      "options": {
+        "activate": true,
+        "targetFolderName": "docspress-blocks"
+      }
+    },
+    {
+      "step": "installTheme",
+      "themeData": {
+        "resource": "git:directory",
+        "url": "https://github.com/Automattic/docspress",
+        "ref": "main",
+        "refType": "branch",
+        "path": "theme"
+      },
+      "options": {
+        "activate": true,
+        "targetFolderName": "docspress"
+      }
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php require_once '/wordpress/wp-load.php'; require get_theme_root( 'docspress' ) . '/docspress/playground/setup-versioning.php';"
+    }
+  ]
+}

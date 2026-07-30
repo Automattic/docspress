@@ -6,10 +6,17 @@ import { markdownToBlocks } from "./markdown.js";
 import { hashPageState } from "./page-state.js";
 import { prependSentinel } from "./sentinel.js";
 import { escapeAttribute, escapeHtml, normalizeBoolean, slugify, titleFromSlug, toPosixPath } from "./utils.js";
+import { readVersionsRegistry } from "./versions.js";
 
 const INDEX_FILENAMES = new Set(["index", "readme"]);
 
 export async function collectDesiredPages(options) {
+  const versionsRegistry = options.versionsRegistry
+    || (options.versionsFile ? await readVersionsRegistry(options) : null);
+  if (versionsRegistry) {
+    return collectVersionedPages({ ...options, versionsRegistry });
+  }
+
   const context = createContext(options);
   const byRoute = options.manifestFile
     ? await collectManifestPages(context, options)
@@ -26,6 +33,114 @@ export async function collectDesiredPages(options) {
     .sort((a, b) => a.depth - b.depth || a.key.localeCompare(b.key));
 }
 
+async function collectVersionedPages(options) {
+  if (options.manifestFile || options.redirectsFile) {
+    throw new Error("manifest-file and redirects-file cannot be combined with versions-file; configure them on individual version entries.");
+  }
+
+  const context = createContext(options);
+  const registry = options.versionsRegistry;
+  const files = await fg(["**/*.md", "**/*.markdown"], {
+    cwd: context.absoluteDocsDir,
+    onlyFiles: true,
+    dot: false,
+    unique: true
+  });
+  const claims = new Map();
+  const collectedByVersion = new Map();
+
+  for (const version of registry.versions.filter(({ source }) => source.type === "manifest")) {
+    const pages = await collectManifestPages(context, {
+      ...options,
+      manifestFile: version.source.path
+    });
+    claimManifestSources(pages, version, claims, context);
+    collectedByVersion.set(version.id, pages);
+  }
+
+  for (const version of registry.versions.filter(({ source }) => source.type === "directory")) {
+    const prefix = `${version.source.path}/`;
+    const mappings = files
+      .filter((file) => toPosixPath(file).startsWith(prefix))
+      .map((file) => ({ file, logicalFile: toPosixPath(file).slice(prefix.length) }));
+    claimFileMappings(mappings, version, claims);
+    collectedByVersion.set(version.id, await collectFilePages(context, mappings));
+  }
+
+  for (const version of registry.versions.filter(({ source }) => source.type === "suffix")) {
+    const mappings = files
+      .map((file) => suffixFileMapping(file, version.source.suffix))
+      .filter(Boolean);
+    claimFileMappings(mappings, version, claims);
+    collectedByVersion.set(version.id, await collectFilePages(context, mappings));
+  }
+
+  for (const version of registry.versions.filter(({ source }) => source.type === "root")) {
+    const mappings = files
+      .filter((file) => !claims.has(toPosixPath(file)))
+      .map((file) => ({ file, logicalFile: toPosixPath(file) }));
+    claimFileMappings(mappings, version, claims);
+    collectedByVersion.set(version.id, await collectFilePages(context, mappings));
+  }
+
+  const versionPrefixes = new Set(registry.versions.map(({ id }) => id));
+  const latestRoutes = collectedByVersion.get(registry.latest) || new Map();
+  for (const route of latestRoutes.keys()) {
+    const firstSegment = route.split("/")[0];
+    if (route && versionPrefixes.has(firstSegment)) {
+      throw new Error(`Latest-version logical route '${route}' conflicts with the reserved version prefix '${firstSegment}'.`);
+    }
+  }
+
+  const rootSlug = slugify(options.rootSlug || "docs", "docs");
+  const desired = [];
+  const neutralRoot = placeholderPage([], options.rootTitle || "Docs");
+  neutralRoot.sourcePath = "virtual:version-root";
+  neutralRoot.versionContainer = true;
+  neutralRoot.body = "<!-- wp:paragraph -->\n<p>This Page contains the versioned documentation trees managed by DocsPress.</p>\n<!-- /wp:paragraph -->";
+  desired.push(finalizePage(neutralRoot, {
+    ...options,
+    routePrefixSegments: [rootSlug]
+  }));
+
+  for (const version of registry.versions) {
+    const byRoute = collectedByVersion.get(version.id) || new Map();
+    ensurePlaceholderHierarchy(byRoute, options.rootTitle);
+    if (version.redirectsFile) {
+      await applyRedirects(byRoute, {
+        ...options,
+        redirectsFile: version.redirectsFile,
+        routePrefixSegments: [rootSlug, version.id]
+      }, context);
+      ensurePlaceholderHierarchy(byRoute, options.rootTitle);
+    }
+
+    for (const page of byRoute.values()) {
+      page.docsVersion = version;
+      page.logicalRoute = page.routeKey;
+      page.stableIdentity = `${version.id}:${page.routeKey}`;
+      page.sourceType = version.source.type;
+      page.manifestFile = version.source.type === "manifest" ? version.source.path : "";
+    }
+
+    const linkResolver = createLinkResolver(byRoute, context, {
+      ...options,
+      routePrefixSegments: [rootSlug, version.id]
+    });
+    convertMarkdownPages(byRoute, options, linkResolver);
+
+    for (const page of byRoute.values()) {
+      desired.push(finalizePage(page, {
+        ...options,
+        routePrefixSegments: [rootSlug, version.id],
+        legacyLatestPrefix: version.latest ? [rootSlug] : null
+      }));
+    }
+  }
+
+  return desired.sort((a, b) => a.depth - b.depth || a.key.localeCompare(b.key));
+}
+
 function createContext(options) {
   const cwd = options.cwd || process.cwd();
   const docsDir = options.docsDir || "docs";
@@ -40,20 +155,22 @@ function createContext(options) {
   };
 }
 
-async function collectFilePages(context) {
-  const files = await fg(["**/*.md", "**/*.markdown"], {
+async function collectFilePages(context, suppliedMappings = null) {
+  const mappings = suppliedMappings || (await fg(["**/*.md", "**/*.markdown"], {
     cwd: context.absoluteDocsDir,
     onlyFiles: true,
     dot: false,
     unique: true
-  });
+  })).map((file) => ({ file, logicalFile: file }));
 
   const byRoute = new Map();
 
-  for (const file of files.sort()) {
+  for (const mapping of mappings.sort((a, b) => a.file.localeCompare(b.file))) {
+    const file = toPosixPath(mapping.file);
+    const logicalFile = toPosixPath(mapping.logicalFile);
     const absolutePath = path.join(context.absoluteDocsDir, file);
     const markdown = await fs.readFile(absolutePath, "utf8");
-    const routeSegments = routeSegmentsForFile(file);
+    const routeSegments = routeSegmentsForFile(logicalFile);
     const routeKey = routeSegments.join("/");
 
     if (byRoute.has(routeKey)) {
@@ -72,6 +189,53 @@ async function collectFilePages(context) {
   }
 
   return byRoute;
+}
+
+function suffixFileMapping(file, suffix) {
+  const normalized = toPosixPath(file);
+  const parsed = path.posix.parse(normalized);
+  if (!parsed.name.endsWith(suffix)) {
+    return null;
+  }
+
+  const base = parsed.name.slice(0, -suffix.length);
+  if (!base) {
+    return null;
+  }
+
+  return {
+    file: normalized,
+    logicalFile: path.posix.join(parsed.dir, `${base}${parsed.ext}`)
+  };
+}
+
+function claimFileMappings(mappings, version, claims) {
+  for (const mapping of mappings) {
+    const source = toPosixPath(mapping.file);
+    const claimed = claims.get(source);
+    if (claimed && claimed !== version.id) {
+      throw new Error(`Markdown source ${source} is claimed by both ${claimed} and ${version.id}.`);
+    }
+    claims.set(source, version.id);
+  }
+}
+
+function claimManifestSources(pages, version, claims, context) {
+  for (const page of pages.values()) {
+    if (!page.sourcePath || page.sourcePath.includes(":")) {
+      continue;
+    }
+    const repositorySource = toPosixPath(page.sourcePath);
+    const docsPrefix = `${context.docsDirForSource}/`;
+    const source = repositorySource.startsWith(docsPrefix)
+      ? repositorySource.slice(docsPrefix.length)
+      : `@repo:${repositorySource}`;
+    const claimed = claims.get(source);
+    if (claimed && claimed !== version.id) {
+      throw new Error(`Markdown source ${source} is claimed by both ${claimed} and ${version.id}.`);
+    }
+    claims.set(source, version.id);
+  }
 }
 
 async function collectManifestPages(context, options) {
@@ -300,7 +464,7 @@ async function applyRedirects(byRoute, options, context) {
       throw new Error(`Docspress redirect '${redirect.from}' conflicts with an existing docs page.`);
     }
 
-    const targetUrl = redirectTargetUrl(redirect.to, rootSlug);
+    const targetUrl = redirectTargetUrl(redirect.to, rootSlug, options.routePrefixSegments);
     byRoute.set(routeKey, {
       kind: "redirect",
       routeKey,
@@ -342,23 +506,26 @@ function routeSegmentsForRedirect(value, rootSlug) {
   return normalized ? normalized.split("/") : [];
 }
 
-function redirectTargetUrl(value, rootSlug) {
+function redirectTargetUrl(value, rootSlug, routePrefixSegments = null) {
   const raw = String(value || "").trim();
   if (/^[a-z][a-z0-9+.-]*:/i.test(raw) || raw.startsWith("//") || raw.startsWith("#")) {
     return raw;
   }
 
   const normalized = normalizeRoutePath(raw, rootSlug);
-  return `/${[rootSlug, normalized].filter(Boolean).join("/")}/`;
+  const prefix = routePrefixSegments || [rootSlug];
+  return `/${[...prefix, normalized].filter(Boolean).join("/")}/`;
 }
 
 function createLinkResolver(byRoute, context, options) {
   const rewriteLinks = options.rewriteLinks === undefined ? true : normalizeBoolean(options.rewriteLinks);
   const aliases = new Map();
-  const rootSlug = slugify(options.rootSlug || "docs", "docs");
+  const routePrefixSegments = options.routePrefixSegments
+    || [slugify(options.rootSlug || "docs", "docs")];
+  const rootSlug = routePrefixSegments[0];
 
   for (const page of byRoute.values()) {
-    const fullKey = [rootSlug, ...page.routeSegments].join("/");
+    const fullKey = [...routePrefixSegments, ...page.routeSegments].join("/");
     addAlias(aliases, page.routeKey, fullKey);
     addAlias(aliases, `${page.routeKey}/`, fullKey);
     addAlias(aliases, fullKey, fullKey);
@@ -480,7 +647,8 @@ function normalizeRoutePath(value, rootSlug) {
 
 function finalizePage(page, options) {
   const rootSlug = slugify(options.rootSlug || "docs", "docs");
-  const fullSegments = [rootSlug, ...page.routeSegments];
+  const routePrefixSegments = options.routePrefixSegments || [rootSlug];
+  const fullSegments = [...routePrefixSegments, ...page.routeSegments];
   const key = fullSegments.join("/");
   const parentSegments = fullSegments.slice(0, -1);
   const parentKey = parentSegments.length > 0 ? parentSegments.join("/") : null;
@@ -501,7 +669,13 @@ function finalizePage(page, options) {
     slug,
     parentKey,
     status,
-    body
+    body,
+    docsVersion: page.docsVersion?.id || null,
+    logicalRoute: page.logicalRoute ?? null,
+    stableIdentity: page.stableIdentity || null,
+    sourceType: page.sourceType || null,
+    manifestFile: page.manifestFile || null,
+    versionContainer: Boolean(page.versionContainer)
   };
   const hash = hashPageState(stablePayload);
   const sentinel = {
@@ -509,6 +683,16 @@ function finalizePage(page, options) {
     source: page.sourcePath,
     hash
   };
+  if (page.docsVersion?.id) {
+    sentinel.docsVersion = page.docsVersion.id;
+    sentinel.logicalRoute = page.logicalRoute || "";
+    sentinel.identity = page.stableIdentity;
+    sentinel.sourceType = page.sourceType;
+    sentinel.latest = Boolean(page.docsVersion.latest);
+    if (page.manifestFile) {
+      sentinel.manifestFile = page.manifestFile;
+    }
+  }
   if (typeof page.sourceMarkdown === "string") {
     sentinel.sourceContentBase64 = Buffer.from(page.sourceMarkdown, "utf8").toString("base64");
   }
@@ -529,7 +713,11 @@ function finalizePage(page, options) {
     body,
     hash,
     content,
-    depth: fullSegments.length
+    depth: fullSegments.length,
+    versionContainer: Boolean(page.versionContainer),
+    legacyKeys: options.legacyLatestPrefix && page.routeSegments.length > 0
+      ? [[...options.legacyLatestPrefix, ...page.routeSegments].join("/")]
+      : []
   };
 }
 

@@ -89,4 +89,60 @@ describe("WordPressClient", () => {
 
     await expect(client.listPages()).rejects.toThrow(/Regenerate WP_ACCESS_TOKEN/);
   });
+
+  it("reads version taxonomy terms, Page metadata, and DocsPress settings", async () => {
+    const calls = [];
+    const client = new WordPressClient({
+      baseUrl: "https://example.test",
+      site: "ignored",
+      token: "token",
+      taxonomies: ["docspress_versions"],
+      fetchImpl: async (url, init) => {
+        calls.push([String(url), init]);
+        const pathname = new URL(String(url)).pathname;
+        if (pathname.endsWith("/docspress_versions")) {
+          return jsonResponse([{
+            id: 7,
+            name: "Version 1",
+            slug: "v1",
+            count: 2,
+            meta: { docspress_version_active: true }
+          }], { headers: { "x-wp-totalpages": "1" } });
+        }
+        if (pathname.endsWith("/settings")) {
+          return jsonResponse({
+            docspress_repository_latest_version: "v2",
+            docspress_version_override: "v1",
+            docspress_docs_root_slug: "docs"
+          });
+        }
+        return jsonResponse([{
+          id: 12,
+          slug: "hello",
+          parent: 0,
+          content: { raw: "Hello" },
+          title: { raw: "Hello" },
+          meta: { _docspress_version_id: "v1" },
+          docspress_versions: [7]
+        }], { headers: { "x-wp-totalpages": "1" } });
+      }
+    });
+
+    const [pages, terms, settings] = await Promise.all([
+      client.listPages(),
+      client.listTerms("docspress_versions"),
+      client.getSettings()
+    ]);
+
+    expect(pages[0]).toMatchObject({
+      meta: { _docspress_version_id: "v1" },
+      terms: { docspress_versions: [7] }
+    });
+    expect(terms[0]).toMatchObject({ id: 7, slug: "v1", count: 2 });
+    expect(settings.docspress_version_override).toBe("v1");
+    expect(calls.map(([url]) => url)).toEqual(expect.arrayContaining([
+      "https://example.test/wp-json/wp/v2/docspress_versions?per_page=100&page=1&context=edit&hide_empty=false",
+      "https://example.test/wp-json/wp/v2/settings?context=edit"
+    ]));
+  });
 });

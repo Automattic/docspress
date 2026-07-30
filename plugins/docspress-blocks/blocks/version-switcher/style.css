@@ -1,0 +1,97 @@
+.wp-block-docspress-version-switcher {
+	--docspress-version-surface: var(--dp-paper, var(--wp--preset--color--surface, var(--wp--preset--color--base, #fff)));
+	--docspress-version-text: var(--dp-ink, var(--wp--preset--color--foreground, var(--wp--preset--color--contrast, #1e1e1e)));
+	--docspress-version-border: var(--dp-line, var(--wp--preset--color--border, color-mix(in srgb, currentColor 20%, transparent)));
+	align-items: center;
+	color: var(--docspress-version-text);
+	display: flex;
+	flex-wrap: wrap;
+	font: inherit;
+	gap: var(--wp--preset--spacing--20, .5rem);
+}
+
+.docspress-version-switcher__label {
+	font-size: .8125em;
+	font-weight: 700;
+	letter-spacing: .02em;
+}
+
+.docspress-version-switcher__control {
+	align-items: center;
+	display: inline-flex;
+	position: relative;
+}
+
+.docspress-version-switcher__control select {
+	appearance: none;
+	background: var(--docspress-version-surface);
+	border: 1px solid var(--docspress-version-border);
+	border-radius: var(--wp--custom--radius--control, .5rem);
+	color: inherit;
+	font: inherit;
+	font-weight: 650;
+	min-block-size: 2.5rem;
+	padding: .5rem 2.25rem .5rem .75rem;
+}
+
+.docspress-version-switcher__chevron {
+	block-size: .5rem;
+	border-block-end: .125rem solid currentColor;
+	border-inline-end: .125rem solid currentColor;
+	box-sizing: border-box;
+	inline-size: .5rem;
+	inset-inline-end: .75rem;
+	pointer-events: none;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-70%) rotate(45deg);
+}
+
+.docspress-version-switcher__links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: .35rem;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.docspress-version-switcher__links a {
+	border: 1px solid var(--docspress-version-border);
+	border-radius: 999px;
+	color: inherit;
+	display: inline-flex;
+	gap: .35rem;
+	padding: .4rem .75rem;
+	text-decoration: none;
+}
+
+.docspress-version-switcher__links a[aria-current="page"] {
+	background: var(--dp-ink, var(--wp--preset--color--foreground, var(--wp--preset--color--contrast, #1e1e1e)));
+	color: var(--dp-paper, var(--wp--preset--color--background, var(--wp--preset--color--base, #fff)));
+}
+
+.docspress-version-switcher__badge {
+	font-size: .72em;
+	font-weight: 700;
+	letter-spacing: .05em;
+	text-transform: uppercase;
+}
+
+.docspress-version-switcher__unavailable {
+	font-size: .82em;
+	opacity: .72;
+}
+
+.docspress-version-switcher :is(a, select):focus-visible {
+	outline: 3px solid var(--dp-blue, var(--wp--preset--color--accent, #3858e9));
+	outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+	.wp-block-docspress-version-switcher,
+	.docspress-version-switcher__control,
+	.docspress-version-switcher__control select {
+		inline-size: 100%;
+	}
+}

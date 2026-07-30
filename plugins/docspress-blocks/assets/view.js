@@ -257,15 +257,46 @@
 		} );
 	}
 
+	function enhanceVersions( root ) {
+		root.querySelectorAll( '[data-docspress-version-notice]' ).forEach( function ( notice ) {
+			try {
+				if ( window.localStorage.getItem( `docspress-version-notice:${ notice.dataset.docspressVersionNotice }` ) ) {
+					notice.hidden = true;
+				}
+			} catch ( error ) {
+				// Private browsing can make storage unavailable; the notice still works.
+			}
+		} );
+	}
+
 	function initialize() {
 		enhanceCode( document );
 		enhanceApiPayloads( document );
 		enhanceTabs( document );
 		enhanceAnnotations( document );
+		enhanceVersions( document );
+		document.addEventListener( 'change', function ( event ) {
+			const select = event.target.closest( '[data-docspress-version-select]' );
+			if ( select && select.value ) {
+				window.location.assign( select.value );
+			}
+		} );
 		document.addEventListener( 'click', function ( event ) {
 			const button = event.target.closest( '[data-docspress-copy]' );
 			if ( button ) {
 				copyCode( button );
+			}
+			const dismiss = event.target.closest( '[data-docspress-version-dismiss]' );
+			if ( dismiss ) {
+				const notice = dismiss.closest( '[data-docspress-version-notice]' );
+				if ( notice ) {
+					notice.hidden = true;
+					try {
+						window.localStorage.setItem( `docspress-version-notice:${ notice.dataset.docspressVersionNotice }`, 'dismissed' );
+					} catch ( error ) {
+						// Dismiss for this view even when persistence is unavailable.
+					}
+				}
 			}
 		} );
 	}
@@ -274,6 +305,7 @@
 		enhanceApiPayloads,
 		enhanceCode,
 		enhanceAnnotations,
+		enhanceVersions,
 		highlightJson
 	};
 

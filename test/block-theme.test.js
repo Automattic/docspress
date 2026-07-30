@@ -99,6 +99,8 @@ const expectCompleteThemePreset = (preset) => {
     "core/button",
     "core/code",
     "core/quote",
+    "docspress/version-notice",
+    "docspress/version-switcher",
   ]);
   expect(preset.styles.blocks["core/code"].typography).toBeTruthy();
 };
@@ -920,10 +922,10 @@ describe("DocsPress block theme constraints", () => {
     expect(setup).toContain("Download Blocks");
     expect(setup).toContain("Preview Kitchen Sink");
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.20/docspress-theme-0.9.20.zip"
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.10.0/docspress-theme-0.10.0.zip"
     );
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.9.18/docspress-blocks-0.9.13.zip"
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.10.0/docspress-blocks-0.10.0.zip"
     );
     expect(styles).toContain(".home-proof-strip {");
     expect(styles).toContain(".home-sync-section {");

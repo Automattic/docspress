@@ -25489,7 +25489,7 @@ var Schema = __nccwpck_require__(995);
 module.exports = new Schema({
   explicit: [
     __nccwpck_require__(4504),
-    __nccwpck_require__(9467),
+    __nccwpck_require__(1848),
     __nccwpck_require__(7021)
   ]
 });
@@ -26475,7 +26475,7 @@ module.exports = new Type('tag:yaml.org,2002:pairs', {
 
 /***/ }),
 
-/***/ 9467:
+/***/ 1848:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 
@@ -91602,7 +91602,8 @@ async function createReverseChanges(options) {
     pages,
     desiredPages,
     manifestFile = "",
-    createH1 = false
+    createH1 = false,
+    effectiveLatest = ""
   } = options;
   const desiredByKey = new Map(desiredPages.map((page) => [page.key, page]));
   const pageByKey = new Map(pages.map(({ page }) => [page.sentinel.key, page]));
@@ -91628,19 +91629,23 @@ async function createReverseChanges(options) {
     });
 
     if (content !== existing) {
-      changes.set(sourcePath, content);
+      changes.set(sourcePath, reverseChange(sourcePath, content, desired, effectiveLatest));
     }
 
     if (desired.titleOverride && desired.manifestId && desired.title !== page.title) {
-      manifestTitles.set(desired.manifestId, page.title);
+      const desiredManifest = desired.manifestFile || manifestFile;
+      if (!desiredManifest) {
+        throw new Error("A manifest-backed WordPress title changed, but its version manifest is not configured.");
+      }
+      if (!manifestTitles.has(desiredManifest)) {
+        manifestTitles.set(desiredManifest, new Map());
+      }
+      manifestTitles.get(desiredManifest).set(desired.manifestId, page.title);
     }
   }
 
-  if (manifestTitles.size > 0) {
-    if (!manifestFile) {
-      throw new Error("A manifest-backed WordPress title changed, but manifest-file is not configured.");
-    }
-    const manifestPath = validateRepositoryPath(manifestFile, cwd, "manifest-file");
+  for (const [configuredManifest, titles] of manifestTitles) {
+    const manifestPath = validateRepositoryPath(configuredManifest, cwd, "manifest-file");
     const absoluteManifest = external_node_path_namespaceObject.resolve(cwd, manifestPath);
     const existingManifest = await promises_namespaceObject.readFile(absoluteManifest, "utf8");
     const manifest = JSON.parse(existingManifest);
@@ -91648,7 +91653,7 @@ async function createReverseChanges(options) {
     if (!Array.isArray(entries)) {
       throw new Error(`Docspress manifest must contain a pages array: ${manifestPath}`);
     }
-    for (const [id, title] of manifestTitles.entries()) {
+    for (const [id, title] of titles.entries()) {
       const entry = entries.find((candidate) => String(candidate?.id || candidate?.slug || "") === id);
       if (!entry) {
         throw new Error(`Docspress could not find manifest entry ${id} while applying a WordPress title change.`);
@@ -91657,11 +91662,27 @@ async function createReverseChanges(options) {
     }
     const serialized = `${JSON.stringify(manifest, null, 2)}\n`;
     if (serialized !== existingManifest) {
-      changes.set(manifestPath, serialized);
+      const desired = desiredPages.find((page) => page.manifestFile === configuredManifest);
+      changes.set(manifestPath, reverseChange(manifestPath, serialized, desired, effectiveLatest));
     }
   }
 
-  return Array.from(changes, ([filePath, content]) => ({ path: filePath, content }));
+  return Array.from(changes.values());
+}
+
+function reverseChange(filePath, content, desired = {}, effectiveLatest = "") {
+  const versionId = desired?.docsVersion?.id || "";
+  const latestId = effectiveLatest || (desired?.docsVersion?.latest ? versionId : "");
+  return {
+    path: filePath,
+    content,
+    versionId,
+    versionLabel: desired?.docsVersion?.label || desired?.docsVersion?.id || "",
+    latest: Boolean(versionId && latestId === versionId),
+    effectiveLatest: latestId,
+    logicalRoute: desired?.logicalRoute || "",
+    sourceType: desired?.sourceType || ""
+  };
 }
 
 function createTurndownService(resolveLink) {
@@ -92058,6 +92079,11 @@ async function syncPages(options) {
     dryRun = false,
     deleteMode = "trash",
     rootSlug = "docs",
+    versionsRegistry = null,
+    versionTaxonomy = "docspress_versions",
+    githubRepository = "",
+    githubRef = "main",
+    githubServerUrl = "https://github.com",
     allowDeletions = true,
     skipUpdateKeys = new Set(),
     logger = console
@@ -92068,6 +92094,18 @@ async function syncPages(options) {
   const desiredKeys = new Set(desiredPages.map((page) => page.key));
   const result = createResult(dryRun);
   const idByKey = new Map();
+  const matchedExistingIds = new Set();
+  const versionState = versionsRegistry
+    ? await reconcileVersionState({
+      client,
+      versionsRegistry,
+      versionTaxonomy,
+      rootSlug,
+      dryRun,
+      result,
+      logger
+    })
+    : null;
   let syntheticId = -1;
 
   for (const [key, page] of indexed.managedByKey.entries()) {
@@ -92076,44 +92114,67 @@ async function syncPages(options) {
 
   for (const desired of desiredPages) {
     const existingAtPath = indexed.byPath.get(desired.key);
-    const managed = indexed.managedByKey.get(desired.key);
+    let managed = indexed.managedByKey.get(desired.key);
+    if (!managed) {
+      managed = (desired.legacyKeys || [])
+        .map((key) => indexed.managedByKey.get(key))
+        .find((candidate) => candidate && !matchedExistingIds.has(candidate.id));
+    }
 
     if (desired.parentKey && !idByKey.has(desired.parentKey)) {
-      addConflict(result, desired.key, `Parent page is unavailable: ${desired.parentKey}`);
+      addConflict(result, desired.key, `Parent page is unavailable: ${desired.parentKey}`, desired);
       continue;
     }
 
     if (existingAtPath && !managed) {
-      addConflict(result, desired.key, "An unmanaged WordPress page already uses this path.");
+      addConflict(result, desired.key, "An unmanaged WordPress page already uses this path.", desired);
       continue;
     }
 
     const parentId = desired.parentKey ? idByKey.get(desired.parentKey) : 0;
-    const payload = pagePayload(desired, parentId, managed);
+    const payload = pagePayload(desired, parentId, managed, {
+      versionTaxonomy,
+      versionTermId: desired.docsVersion?.id
+        ? versionState?.termIds.get(desired.docsVersion.id)
+        : null,
+      githubRepository,
+      githubRef,
+      githubServerUrl
+    });
 
     if (managed) {
+      matchedExistingIds.add(managed.id);
       if (skipUpdateKeys.has(desired.key)) {
         result.unchanged += 1;
         result.operations.push({
           action: "unchanged",
           key: desired.key,
           id: managed.id,
-          reason: "WordPress-only edit is awaiting its pull request."
+          reason: "WordPress-only edit is awaiting its pull request.",
+          ...pageOperationContext(desired)
         });
         continue;
       }
       if (
         managed.sentinel?.hash === desired.hash
         && managed.parent === parentId
-        && managedMetadataMatches(desired, managed)
+        && managedMetadataMatches(desired, managed, {
+          versionTaxonomy,
+          versionTermId: desired.docsVersion?.id
+            ? versionState?.termIds.get(desired.docsVersion.id)
+            : null,
+          githubRepository,
+          githubRef,
+          githubServerUrl
+        })
       ) {
         result.unchanged += 1;
-        result.operations.push({ action: "unchanged", key: desired.key, id: managed.id });
+        result.operations.push({ action: "unchanged", key: desired.key, id: managed.id, ...pageOperationContext(desired) });
         continue;
       }
 
       result.updated += 1;
-      result.operations.push({ action: "update", key: desired.key, id: managed.id });
+      result.operations.push({ action: "update", key: desired.key, id: managed.id, ...pageOperationContext(desired) });
       logger.info?.(`${dryRun ? "Would update" : "Updating"} ${desired.key}`);
       if (!dryRun) {
         const updated = await client.updatePage(managed.id, payload);
@@ -92125,7 +92186,7 @@ async function syncPages(options) {
     }
 
     result.created += 1;
-    result.operations.push({ action: "create", key: desired.key });
+    result.operations.push({ action: "create", key: desired.key, ...pageOperationContext(desired) });
     logger.info?.(`${dryRun ? "Would create" : "Creating"} ${desired.key}`);
     if (!dryRun) {
       const created = await client.createPage(payload);
@@ -92137,12 +92198,22 @@ async function syncPages(options) {
   }
 
   const deletions = allowDeletions ? Array.from(indexed.managedByKey.values())
-    .filter((page) => isUnderRoot(page.sentinel?.key, rootSlug) && !desiredKeys.has(page.sentinel.key))
+    .filter((page) => (
+      isUnderRoot(page.sentinel?.key, rootSlug)
+      && !desiredKeys.has(page.sentinel.key)
+      && !matchedExistingIds.has(page.id)
+    ))
     .sort((a, b) => b.path.split("/").length - a.path.split("/").length) : [];
 
   for (const page of deletions) {
     result.deleted += 1;
-    result.operations.push({ action: "delete", key: page.sentinel.key, id: page.id });
+    result.operations.push({
+      action: "delete",
+      key: page.sentinel.key,
+      id: page.id,
+      version: page.sentinel?.docsVersion || page.meta?._docspress_version_id || "",
+      sourcePath: page.sentinel?.source || page.meta?._docspress_source_path || ""
+    });
     logger.info?.(`${dryRun ? "Would delete" : "Deleting"} ${page.sentinel.key}`);
     if (!dryRun) {
       await client.deletePage(page.id, { force: deleteMode === "force" });
@@ -92152,7 +92223,7 @@ async function syncPages(options) {
   return result;
 }
 
-function pagePayload(page, parentId, managed) {
+function pagePayload(page, parentId, managed, options = {}) {
   const payload = {
     title: page.title,
     content: page.content,
@@ -92167,10 +92238,40 @@ function pagePayload(page, parentId, managed) {
     payload.menu_order = 0;
   }
 
+  if (page.docsVersion?.id) {
+    payload[options.versionTaxonomy] = options.versionTermId ? [options.versionTermId] : [];
+    payload.meta = {
+      _docspress_version_id: page.docsVersion.id,
+      _docspress_logical_route: page.logicalRoute || "",
+      _docspress_page_identity: page.stableIdentity,
+      _docspress_source_type: page.sourceType,
+      _docspress_source_path: page.sourcePath,
+      ...githubSourceMeta(page, options),
+      _docspress_docs_root: page.key.split("/")[0],
+      _docspress_version_container: false
+    };
+  } else if (page.versionContainer) {
+    payload.meta = {
+      _docspress_version_container: true
+    };
+  } else if (managed?.meta?._docspress_version_id) {
+    payload[options.versionTaxonomy] = [];
+    payload.meta = {
+      _docspress_version_id: "",
+      _docspress_logical_route: "",
+      _docspress_page_identity: "",
+      _docspress_source_type: "",
+      _docspress_source_path: page.sourcePath || "",
+      ...githubSourceMeta(page, options),
+      _docspress_docs_root: page.key.split("/")[0],
+      _docspress_version_container: false
+    };
+  }
+
   return payload;
 }
 
-function managedMetadataMatches(desired, managed) {
+function managedMetadataMatches(desired, managed, options = {}) {
   const desiredSentinel = readSentinel(desired.content) || {};
   const desiredHasPosition = Object.hasOwn(desired, "sidebarPosition");
   const managedHasPosition = Object.hasOwn(managed.sentinel || {}, "sidebarPosition");
@@ -92190,7 +92291,42 @@ function managedMetadataMatches(desired, managed) {
     ? managedHasSourceContent && managed.sentinel.sourceContentBase64 === desiredSentinel.sourceContentBase64
     : !managedHasSourceContent;
 
-  return positionMatches && collapsedMatches && sourceContentMatches;
+  const desiredVersion = desired.docsVersion?.id || "";
+  const versionMatches = String(managed.meta?._docspress_version_id || "") === desiredVersion;
+  const logicalRouteMatches = String(managed.meta?._docspress_logical_route || "") === String(desired.logicalRoute || "");
+  const identityMatches = String(managed.meta?._docspress_page_identity || "") === String(desired.stableIdentity || "");
+  const sourceTypeMatches = String(managed.meta?._docspress_source_type || "") === String(desired.sourceType || "");
+  const sourcePathMatches = !desiredVersion
+    || String(managed.meta?._docspress_source_path || "") === String(desired.sourcePath || "");
+  const githubMeta = githubSourceMeta(desired, options);
+  const githubMatches = !desiredVersion || Object.entries(githubMeta).every(
+    ([key, value]) => String(managed.meta?.[key] || "") === String(value)
+  );
+  const taxonomyMatches = !desiredVersion
+    ? (managed.terms?.[options.versionTaxonomy] || []).length === 0
+    : termsMatch(managed.terms?.[options.versionTaxonomy], options.versionTermId ? [options.versionTermId] : []);
+  const containerMatches = normalizeBooleanMeta(managed.meta?._docspress_version_container) === Boolean(desired.versionContainer);
+
+  return positionMatches
+    && collapsedMatches
+    && sourceContentMatches
+    && versionMatches
+    && logicalRouteMatches
+    && identityMatches
+    && sourceTypeMatches
+    && sourcePathMatches
+    && githubMatches
+    && containerMatches
+    && taxonomyMatches;
+}
+
+function githubSourceMeta(page, options = {}) {
+  return {
+    _docspress_github_path: page.sourcePath || "",
+    _docspress_github_repository: options.githubRepository || "",
+    _docspress_github_ref: options.githubRef || "main",
+    _docspress_github_server_url: options.githubServerUrl || "https://github.com"
+  };
 }
 
 function createResult(dryRun) {
@@ -92202,14 +92338,154 @@ function createResult(dryRun) {
     unchanged: 0,
     conflicts: 0,
     conflictDetails: [],
-    operations: []
+    operations: [],
+    versionOperations: [],
+    effectiveLatest: ""
   };
 }
 
-function addConflict(result, key, reason) {
+function addConflict(result, key, reason, page = {}) {
+  const context = pageOperationContext(page);
   result.conflicts += 1;
-  result.conflictDetails.push({ key, reason });
-  result.operations.push({ action: "conflict", key, reason });
+  result.conflictDetails.push({ key, reason, ...context });
+  result.operations.push({ action: "conflict", key, reason, ...context });
+}
+
+function pageOperationContext(page) {
+  return {
+    version: page.docsVersion?.id || "",
+    sourcePath: page.sourcePath || "",
+    logicalRoute: page.logicalRoute || ""
+  };
+}
+
+async function reconcileVersionState({
+  client,
+  versionsRegistry,
+  versionTaxonomy,
+  rootSlug,
+  dryRun,
+  result,
+  logger
+}) {
+  let existingTerms;
+  let settings;
+  try {
+    [existingTerms, settings] = await Promise.all([
+      client.listTerms(versionTaxonomy),
+      client.getSettings()
+    ]);
+  } catch (error) {
+    throw new Error(`DocsPress versioning requires an active DocsPress Blocks plugin exposing ${versionTaxonomy} and version settings through REST. ${error.message}`);
+  }
+
+  if (!Object.hasOwn(settings, "docspress_repository_latest_version")
+    || !Object.hasOwn(settings, "docspress_version_override")
+    || !Object.hasOwn(settings, "docspress_docs_root_slug")) {
+    throw new Error("DocsPress Blocks is active but its version settings are not exposed through the WordPress REST settings endpoint.");
+  }
+
+  const configuredIds = new Set(versionsRegistry.versions.map(({ id }) => id));
+  const override = configuredIds.has(String(settings.docspress_version_override || ""))
+    ? String(settings.docspress_version_override)
+    : "";
+  const effectiveLatest = override || versionsRegistry.latest;
+  const existingBySlug = new Map(existingTerms.map((term) => [term.slug, term]));
+  const termIds = new Map();
+  let syntheticTermId = -1;
+
+  for (const version of versionsRegistry.versions) {
+    const expectedMeta = {
+      docspress_version_order: version.order,
+      docspress_version_active: true,
+      docspress_version_repository_latest: version.id === versionsRegistry.latest,
+      docspress_version_effective_latest: version.id === effectiveLatest
+    };
+    const existing = existingBySlug.get(version.id);
+    const needsUpdate = !existing
+      || existing.name !== version.label
+      || !versionMetaMatches(existing.meta, expectedMeta);
+
+    if (needsUpdate) {
+      result.versionOperations.push({
+        action: existing ? "update-term" : "create-term",
+        version: version.id
+      });
+      logger.info?.(`${dryRun ? "Would synchronize" : "Synchronizing"} documentation version ${version.id}`);
+    }
+
+    if (dryRun) {
+      termIds.set(version.id, existing?.id || syntheticTermId--);
+    } else if (!existing) {
+      const created = await client.createTerm(versionTaxonomy, {
+        name: version.label,
+        slug: version.id,
+        meta: expectedMeta
+      });
+      termIds.set(version.id, created.id);
+    } else if (needsUpdate) {
+      const updated = await client.updateTerm(versionTaxonomy, existing.id, {
+        name: version.label,
+        meta: expectedMeta
+      });
+      termIds.set(version.id, updated.id);
+    } else {
+      termIds.set(version.id, existing.id);
+    }
+  }
+
+  for (const term of existingTerms) {
+    if (configuredIds.has(term.slug) || !term.meta?.docspress_version_active) {
+      continue;
+    }
+    result.versionOperations.push({ action: "deactivate-term", version: term.slug });
+    if (!dryRun) {
+      await client.updateTerm(versionTaxonomy, term.id, {
+        meta: {
+          ...term.meta,
+          docspress_version_active: false,
+          docspress_version_repository_latest: false,
+          docspress_version_effective_latest: false
+        }
+      });
+    }
+  }
+
+  const settingPayload = {
+    docspress_repository_latest_version: versionsRegistry.latest,
+    docspress_docs_root_slug: rootSlug
+  };
+  if (
+    settings.docspress_repository_latest_version !== versionsRegistry.latest
+    || settings.docspress_docs_root_slug !== rootSlug
+  ) {
+    result.versionOperations.push({ action: "update-settings", latest: versionsRegistry.latest, rootSlug });
+    if (!dryRun) {
+      await client.updateSettings(settingPayload);
+    }
+  }
+
+  result.effectiveLatest = effectiveLatest;
+  return { termIds, effectiveLatest };
+}
+
+function versionMetaMatches(actual, expected) {
+  return Object.entries(expected).every(([key, value]) => {
+    if (typeof value === "boolean") {
+      return normalizeBooleanMeta(actual?.[key]) === value;
+    }
+    return Number(actual?.[key]) === Number(value);
+  });
+}
+
+function termsMatch(actual, expected) {
+  const left = (actual || []).map(Number).sort((a, b) => a - b);
+  const right = (expected || []).map(Number).sort((a, b) => a - b);
+  return left.length === right.length && left.every((value, index) => value === right[index]);
+}
+
+function normalizeBooleanMeta(value) {
+  return value === true || value === 1 || value === "1" || value === "true";
 }
 
 function isUnderRoot(key, rootSlug) {
@@ -92372,9 +92648,13 @@ async function syncBidirectional(options) {
     dryRun = false,
     deleteMode = "trash",
     rootSlug = "docs",
+    versionsRegistry = null,
     cwd = process.cwd(),
     manifestFile = "",
     createH1 = false,
+    githubRepository = "",
+    githubRef = "main",
+    githubServerUrl = "https://github.com",
     logger = console
   } = options;
   const existingPages = await client.listPages();
@@ -92390,6 +92670,10 @@ async function syncBidirectional(options) {
       dryRun: true,
       deleteMode,
       rootSlug,
+      versionsRegistry,
+      githubRepository,
+      githubRef,
+      githubServerUrl,
       skipUpdateKeys: wordpressChangeKeys,
       logger: { info() {} }
     });
@@ -92410,14 +92694,28 @@ async function syncBidirectional(options) {
     };
   }
 
+  let effectiveLatest = versionsRegistry?.latest || "";
+  if (versionsRegistry) {
+    const settings = await client.getSettings();
+    const configured = new Set(versionsRegistry.versions.map(({ id }) => id));
+    const override = String(settings.docspress_version_override || "");
+    if (configured.has(override)) {
+      effectiveLatest = override;
+    }
+  }
   const changes = await createReverseChanges({
     cwd,
     pages: plan.wordpressChanges,
     desiredPages,
     manifestFile,
-    createH1
+    createH1,
+    effectiveLatest
   });
-  const proposedOperations = changes.map((change) => ({ action: "propose", path: change.path }));
+  const proposedOperations = changes.map((change) => ({
+    action: "propose",
+    path: change.path,
+    version: change.versionId || ""
+  }));
 
   if (dryRun) {
     const preview = mode === "reconcile" ? publishPreview : emptyResult(true);
@@ -92428,6 +92726,7 @@ async function syncBidirectional(options) {
       classifications: plan.classifications,
       proposed: changes.length,
       proposedFiles: changes.map((change) => change.path),
+      proposedFileDetails: changes.map(proposedFileDetail),
       pullRequest: null,
       operations: [...preview.operations, ...proposedOperations]
     };
@@ -92443,6 +92742,10 @@ async function syncBidirectional(options) {
       dryRun: false,
       deleteMode,
       rootSlug,
+      versionsRegistry,
+      githubRepository,
+      githubRef,
+      githubServerUrl,
       skipUpdateKeys: wordpressChangeKeys,
       logger
     });
@@ -92454,6 +92757,10 @@ async function syncBidirectional(options) {
       dryRun: false,
       deleteMode,
       rootSlug,
+      versionsRegistry,
+      githubRepository,
+      githubRef,
+      githubServerUrl,
       allowDeletions: false,
       logger
     });
@@ -92467,8 +92774,18 @@ async function syncBidirectional(options) {
     classifications: plan.classifications,
     proposed: changes.length,
     proposedFiles: changes.map((change) => change.path),
+    proposedFileDetails: changes.map(proposedFileDetail),
     pullRequest,
     operations: [...wordpressResult.operations, ...proposedOperations]
+  };
+}
+
+function proposedFileDetail(change) {
+  return {
+    path: change.path,
+    version: change.versionId || "",
+    logicalRoute: change.logicalRoute || "",
+    effectiveLatest: change.effectiveLatest || ""
   };
 }
 
@@ -92495,7 +92812,166 @@ function mergeConflicts(...groups) {
 
 // EXTERNAL MODULE: ./node_modules/fast-glob/out/index.js
 var out = __nccwpck_require__(5648);
+;// CONCATENATED MODULE: ./src/versions.js
+
+
+
+
+const SOURCE_TYPES = new Set(["root", "directory", "suffix", "manifest"]);
+
+async function readVersionsRegistry(options = {}) {
+  const cwd = options.cwd || process.cwd();
+  const versionsFile = utils_toPosixPath(options.versionsFile || "");
+  if (!versionsFile) {
+    return null;
+  }
+
+  const absolutePath = external_node_path_namespaceObject.resolve(cwd, versionsFile);
+  const relativePath = external_node_path_namespaceObject.relative(cwd, absolutePath);
+  if (!relativePath || relativePath.startsWith("..") || external_node_path_namespaceObject.isAbsolute(relativePath)) {
+    throw new Error(`The Docspress versions file must stay inside the checked-out repository: ${versionsFile}`);
+  }
+
+  const data = JSON.parse(await promises_namespaceObject.readFile(absolutePath, "utf8"));
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    throw new Error(`Docspress versions file must contain an object: ${versionsFile}`);
+  }
+  if (!Array.isArray(data.versions) || data.versions.length === 0) {
+    throw new Error(`Docspress versions file must contain a non-empty versions array: ${versionsFile}`);
+  }
+
+  const versions = data.versions.map((entry, index) => normalizeVersionEntry(entry, index));
+  const byId = new Map();
+  let rootVersion = null;
+
+  for (const version of versions) {
+    if (byId.has(version.id)) {
+      throw new Error(`Docspress versions file contains duplicate version id: ${version.id}`);
+    }
+    byId.set(version.id, version);
+
+    if (version.source.type === "root") {
+      if (rootVersion) {
+        throw new Error(`Docspress versions file may define only one root source: ${rootVersion.id} and ${version.id}`);
+      }
+      rootVersion = version;
+    }
+  }
+
+  const latest = normalizeVersionId(data.latest);
+  if (!latest || !byId.has(latest)) {
+    throw new Error(`Docspress versions file latest must reference a configured version: ${data.latest || "(missing)"}`);
+  }
+  if (rootVersion && rootVersion.id !== latest) {
+    throw new Error(`The root documentation source must be the configured latest version (${latest}), not ${rootVersion.id}.`);
+  }
+
+  for (const [order, version] of versions.entries()) {
+    version.order = order;
+    version.latest = version.id === latest;
+  }
+
+  return {
+    file: versionsFile,
+    latest,
+    versions
+  };
+}
+
+function normalizeVersionEntry(entry, index) {
+  if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
+    throw new Error(`Docspress version entry ${index + 1} must be an object.`);
+  }
+
+  const rawId = String(entry.id || "").trim();
+  const id = normalizeVersionId(rawId);
+  if (!id || id !== rawId.toLowerCase()) {
+    throw new Error(`Docspress version entry ${index + 1} has an invalid id: ${rawId || "(missing)"}`);
+  }
+
+  const label = String(entry.label || rawId).trim();
+  if (!label) {
+    throw new Error(`Docspress version ${id} must have a non-empty label.`);
+  }
+
+  const source = normalizeSource(entry.source, id);
+  const redirectsFile = normalizeRepositoryFile(entry.redirects || entry.redirectsFile || "", `redirects for ${id}`);
+
+  return {
+    id,
+    label,
+    source,
+    redirectsFile,
+    order: index,
+    latest: false
+  };
+}
+
+function normalizeSource(source, versionId) {
+  if (!source || typeof source !== "object" || Array.isArray(source)) {
+    throw new Error(`Docspress version ${versionId} must define a source object.`);
+  }
+
+  const type = String(source.type || "").trim().toLowerCase();
+  if (!SOURCE_TYPES.has(type)) {
+    throw new Error(`Docspress version ${versionId} has an unsupported source type: ${type || "(missing)"}`);
+  }
+
+  if (type === "root") {
+    return { type };
+  }
+
+  if (type === "directory") {
+    const directory = normalizeRelativePath(source.path, `directory source for ${versionId}`);
+    if (!directory || directory === ".") {
+      throw new Error(`Docspress version ${versionId} directory source must name a directory below docs-dir.`);
+    }
+    return { type, path: directory };
+  }
+
+  if (type === "suffix") {
+    const suffix = String(source.suffix || "").trim();
+    if (!/^\.[a-z0-9][a-z0-9._-]*$/i.test(suffix)) {
+      throw new Error(`Docspress version ${versionId} suffix must look like .v1.`);
+    }
+    return { type, suffix };
+  }
+
+  const manifestPath = normalizeRepositoryFile(source.path, `manifest source for ${versionId}`);
+  if (!manifestPath) {
+    throw new Error(`Docspress version ${versionId} manifest source must provide a repository-relative path.`);
+  }
+  return { type, path: manifestPath };
+}
+
+function normalizeVersionId(value) {
+  const raw = String(value || "").trim().toLowerCase();
+  return slugify(raw, "");
+}
+
+function normalizeRepositoryFile(value, label) {
+  if (!value) {
+    return "";
+  }
+  return normalizeRelativePath(value, label);
+}
+
+function normalizeRelativePath(value, label) {
+  const raw = utils_toPosixPath(String(value || "").trim());
+  if (
+    !raw
+    || raw.startsWith("/")
+    || raw.includes(":")
+    || raw.includes("\0")
+    || raw.split("/").some((segment) => !segment || segment === "." || segment === "..")
+  ) {
+    throw new Error(`Invalid repository-relative ${label}: ${raw || "(empty)"}`);
+  }
+  return raw.replace(/\/+$/, "");
+}
+
 ;// CONCATENATED MODULE: ./src/docs.js
+
 
 
 
@@ -92508,6 +92984,12 @@ var out = __nccwpck_require__(5648);
 const INDEX_FILENAMES = new Set(["index", "readme"]);
 
 async function collectDesiredPages(options) {
+  const versionsRegistry = options.versionsRegistry
+    || (options.versionsFile ? await readVersionsRegistry(options) : null);
+  if (versionsRegistry) {
+    return collectVersionedPages({ ...options, versionsRegistry });
+  }
+
   const context = createContext(options);
   const byRoute = options.manifestFile
     ? await collectManifestPages(context, options)
@@ -92524,6 +93006,114 @@ async function collectDesiredPages(options) {
     .sort((a, b) => a.depth - b.depth || a.key.localeCompare(b.key));
 }
 
+async function collectVersionedPages(options) {
+  if (options.manifestFile || options.redirectsFile) {
+    throw new Error("manifest-file and redirects-file cannot be combined with versions-file; configure them on individual version entries.");
+  }
+
+  const context = createContext(options);
+  const registry = options.versionsRegistry;
+  const files = await out(["**/*.md", "**/*.markdown"], {
+    cwd: context.absoluteDocsDir,
+    onlyFiles: true,
+    dot: false,
+    unique: true
+  });
+  const claims = new Map();
+  const collectedByVersion = new Map();
+
+  for (const version of registry.versions.filter(({ source }) => source.type === "manifest")) {
+    const pages = await collectManifestPages(context, {
+      ...options,
+      manifestFile: version.source.path
+    });
+    claimManifestSources(pages, version, claims, context);
+    collectedByVersion.set(version.id, pages);
+  }
+
+  for (const version of registry.versions.filter(({ source }) => source.type === "directory")) {
+    const prefix = `${version.source.path}/`;
+    const mappings = files
+      .filter((file) => utils_toPosixPath(file).startsWith(prefix))
+      .map((file) => ({ file, logicalFile: utils_toPosixPath(file).slice(prefix.length) }));
+    claimFileMappings(mappings, version, claims);
+    collectedByVersion.set(version.id, await collectFilePages(context, mappings));
+  }
+
+  for (const version of registry.versions.filter(({ source }) => source.type === "suffix")) {
+    const mappings = files
+      .map((file) => suffixFileMapping(file, version.source.suffix))
+      .filter(Boolean);
+    claimFileMappings(mappings, version, claims);
+    collectedByVersion.set(version.id, await collectFilePages(context, mappings));
+  }
+
+  for (const version of registry.versions.filter(({ source }) => source.type === "root")) {
+    const mappings = files
+      .filter((file) => !claims.has(utils_toPosixPath(file)))
+      .map((file) => ({ file, logicalFile: utils_toPosixPath(file) }));
+    claimFileMappings(mappings, version, claims);
+    collectedByVersion.set(version.id, await collectFilePages(context, mappings));
+  }
+
+  const versionPrefixes = new Set(registry.versions.map(({ id }) => id));
+  const latestRoutes = collectedByVersion.get(registry.latest) || new Map();
+  for (const route of latestRoutes.keys()) {
+    const firstSegment = route.split("/")[0];
+    if (route && versionPrefixes.has(firstSegment)) {
+      throw new Error(`Latest-version logical route '${route}' conflicts with the reserved version prefix '${firstSegment}'.`);
+    }
+  }
+
+  const rootSlug = slugify(options.rootSlug || "docs", "docs");
+  const desired = [];
+  const neutralRoot = placeholderPage([], options.rootTitle || "Docs");
+  neutralRoot.sourcePath = "virtual:version-root";
+  neutralRoot.versionContainer = true;
+  neutralRoot.body = "<!-- wp:paragraph -->\n<p>This Page contains the versioned documentation trees managed by DocsPress.</p>\n<!-- /wp:paragraph -->";
+  desired.push(finalizePage(neutralRoot, {
+    ...options,
+    routePrefixSegments: [rootSlug]
+  }));
+
+  for (const version of registry.versions) {
+    const byRoute = collectedByVersion.get(version.id) || new Map();
+    ensurePlaceholderHierarchy(byRoute, options.rootTitle);
+    if (version.redirectsFile) {
+      await applyRedirects(byRoute, {
+        ...options,
+        redirectsFile: version.redirectsFile,
+        routePrefixSegments: [rootSlug, version.id]
+      }, context);
+      ensurePlaceholderHierarchy(byRoute, options.rootTitle);
+    }
+
+    for (const page of byRoute.values()) {
+      page.docsVersion = version;
+      page.logicalRoute = page.routeKey;
+      page.stableIdentity = `${version.id}:${page.routeKey}`;
+      page.sourceType = version.source.type;
+      page.manifestFile = version.source.type === "manifest" ? version.source.path : "";
+    }
+
+    const linkResolver = createLinkResolver(byRoute, context, {
+      ...options,
+      routePrefixSegments: [rootSlug, version.id]
+    });
+    convertMarkdownPages(byRoute, options, linkResolver);
+
+    for (const page of byRoute.values()) {
+      desired.push(finalizePage(page, {
+        ...options,
+        routePrefixSegments: [rootSlug, version.id],
+        legacyLatestPrefix: version.latest ? [rootSlug] : null
+      }));
+    }
+  }
+
+  return desired.sort((a, b) => a.depth - b.depth || a.key.localeCompare(b.key));
+}
+
 function createContext(options) {
   const cwd = options.cwd || process.cwd();
   const docsDir = options.docsDir || "docs";
@@ -92538,20 +93128,22 @@ function createContext(options) {
   };
 }
 
-async function collectFilePages(context) {
-  const files = await out(["**/*.md", "**/*.markdown"], {
+async function collectFilePages(context, suppliedMappings = null) {
+  const mappings = suppliedMappings || (await out(["**/*.md", "**/*.markdown"], {
     cwd: context.absoluteDocsDir,
     onlyFiles: true,
     dot: false,
     unique: true
-  });
+  })).map((file) => ({ file, logicalFile: file }));
 
   const byRoute = new Map();
 
-  for (const file of files.sort()) {
+  for (const mapping of mappings.sort((a, b) => a.file.localeCompare(b.file))) {
+    const file = utils_toPosixPath(mapping.file);
+    const logicalFile = utils_toPosixPath(mapping.logicalFile);
     const absolutePath = external_node_path_namespaceObject.join(context.absoluteDocsDir, file);
     const markdown = await promises_namespaceObject.readFile(absolutePath, "utf8");
-    const routeSegments = routeSegmentsForFile(file);
+    const routeSegments = routeSegmentsForFile(logicalFile);
     const routeKey = routeSegments.join("/");
 
     if (byRoute.has(routeKey)) {
@@ -92570,6 +93162,53 @@ async function collectFilePages(context) {
   }
 
   return byRoute;
+}
+
+function suffixFileMapping(file, suffix) {
+  const normalized = utils_toPosixPath(file);
+  const parsed = external_node_path_namespaceObject.posix.parse(normalized);
+  if (!parsed.name.endsWith(suffix)) {
+    return null;
+  }
+
+  const base = parsed.name.slice(0, -suffix.length);
+  if (!base) {
+    return null;
+  }
+
+  return {
+    file: normalized,
+    logicalFile: external_node_path_namespaceObject.posix.join(parsed.dir, `${base}${parsed.ext}`)
+  };
+}
+
+function claimFileMappings(mappings, version, claims) {
+  for (const mapping of mappings) {
+    const source = utils_toPosixPath(mapping.file);
+    const claimed = claims.get(source);
+    if (claimed && claimed !== version.id) {
+      throw new Error(`Markdown source ${source} is claimed by both ${claimed} and ${version.id}.`);
+    }
+    claims.set(source, version.id);
+  }
+}
+
+function claimManifestSources(pages, version, claims, context) {
+  for (const page of pages.values()) {
+    if (!page.sourcePath || page.sourcePath.includes(":")) {
+      continue;
+    }
+    const repositorySource = utils_toPosixPath(page.sourcePath);
+    const docsPrefix = `${context.docsDirForSource}/`;
+    const source = repositorySource.startsWith(docsPrefix)
+      ? repositorySource.slice(docsPrefix.length)
+      : `@repo:${repositorySource}`;
+    const claimed = claims.get(source);
+    if (claimed && claimed !== version.id) {
+      throw new Error(`Markdown source ${source} is claimed by both ${claimed} and ${version.id}.`);
+    }
+    claims.set(source, version.id);
+  }
 }
 
 async function collectManifestPages(context, options) {
@@ -92798,7 +93437,7 @@ async function applyRedirects(byRoute, options, context) {
       throw new Error(`Docspress redirect '${redirect.from}' conflicts with an existing docs page.`);
     }
 
-    const targetUrl = redirectTargetUrl(redirect.to, rootSlug);
+    const targetUrl = redirectTargetUrl(redirect.to, rootSlug, options.routePrefixSegments);
     byRoute.set(routeKey, {
       kind: "redirect",
       routeKey,
@@ -92840,23 +93479,26 @@ function routeSegmentsForRedirect(value, rootSlug) {
   return normalized ? normalized.split("/") : [];
 }
 
-function redirectTargetUrl(value, rootSlug) {
+function redirectTargetUrl(value, rootSlug, routePrefixSegments = null) {
   const raw = String(value || "").trim();
   if (/^[a-z][a-z0-9+.-]*:/i.test(raw) || raw.startsWith("//") || raw.startsWith("#")) {
     return raw;
   }
 
   const normalized = normalizeRoutePath(raw, rootSlug);
-  return `/${[rootSlug, normalized].filter(Boolean).join("/")}/`;
+  const prefix = routePrefixSegments || [rootSlug];
+  return `/${[...prefix, normalized].filter(Boolean).join("/")}/`;
 }
 
 function createLinkResolver(byRoute, context, options) {
   const rewriteLinks = options.rewriteLinks === undefined ? true : normalizeBoolean(options.rewriteLinks);
   const aliases = new Map();
-  const rootSlug = slugify(options.rootSlug || "docs", "docs");
+  const routePrefixSegments = options.routePrefixSegments
+    || [slugify(options.rootSlug || "docs", "docs")];
+  const rootSlug = routePrefixSegments[0];
 
   for (const page of byRoute.values()) {
-    const fullKey = [rootSlug, ...page.routeSegments].join("/");
+    const fullKey = [...routePrefixSegments, ...page.routeSegments].join("/");
     addAlias(aliases, page.routeKey, fullKey);
     addAlias(aliases, `${page.routeKey}/`, fullKey);
     addAlias(aliases, fullKey, fullKey);
@@ -92978,7 +93620,8 @@ function normalizeRoutePath(value, rootSlug) {
 
 function finalizePage(page, options) {
   const rootSlug = slugify(options.rootSlug || "docs", "docs");
-  const fullSegments = [rootSlug, ...page.routeSegments];
+  const routePrefixSegments = options.routePrefixSegments || [rootSlug];
+  const fullSegments = [...routePrefixSegments, ...page.routeSegments];
   const key = fullSegments.join("/");
   const parentSegments = fullSegments.slice(0, -1);
   const parentKey = parentSegments.length > 0 ? parentSegments.join("/") : null;
@@ -92999,7 +93642,13 @@ function finalizePage(page, options) {
     slug,
     parentKey,
     status,
-    body
+    body,
+    docsVersion: page.docsVersion?.id || null,
+    logicalRoute: page.logicalRoute ?? null,
+    stableIdentity: page.stableIdentity || null,
+    sourceType: page.sourceType || null,
+    manifestFile: page.manifestFile || null,
+    versionContainer: Boolean(page.versionContainer)
   };
   const hash = hashPageState(stablePayload);
   const sentinel = {
@@ -93007,6 +93656,16 @@ function finalizePage(page, options) {
     source: page.sourcePath,
     hash
   };
+  if (page.docsVersion?.id) {
+    sentinel.docsVersion = page.docsVersion.id;
+    sentinel.logicalRoute = page.logicalRoute || "";
+    sentinel.identity = page.stableIdentity;
+    sentinel.sourceType = page.sourceType;
+    sentinel.latest = Boolean(page.docsVersion.latest);
+    if (page.manifestFile) {
+      sentinel.manifestFile = page.manifestFile;
+    }
+  }
   if (typeof page.sourceMarkdown === "string") {
     sentinel.sourceContentBase64 = Buffer.from(page.sourceMarkdown, "utf8").toString("base64");
   }
@@ -93027,7 +93686,11 @@ function finalizePage(page, options) {
     body,
     hash,
     content,
-    depth: fullSegments.length
+    depth: fullSegments.length,
+    versionContainer: Boolean(page.versionContainer),
+    legacyKeys: options.legacyLatestPrefix && page.routeSegments.length > 0
+      ? [[...options.legacyLatestPrefix, ...page.routeSegments].join("/")]
+      : []
   };
 }
 
@@ -93261,12 +93924,25 @@ class GitHubPullRequestClient {
 }
 
 function pullRequestBody(changes) {
-  const files = changes.map((change) => `- \`${change.path}\``).join("\n");
+  const versioned = changes.some((change) => change.versionId);
+  const files = versioned
+    ? versionedFileList(changes)
+    : changes.map((change) => `- \`${change.path}\``).join("\n");
   const fileLabel = `${changes.length} Markdown ${changes.length === 1 ? "file" : "files"}`;
-  return `${DOCSPRESS_PR_MARKER}\n\n## Summary\n\nSynchronizes documentation edits made in WordPress back to their Markdown sources. This rolling pull request is maintained automatically by DocsPress.\n\n| Direction | Changes |\n| --- | ---: |\n| WordPress → GitHub | ${fileLabel} |\n\n## Changed files\n\n${files}\n\n## Review and merge\n\nReview these as normal documentation changes. After this pull request merges, the next DocsPress reconcile run refreshes the WordPress synchronization baseline.\n\n> This branch is owned by DocsPress and may be force-refreshed on every synchronization run.\n`;
+  const effectiveLatest = changes.find((change) => change.effectiveLatest)?.effectiveLatest || "";
+  const latestLine = effectiveLatest ? `\n\nEffective latest version: \`${effectiveLatest}\`.` : "";
+  return `${DOCSPRESS_PR_MARKER}\n\n## Summary\n\nSynchronizes documentation edits made in WordPress back to their Markdown sources. This rolling pull request is maintained automatically by DocsPress.${latestLine}\n\n| Direction | Changes |\n| --- | ---: |\n| WordPress → GitHub | ${fileLabel} |\n\n## Changed files\n\n${files}\n\n## Review and merge\n\nReview these as normal documentation changes. After this pull request merges, the next DocsPress reconcile run refreshes the WordPress synchronization baseline.\n\n> This branch is owned by DocsPress and may be force-refreshed on every synchronization run.\n`;
 }
 
 function pullRequestTitle(changes) {
+  const versionIds = [...new Set(changes.map((change) => change.versionId).filter(Boolean))];
+  if (versionIds.length === 1) {
+    return `docs(${versionIds[0]}): sync changes from WordPress`;
+  }
+  if (versionIds.length > 1) {
+    return `docs(versions): sync ${changes.length} files from WordPress`;
+  }
+
   if (changes.length !== 1) {
     return `docs(wordpress): sync ${changes.length} files from WordPress`;
   }
@@ -93289,6 +93965,34 @@ function pullRequestTitle(changes) {
   return `docs(${scope}): sync changes from WordPress`;
 }
 
+function versionedFileList(changes) {
+  const byVersion = new Map();
+  for (const change of changes) {
+    const id = change.versionId || "Unversioned";
+    if (!byVersion.has(id)) {
+      byVersion.set(id, {
+        label: change.versionLabel || id,
+        latest: false,
+        changes: []
+      });
+    }
+    const group = byVersion.get(id);
+    group.latest ||= Boolean(change.latest);
+    group.changes.push(change);
+  }
+
+  return Array.from(byVersion, ([id, group]) => {
+    const latest = group.latest ? " — Latest" : "";
+    const idLabel = group.label !== id ? ` (\`${id}\`)` : "";
+    const heading = `### ${group.label}${idLabel}${latest}`;
+    const files = group.changes
+      .sort((left, right) => left.path.localeCompare(right.path))
+      .map((change) => `- \`${change.path}\`${change.sourceType ? ` — ${change.sourceType}` : ""}`)
+      .join("\n");
+    return `${heading}\n\n${files}`;
+  }).join("\n\n");
+}
+
 ;// CONCATENATED MODULE: ./src/wordpress.js
 
 
@@ -93298,6 +94002,7 @@ class WordPressClient {
     this.site = options.site;
     this.token = options.token;
     this.fetchImpl = options.fetchImpl || fetch;
+    this.taxonomies = options.taxonomies || [];
   }
 
   restEndpoint(collection) {
@@ -93336,17 +94041,17 @@ class WordPressClient {
       page += 1;
     } while (page <= totalPages);
 
-    return pages.map(normalizePage);
+    return pages.map((pageData) => normalizePage(pageData, this.taxonomies));
   }
 
   async createPage(payload) {
     const response = await this.request("POST", this.pagesEndpoint(), { body: payload });
-    return normalizePage(response.data);
+    return normalizePage(response.data, this.taxonomies);
   }
 
   async updatePage(id, payload) {
     const response = await this.request("POST", `${this.pagesEndpoint()}/${id}`, { body: payload });
-    return normalizePage(response.data);
+    return normalizePage(response.data, this.taxonomies);
   }
 
   async deletePage(id, options = {}) {
@@ -93354,6 +94059,54 @@ class WordPressClient {
       query: options.force ? { force: "true" } : {}
     });
     return response.data;
+  }
+
+  termsEndpoint(taxonomy) {
+    return this.restEndpoint(taxonomy);
+  }
+
+  async listTerms(taxonomy) {
+    const terms = [];
+    let page = 1;
+    let totalPages = 1;
+
+    do {
+      const response = await this.request("GET", this.termsEndpoint(taxonomy), {
+        query: {
+          per_page: "100",
+          page: String(page),
+          context: "edit",
+          hide_empty: "false"
+        }
+      });
+      terms.push(...response.data);
+      totalPages = Number(response.headers.get("x-wp-totalpages") || totalPages || 1);
+      page += 1;
+    } while (page <= totalPages);
+
+    return terms.map(normalizeTerm);
+  }
+
+  async createTerm(taxonomy, payload) {
+    const response = await this.request("POST", this.termsEndpoint(taxonomy), { body: payload });
+    return normalizeTerm(response.data);
+  }
+
+  async updateTerm(taxonomy, id, payload) {
+    const response = await this.request("POST", `${this.termsEndpoint(taxonomy)}/${id}`, { body: payload });
+    return normalizeTerm(response.data);
+  }
+
+  async getSettings() {
+    const response = await this.request("GET", this.restEndpoint("settings"), {
+      query: { context: "edit" }
+    });
+    return response.data || {};
+  }
+
+  async updateSettings(payload) {
+    const response = await this.request("POST", this.restEndpoint("settings"), { body: payload });
+    return response.data || {};
   }
 
   async request(method, url, options = {}) {
@@ -93406,12 +94159,16 @@ function formatApiError(data, method, requestUrl, status) {
   return message;
 }
 
-function normalizePage(page) {
+function normalizePage(page, taxonomies = []) {
   const id = page.id ?? page.ID;
   const rawContent = typeof page.content === "string" ? page.content : page.content?.raw ?? page.content?.rendered ?? "";
   const renderedTitle = typeof page.title === "string" ? page.title : page.title?.raw ?? page.title?.rendered ?? "";
   const parent = typeof page.parent === "number" ? page.parent : page.parent?.ID ?? page.parent?.id ?? 0;
   const menuOrder = page.menu_order ?? page.menuOrder ?? 0;
+  const terms = {};
+  for (const taxonomy of taxonomies) {
+    terms[taxonomy] = Array.isArray(page[taxonomy]) ? page[taxonomy].map(Number) : [];
+  }
 
   return {
     id,
@@ -93421,11 +94178,24 @@ function normalizePage(page) {
     title: renderedTitle,
     content: rawContent,
     status: page.status,
-    link: page.link ?? page.URL ?? ""
+    link: page.link ?? page.URL ?? "",
+    meta: page.meta && typeof page.meta === "object" ? page.meta : {},
+    terms
+  };
+}
+
+function normalizeTerm(term) {
+  return {
+    id: Number(term.id ?? term.ID),
+    name: String(term.name || ""),
+    slug: String(term.slug || ""),
+    count: Number(term.count || 0),
+    meta: term.meta && typeof term.meta === "object" ? term.meta : {}
   };
 }
 
 ;// CONCATENATED MODULE: ./src/index.js
+
 
 
 
@@ -93445,6 +94215,7 @@ async function main() {
     docsDir: getInput("docs-dir") || "docs",
     manifestFile: getInput("manifest-file") || "",
     redirectsFile: getInput("redirects-file") || "",
+    versionsFile: getInput("versions-file") || "",
     rootSlug: getInput("root-slug") || "docs",
     rootTitle: getInput("root-title") || "Docs",
     createH1: normalizeBoolean(getInput("create-h1") || "false"),
@@ -93476,11 +94247,16 @@ async function main() {
     return;
   }
 
+  const versionsRegistry = config.versionsFile
+    ? await readVersionsRegistry({ cwd: process.cwd(), versionsFile: config.versionsFile })
+    : null;
   const desiredPages = await collectDesiredPages({
     cwd: process.cwd(),
     docsDir: config.docsDir,
     manifestFile: config.manifestFile,
     redirectsFile: config.redirectsFile,
+    versionsFile: config.versionsFile,
+    versionsRegistry,
     rootSlug: config.rootSlug,
     rootTitle: config.rootTitle,
     createH1: config.createH1,
@@ -93498,7 +94274,8 @@ async function main() {
   const client = new WordPressClient({
     baseUrl: config.baseUrl,
     site: config.site,
-    token: config.token
+    token: config.token,
+    taxonomies: versionsRegistry ? ["docspress_versions"] : []
   });
 
   const result = config.mode === "publish"
@@ -93508,6 +94285,10 @@ async function main() {
       dryRun: config.dryRun,
       deleteMode: config.deleteMode,
       rootSlug: config.rootSlug,
+      versionsRegistry,
+      githubRepository: config.githubRepository,
+      githubRef: config.githubRef,
+      githubServerUrl: config.githubServerUrl,
       logger: core_namespaceObject
     })
     : await syncBidirectional({
@@ -93524,9 +94305,13 @@ async function main() {
       dryRun: config.dryRun,
       deleteMode: config.deleteMode,
       rootSlug: config.rootSlug,
+      versionsRegistry,
       cwd: process.cwd(),
       manifestFile: config.manifestFile,
       createH1: config.createH1,
+      githubRepository: config.githubRepository,
+      githubRef: config.githubRef,
+      githubServerUrl: config.githubServerUrl,
       logger: core_namespaceObject
     });
 
@@ -93575,10 +94360,24 @@ async function writeSummary(result) {
     summary.addLink(`Pull request #${result.pullRequest.number}`, result.pullRequest.url);
   }
 
+  if (result.effectiveLatest) {
+    summary.addRaw(`\nEffective latest version: \`${result.effectiveLatest}\`\n`);
+  }
+
+  if (result.proposedFileDetails?.length > 0) {
+    summary.addHeading("Proposed files", 2);
+    for (const file of result.proposedFileDetails) {
+      const version = file.version ? ` (${file.version})` : "";
+      summary.addRaw(`- \`${file.path}\`${version}\n`);
+    }
+  }
+
   if (result.conflictDetails.length > 0) {
     summary.addHeading("Conflicts", 2);
     for (const conflict of result.conflictDetails) {
-      summary.addRaw(`- \`${conflict.key}\`: ${conflict.reason}\n`);
+      const version = conflict.version ? ` (${conflict.version})` : "";
+      const source = conflict.sourcePath ? ` → \`${conflict.sourcePath}\`` : "";
+      summary.addRaw(`- \`${conflict.key}\`${version}${source}: ${conflict.reason}\n`);
     }
   }
 
