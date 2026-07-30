@@ -1,5 +1,7 @@
 import { stripTrailingSlash } from "./utils.js";
 
+const EDITABLE_PAGE_STATUSES = ["publish", "future", "draft", "pending", "private"];
+
 export class WordPressClient {
   constructor(options) {
     this.baseUrl = stripTrailingSlash(options.baseUrl || "https://public-api.wordpress.com");
@@ -27,25 +29,37 @@ export class WordPressClient {
   }
 
   async listPages() {
-    const pages = [];
-    let page = 1;
-    let totalPages = 1;
+    const pagesById = new Map();
 
-    do {
-      const response = await this.request("GET", this.pagesEndpoint(), {
-        query: {
-          per_page: "100",
-          page: String(page),
-          context: "edit",
-          status: "any"
+    // WordPress exposes `any` in the REST schema, but some WordPress.com and
+    // Atomic sites reject it during capability checks. Query each writable
+    // Page status explicitly so drafts and scheduled or private Pages remain
+    // visible without relying on that shortcut.
+    for (const status of EDITABLE_PAGE_STATUSES) {
+      let page = 1;
+      let totalPages = 1;
+
+      do {
+        const response = await this.request("GET", this.pagesEndpoint(), {
+          query: {
+            per_page: "100",
+            page: String(page),
+            context: "edit",
+            status
+          }
+        });
+
+        for (const pageData of response.data) {
+          const id = pageData.id ?? pageData.ID;
+          pagesById.set(id, pageData);
         }
-      });
-      pages.push(...response.data);
-      totalPages = Number(response.headers.get("x-wp-totalpages") || totalPages || 1);
-      page += 1;
-    } while (page <= totalPages);
 
-    return pages.map((pageData) => normalizePage(pageData, this.taxonomies));
+        totalPages = Number(response.headers.get("x-wp-totalpages") || totalPages || 1);
+        page += 1;
+      } while (page <= totalPages);
+    }
+
+    return Array.from(pagesById.values(), (pageData) => normalizePage(pageData, this.taxonomies));
   }
 
   async createPage(payload) {

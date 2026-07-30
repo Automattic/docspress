@@ -34,9 +34,17 @@ describe("WordPressClient", () => {
     expect(calls[0].url).toContain("https://public-api.wordpress.com/wp/v2/sites/fkadev.blog/pages");
     expect(calls[0].url).toContain("context=edit");
     expect(calls[0].init.headers.Authorization).toBe("Bearer token");
+    expect(calls.map(({ url }) => new URL(url).searchParams.get("status"))).toEqual([
+      "publish",
+      "future",
+      "draft",
+      "pending",
+      "private"
+    ]);
+    expect(calls.every(({ url }) => !url.includes("status=any"))).toBe(true);
   });
 
-  it("paginates page listing", async () => {
+  it("paginates every status independently and deduplicates Pages by ID", async () => {
     const calls = [];
     const client = new WordPressClient({
       baseUrl: "https://public-api.wordpress.com",
@@ -44,7 +52,12 @@ describe("WordPressClient", () => {
       token: "token",
       fetchImpl: async (url, init) => {
         calls.push({ url: String(url), init });
-        const page = new URL(String(url)).searchParams.get("page");
+        const requestUrl = new URL(String(url));
+        const status = requestUrl.searchParams.get("status");
+        const page = requestUrl.searchParams.get("page");
+        if (!["publish", "draft"].includes(status)) {
+          return jsonResponse([], { headers: { "x-wp-totalpages": "1" } });
+        }
         return jsonResponse([{
           id: Number(page),
           slug: `page-${page}`,
@@ -62,7 +75,21 @@ describe("WordPressClient", () => {
 
     expect(pages.map((page) => page.id)).toEqual([1, 2]);
     expect(pages.map((page) => page.menuOrder)).toEqual([10, 20]);
-    expect(calls).toHaveLength(2);
+    expect(calls.map(({ url }) => {
+      const requestUrl = new URL(url);
+      return [
+        requestUrl.searchParams.get("status"),
+        requestUrl.searchParams.get("page")
+      ];
+    })).toEqual([
+      ["publish", "1"],
+      ["publish", "2"],
+      ["future", "1"],
+      ["draft", "1"],
+      ["draft", "2"],
+      ["pending", "1"],
+      ["private", "1"]
+    ]);
   });
 
   it("raises WordPress API errors", async () => {
