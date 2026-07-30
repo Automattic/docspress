@@ -265,6 +265,20 @@ function docspress_playground_with_component_inventory( $content ) {
 	return $base_content . "\n\n" . docspress_playground_component_inventory();
 }
 
+/**
+ * Decide whether the generated runtime snapshot should use live components.
+ *
+ * Production keeps the source-authored snapshot so a theme deployment cannot
+ * look like a WordPress-side documentation edit during two-way reconciliation.
+ * Playground Blueprints use the development environment and receive the live
+ * inventory that proves which components are actually running.
+ *
+ * @return bool
+ */
+function docspress_playground_should_use_live_inventory() {
+	return 'production' !== wp_get_environment_type();
+}
+
 $generated_path = __DIR__ . '/generated-docs.json';
 if ( ! file_exists( $generated_path ) ) {
 	wp_die( 'Missing generated Playground docs. Run npm run playground:docs.' );
@@ -302,7 +316,10 @@ foreach ( $generated['pages'] as $page ) {
 		wp_die( esc_html( 'Generated documentation parent is unavailable: ' . $parent_key ) );
 	}
 
-	if ( 'docs/reference/kitchen-sink' === $page['key'] ) {
+	if (
+		'docs/reference/kitchen-sink' === $page['key']
+		&& docspress_playground_should_use_live_inventory()
+	) {
 		$page['content'] = docspress_playground_with_component_inventory( $page['content'] );
 	}
 
