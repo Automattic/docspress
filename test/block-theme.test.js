@@ -209,6 +209,9 @@ describe("DocsPress block theme constraints", () => {
     );
     expect(kitchenSink?.content.match(/<h2>Playground runtime<\/h2>/g)).toHaveLength(1);
     expect(setup).toContain("docspress_playground_with_component_inventory");
+    expect(setup).toContain("function docspress_playground_should_use_live_inventory()");
+    expect(setup).toContain("return 'production' !== wp_get_environment_type();");
+    expect(setup).toContain("&& docspress_playground_should_use_live_inventory()");
     expect(setup).toContain(
       "$page['content'] = docspress_playground_with_component_inventory"
     );
