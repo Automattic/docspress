@@ -9,6 +9,7 @@ Move from a reviewed manual draft to maintainable synchronization in either dire
 ## Available guides
 
 - [Make documentation AI-friendly](ai-friendly-documentation.md) explains how `llms.txt` and exact per-Page Markdown routes make published documentation easier for agents and retrieval systems to discover and consume.
+- [Collect feedback with Was This Helpful](was-this-helpful.md) shows how to customize the visitor prompt, review per-Page totals, control visibility, and extend the aggregate response hook.
 - [Customize the theme in the Site Editor](customize-theme.md) shows how to make the complete site highly customizable with Global Style variations, templates, template parts, navigation, command search, comments, and per-block controls.
 - [GitHub to WordPress](github-to-wordpress.md) explains how merged Markdown creates, updates, or removes managed WordPress Pages.
 - [WordPress to GitHub](wordpress-to-github.md) explains how Gutenberg edits become Markdown changes on a rolling pull request.

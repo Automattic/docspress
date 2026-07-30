@@ -913,6 +913,14 @@ describe("DocsPress block theme constraints", () => {
     expect(setup).toContain('className":"home-proof-strip"');
     expect(setup).toContain("<code>/llms.txt</code>");
     expect(setup).toContain("<code>GitHub ↔ WordPress</code>");
+    expect(setup).toContain('className":"home-proof-grid home-proof-grid--secondary"');
+    expect(setup).toContain('className":"is-style-wide home-proof-row-divider"');
+    expect(setup).toContain("<code>Site Editor</code>");
+    expect(setup).toContain("Fully customizable");
+    expect(setup).toContain("<code>v1 → v2 → v3</code>");
+    expect(setup).toContain("API versioning");
+    expect(setup).toContain("<code>Threaded replies</code>");
+    expect(setup).toContain("Built-in discussions");
     expect(setup).toContain("wp:docspress/colorful-code");
     expect(setup).toContain("wp:docspress/flow");
     expect(setup).toContain("wp:docspress/result");
@@ -922,10 +930,10 @@ describe("DocsPress block theme constraints", () => {
     expect(setup).toContain("Download Blocks");
     expect(setup).toContain("Preview Kitchen Sink");
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.10.0/docspress-theme-0.10.0.zip"
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.10.1/docspress-theme-0.10.1.zip"
     );
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.10.0/docspress-blocks-0.10.0.zip"
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.10.1/docspress-blocks-0.10.1.zip"
     );
     expect(styles).toContain(".home-proof-strip {");
     expect(styles).toContain(".home-sync-section {");

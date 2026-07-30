@@ -118,7 +118,7 @@ Each reading component has its own Block Settings:
 
 Every component also receives native color, gradient, typography, spacing, border, dimensions, position, shadow, anchor, and CSS-class controls from WordPress.
 
-The feedback block is enabled by default immediately before Adjacent Navigation. Each browser can submit one response per Page. WordPress stores the aggregate Helpful and Not helpful counts on that Page; open the Page editor and expand **Page feedback** in the details sidebar to review the counts, total, and helpful rate. Turn off **Show feedback on this Page** to hide the prompt on that Page while preserving its totals, or disable the block in the Page template to hide it site-wide.
+The feedback block is enabled by default immediately before Adjacent Navigation. Each browser can submit one response per Page. WordPress stores the aggregate Helpful and Not helpful counts on that Page; open the Page editor and expand **Page feedback** in the details sidebar to review the counts, total, and helpful rate. Turn off **Show feedback on this Page** to hide the prompt on that Page while preserving its totals, or disable the block in the Page template to hide it site-wide. See [Collect feedback with Was This Helpful](was-this-helpful.md) for screenshots, storage behavior, REST responses, and the developer hook.
 
 ## Customize documentation blocks
 
