@@ -12,27 +12,27 @@ The same committed file remains useful in both places. GitHub hides the lossless
 {
   "version": 1,
   "name": "core/image",
-  "serialized": "\u003c!\u002d\u002d wp:image {\"url\":\"https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/compatibility/github-markdown-preview.jpg\",\"alt\":\"GitHub Markdown preview of the Markdown and Gutenberg documentation page showing readable prose and a core block mapping table\",\"width\":\"900px\",\"sizeSlug\":\"full\",\"linkDestination\":\"none\"} \u002d\u002d\u003e\n\u003cfigure class=\"wp-block-image size-full is-resized\"\u003e\u003cimg src=\"https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/compatibility/github-markdown-preview.jpg\" alt=\"GitHub Markdown preview of the Markdown and Gutenberg documentation page showing readable prose and a core block mapping table\" style=\"width:900px\"/\u003e\u003cfigcaption class=\"wp-element-caption\"\u003eGitHub renders the visible Markdown while the configuration comments stay hidden.\u003c/figcaption\u003e\u003c/figure\u003e\n\u003c!\u002d\u002d /wp:image \u002d\u002d\u003e"
+  "serialized": "\u003c!\u002d\u002d wp:image {\"url\":\"https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/compatibility/github-mermaid-preview.jpg\",\"alt\":\"GitHub Markdown preview showing a rendered Mermaid sequence diagram with Author, DocsPress, WordPress, and Reader actors\",\"width\":\"740px\",\"sizeSlug\":\"full\",\"linkDestination\":\"none\"} \u002d\u002d\u003e\n\u003cfigure class=\"wp-block-image size-full is-resized\"\u003e\u003cimg src=\"https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/compatibility/github-mermaid-preview.jpg\" alt=\"GitHub Markdown preview showing a rendered Mermaid sequence diagram with Author, DocsPress, WordPress, and Reader actors\" style=\"width:740px\"/\u003e\u003cfigcaption class=\"wp-element-caption\"\u003eGitHub renders the Markdown diagram preview as Mermaid.\u003c/figcaption\u003e\u003c/figure\u003e\n\u003c!\u002d\u002d /wp:image \u002d\u002d\u003e"
 }
 -->
-![GitHub Markdown preview of the Markdown and Gutenberg documentation page showing readable prose and a core block mapping table](https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/compatibility/github-markdown-preview.jpg)
+![GitHub Markdown preview showing a rendered Mermaid sequence diagram with Author, DocsPress, WordPress, and Reader actors](https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/compatibility/github-mermaid-preview.jpg)
 
-GitHub renders the visible Markdown while the configuration comments stay hidden.
+GitHub renders the Markdown diagram preview as Mermaid.
 <!-- /docspress:block -->
 
 <!-- docspress:block
 {
   "version": 1,
   "name": "core/image",
-  "serialized": "\u003c!\u002d\u002d wp:image {\"url\":\"https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/compatibility/wordpress-native-page.jpg\",\"alt\":\"Published DocsPress WordPress page showing native navigation, breadcrumbs, table of contents, and a styled core block mapping table\",\"width\":\"900px\",\"sizeSlug\":\"full\",\"linkDestination\":\"none\"} \u002d\u002d\u003e\n\u003cfigure class=\"wp-block-image size-full is-resized\"\u003e\u003cimg src=\"https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/compatibility/wordpress-native-page.jpg\" alt=\"Published DocsPress WordPress page showing native navigation, breadcrumbs, table of contents, and a styled core block mapping table\" style=\"width:900px\"/\u003e\u003cfigcaption class=\"wp-element-caption\"\u003eWordPress reconstructs native blocks and places them inside the editable DocsPress theme.\u003c/figcaption\u003e\u003c/figure\u003e\n\u003c!\u002d\u002d /wp:image \u002d\u002d\u003e"
+  "serialized": "\u003c!\u002d\u002d wp:image {\"url\":\"https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/compatibility/wordpress-callout-preview.jpg\",\"alt\":\"Published WordPress callout examples showing tip, danger, and collapsed note styles\",\"width\":\"570px\",\"sizeSlug\":\"full\",\"linkDestination\":\"none\"} \u002d\u002d\u003e\n\u003cfigure class=\"wp-block-image size-full is-resized\"\u003e\u003cimg src=\"https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/compatibility/wordpress-callout-preview.jpg\" alt=\"Published WordPress callout examples showing tip, danger, and collapsed note styles\" style=\"width:570px\"/\u003e\u003cfigcaption class=\"wp-element-caption\"\u003eWordPress reconstructs editable callouts with native styling and disclosure behavior.\u003c/figcaption\u003e\u003c/figure\u003e\n\u003c!\u002d\u002d /wp:image \u002d\u002d\u003e"
 }
 -->
-![Published DocsPress WordPress page showing native navigation, breadcrumbs, table of contents, and a styled core block mapping table](https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/compatibility/wordpress-native-page.jpg)
+![Published WordPress callout examples showing tip, danger, and collapsed note styles](https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/compatibility/wordpress-callout-preview.jpg)
 
-WordPress reconstructs native blocks and places them inside the editable DocsPress theme.
+WordPress reconstructs editable callouts with native styling and disclosure behavior.
 <!-- /docspress:block -->
 
-The screenshots intentionally show the same title, introduction, and mapping table. The surrounding interface differs because each destination keeps its strengths: repository review controls on GitHub; site navigation, breadcrumbs, search, table of contents, and block styling on WordPress.
+The cropped screenshots focus on two compatibility contracts: GitHub turns a DocsPress diagram envelope into a live Mermaid diagram; WordPress reconstructs callout envelopes as styled native blocks, including collapsible details. Each surface receives its strongest native presentation from the same readable Markdown source.
 
 ## Core Markdown mapping
 
