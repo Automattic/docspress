@@ -8,7 +8,31 @@ Follow these steps once to connect an existing Markdown tree to WordPress safely
 
 Create a repository secret named `WP_ACCESS_TOKEN`. The [authentication guide](./authentication.md) explains how to generate the token without exposing it. The same token reads editor content for WordPress-to-GitHub proposals and writes Pages for GitHub-to-WordPress publication.
 
-<!-- wp:docspress/terminal-session {"title":"Add the repository secret","shell":"bash","prompt":"$","command":"gh secret set WP_ACCESS_TOKEN --repo OWNER/REPOSITORY","output":"✓ Set Actions secret WP_ACCESS_TOKEN"} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/terminal-session",
+  "attrs": {
+    "title": "Add the repository secret",
+    "shell": "bash",
+    "prompt": "$",
+    "command": "gh secret set WP_ACCESS_TOKEN \u002d\u002drepo OWNER/REPOSITORY",
+    "output": "✓ Set Actions secret WP_ACCESS_TOKEN"
+  }
+}
+-->
+#### Add the repository secret
+
+```bash
+$ gh secret set WP_ACCESS_TOKEN --repo OWNER/REPOSITORY
+```
+
+**Output**
+
+```text
+✓ Set Actions secret WP_ACCESS_TOKEN
+```
+<!-- /docspress:block -->
 
 ## 2. Allow pull request creation
 
@@ -22,7 +46,65 @@ The workflow's `GITHUB_TOKEN` creates the proposal branch and pull request. You 
 
 Create `.github/workflows/sync-docs.yml` with a manual trigger, `mode: reconcile`, draft status, a recoverable deletion policy, and dry-run mode:
 
-<!-- wp:docspress/colorful-code {"language":"yaml","filename":".github/workflows/sync-docs.yml","code":"name: Sync DocsPress documentation\n\non:\n  workflow_dispatch:\n\npermissions:\n  contents: write\n  pull-requests: write\n\nconcurrency:\n  group: docspress-sync\n  cancel-in-progress: false\n\njobs:\n  sync:\n    # Skip a push created by merging the managed WordPress proposal.\n    if: >-\n      github.event_name != 'push' ||\n      !contains(\n        github.event.head_commit.message,\n        format('from {0}/docspress/wordpress-sync', github.repository_owner)\n      )\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n      - uses: Automattic/docspress@14d318924a81fb95ce4d3aaa9c3b547bf76b7768\n        with:\n          mode: reconcile\n          wordpress-site: example.wordpress.com\n          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n          docs-dir: docs\n          root-slug: docs\n          root-title: Docs\n          create-h1: false\n          rewrite-links: true\n          edit-link: false\n          pull-request-branch: docspress/wordpress-sync\n          status: draft\n          delete-mode: trash\n          dry-run: true","highlightedLines":"3-4,6-8,17-22,25-28,37-40","showLineNumbers":true,"caption":"The workflow understands both directions, but starts manually and cannot change either system while dry-run is true."} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/colorful-code",
+  "attrs": {
+    "language": "yaml",
+    "filename": ".github/workflows/sync-docs.yml",
+    "code": "name: Sync DocsPress documentation\n\non:\n  workflow_dispatch:\n\npermissions:\n  contents: write\n  pull-requests: write\n\nconcurrency:\n  group: docspress-sync\n  cancel-in-progress: false\n\njobs:\n  sync:\n    # Skip a push created by merging the managed WordPress proposal.\n    if: \u003e-\n      github.event_name != 'push' ||\n      !contains(\n        github.event.head_commit.message,\n        format('from {0}/docspress/wordpress-sync', github.repository_owner)\n      )\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n      - uses: Automattic/docspress@14d318924a81fb95ce4d3aaa9c3b547bf76b7768\n        with:\n          mode: reconcile\n          wordpress-site: example.wordpress.com\n          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n          docs-dir: docs\n          root-slug: docs\n          root-title: Docs\n          create-h1: false\n          rewrite-links: true\n          edit-link: false\n          pull-request-branch: docspress/wordpress-sync\n          status: draft\n          delete-mode: trash\n          dry-run: true",
+    "highlightedLines": "3-4,6-8,17-22,25-28,37-40",
+    "showLineNumbers": true,
+    "caption": "The workflow understands both directions, but starts manually and cannot change either system while dry-run is true."
+  }
+}
+-->
+**.github/workflows/sync-docs.yml — The workflow understands both directions, but starts manually and cannot change either system while dry-run is true.**
+
+```yaml
+name: Sync DocsPress documentation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: docspress-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    # Skip a push created by merging the managed WordPress proposal.
+    if: >-
+      github.event_name != 'push' ||
+      !contains(
+        github.event.head_commit.message,
+        format('from {0}/docspress/wordpress-sync', github.repository_owner)
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: Automattic/docspress@14d318924a81fb95ce4d3aaa9c3b547bf76b7768
+        with:
+          mode: reconcile
+          wordpress-site: example.wordpress.com
+          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}
+          docs-dir: docs
+          root-slug: docs
+          root-title: Docs
+          create-h1: false
+          rewrite-links: true
+          edit-link: false
+          pull-request-branch: docspress/wordpress-sync
+          status: draft
+          delete-mode: trash
+          dry-run: true
+```
+<!-- /docspress:block -->
 
 Replace `example.wordpress.com` with the site domain. Keep both Actions pinned to reviewed commit SHAs.
 
@@ -39,7 +121,32 @@ Replace `example.wordpress.com` with the site domain. Keep both Actions pinned t
 
 Run the workflow from a trusted terminal:
 
-<!-- wp:docspress/terminal-session {"title":"Run DocsPress","shell":"bash","prompt":"$","command":"gh workflow run sync-docs.yml --repo OWNER/REPOSITORY\ngh run watch --repo OWNER/REPOSITORY --exit-status","output":"✓ sync completed successfully"} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/terminal-session",
+  "attrs": {
+    "title": "Run DocsPress",
+    "shell": "bash",
+    "prompt": "$",
+    "command": "gh workflow run sync-docs.yml \u002d\u002drepo OWNER/REPOSITORY\ngh run watch \u002d\u002drepo OWNER/REPOSITORY \u002d\u002dexit-status",
+    "output": "✓ sync completed successfully"
+  }
+}
+-->
+#### Run DocsPress
+
+```bash
+$ gh workflow run sync-docs.yml --repo OWNER/REPOSITORY
+$ gh run watch --repo OWNER/REPOSITORY --exit-status
+```
+
+**Output**
+
+```text
+✓ sync completed successfully
+```
+<!-- /docspress:block -->
 
 You can also open **Actions → Sync DocsPress documentation → Run workflow** in GitHub.
 
@@ -78,7 +185,26 @@ dry-run: false
 
 Keep `status: draft`, dispatch the workflow again, and inspect the generated WordPress Pages. Check the hierarchy, Gutenberg blocks, rewritten links, and any proposed Markdown pull request before publishing or merging anything.
 
-<!-- wp:docspress/result {"status":"success","title":"First two-way draft verified","content":"<p>The Page hierarchy, Gutenberg content, Markdown proposals, rewritten links, and managed boundaries are ready for editorial review.</p>","meta":"next: choose automatic triggers"} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/result",
+  "attrs": {
+    "status": "success",
+    "title": "First two-way draft verified",
+    "content": "\u003cp\u003eThe Page hierarchy, Gutenberg content, Markdown proposals, rewritten links, and managed boundaries are ready for editorial review.\u003c/p\u003e",
+    "meta": "next: choose automatic triggers"
+  }
+}
+-->
+> [!TIP]
+>
+> **First two-way draft verified**
+>
+> The Page hierarchy, Gutenberg content, Markdown proposals, rewritten links, and managed boundaries are ready for editorial review.
+>
+> _next: choose automatic triggers_
+<!-- /docspress:block -->
 
 ## 8. Enable the directions you need
 

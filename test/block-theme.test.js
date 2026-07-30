@@ -293,8 +293,8 @@ describe("DocsPress block theme constraints", () => {
       const guide = await fs.readFile(path.join(guideRoot, `${name}.md`), "utf8");
 
       expect(index).toContain(`(${name}.md)`);
-      expect(guide).toContain("<!-- wp:docspress/fields ");
-      expect(guide.split(`<!-- wp:docspress/${name} `).length - 1).toBeGreaterThanOrEqual(3);
+      expect(guide).toContain('"name": "docspress/fields"');
+      expect(guide.split(`"name": "docspress/${name}"`).length - 1).toBeGreaterThanOrEqual(3);
     }
   });
 

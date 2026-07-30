@@ -15,7 +15,47 @@ Add, remove, and reorder steps in Gutenberg. Give each step a concise action tit
 
 ## Attributes
 
-<!-- wp:docspress/fields {"title":"Flow attributes","description":"Numbering and steps accepted by <code>docspress/flow</code>.","fields":[{"name":"start","type":"number","required":false,"defaultValue":"1","description":"<p>First visible step number, clamped to 1–99.</p>","values":"1–99","deprecated":false},{"name":"steps","type":"array","required":true,"defaultValue":"Three starter steps","description":"<p>One to 20 ordered step objects.</p>","values":"1–20 items","deprecated":false}],"searchable":false,"compact":true} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/fields",
+  "attrs": {
+    "title": "Flow attributes",
+    "description": "Numbering and steps accepted by \u003ccode\u003edocspress/flow\u003c/code\u003e.",
+    "fields": [
+      {
+        "name": "start",
+        "type": "number",
+        "required": false,
+        "defaultValue": "1",
+        "description": "\u003cp\u003eFirst visible step number, clamped to 1–99.\u003c/p\u003e",
+        "values": "1–99",
+        "deprecated": false
+      },
+      {
+        "name": "steps",
+        "type": "array",
+        "required": true,
+        "defaultValue": "Three starter steps",
+        "description": "\u003cp\u003eOne to 20 ordered step objects.\u003c/p\u003e",
+        "values": "1–20 items",
+        "deprecated": false
+      }
+    ],
+    "searchable": false,
+    "compact": true
+  }
+}
+-->
+#### Flow attributes
+
+Numbering and steps accepted by <code>docspress/flow</code>.
+
+| Field | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `start` | number | No | 1 | <p>First visible step number, clamped to 1–99.</p> |
+| `steps` | array | Yes | Three starter steps | <p>One to 20 ordered step objects.</p> |
+<!-- /docspress:block -->
 
 Each step has a formatted `title` and formatted `content`. Empty or invalid step data falls back to the three starter steps so the block never publishes as an unexplained empty shell.
 
@@ -23,15 +63,125 @@ Each step has a formatted `title` and formatted `content`. Empty or invalid step
 
 ### Configure and verify
 
-<!-- wp:docspress/flow {"start":1,"steps":[{"title":"Choose","content":"<p>Select the option that matches your project.</p>"},{"title":"Configure","content":"<p>Set the values required by your environment.</p>"},{"title":"Verify","content":"<p>Run the check and confirm the expected result.</p>"}]} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/flow",
+  "attrs": {
+    "start": 1,
+    "steps": [
+      {
+        "title": "Choose",
+        "content": "\u003cp\u003eSelect the option that matches your project.\u003c/p\u003e"
+      },
+      {
+        "title": "Configure",
+        "content": "\u003cp\u003eSet the values required by your environment.\u003c/p\u003e"
+      },
+      {
+        "title": "Verify",
+        "content": "\u003cp\u003eRun the check and confirm the expected result.\u003c/p\u003e"
+      }
+    ]
+  }
+}
+-->
+1. **Choose**
+
+   Select the option that matches your project.
+
+2. **Configure**
+
+   Set the values required by your environment.
+
+3. **Verify**
+
+   Run the check and confirm the expected result.
+<!-- /docspress:block -->
 
 ### Continue a release checklist
 
-<!-- wp:docspress/flow {"start":4,"steps":[{"title":"Freeze content edits","content":"<p>Tell editors when the release window begins and where urgent corrections should go.</p>"},{"title":"Publish the migration","content":"<p>Apply the reviewed change to the staged target before production.</p>"},{"title":"Observe the first readers","content":"<p>Watch error rate, search exits, and support messages for fifteen minutes.</p>"}]} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/flow",
+  "attrs": {
+    "start": 4,
+    "steps": [
+      {
+        "title": "Freeze content edits",
+        "content": "\u003cp\u003eTell editors when the release window begins and where urgent corrections should go.\u003c/p\u003e"
+      },
+      {
+        "title": "Publish the migration",
+        "content": "\u003cp\u003eApply the reviewed change to the staged target before production.\u003c/p\u003e"
+      },
+      {
+        "title": "Observe the first readers",
+        "content": "\u003cp\u003eWatch error rate, search exits, and support messages for fifteen minutes.\u003c/p\u003e"
+      }
+    ]
+  }
+}
+-->
+4. **Freeze content edits**
+
+   Tell editors when the release window begins and where urgent corrections should go.
+
+5. **Publish the migration**
+
+   Apply the reviewed change to the staged target before production.
+
+6. **Observe the first readers**
+
+   Watch error rate, search exits, and support messages for fifteen minutes.
+<!-- /docspress:block -->
 
 ### Restore service during an incident
 
-<!-- wp:docspress/flow {"start":1,"steps":[{"title":"Name the impact","content":"<p>Record which readers, routes, and regions are affected.</p>"},{"title":"Protect evidence","content":"<p>Capture the failing request and relevant logs before changing the system.</p>"},{"title":"Reduce the blast radius","content":"<p>Disable the smallest unsafe surface or route traffic to the known-good version.</p>"},{"title":"Confirm recovery","content":"<p>Repeat the original failing journey and document the observed result.</p>"}]} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/flow",
+  "attrs": {
+    "start": 1,
+    "steps": [
+      {
+        "title": "Name the impact",
+        "content": "\u003cp\u003eRecord which readers, routes, and regions are affected.\u003c/p\u003e"
+      },
+      {
+        "title": "Protect evidence",
+        "content": "\u003cp\u003eCapture the failing request and relevant logs before changing the system.\u003c/p\u003e"
+      },
+      {
+        "title": "Reduce the blast radius",
+        "content": "\u003cp\u003eDisable the smallest unsafe surface or route traffic to the known-good version.\u003c/p\u003e"
+      },
+      {
+        "title": "Confirm recovery",
+        "content": "\u003cp\u003eRepeat the original failing journey and document the observed result.\u003c/p\u003e"
+      }
+    ]
+  }
+}
+-->
+1. **Name the impact**
+
+   Record which readers, routes, and regions are affected.
+
+2. **Protect evidence**
+
+   Capture the failing request and relevant logs before changing the system.
+
+3. **Reduce the blast radius**
+
+   Disable the smallest unsafe surface or route traffic to the known-good version.
+
+4. **Confirm recovery**
+
+   Repeat the original failing journey and document the observed result.
+<!-- /docspress:block -->
 
 ## Published behavior and accessibility
 
@@ -39,4 +189,22 @@ The block renders as an ordered list with an explicit starting value. Numbers ar
 
 Start each title with an imperative verb. Keep one reader action per step, and place the observable success condition at the end of the step.
 
-<!-- wp:docspress/callout {"tone":"tip","title":"Show the verification step","content":"<p>A procedure is easier to trust when its last step tells readers exactly how to confirm that the task succeeded.</p>","collapsible":false,"open":true} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/callout",
+  "attrs": {
+    "tone": "tip",
+    "title": "Show the verification step",
+    "content": "\u003cp\u003eA procedure is easier to trust when its last step tells readers exactly how to confirm that the task succeeded.\u003c/p\u003e",
+    "collapsible": false,
+    "open": true
+  }
+}
+-->
+> [!TIP]
+>
+> **Show the verification step**
+>
+> A procedure is easier to trust when its last step tells readers exactly how to confirm that the task succeeded.
+<!-- /docspress:block -->

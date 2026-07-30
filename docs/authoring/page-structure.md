@@ -6,7 +6,31 @@ DocsPress derives the WordPress Page hierarchy from Markdown paths unless a mani
 
 ## File-to-Page mapping
 
-<!-- wp:docspress/file-tree {"root":"docs/","tree":"index.md\ngetting-started.md\nguides/\n  index.md\n  continuous-sync.md\nreference/\n  action-inputs.md","caption":"Index files become section roots; other filenames become child slugs."} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/file-tree",
+  "attrs": {
+    "root": "docs/",
+    "tree": "index.md\ngetting-started.md\nguides/\n  index.md\n  continuous-sync.md\nreference/\n  action-inputs.md",
+    "caption": "Index files become section roots; other filenames become child slugs."
+  }
+}
+-->
+#### docs/
+
+```text
+index.md
+getting-started.md
+guides/
+  index.md
+  continuous-sync.md
+reference/
+  action-inputs.md
+```
+
+_Index files become section roots; other filenames become child slugs._
+<!-- /docspress:block -->
 
 With `root-slug: docs`, these files map to:
 

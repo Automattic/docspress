@@ -20,7 +20,63 @@ For self-hosted WordPress, it is:
 
 Listing requests use `context=edit`, `status=any`, and pages of 100 records until `x-wp-totalpages` is exhausted.
 
-<!-- wp:docspress/api-request {"method":"POST","endpoint":"/wp-json/wp/v2/pages","headers":"Accept: application/json\nContent-Type: application/json\nAuthorization: Bearer $WP_ACCESS_TOKEN","requestBody":"{\n  \"title\": \"Getting started\",\n  \"slug\": \"getting-started\",\n  \"status\": \"draft\",\n  \"parent\": 42,\n  \"content\": \"<!-- docspress:{...} -->\\n<!-- wp:paragraph -->...\"\n}","requestBodyFormat":"json","responseStatus":"201 Created","responseBody":"{\n  \"id\": 43,\n  \"slug\": \"getting-started\",\n  \"status\": \"draft\",\n  \"parent\": 42\n}","responseBodyFormat":"json"} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/api-request",
+  "attrs": {
+    "method": "POST",
+    "endpoint": "/wp-json/wp/v2/pages",
+    "headers": "Accept: application/json\nContent-Type: application/json\nAuthorization: Bearer $WP_ACCESS_TOKEN",
+    "requestBody": "{\n  \"title\": \"Getting started\",\n  \"slug\": \"getting-started\",\n  \"status\": \"draft\",\n  \"parent\": 42,\n  \"content\": \"\u003c!\u002d\u002d docspress:{...} \u002d\u002d\u003e\\n\u003c!\u002d\u002d wp:paragraph \u002d\u002d\u003e...\"\n}",
+    "requestBodyFormat": "json",
+    "responseStatus": "201 Created",
+    "responseBody": "{\n  \"id\": 43,\n  \"slug\": \"getting-started\",\n  \"status\": \"draft\",\n  \"parent\": 42\n}",
+    "responseBodyFormat": "json"
+  }
+}
+-->
+<details>
+<summary><strong>Request:</strong> <code>POST /wp-json/wp/v2/pages</code></summary>
+
+**Headers**
+
+```http
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer $WP_ACCESS_TOKEN
+```
+
+**Body**
+
+```json
+{
+  "title": "Getting started",
+  "slug": "getting-started",
+  "status": "draft",
+  "parent": 42,
+  "content": "<!-- docspress:{...} -->\n<!-- wp:paragraph -->..."
+}
+```
+
+</details>
+
+<details>
+<summary><strong>Response:</strong> <code>201 Created</code></summary>
+
+**Body**
+
+```json
+{
+  "id": 43,
+  "slug": "getting-started",
+  "status": "draft",
+  "parent": 42
+}
+```
+
+</details>
+<!-- /docspress:block -->
 
 Updates use `POST /pages/{id}`. Deletions use `DELETE /pages/{id}` and add `force=true` only for `delete-mode: force`.
 
@@ -51,8 +107,24 @@ Desired Pages are sorted by depth and key so parents are available before childr
 
 For bidirectional runs, a GitHub-only change is published, a WordPress-only title or content change becomes a pull request, and matching current states refresh the sentinel after that pull request merges. If both current states differ from the sentinel and from each other, the run fails before writes. WordPress-created or deleted Pages and WordPress slug, parent, or status changes are intentionally outside reverse-sync scope.
 
-<!-- wp:docspress/callout {"tone":"success","title":"Manual Pages are protected","content":"<p>An unmanaged Page collision fails the Action instead of overwriting content that was created outside DocsPress.</p>","collapsible":false} /-->
-
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/callout",
+  "attrs": {
+    "tone": "success",
+    "title": "Manual Pages are protected",
+    "content": "\u003cp\u003eAn unmanaged Page collision fails the Action instead of overwriting content that was created outside DocsPress.\u003c/p\u003e",
+    "collapsible": false
+  }
+}
+-->
+> [!TIP]
+>
+> **Manual Pages are protected**
+>
+> An unmanaged Page collision fails the Action instead of overwriting content that was created outside DocsPress.
+<!-- /docspress:block -->
 ## Dry-run behavior
 
 Dry-run performs discovery, conversion, Page listing, comparison, conflict detection, deletion planning, and reverse Markdown generation. It assigns synthetic parent IDs for planned creates but does not call WordPress or GitHub write endpoints.

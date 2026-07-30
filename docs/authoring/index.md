@@ -13,9 +13,26 @@ Write ordinary Markdown for ordinary content and use DocsPress blocks where docu
 - Add frontmatter `title` and begin body sections at `##` when the DocsPress theme renders the Page title.
 - Link pages with relative Markdown paths; DocsPress rewrites known documentation routes by default.
 - Use real, verified examples with fake credentials and non-production identifiers.
-- Keep serialized `wp:docspress/*` comments as valid compact JSON.
+- Keep `docspress:block` config valid and update its semantic Markdown preview with it; legacy `wp:docspress/*` comments remain accepted input.
 
-<!-- wp:docspress/callout {"tone":"note","title":"One Markdown tree, two block systems","content":"<p>Common Markdown becomes WordPress core blocks. Serialized DocsPress comments remain custom dynamic blocks rendered by the companion plugin.</p>","collapsible":false} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/callout",
+  "attrs": {
+    "tone": "note",
+    "title": "One Markdown tree, two block systems",
+    "content": "\u003cp\u003eCommon Markdown becomes WordPress core blocks. Readable DocsPress envelopes become custom dynamic blocks rendered by the companion plugin.\u003c/p\u003e",
+    "collapsible": false
+  }
+}
+-->
+> [!NOTE]
+>
+> **One Markdown tree, two block systems**
+>
+> Common Markdown becomes WordPress core blocks. Readable DocsPress envelopes become custom dynamic blocks rendered by the companion plugin.
+<!-- /docspress:block -->
 
 ## Learn the formats
 

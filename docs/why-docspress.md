@@ -5,7 +5,24 @@ sidebar_position: 20
 
 DocsPress is the advantageous choice when documentation belongs in GitHub but WordPress is already the trusted publishing, editorial, and presentation platform. It combines a developer-native Markdown workflow with a highly customizable WordPress site that editors can reshape without rebuilding the theme.
 
-<!-- wp:docspress/callout {"tone":"success","title":"Keep the workflow you already have","content":"<p>Developers keep Markdown, pull requests, and code review. Readers and editors keep WordPress Pages, previews, menus, themes, users, and plugins.</p>","collapsible":false} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/callout",
+  "attrs": {
+    "tone": "success",
+    "title": "Keep the workflow you already have",
+    "content": "\u003cp\u003eDevelopers keep Markdown, pull requests, and code review. Readers and editors keep WordPress Pages, previews, menus, themes, users, and plugins.\u003c/p\u003e",
+    "collapsible": false
+  }
+}
+-->
+> [!TIP]
+>
+> **Keep the workflow you already have**
+>
+> Developers keep Markdown, pull requests, and code review. Readers and editors keep WordPress Pages, previews, menus, themes, users, and plugins.
+<!-- /docspress:block -->
 
 ## DocsPress and Docusaurus solve different deployment problems
 
@@ -57,16 +74,69 @@ This customization remains portable WordPress block-theme data. It does not requ
 
 DocsPress can keep comments closed on reference material and enable them only on the Pages or posts where questions and feedback are useful. The theme presents threaded replies through its editable Comments template part, while WordPress continues to own comment status, registration rules, moderation, notifications, paging, and spam controls. Removing the Comments template part hides that presentation without deleting existing comments.
 
-<!-- wp:docspress/callout {"tone":"tip","title":"Comments are opt-in per publishing surface","content":"<p>Use WordPress’s per-Page discussion setting to decide where replies are accepted, then edit the Comments template part to control how that conversation appears across the site.</p>","collapsible":false} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/callout",
+  "attrs": {
+    "tone": "tip",
+    "title": "Comments are opt-in per publishing surface",
+    "content": "\u003cp\u003eUse WordPress’s per-Page discussion setting to decide where replies are accepted, then edit the Comments template part to control how that conversation appears across the site.\u003c/p\u003e",
+    "collapsible": false
+  }
+}
+-->
+> [!TIP]
+>
+> **Comments are opt-in per publishing surface**
+>
+> Use WordPress’s per-Page discussion setting to decide where replies are accepted, then edit the Comments template part to control how that conversation appears across the site.
+<!-- /docspress:block -->
 
 ### A smaller operational change for WordPress teams
 
 DocsPress adds one GitHub Action and one managed Page tree to infrastructure the team already operates. Docusaurus is an excellent fit when the team explicitly wants a React static application; DocsPress is simpler when adding another Node-powered public site would duplicate existing WordPress capabilities.
 
-<!-- wp:docspress/result {"status":"success","title":"Best fit: WordPress is already the destination","content":"<p>DocsPress preserves developer-native authoring while making documentation a highly customizable, first-class part of the WordPress site.</p>","meta":"GitHub authoring · WordPress publishing · Site Editor design"} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/result",
+  "attrs": {
+    "status": "success",
+    "title": "Best fit: WordPress is already the destination",
+    "content": "\u003cp\u003eDocsPress preserves developer-native authoring while making documentation a highly customizable, first-class part of the WordPress site.\u003c/p\u003e",
+    "meta": "GitHub authoring · WordPress publishing · Site Editor design"
+  }
+}
+-->
+> [!TIP]
+>
+> **Best fit: WordPress is already the destination**
+>
+> DocsPress preserves developer-native authoring while making documentation a highly customizable, first-class part of the WordPress site.
+>
+> _GitHub authoring · WordPress publishing · Site Editor design_
+<!-- /docspress:block -->
 
 ## When Docusaurus may be the better fit
 
 Choose Docusaurus when you specifically need a standalone static React application, extensive MDX component composition, built-in documentation version snapshots, or its mature internationalization and search ecosystem. Its official documentation describes [the React application structure](https://docusaurus.io/docs/installation), [static deployment options](https://docusaurus.io/docs/deployment), [search integrations](https://docusaurus.io/docs/search), and [versioning workflow](https://docusaurus.io/docs/versioning).
 
-<!-- wp:docspress/callout {"tone":"note","title":"A practical decision","content":"<p>If your organization already publishes through WordPress, start with DocsPress. If the documentation must be an independent React product, start with Docusaurus.</p>","collapsible":false} /-->
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/callout",
+  "attrs": {
+    "tone": "note",
+    "title": "A practical decision",
+    "content": "\u003cp\u003eIf your organization already publishes through WordPress, start with DocsPress. If the documentation must be an independent React product, start with Docusaurus.\u003c/p\u003e",
+    "collapsible": false
+  }
+}
+-->
+> [!NOTE]
+>
+> **A practical decision**
+>
+> If your organization already publishes through WordPress, start with DocsPress. If the documentation must be an independent React product, start with Docusaurus.
+<!-- /docspress:block -->
