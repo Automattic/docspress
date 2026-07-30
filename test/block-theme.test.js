@@ -224,7 +224,14 @@ describe("DocsPress block theme constraints", () => {
     expect(readme).toContain("--mount=\"$PWD/docs:/wordpress/docspress-source-docs\"");
     expect(readme).toContain("--reset");
     expect(readme).not.toContain("npx docspress@latest playground");
-    expect(readme).toContain("One command from docs to WordPress");
+    expect(readme).toContain("## Quick start");
+    expect(readme).toContain("## Preview local docs from the CLI");
+    expect(readme).toContain("blueprint-versioning.json");
+    expect(readme).toContain("## GitHub Actions");
+    expect(readme).toContain("mode: reconcile");
+    expect(readme).toContain("## WordPress.com authentication");
+    expect(readme).toContain("https://docs.press/docs/");
+    expect(readme).not.toContain("## Configuration");
   });
 
   it("prefers the current mounted theme when reseeding the local Playground", async () => {
