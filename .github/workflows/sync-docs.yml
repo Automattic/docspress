@@ -36,7 +36,9 @@ jobs:
       - uses: ./
         with:
           mode: reconcile
-          wordpress-url: https://fkadocs.atomicsites.blog
+          # WP_ACCESS_TOKEN is a WordPress.com OAuth token. Send it through the
+          # WordPress.com API so the request receives its authenticated user.
+          wordpress-url: https://public-api.wordpress.com
           wordpress-site: fkadocs.atomicsites.blog
           wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}
           docs-dir: docs

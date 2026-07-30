@@ -4,6 +4,36 @@ title: Markdown and Gutenberg
 
 DocsPress converts familiar Markdown into editable Gutenberg-compatible content. In the other direction, it emits ordinary Markdown for portable core blocks and a readable, versioned Markdown envelope for blocks that need Gutenberg-only configuration.
 
+## One source, two native interfaces
+
+The same committed file remains useful in both places. GitHub hides the lossless configuration comments and renders the visible GFM preview. WordPress reads that configuration, rebuilds native Gutenberg blocks, and applies the documentation theme. Reviewers do not have to decode serialized `wp:*` comments, and WordPress editors do not receive a flattened Markdown imitation.
+
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "core/image",
+  "serialized": "\u003c!\u002d\u002d wp:image {\"url\":\"https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/compatibility/github-markdown-preview.jpg\",\"alt\":\"GitHub Markdown preview of the Markdown and Gutenberg documentation page showing readable prose and a core block mapping table\",\"width\":\"900px\",\"sizeSlug\":\"full\",\"linkDestination\":\"none\"} \u002d\u002d\u003e\n\u003cfigure class=\"wp-block-image size-full is-resized\"\u003e\u003cimg src=\"https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/compatibility/github-markdown-preview.jpg\" alt=\"GitHub Markdown preview of the Markdown and Gutenberg documentation page showing readable prose and a core block mapping table\" style=\"width:900px\"/\u003e\u003cfigcaption class=\"wp-element-caption\"\u003eGitHub renders the visible Markdown while the configuration comments stay hidden.\u003c/figcaption\u003e\u003c/figure\u003e\n\u003c!\u002d\u002d /wp:image \u002d\u002d\u003e"
+}
+-->
+![GitHub Markdown preview of the Markdown and Gutenberg documentation page showing readable prose and a core block mapping table](https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/compatibility/github-markdown-preview.jpg)
+
+GitHub renders the visible Markdown while the configuration comments stay hidden.
+<!-- /docspress:block -->
+
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "core/image",
+  "serialized": "\u003c!\u002d\u002d wp:image {\"url\":\"https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/compatibility/wordpress-native-page.jpg\",\"alt\":\"Published DocsPress WordPress page showing native navigation, breadcrumbs, table of contents, and a styled core block mapping table\",\"width\":\"900px\",\"sizeSlug\":\"full\",\"linkDestination\":\"none\"} \u002d\u002d\u003e\n\u003cfigure class=\"wp-block-image size-full is-resized\"\u003e\u003cimg src=\"https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/compatibility/wordpress-native-page.jpg\" alt=\"Published DocsPress WordPress page showing native navigation, breadcrumbs, table of contents, and a styled core block mapping table\" style=\"width:900px\"/\u003e\u003cfigcaption class=\"wp-element-caption\"\u003eWordPress reconstructs native blocks and places them inside the editable DocsPress theme.\u003c/figcaption\u003e\u003c/figure\u003e\n\u003c!\u002d\u002d /wp:image \u002d\u002d\u003e"
+}
+-->
+![Published DocsPress WordPress page showing native navigation, breadcrumbs, table of contents, and a styled core block mapping table](https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/compatibility/wordpress-native-page.jpg)
+
+WordPress reconstructs native blocks and places them inside the editable DocsPress theme.
+<!-- /docspress:block -->
+
+The screenshots intentionally show the same title, introduction, and mapping table. The surrounding interface differs because each destination keeps its strengths: repository review controls on GitHub; site navigation, breadcrumbs, search, table of contents, and block styling on WordPress.
+
 ## Core Markdown mapping
 
 | Markdown | WordPress block |
