@@ -284,6 +284,26 @@ describe("DocsPress block theme constraints", () => {
     expect(fieldsStyles).toContain(".wp-block-docspress-fields .docspress-fields__metadata code");
   });
 
+  it("places Result metadata in a footer below the content", async () => {
+    const styles = await fs.readFile(
+      path.join(blocksRoot, "result", "style.css"),
+      "utf8"
+    );
+    const blockRule = styles.match(
+      /^\.wp-block-docspress-result\s*\{([^}]*)\}/m
+    )?.[1] ?? "";
+    const metaRule = styles.match(
+      /^\.docspress-result__meta\s*\{([^}]*)\}/m
+    )?.[1] ?? "";
+
+    expect(blockRule).toContain("grid-template-columns: auto minmax(0, 1fr);");
+    expect(metaRule).toContain("grid-column: 2;");
+    expect(metaRule).toContain("grid-row: 2;");
+    expect(metaRule).toContain("overflow-wrap: anywhere;");
+    expect(metaRule).not.toContain("align-self: center;");
+    expect(metaRule).not.toContain("padding-left:");
+  });
+
   it("gives every companion block native Site Editor design controls", async () => {
     const editors = await Promise.all(
       blockNames.map((name) => fs.readFile(path.join(blocksRoot, name, "editor.js"), "utf8"))
@@ -940,10 +960,10 @@ describe("DocsPress block theme constraints", () => {
     expect(setup).toContain("Download Blocks");
     expect(setup).toContain("Preview Kitchen Sink");
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.10.1/docspress-theme-0.10.1.zip"
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.10.2/docspress-theme-0.10.2.zip"
     );
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.10.1/docspress-blocks-0.10.1.zip"
+      "https://github.com/Automattic/docspress/releases/download/wordpress-0.10.2/docspress-blocks-0.10.2.zip"
     );
     expect(styles).toContain(".home-proof-strip {");
     expect(styles).toContain(".home-sync-section {");
