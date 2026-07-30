@@ -61,7 +61,7 @@ The theme also ships JSON block style variations for Soft panel, Outline card, a
 | `docspress/adjacent-navigation` | `rootSlug`, `sort`, `showRoot`, `maxDepth`, `previousLabel`, `nextLabel`, `showTitles` |
 | `docspress/color-mode-toggle` | `label`, `showLabel`, `defaultMode` |
 | `docspress/docs-menu-toggle` | `label` |
-| `docspress/version-switcher` | `label`, `showLabel`, `presentation`, `showLatestBadge`, `showWhenSingle`, `missingPageText` |
+| `docspress/version-switcher` | `label`, `showLabel`, `presentation`, `showLatestBadge`, `hideSingle`, `unavailableLabel` |
 | `docspress/version-notice` | `message`, `latestLinkLabel`, `showIcon`, `dismissible` |
 
 The ten theme blocks and two version blocks support native color, background, link color, gradients, typography, spacing, borders, minimum height, sticky positioning, shadow, anchor, and CSS-class controls. Their server renderers ensure the editor-facing parameters control live Page, navigation, heading, source-path, and version data. Page Summary displays a manually written Page excerpt or its optional fallback, preventing WordPress from generating a duplicate summary from the first paragraph.
