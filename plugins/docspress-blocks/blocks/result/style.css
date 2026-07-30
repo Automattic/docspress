@@ -6,7 +6,7 @@
 	box-sizing: border-box;
 	width: 100%;
 	min-width: 0;
-	grid-template-columns: auto minmax(0, 1fr) auto;
+	grid-template-columns: auto minmax(0, 1fr);
 	align-items: start;
 	gap: 12px;
 	margin-block: clamp(1.25rem, 2.5vw, 2rem);
@@ -86,20 +86,10 @@ html[data-theme="dark"] .docspress-result--error {
 }
 
 .docspress-result__meta {
-	align-self: center;
-	padding-left: 12px;
+	grid-column: 2;
+	grid-row: 2;
+	min-width: 0;
 	color: var(--dp-muted, #6f7685);
 	font: 600 0.69rem/1.35 var(--dp-font-mono, "SFMono-Regular", Consolas, monospace);
-	white-space: nowrap;
-}
-
-@media (max-width: 560px) {
-	.wp-block-docspress-result {
-		grid-template-columns: auto minmax(0, 1fr);
-	}
-
-	.docspress-result__meta {
-		grid-column: 2;
-		padding-left: 0;
-	}
+	overflow-wrap: anywhere;
 }
