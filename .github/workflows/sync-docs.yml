@@ -36,8 +36,10 @@ jobs:
       - uses: ./
         with:
           mode: reconcile
-          wordpress-url: https://fkadocs.atomicsites.blog
-          wordpress-site: fkadocs.atomicsites.blog
+          # Use the canonical origin so Fetch preserves the Authorization
+          # header instead of following a cross-origin Atomic-domain redirect.
+          wordpress-url: https://docs.press
+          wordpress-site: docs.press
           wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}
           docs-dir: docs
           root-slug: docs
