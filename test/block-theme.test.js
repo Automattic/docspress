@@ -229,7 +229,10 @@ describe("DocsPress block theme constraints", () => {
     expect(readme).toContain("blueprint-versioning.json");
     expect(readme).toContain("## GitHub Actions");
     expect(readme).toContain("mode: reconcile");
-    expect(readme).toContain("## WordPress.com authentication");
+    expect(readme).toContain("## Authentication");
+    expect(readme).toContain("### WordPress.com");
+    expect(readme).toContain("### Self-hosted WordPress (.org)");
+    expect(readme).toContain("wordpress-url: https://docs.example.com");
     expect(readme).toContain("https://docs.press/docs/");
     expect(readme).not.toContain("## Configuration");
   });
