@@ -556,7 +556,7 @@ $home_content .= <<<'HTML'
 <!-- wp:group {"className":"home-download-grid","layout":{"type":"default"}} -->
 <div class="wp-block-group home-download-grid"><!-- wp:group {"tagName":"article","className":"home-download-card home-download-card--theme","layout":{"type":"default"}} -->
 <article class="wp-block-group home-download-card home-download-card--theme"><!-- wp:paragraph {"className":"home-download-card__meta"} -->
-<p class="home-download-card__meta"><span>Site experience</span><span>Theme 0.10.2</span></p>
+<p class="home-download-card__meta"><span>Site experience</span><span>Latest theme</span></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":3} -->
@@ -584,7 +584,7 @@ $home_content .= <<<'HTML'
 <!-- wp:group {"className":"home-download-card__actions","layout":{"type":"flex","flexWrap":"wrap"}} -->
 <div class="wp-block-group home-download-card__actions"><!-- wp:buttons -->
 <div class="wp-block-buttons"><!-- wp:button -->
-<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://github.com/Automattic/docspress/releases/download/wordpress-0.10.2/docspress-theme-0.10.2.zip">Download theme .zip</a></div>
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://github.com/Automattic/docspress/releases/latest/download/docspress-theme.zip">Download theme .zip</a></div>
 <!-- /wp:button --></div>
 <!-- /wp:buttons --></div>
 <!-- /wp:group -->
@@ -596,7 +596,7 @@ $home_content .= <<<'HTML'
 
 <!-- wp:group {"tagName":"article","className":"home-download-card home-download-card--blocks","layout":{"type":"default"}} -->
 <article class="wp-block-group home-download-card home-download-card--blocks"><!-- wp:paragraph {"className":"home-download-card__meta"} -->
-<p class="home-download-card__meta"><span>Authoring toolkit</span><span>Blocks 0.10.2</span></p>
+<p class="home-download-card__meta"><span>Authoring toolkit</span><span>Latest blocks</span></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":3} -->
@@ -624,7 +624,7 @@ $home_content .= <<<'HTML'
 <!-- wp:group {"className":"home-download-card__actions","layout":{"type":"flex","flexWrap":"wrap"}} -->
 <div class="wp-block-group home-download-card__actions"><!-- wp:buttons -->
 <div class="wp-block-buttons"><!-- wp:button -->
-<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://github.com/Automattic/docspress/releases/download/wordpress-0.10.2/docspress-blocks-0.10.2.zip">Download plugins .zip</a></div>
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://github.com/Automattic/docspress/releases/latest/download/docspress-blocks.zip">Download plugins .zip</a></div>
 <!-- /wp:button --></div>
 <!-- /wp:buttons -->
 
