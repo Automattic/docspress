@@ -16,7 +16,7 @@
 ## Quick start
 
 1. Put the Markdown documentation in `docs/`.
-2. [Create a WordPress.com token](#wordpresscom-authentication).
+2. [Create a WordPress access token](#authentication).
 3. Add one of the [GitHub Actions workflows](#github-actions) below.
 4. Run it first with `status: draft` and `dry-run: true`.
 
@@ -131,7 +131,9 @@ jobs:
 
 WordPress-only edits become a rolling Markdown pull request. A true two-sided edit is reported as a conflict instead of overwriting either version.
 
-## WordPress.com authentication
+## Authentication
+
+### WordPress.com
 
 DocsPress uses a WordPress.com OAuth token stored as the repository secret `WP_ACCESS_TOKEN`.
 
@@ -159,7 +161,32 @@ The helper opens WordPress.com for authorization and stores the resulting token 
 gh secret list --repo OWNER/REPO
 ```
 
-For the full OAuth explanation, use [Authenticate WordPress](https://docs.press/docs/publish-existing-docs/authentication/).
+### Self-hosted WordPress (.org)
+
+DocsPress can use a REST API key from your host or authentication plugin when it accepts `Authorization: Bearer …`. Core WordPress does not create this key itself.
+
+Store the key without printing it:
+
+```bash
+printf "WordPress REST API key: "
+IFS= read -r -s WORDPRESS_REST_API_KEY
+printf "\n"
+printf "%s" "$WORDPRESS_REST_API_KEY" |
+  gh secret set WP_ACCESS_TOKEN --repo OWNER/REPO
+unset WORDPRESS_REST_API_KEY
+```
+
+Set `wordpress-url` to the site origin without `/wp-json`:
+
+```yaml
+wordpress-url: https://docs.example.com
+wordpress-site: docs.example.com
+wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}
+```
+
+DocsPress calls `https://docs.example.com/wp-json/wp/v2/pages`. Confirm that the key can read, create, update, and delete Pages before publishing.
+
+For the complete setup, use [Authenticate WordPress](https://docs.press/docs/publish-existing-docs/authentication/).
 
 ## Documentation
 
