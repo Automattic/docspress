@@ -36,9 +36,10 @@ Listing requests use `context=edit`, `status=any`, and pages of 100 records unti
   }
 }
 -->
-#### POST /wp-json/wp/v2/pages
+<details>
+<summary><strong>Request:</strong> <code>POST /wp-json/wp/v2/pages</code></summary>
 
-**Request headers**
+**Headers**
 
 ```http
 Accept: application/json
@@ -46,7 +47,7 @@ Content-Type: application/json
 Authorization: Bearer $WP_ACCESS_TOKEN
 ```
 
-**Request body**
+**Body**
 
 ```json
 {
@@ -58,7 +59,12 @@ Authorization: Bearer $WP_ACCESS_TOKEN
 }
 ```
 
-**Response: 201 Created**
+</details>
+
+<details>
+<summary><strong>Response:</strong> <code>201 Created</code></summary>
+
+**Body**
 
 ```json
 {
@@ -68,6 +74,8 @@ Authorization: Bearer $WP_ACCESS_TOKEN
   "parent": 42
 }
 ```
+
+</details>
 <!-- /docspress:block -->
 
 Updates use `POST /pages/{id}`. Deletions use `DELETE /pages/{id}` and add `force=true` only for `delete-mode: force`.

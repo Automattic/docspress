@@ -551,15 +551,21 @@ _Sequence mode uses the same compact, editable relationship syntax._
   }
 }
 -->
-#### GET /wp-json/
+<details>
+<summary><strong>Request:</strong> <code>GET /wp-json/</code></summary>
 
-**Request headers**
+**Headers**
 
 ```http
 Accept: application/json
 ```
 
-**Response: 200 OK**
+</details>
+
+<details>
+<summary><strong>Response:</strong> <code>200 OK</code></summary>
+
+**Body**
 
 ```json
 {
@@ -567,6 +573,8 @@ Accept: application/json
   "namespaces": ["wp/v2"]
 }
 ```
+
+</details>
 <!-- /docspress:block -->
 
 <!-- docspress:block
@@ -585,16 +593,17 @@ Accept: application/json
   }
 }
 -->
-#### POST /wp-json/wp/v2/pages
+<details>
+<summary><strong>Request:</strong> <code>POST /wp-json/wp/v2/pages</code></summary>
 
-**Request headers**
+**Headers**
 
 ```http
 Content-Type: application/json
 Authorization: Bearer $WP_ACCESS_TOKEN
 ```
 
-**Request body**
+**Body**
 
 ```json
 {
@@ -603,7 +612,12 @@ Authorization: Bearer $WP_ACCESS_TOKEN
 }
 ```
 
-**Response: 201 Created**
+</details>
+
+<details>
+<summary><strong>Response:</strong> <code>201 Created</code></summary>
+
+**Body**
 
 ```json
 {
@@ -611,6 +625,8 @@ Authorization: Bearer $WP_ACCESS_TOKEN
   "status": "draft"
 }
 ```
+
+</details>
 <!-- /docspress:block -->
 
 <!-- docspress:block
@@ -629,25 +645,33 @@ Authorization: Bearer $WP_ACCESS_TOKEN
   }
 }
 -->
-#### PUT /wp-json/wp/v2/pages/43
+<details>
+<summary><strong>Request:</strong> <code>PUT /wp-json/wp/v2/pages/43</code></summary>
 
-**Request headers**
+**Headers**
 
 ```http
 Content-Type: application/x-www-form-urlencoded
 ```
 
-**Request body**
+**Body**
 
-```raw
+```text
 title=REST+API+Reference
 ```
 
-**Response: 200 OK**
+</details>
 
-```raw
+<details>
+<summary><strong>Response:</strong> <code>200 OK</code></summary>
+
+**Body**
+
+```text
 Updated page 43: REST API Reference
 ```
+
+</details>
 <!-- /docspress:block -->
 
 <!-- docspress:block
@@ -666,25 +690,33 @@ Updated page 43: REST API Reference
   }
 }
 -->
-#### PATCH /wp-json/wp/v2/pages/43
+<details>
+<summary><strong>Request:</strong> <code>PATCH /wp-json/wp/v2/pages/43</code></summary>
 
-**Request headers**
+**Headers**
 
 ```http
 Content-Type: application/json
 ```
 
-**Request body**
+**Body**
 
 ```json
 { "status": "publish" }
 ```
 
-**Response: 200 OK**
+</details>
+
+<details>
+<summary><strong>Response:</strong> <code>200 OK</code></summary>
+
+**Body**
 
 ```json
 { "id": 43, "status": "publish" }
 ```
+
+</details>
 <!-- /docspress:block -->
 
 <!-- docspress:block
@@ -703,15 +735,21 @@ Content-Type: application/json
   }
 }
 -->
-#### DELETE /wp-json/wp/v2/pages/43?force=true
+<details>
+<summary><strong>Request:</strong> <code>DELETE /wp-json/wp/v2/pages/43?force=true</code></summary>
 
-**Request headers**
+**Headers**
 
 ```http
 Authorization: Bearer $WP_ACCESS_TOKEN
 ```
 
-**Response: 204 No Content**
+</details>
+
+<details>
+<summary><strong>Response:</strong> <code>204 No Content</code></summary>
+
+</details>
 <!-- /docspress:block -->
 
 ## Fields / Schema

@@ -11,6 +11,12 @@ Keep the block static when the endpoint needs credentials, modifies data, has re
 
 Use `editable: false` to offer a fixed runnable request. Relative endpoints resolve against the current site unless `baseUrl` is supplied.
 
+## GitHub preview
+
+The readable Markdown envelope projects the request and response into separate collapsed `<details>` groups. Each summary exposes the method, endpoint, or response status before expansion, while headers and bodies remain syntax-highlighted fenced code inside the group.
+
+This presentation exists only in Markdown. The hidden config remains authoritative and reconstructs the native `docspress/api-request` block in Gutenberg; DocsPress never sends the generated `<details>` markup to WordPress.
+
 ## Attributes
 
 <!-- docspress:block
@@ -193,16 +199,22 @@ Request, example response, and runner policy accepted by <code>docspress/api-req
   }
 }
 -->
-#### GET /wp-json/wp/v2/pages?context=edit
+<details>
+<summary><strong>Request:</strong> <code>GET /wp-json/wp/v2/pages?context=edit</code></summary>
 
-**Request headers**
+**Headers**
 
 ```http
 Accept: application/json
 Authorization: Bearer $WP_ACCESS_TOKEN
 ```
 
-**Response: 200 OK**
+</details>
+
+<details>
+<summary><strong>Response:</strong> <code>200 OK</code></summary>
+
+**Body**
 
 ```json
 [{
@@ -210,6 +222,8 @@ Authorization: Bearer $WP_ACCESS_TOKEN
   "slug": "docs"
 }]
 ```
+
+</details>
 <!-- /docspress:block -->
 
 ## Runnable example
@@ -236,21 +250,29 @@ Authorization: Bearer $WP_ACCESS_TOKEN
   }
 }
 -->
-#### GET /wp-json/
+<details>
+<summary><strong>Request:</strong> <code>GET /wp-json/</code></summary>
 
-**Request headers**
+**Headers**
 
 ```http
 Accept: application/json
 ```
 
-**Response: 200 OK**
+</details>
+
+<details>
+<summary><strong>Response:</strong> <code>200 OK</code></summary>
+
+**Body**
 
 ```json
 {
   "name": "WordPress"
 }
 ```
+
+</details>
 <!-- /docspress:block -->
 
 ## Static validation-error example
@@ -277,9 +299,10 @@ Accept: application/json
   }
 }
 -->
-#### POST /wp-json/wp/v2/pages
+<details>
+<summary><strong>Request:</strong> <code>POST /wp-json/wp/v2/pages</code></summary>
 
-**Request headers**
+**Headers**
 
 ```http
 Accept: application/json
@@ -287,7 +310,7 @@ Content-Type: application/json
 Authorization: Bearer $WP_ACCESS_TOKEN
 ```
 
-**Request body**
+**Body**
 
 ```json
 {
@@ -296,7 +319,12 @@ Authorization: Bearer $WP_ACCESS_TOKEN
 }
 ```
 
-**Response: 400 Bad Request**
+</details>
+
+<details>
+<summary><strong>Response:</strong> <code>400 Bad Request</code></summary>
+
+**Body**
 
 ```json
 {
@@ -307,6 +335,8 @@ Authorization: Bearer $WP_ACCESS_TOKEN
   }
 }
 ```
+
+</details>
 <!-- /docspress:block -->
 
 ## Runner safety

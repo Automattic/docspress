@@ -6,7 +6,7 @@ import { blocksToMarkdown, mergeWordPressIntoSource, upgradeLegacyBlockSyntax } 
 import { prependSentinel } from "../src/sentinel.js";
 
 const customPreviewCases = [
-  ["docspress/api-request", { method: "POST", endpoint: "/v1/docs", responseStatus: "201 Created" }, "#### POST /v1/docs"],
+  ["docspress/api-request", { method: "POST", endpoint: "/v1/docs", responseStatus: "201 Created" }, "<summary><strong>Request:</strong> <code>POST /v1/docs</code></summary>"],
   ["docspress/audience-paths", { eyebrow: "Start", title: "Choose", description: "Pick a path.", paths: [{ title: "Existing docs", description: "Use Markdown.", url: "/docs/", cta: "Open docs" }] }, "## Choose"],
   ["docspress/callout", { tone: "warning", title: "Careful", content: "<p>Keep <strong>Markdown</strong> readable.</p>" }, "> [!WARNING]"],
   ["docspress/code-tabs", { tabs: [{ label: "JavaScript", language: "js", filename: "index.js", code: "const docs = true;" }] }, "#### JavaScript — index.js"],
@@ -193,6 +193,164 @@ describe("readable DocsPress Markdown blocks", () => {
     expect(markdown).toContain("> Keep **both** directions safe.");
     expect(markdown).toContain('"collapsible": true');
     expect(markdown).toContain('"open": false');
+  });
+
+  it("renders an API exchange as separate GitHub details groups and round-trips every attribute", () => {
+    const attrs = {
+      method: "POST",
+      endpoint: "/wp-json/wp/v2/pages",
+      headers: "Accept: application/json\nAuthorization: Bearer $WP_ACCESS_TOKEN",
+      requestBody: "{\n  \"title\": \"Docs\"\n}",
+      requestBodyFormat: "json",
+      responseStatus: "201 Created",
+      responseBody: "{\n  \"id\": 42\n}",
+      responseBodyFormat: "json",
+      runnable: true,
+      editable: false,
+      allowUnsafe: true,
+      baseUrl: "https://example.com",
+      allowedOrigins: "https://example.com",
+      timeout: 30000
+    };
+    const markdown = blocksToMarkdown(rawCustomBlock("docspress/api-request", attrs));
+
+    expect(markdown.match(/<details>/g)).toHaveLength(2);
+    expect(markdown.match(/<\/details>/g)).toHaveLength(2);
+    expect(markdown).toContain("<summary><strong>Request:</strong> <code>POST /wp-json/wp/v2/pages</code></summary>");
+    expect(markdown).toContain("**Headers**\n\n```http\nAccept: application/json");
+    expect(markdown).toContain("**Body**\n\n```json\n{\n  \"title\": \"Docs\"\n}\n```");
+    expect(markdown).toContain("<summary><strong>Response:</strong> <code>201 Created</code></summary>");
+    expect(markdown).toContain("```json\n{\n  \"id\": 42\n}\n```");
+    expect(markdown).not.toContain("#### POST");
+
+    const roundTripped = firstNamedBlock(markdownToBlocks(markdown, { fallbackTitle: "Docs" }).blocks);
+    expect(roundTripped?.blockName).toBe("docspress/api-request");
+    expect(roundTripped?.attrs).toEqual(attrs);
+  });
+
+  it("keeps empty API request and response payloads as valid summary-only groups", () => {
+    const attrs = {
+      method: "DELETE",
+      endpoint: "/wp-json/wp/v2/pages/42",
+      headers: "",
+      requestBody: "",
+      responseStatus: "204 No Content",
+      responseBody: ""
+    };
+    const markdown = blocksToMarkdown(rawCustomBlock("docspress/api-request", attrs));
+
+    expect(markdown).toContain([
+      "<details>",
+      "<summary><strong>Request:</strong> <code>DELETE /wp-json/wp/v2/pages/42</code></summary>",
+      "",
+      "</details>"
+    ].join("\n"));
+    expect(markdown).toContain([
+      "<details>",
+      "<summary><strong>Response:</strong> <code>204 No Content</code></summary>",
+      "",
+      "</details>"
+    ].join("\n"));
+    expect(markdown).not.toContain("**Headers**");
+    expect(markdown).not.toContain("**Body**");
+    expect(markdown).not.toContain("```");
+    expect(firstNamedBlock(markdownToBlocks(markdown, { fallbackTitle: "Docs" }).blocks)?.attrs)
+      .toEqual(attrs);
+  });
+
+  it("projects omitted API attributes with Gutenberg defaults without adding them to config", () => {
+    const markdown = blocksToMarkdown(rawCustomBlock("docspress/api-request", {}));
+    const block = firstNamedBlock(markdownToBlocks(markdown, { fallbackTitle: "Docs" }).blocks);
+
+    expect(markdown).toContain("<code>GET /wp-json/wp/v2/pages</code>");
+    expect(markdown).toContain("Accept: application/json");
+    expect(markdown).toContain("<code>200 OK</code>");
+    expect(markdown).toContain('"slug": "getting-started"');
+    expect(markdown).toContain('"attrs": {}');
+    expect(block?.attrs).toEqual({});
+  });
+
+  it("escapes API summary HTML, chooses safe fences, and degrades unknown formats to text", () => {
+    const attrs = {
+      method: "TRACE",
+      endpoint: "/items?<tag>&q=\"quoted\"\nnext",
+      headers: "X-Closing: </details>\nX-Ticks: `````",
+      requestBody: "</details>\n```danger\npayload",
+      requestBodyFormat: "json onmouseover=alert(1)",
+      responseStatus: "200 </summary><script>alert(1)</script>",
+      responseBody: "`````\n</details>",
+      responseBodyFormat: "RAW"
+    };
+    const markdown = blocksToMarkdown(rawCustomBlock("docspress/api-request", attrs));
+    const visible = markdown.slice(markdown.indexOf("-->\n") + 4, markdown.lastIndexOf("<!-- /docspress:block -->"));
+
+    expect(visible).toContain("<code>GET /items?&lt;tag&gt;&amp;q=&quot;quoted&quot; next</code>");
+    expect(visible).toContain("<code>200 &lt;/summary&gt;&lt;script&gt;alert(1)&lt;/script&gt;</code>");
+    expect(visible).not.toContain("<script>");
+    expect(visible).toContain("``````http\nX-Closing: </details>\nX-Ticks: `````\n``````");
+    expect(visible).toContain("````text\n</details>\n```danger\npayload\n````");
+    expect(visible).toContain("``````text\n`````\n</details>\n``````");
+    expect(firstNamedBlock(markdownToBlocks(markdown, { fallbackTitle: "Docs" }).blocks)?.attrs)
+      .toEqual(attrs);
+  });
+
+  it("keeps CRLF and blank lines inside API payloads without affecting envelope parsing", () => {
+    const attrs = {
+      method: "PATCH",
+      endpoint: "/v1/docs",
+      headers: "Accept: application/json\r\n\r\nX-Trace: one",
+      requestBody: "{\r\n  \"body\": \"line one\\n\\nline two\"\r\n}",
+      requestBodyFormat: "json",
+      responseStatus: "",
+      responseBody: "line one\r\n\r\nline two",
+      responseBodyFormat: "raw"
+    };
+    const markdown = blocksToMarkdown(rawCustomBlock("docspress/api-request", attrs));
+
+    expect(markdown).toContain("<summary><strong>Response</strong></summary>");
+    expect(markdown).toContain("```http\nAccept: application/json\r\n\r\nX-Trace: one\n```");
+    expect(markdown).toContain("```text\nline one\r\n\r\nline two\n```");
+    expect(firstNamedBlock(markdownToBlocks(markdown, { fallbackTitle: "Docs" }).blocks)?.attrs)
+      .toEqual(attrs);
+  });
+
+  it("round-trips a WordPress-side API edit through reconciliation and regenerates both details groups", () => {
+    const originalAttrs = {
+      method: "GET",
+      endpoint: "/v1/docs",
+      headers: "Accept: application/json",
+      requestBody: "",
+      requestBodyFormat: "json",
+      responseStatus: "200 OK",
+      responseBody: "{\"ok\":true}",
+      responseBodyFormat: "json"
+    };
+    const editedAttrs = {
+      ...originalAttrs,
+      endpoint: "/v1/docs?context=edit",
+      responseStatus: "503 <Retry>",
+      responseBody: "```\n</details>\nretry later",
+      responseBodyFormat: "raw"
+    };
+    const existing = `---
+title: API
+---
+
+${blocksToMarkdown(rawCustomBlock("docspress/api-request", originalAttrs)).trim()}
+`;
+    const desired = desiredFromMarkdown(existing);
+    const merged = mergeWordPressIntoSource({
+      existing,
+      desired,
+      page: pageFromBody(desired, rawCustomBlock("docspress/api-request", editedAttrs))
+    });
+    const roundTripped = firstNamedBlock(markdownToBlocks(merged, { fallbackTitle: "Docs" }).blocks);
+
+    expect(merged).toContain("<summary><strong>Request:</strong> <code>GET /v1/docs?context=edit</code></summary>");
+    expect(merged).toContain("<summary><strong>Response:</strong> <code>503 &lt;Retry&gt;</code></summary>");
+    expect(merged).toContain("````text\n```\n</details>\nretry later\n````");
+    expect(merged.match(/<details>/g)).toHaveLength(2);
+    expect(roundTripped?.attrs).toEqual(editedAttrs);
   });
 
   it("renders compact flow diagrams as GitHub-compatible Mermaid and preserves the source attributes", () => {
@@ -473,10 +631,47 @@ title: Migration
     const upgraded = upgradeLegacyBlockSyntax(source);
 
     expect(upgraded).toContain('"name": "docspress/api-request"');
-    expect(upgraded).toContain("#### POST /pages");
+    expect(upgraded).toContain("<summary><strong>Request:</strong> <code>POST /pages</code></summary>");
+    expect(upgraded).toContain("<summary><strong>Response:</strong> <code>200 OK</code></summary>");
     expect(upgraded).not.toContain("<!-- wp:docspress/api-request");
     expect(firstNamedBlock(markdownToBlocks(upgraded, { fallbackTitle: "Docs" }).blocks)?.attrs.responseBody)
       .toContain("<!-- wp:paragraph -->");
+  });
+
+  it("refreshes an existing API envelope from headings to details without changing Gutenberg", () => {
+    const current = blocksToMarkdown(rawCustomBlock("docspress/api-request", {
+      method: "GET",
+      endpoint: "/v1/docs",
+      headers: "Accept: application/json",
+      requestBody: "",
+      responseStatus: "200 OK",
+      responseBody: "{\"ok\":true}",
+      responseBodyFormat: "json"
+    }));
+    const stale = current.replace(
+      /<details>[\s\S]*?<\/details>\n\n<details>[\s\S]*?<\/details>/,
+      `#### GET /v1/docs
+
+**Request headers**
+
+\`\`\`http
+Accept: application/json
+\`\`\`
+
+**Response: 200 OK**
+
+\`\`\`json
+{"ok":true}
+\`\`\``
+    );
+    const upgraded = upgradeLegacyBlockSyntax(stale);
+
+    expect(upgraded.match(/<details>/g)).toHaveLength(2);
+    expect(upgraded).toContain("<summary><strong>Request:</strong> <code>GET /v1/docs</code></summary>");
+    expect(upgraded).toContain("<summary><strong>Response:</strong> <code>200 OK</code></summary>");
+    expect(upgradeLegacyBlockSyntax(upgraded)).toBe(upgraded);
+    expect(markdownToBlocks(upgraded, { fallbackTitle: "Docs" }).blocks)
+      .toBe(markdownToBlocks(stale, { fallbackTitle: "Docs" }).blocks);
   });
 
   it("refreshes an existing diagram envelope with its generated Mermaid preview", () => {

@@ -285,16 +285,17 @@ The block sends a public `POST` request to the Page-specific endpoint. This exam
   }
 }
 -->
-#### POST /wp-json/docspress/v1/feedback/123
+<details>
+<summary><strong>Request:</strong> <code>POST /wp-json/docspress/v1/feedback/123</code></summary>
 
-**Request headers**
+**Headers**
 
 ```http
 Accept: application/json
 Content-Type: application/json
 ```
 
-**Request body**
+**Body**
 
 ```json
 {
@@ -302,7 +303,12 @@ Content-Type: application/json
 }
 ```
 
-**Response: 200 OK**
+</details>
+
+<details>
+<summary><strong>Response:</strong> <code>200 OK</code></summary>
+
+**Body**
 
 ```json
 {
@@ -315,6 +321,8 @@ Content-Type: application/json
   }
 }
 ```
+
+</details>
 <!-- /docspress:block -->
 
 The request accepts only `helpful` or `unhelpful`. It returns `404` for a Page that is missing, unpublished, or not a Page; `403` for a password-protected Page; `400` for an invalid vote; and `500` when WordPress cannot update the counter. Successful responses include `Cache-Control: no-store`.

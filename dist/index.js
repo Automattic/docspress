@@ -90985,14 +90985,74 @@ function renderFlow(attrs, service) {
 }
 
 function renderApiRequest(attrs) {
-  const sections = [
-    `#### ${escapeHeading(`${attrs.method || "GET"} ${attrs.endpoint || ""}`.trim())}`,
-    attrs.headers ? `**Request headers**\n\n${fencedCode(attrs.headers, "http")}` : "",
-    attrs.requestBody ? `**Request body**\n\n${fencedCode(attrs.requestBody, attrs.requestBodyFormat || "text")}` : "",
-    attrs.responseStatus ? `**Response: ${escapeInline(attrs.responseStatus)}**` : "",
-    attrs.responseBody ? fencedCode(attrs.responseBody, attrs.responseBodyFormat || "text") : ""
-  ];
-  return sections.filter(Boolean).join("\n\n");
+  const defaults = CUSTOM_BLOCK_DEFAULTS["docspress/api-request"];
+  const method = apiAttribute(attrs, defaults, "method");
+  const endpoint = apiAttribute(attrs, defaults, "endpoint");
+  const headers = apiAttribute(attrs, defaults, "headers");
+  const requestBody = apiAttribute(attrs, defaults, "requestBody");
+  const responseStatus = apiAttribute(attrs, defaults, "responseStatus");
+  const responseBody = apiAttribute(attrs, defaults, "responseBody");
+  const requestFormat = apiPayloadLanguage(apiAttribute(attrs, defaults, "requestBodyFormat"));
+  const responseFormat = apiPayloadLanguage(apiAttribute(attrs, defaults, "responseBodyFormat"));
+  const requestLabel = `${normalizedApiMethod(method)} ${String(endpoint).trim()}`.trim();
+  const requestContent = [
+    String(headers).trim() ? `**Headers**\n\n${fencedCode(headers, "http")}` : "",
+    String(requestBody).trim() ? `**Body**\n\n${fencedCode(requestBody, requestFormat)}` : ""
+  ].filter(Boolean).join("\n\n");
+  const responseContent = String(responseBody).trim()
+    ? `**Body**\n\n${fencedCode(responseBody, responseFormat)}`
+    : "";
+  const responseLabel = String(responseStatus).trim();
+
+  return [
+    markdownDetails(
+      `<strong>Request:</strong> <code>${escapeDetailsText(requestLabel)}</code>`,
+      requestContent
+    ),
+    markdownDetails(
+      responseLabel
+        ? `<strong>Response:</strong> <code>${escapeDetailsText(responseLabel)}</code>`
+        : "<strong>Response</strong>",
+      responseContent
+    )
+  ].join("\n\n");
+}
+
+function apiAttribute(attrs, defaults, name) {
+  return attrs[name] === undefined || attrs[name] === null
+    ? defaults[name]
+    : attrs[name];
+}
+
+function normalizedApiMethod(value) {
+  const method = String(value || "").trim().toUpperCase();
+  return ["GET", "POST", "PUT", "PATCH", "DELETE"].includes(method)
+    ? method
+    : "GET";
+}
+
+function apiPayloadLanguage(value) {
+  return String(value || "").toLowerCase() === "json"
+    ? "json"
+    : "text";
+}
+
+function markdownDetails(summary, content) {
+  const body = String(content || "").trim();
+  return `<details>
+<summary>${summary}</summary>${body ? `\n\n${body}` : ""}
+
+</details>`;
+}
+
+function escapeDetailsText(value) {
+  return String(value || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 function renderAudiencePaths(attrs) {
