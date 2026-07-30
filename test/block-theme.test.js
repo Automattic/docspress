@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { collectDesiredPages } from "../src/docs.js";
 
 const root = process.cwd();
 const blocksRoot = path.join(root, "plugins", "docspress-blocks", "blocks");
@@ -220,7 +221,7 @@ describe("DocsPress block theme constraints", () => {
     expect(localDocsImporter).toContain("DOCSPRESS_LOCAL_DOCS_SOURCE");
     expect(localDocsImporter).toContain("docspress_local_docs_markdown_to_blocks");
     expect(localDocsImporter).toContain("_docspress_source_path");
-    expect(readme).toContain("npx @wp-playground/cli@latest start");
+    expect(readme).toContain("npx @wp-playground/cli@3.1.46 start");
     expect(readme).toContain("--mount=\"$PWD/docs:/wordpress/docspress-source-docs\"");
     expect(readme).toContain("--reset");
     expect(readme).not.toContain("npx docspress@latest playground");
@@ -235,6 +236,76 @@ describe("DocsPress block theme constraints", () => {
     expect(readme).toContain("wordpress-url: https://docs.example.com");
     expect(readme).toContain("https://docs.press/docs/");
     expect(readme).not.toContain("## Configuration");
+  });
+
+  it("proves unversioned Markdown works in stock WordPress without companion packages", async () => {
+    const exampleRoot = path.join(root, "examples", "stock-wordpress");
+    const blueprint = JSON.parse(
+      await fs.readFile(path.join(exampleRoot, "blueprint.json"), "utf8")
+    );
+    const readme = await fs.readFile(path.join(root, "README.md"), "utf8");
+    const setup = blueprint.steps.find(({ step }) => step === "runPHP")?.code ?? "";
+    const encodedPayload = setup.match(/base64_decode\(\s*'([^']+)'/)?.[1] ?? "";
+    const generated = JSON.parse(Buffer.from(encodedPayload, "base64").toString("utf8"));
+    const desiredPages = await collectDesiredPages({
+      cwd: exampleRoot,
+      docsDir: "docs",
+      rootSlug: "docs",
+      rootTitle: "DocsPress on stock WordPress",
+      createH1: false,
+      rewriteLinks: true,
+      editLink: false,
+      status: "publish",
+    });
+    const expectedPages = desiredPages.map((page) => ({
+      key: page.key,
+      parentKey: page.parentKey,
+      slug: page.slug,
+      title: page.title,
+      content: page.content,
+      depth: page.depth,
+    }));
+    const blockNames = generated.pages.flatMap((page) =>
+      [...page.content.matchAll(/<!--\s+wp:([^\s]+)[^>]*-->/g)].map(
+        (match) => match[1]
+      )
+    );
+
+    expect(blueprint.$schema).toBe(
+      "https://playground.wordpress.net/blueprint-schema.json"
+    );
+    expect(blueprint.landingPage).toBe("/");
+    expect(blueprint.steps).toHaveLength(1);
+    expect(blueprint.steps.some(({ step }) => step === "installTheme")).toBe(false);
+    expect(blueprint.steps.some(({ step }) => step === "installPlugin")).toBe(false);
+    expect(generated.generatedBy).toBe("scripts/build-playground-stock.mjs");
+    expect(generated.pages).toEqual(expectedPages);
+    expect(generated.pages.map(({ key }) => key)).toEqual([
+      "docs",
+      "docs/getting-started",
+      "docs/reference",
+      "docs/reference/configuration",
+    ]);
+    expect(blockNames.length).toBeGreaterThan(0);
+    expect(blockNames.every((name) => !name.includes("/") || name.startsWith("core/")))
+      .toBe(true);
+    expect(generated.pages.map(({ content }) => content).join("\n"))
+      .not.toContain("wp:docspress/");
+    expect(generated.pages[0].content).toContain("/docs/getting-started/");
+    expect(setup).toContain("DocsPress theme</td>");
+    expect(setup).toContain("DocsPress Blocks plugin</td>");
+    expect(setup).toContain("Native core Gutenberg blocks");
+    expect(readme).toContain(
+      "examples%2Fstock-wordpress%2Fblueprint.json"
+    );
+    expect(readme).toContain(
+      "https://github.com/Automattic/docspress/releases/latest/download/docspress-theme.zip"
+    );
+    expect(readme).toContain(
+      "https://github.com/Automattic/docspress/releases/latest/download/docspress-blocks.zip"
+    );
+    expect(readme).toContain("npx @wp-playground/cli@3.1.46 start");
+    expect(readme).toContain("You do not have to install the DocsPress theme.");
   });
 
   it("prefers the current mounted theme when reseeding the local Playground", async () => {
@@ -960,10 +1031,10 @@ describe("DocsPress block theme constraints", () => {
     expect(setup).toContain("Download Blocks");
     expect(setup).toContain("Preview Kitchen Sink");
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.10.2/docspress-theme-0.10.2.zip"
+      "https://github.com/Automattic/docspress/releases/latest/download/docspress-theme.zip"
     );
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/download/wordpress-0.10.2/docspress-blocks-0.10.2.zip"
+      "https://github.com/Automattic/docspress/releases/latest/download/docspress-blocks.zip"
     );
     expect(styles).toContain(".home-proof-strip {");
     expect(styles).toContain(".home-sync-section {");

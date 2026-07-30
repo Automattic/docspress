@@ -22,12 +22,21 @@
 
 The complete product and setup documentation lives at [docs.press/docs](https://docs.press/docs/).
 
+## Optional WordPress packages
+
+You do not have to install the DocsPress theme. An unversioned DocsPress sync works with the site's existing theme and native WordPress blocks.
+
+- [Download the latest DocsPress theme](https://github.com/Automattic/docspress/releases/latest/download/docspress-theme.zip)
+- [Download the latest DocsPress Blocks plugin](https://github.com/Automattic/docspress/releases/latest/download/docspress-blocks.zip)
+
+Install the theme for the complete documentation layout. Install the Blocks plugin for rich DocsPress blocks; it is required when API versioning is enabled.
+
 ## Preview local docs from the CLI
 
 Run this from the repository that contains your `docs/` directory:
 
 ```bash
-npx @wp-playground/cli@latest start \
+npx @wp-playground/cli@3.1.46 start \
   --blueprint=https://raw.githubusercontent.com/Automattic/docspress/main/theme/blueprint-local-docs.json \
   --mount="$PWD/docs:/wordpress/docspress-source-docs" \
   --no-auto-mount \
@@ -40,8 +49,9 @@ WordPress Playground imports the Markdown as editable Pages and opens `/docs/`.
 
 - [Default documentation site](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-docs.json&page-title=DocsPress%20Documentation)
 - [Versioned API documentation](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-versioning.json&page-title=DocsPress%20Versioning%20Example)
+- [Stock WordPress, no DocsPress theme or plugin](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Fexamples%2Fstock-wordpress%2Fblueprint.json&page-title=DocsPress%20on%20Stock%20WordPress)
 
-Both examples are temporary, editable WordPress sites with the DocsPress theme and blocks installed.
+The first two examples include the complete DocsPress presentation layer. The stock WordPress example installs neither optional package and shows repository Markdown as editable native Gutenberg blocks.
 
 ## GitHub Actions
 
