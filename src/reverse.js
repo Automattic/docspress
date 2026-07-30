@@ -298,7 +298,7 @@ export function upgradeLegacyBlockSyntax(markdown, options = {}) {
   const protectedRanges = [];
   collectNodeRanges(tree, (node) => node.type === "code" || node.type === "inlineCode", protectedRanges);
   const ranges = findSpecialMarkdownRanges(source)
-    .filter((range) => range.type === "gutenberg");
+    .filter((range) => range.type === "gutenberg" || range.type === "docspress-block");
   const selfClosingLine = /^<!--\s*wp:[a-z][a-z0-9_-]*(?:\/[a-z][a-z0-9_-]*)?[^\r\n]*\/-->[ \t]*$/gm;
   let match;
   while ((match = selfClosingLine.exec(source))) {

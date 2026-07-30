@@ -586,11 +586,15 @@ Synchronization owns these REST-visible Page fields and repairs drift even when 
 -->
 #### Version data stays attached through both directions
 
-```text
-GitHub source -> DocsPress Action: collect exact path and logical route
-DocsPress Action -> WordPress Page: synchronize taxonomy and metadata
-WordPress Page -> DocsPress Action: read version-owned edits
-DocsPress Action -> GitHub source: propose the exact destination
+```mermaid
+sequenceDiagram
+  participant n1 as "GitHub source"
+  participant n2 as "DocsPress Action"
+  participant n3 as "WordPress Page"
+  n1->>n2: collect exact path and logical route
+  n2->>n3: synchronize taxonomy and metadata
+  n3->>n2: read version-owned edits
+  n2->>n1: propose the exact destination
 ```
 
 _The version ID and exact source path remain authoritative instead of being inferred from a same-route Page._

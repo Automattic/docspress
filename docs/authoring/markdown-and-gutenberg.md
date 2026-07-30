@@ -32,7 +32,7 @@ DocsPress applies the same deterministic algorithm in both directions:
 4. On WordPress-to-GitHub runs, strip the synchronization marker and generated title or source-link blocks before comparing content.
 5. Normalize editor-only attributes and omitted default values, then fingerprint blocks by meaning rather than byte serialization.
 6. Use a longest-common-subsequence diff to change only the corresponding Markdown source regions. Insertions, deletions, and reordering never regenerate an unchanged region.
-7. Emit pure Markdown for losslessly portable core blocks. Emit semantic previews for all DocsPress blocks: callouts and results use blockquote alerts, code surfaces use fences, fields use tables, flows use ordered lists, and navigation or hero blocks use headings, links, and images.
+7. Emit pure Markdown for losslessly portable core blocks. Emit semantic previews for all DocsPress blocks: callouts and results use blockquote alerts, code surfaces use fences, fields use tables, procedural flows use ordered lists, diagrams use GitHub-rendered Mermaid, and navigation or hero blocks use headings, links, and images.
 8. When a core block carries styling, nested layout, dynamic behavior, or another property Markdown cannot preserve, keep its exact serialized block inside hidden config and show its readable content outside the config.
 9. Fail before writing when a boundary is malformed, config is invalid, a lossless payload names the wrong block, or source regions cannot be mapped one-to-one.
 
@@ -53,6 +53,8 @@ A standalone Markdown image becomes a native `core/image` block. Write meaningfu
 ```
 
 DocsPress preserves the image URL; it does not upload repository files to the WordPress Media Library. Use a stable HTTPS URL, or upload the asset separately before synchronization. Follow the [theme customization guide](../guides/customize-theme.md) for the Site Editor workflow.
+
+The DocsPress Diagram block keeps its compact relationship source in the hidden config and generates a fenced `mermaid` preview for GitHub. Flow diagrams become `flowchart LR`; sequence diagrams become `sequenceDiagram`. WordPress reconstructs its theme-native accessible SVG from the same config, so neither surface depends on the other surface's generated presentation.
 
 ## Choose a DocsPress block
 

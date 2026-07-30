@@ -3,7 +3,7 @@ title: Diagram
 sidebar_position: 70
 ---
 
-Use `docspress/diagram` to turn a compact relationship list into an accessible flow or sequence SVG. It is designed for small architecture and request-flow explanations, with no browser diagram library.
+Use `docspress/diagram` to turn a compact relationship list into a flow or sequence diagram. GitHub renders the Markdown preview as Mermaid, while WordPress renders a theme-native accessible SVG without loading a browser diagram library.
 
 ## When to use it
 
@@ -18,6 +18,8 @@ Source -> Target: optional label
 ```
 
 Lines beginning with `#` are comments. The parser considers the first 30 source lines and renders at most eight actors and 24 relationships. Extra relationships are discarded, so keep the model deliberately small.
+
+DocsPress generates the Mermaid syntax; keep authoring the compact relationship format above. A `flow` diagram becomes a `flowchart LR`, and a `sequence` diagram becomes a `sequenceDiagram`.
 
 ## Attributes
 
@@ -103,10 +105,15 @@ The block supports `wide` alignment in addition to the [shared design controls](
 -->
 #### Documentation publishing flow
 
-```text
-Author -> DocsPress: commit Markdown
-DocsPress -> WordPress: publish blocks
-WordPress -> Reader: serve documentation
+```mermaid
+sequenceDiagram
+  participant n1 as "Author"
+  participant n2 as "DocsPress"
+  participant n3 as "WordPress"
+  participant n4 as "Reader"
+  n1->>n2: commit Markdown
+  n2->>n3: publish blocks
+  n3->>n4: serve documentation
 ```
 
 _The source remains concise and editable in Gutenberg._
@@ -128,13 +135,19 @@ _The source remains concise and editable in Gutenberg._
 -->
 #### From reader question to verified improvement
 
-```text
-Reader -> Support: ask a question
-Support -> Issue: capture the missing detail
-Issue -> Author: assign the documentation change
-Author -> Preview: publish a draft
-Preview -> Reader: validate the answer
-Reader -> Issue: confirm resolution
+```mermaid
+flowchart LR
+  n1["Reader"]
+  n2["Support"]
+  n3["Issue"]
+  n4["Author"]
+  n5["Preview"]
+  n1 -->|"ask a question"| n2
+  n2 -->|"capture the missing detail"| n3
+  n3 -->|"assign the documentation change"| n4
+  n4 -->|"publish a draft"| n5
+  n5 -->|"validate the answer"| n1
+  n1 -->|"confirm resolution"| n3
 ```
 
 _A feedback loop makes the reader part of documentation quality._
@@ -156,13 +169,18 @@ _A feedback loop makes the reader part of documentation quality._
 -->
 #### What happens on a documentation cache miss
 
-```text
-Browser -> Edge: request page
-Edge -> WordPress: cache miss
-WordPress -> Database: load Page and navigation
-Database -> WordPress: return content
-WordPress -> Edge: render response
-Edge -> Browser: cache and deliver
+```mermaid
+sequenceDiagram
+  participant n1 as "Browser"
+  participant n2 as "Edge"
+  participant n3 as "WordPress"
+  participant n4 as "Database"
+  n1->>n2: request page
+  n2->>n3: cache miss
+  n3->>n4: load Page and navigation
+  n4->>n3: return content
+  n3->>n2: render response
+  n2->>n1: cache and deliver
 ```
 
 _The sequence keeps infrastructure actors and response direction explicit._
@@ -170,6 +188,6 @@ _The sequence keeps infrastructure actors and response direction explicit._
 
 ## Published behavior and accessibility
 
-DocsPress produces a theme-native SVG with an image role and accessible label. Labels are plain text, escaped before rendering, and remain available in the Markdown source. No third-party diagram code runs in the browser.
+On GitHub, DocsPress projects the compact source into a fenced `mermaid` block so the repository view renders the diagram. In WordPress, DocsPress produces a theme-native SVG with an image role and accessible label. Labels are escaped for each target syntax and remain in the authoritative config. No third-party diagram code runs on the WordPress page.
 
 Use distinct actor names, short edge labels, and one direction of reading. Describe the important conclusion in nearby prose so the page does not depend on vision alone.

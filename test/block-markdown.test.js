@@ -12,7 +12,7 @@ const customPreviewCases = [
   ["docspress/code-tabs", { tabs: [{ label: "JavaScript", language: "js", filename: "index.js", code: "const docs = true;" }] }, "#### JavaScript — index.js"],
   ["docspress/code-playground", { title: "Demo", html: "<button>Run</button>", css: "button { color: blue; }", javascript: "run();" }, "**HTML**"],
   ["docspress/colorful-code", { language: "js", filename: "index.js", code: "const docs = true;", caption: "Example" }, "```js"],
-  ["docspress/diagram", { title: "Flow", type: "flow", source: "A -> B", caption: "Pipeline" }, "#### Flow"],
+  ["docspress/diagram", { title: "Flow", type: "flow", source: "A -> B", caption: "Pipeline" }, "```mermaid"],
   ["docspress/fields", { title: "Options", description: "Configuration.", fields: [{ name: "site", type: "string", required: true, defaultValue: "", description: "Site ID." }] }, "| Field | Type | Required | Default | Description |"],
   ["docspress/file-tree", { root: "docs/", tree: "index.md\napi.md", caption: "Documentation tree." }, "#### docs/"],
   ["docspress/flow", { start: 3, steps: [{ title: "Verify", content: "<p>Run the tests.</p>" }] }, "3. **Verify**"],
@@ -195,6 +195,110 @@ describe("readable DocsPress Markdown blocks", () => {
     expect(markdown).toContain('"open": false');
   });
 
+  it("renders compact flow diagrams as GitHub-compatible Mermaid and preserves the source attributes", () => {
+    const attrs = {
+      title: "Publishing flow",
+      type: "flow",
+      source: [
+        "Markdown -> DocsPress: collect",
+        "DocsPress --> WordPress: publish",
+        "WordPress -> Reader"
+      ].join("\n"),
+      caption: "The publishing path."
+    };
+    const markdown = blocksToMarkdown(rawCustomBlock("docspress/diagram", attrs));
+
+    expect(markdown).toContain([
+      "```mermaid",
+      "flowchart LR",
+      '  n1["Markdown"]',
+      '  n2["DocsPress"]',
+      '  n3["WordPress"]',
+      '  n4["Reader"]',
+      '  n1 -->|"collect"| n2',
+      '  n2 -->|"publish"| n3',
+      "  n3 --> n4",
+      "```"
+    ].join("\n"));
+    expect(markdown).not.toContain("```text\nMarkdown -> DocsPress");
+
+    const roundTripped = firstNamedBlock(markdownToBlocks(markdown, { fallbackTitle: "Docs" }).blocks);
+    expect(roundTripped?.attrs).toEqual(attrs);
+  });
+
+  it("renders compact sequence diagrams as Mermaid participants and messages", () => {
+    const attrs = {
+      title: "Request lifecycle",
+      type: "sequence",
+      source: "Browser -> API: GET /pages\nAPI -> Browser",
+      caption: ""
+    };
+    const markdown = blocksToMarkdown(rawCustomBlock("docspress/diagram", attrs));
+
+    expect(markdown).toContain([
+      "```mermaid",
+      "sequenceDiagram",
+      '  participant n1 as "Browser"',
+      '  participant n2 as "API"',
+      "  n1->>n2: GET /pages",
+      "  n2->>n1: API to Browser",
+      "```"
+    ].join("\n"));
+  });
+
+  it("escapes Mermaid control characters and matches the WordPress diagram limits", () => {
+    const actors = ['Source "A"', "Target | B", "Actor 3", "Actor 4", "Actor 5", "Actor 6", "Actor 7", "Actor 8"];
+    const actorSetup = [
+      `${actors[0]} -> ${actors[1]}: publish #1; now`,
+      `${actors[2]} -> ${actors[3]}: setup 2`,
+      `${actors[4]} -> ${actors[5]}: setup 3`,
+      `${actors[6]} -> ${actors[7]}: setup 4`
+    ];
+    const repeatedEdges = Array.from({ length: 25 }, (_value, index) => (
+      `${actors[index % actors.length]} -> ${actors[(index + 1) % actors.length]}: label ${index}`
+    ));
+    const markdown = blocksToMarkdown(rawCustomBlock("docspress/diagram", {
+      type: "flow",
+      source: [
+        "# ignored",
+        ...actorSetup,
+        ...repeatedEdges,
+        "Outside first 30 -> Ignored: too late"
+      ].join("\n")
+    }));
+    const preview = markdown.match(/```mermaid\n([\s\S]*?)\n```/)?.[1] || "";
+
+    expect(preview).toContain('n1["Source #34;A#34;"]');
+    expect(preview).toContain('n2["Target #124; B"]');
+    expect(preview).toContain('n1 -->|"publish #35;1#59; now"| n2');
+    expect(preview.match(/^\s+n\d+ -->/gm)).toHaveLength(24);
+    expect(preview).not.toContain("Outside first 30");
+  });
+
+  it("keeps invalid diagram source readable instead of emitting broken Mermaid", () => {
+    const markdown = blocksToMarkdown(rawCustomBlock("docspress/diagram", {
+      type: "flow",
+      source: "# Notes\nNo relationship here"
+    }));
+
+    expect(markdown).toContain("```text\n# Notes\nNo relationship here\n```");
+    expect(markdown).not.toContain("```mermaid");
+  });
+
+  it("keeps procedural Flow blocks as semantic ordered Markdown", () => {
+    const markdown = blocksToMarkdown(rawCustomBlock("docspress/flow", {
+      start: 2,
+      steps: [
+        { title: "Configure", content: "<p>Set the values.</p>" },
+        { title: "Verify", content: "<p>Run the checks.</p>" }
+      ]
+    }));
+
+    expect(markdown).toContain("2. **Configure**");
+    expect(markdown).toContain("3. **Verify**");
+    expect(markdown).not.toContain("```mermaid");
+  });
+
   it("treats config as authoritative and the visible preview as a Markdown projection", () => {
     const markdown = blocksToMarkdown(rawCustomBlock("docspress/callout", {
       tone: "warning",
@@ -373,5 +477,24 @@ title: Migration
     expect(upgraded).not.toContain("<!-- wp:docspress/api-request");
     expect(firstNamedBlock(markdownToBlocks(upgraded, { fallbackTitle: "Docs" }).blocks)?.attrs.responseBody)
       .toContain("<!-- wp:paragraph -->");
+  });
+
+  it("refreshes an existing diagram envelope with its generated Mermaid preview", () => {
+    const current = blocksToMarkdown(rawCustomBlock("docspress/diagram", {
+      title: "Publishing flow",
+      type: "flow",
+      source: "Markdown -> WordPress: publish"
+    }));
+    const stale = current.replace(
+      /```mermaid[\s\S]*?```/,
+      "```text\nMarkdown -> WordPress: publish\n```"
+    );
+    const upgraded = upgradeLegacyBlockSyntax(stale);
+
+    expect(upgraded).toContain("```mermaid\nflowchart LR");
+    expect(upgraded).toContain('n1 -->|"publish"| n2');
+    expect(upgradeLegacyBlockSyntax(upgraded)).toBe(upgraded);
+    expect(markdownToBlocks(upgraded, { fallbackTitle: "Docs" }).blocks)
+      .toBe(markdownToBlocks(stale, { fallbackTitle: "Docs" }).blocks);
   });
 });

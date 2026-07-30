@@ -9,13 +9,6 @@ The **DocsPress: Was This Helpful?** block gives every documentation Page a smal
 {
   "version": 1,
   "name": "core/image",
-  "attrs": {
-    "url": "https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/was-this-helpful/frontend.jpg",
-    "alt": "Published documentation Page showing the Was This Helpful prompt with Yes and No choices",
-    "width": "570px",
-    "sizeSlug": "full",
-    "linkDestination": "none"
-  },
   "serialized": "\u003c!\u002d\u002d wp:image {\"url\":\"https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/was-this-helpful/frontend.jpg\",\"alt\":\"Published documentation Page showing the Was This Helpful prompt with Yes and No choices\",\"width\":\"570px\",\"sizeSlug\":\"full\",\"linkDestination\":\"none\"} \u002d\u002d\u003e\n\u003cfigure class=\"wp-block-image size-full is-resized\"\u003e\u003cimg src=\"https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/was-this-helpful/frontend.jpg\" alt=\"Published documentation Page showing the Was This Helpful prompt with Yes and No choices\" style=\"width:570px\"/\u003e\u003cfigcaption class=\"wp-element-caption\"\u003eThe default Page template places the feedback prompt after the article actions and before adjacent navigation.\u003c/figcaption\u003e\u003c/figure\u003e\n\u003c!\u002d\u002d /wp:image \u002d\u002d\u003e"
 }
 -->
@@ -198,13 +191,6 @@ Open **Pages**, edit the documentation Page, show the editor’s Settings sideba
 {
   "version": 1,
   "name": "core/image",
-  "attrs": {
-    "url": "https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/was-this-helpful/page-editor.jpg",
-    "alt": "WordPress Page editor with the Page feedback panel showing the per-Page visibility control and response totals",
-    "width": "215px",
-    "sizeSlug": "full",
-    "linkDestination": "none"
-  },
   "serialized": "\u003c!\u002d\u002d wp:image {\"url\":\"https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/was-this-helpful/page-editor.jpg\",\"alt\":\"WordPress Page editor with the Page feedback panel showing the per-Page visibility control and response totals\",\"width\":\"215px\",\"sizeSlug\":\"full\",\"linkDestination\":\"none\"} \u002d\u002d\u003e\n\u003cfigure class=\"wp-block-image size-full is-resized\"\u003e\u003cimg src=\"https://raw.githubusercontent.com/Automattic/docspress/main/docs/assets/was-this-helpful/page-editor.jpg\" alt=\"WordPress Page editor with the Page feedback panel showing the per-Page visibility control and response totals\" style=\"width:215px\"/\u003e\u003cfigcaption class=\"wp-element-caption\"\u003eEditors can review the aggregate score and hide the prompt for this Page without erasing its counts.\u003c/figcaption\u003e\u003c/figure\u003e\n\u003c!\u002d\u002d /wp:image \u002d\u002d\u003e"
 }
 -->

@@ -485,10 +485,15 @@ _The maximum eight compact tabs with independent labels, languages, filenames, a
 -->
 #### Documentation publishing flow
 
-```text
-Markdown -> DocsPress: collect
-DocsPress -> WordPress: publish
-WordPress -> Reader: serve
+```mermaid
+flowchart LR
+  n1["Markdown"]
+  n2["DocsPress"]
+  n3["WordPress"]
+  n4["Reader"]
+  n1 -->|"collect"| n2
+  n2 -->|"publish"| n3
+  n3 -->|"serve"| n4
 ```
 
 _A flow diagram rendered as accessible, theme-native SVG without a third-party runtime._
@@ -508,11 +513,15 @@ _A flow diagram rendered as accessible, theme-native SVG without a third-party r
 -->
 #### Runnable request lifecycle
 
-```text
-Reader -> API Console: run GET
-API Console -> WordPress: fetch without credentials
-WordPress -> API Console: JSON response
-API Console -> Reader: format status and body
+```mermaid
+sequenceDiagram
+  participant n1 as "Reader"
+  participant n2 as "API Console"
+  participant n3 as "WordPress"
+  n1->>n2: run GET
+  n2->>n3: fetch without credentials
+  n3->>n2: JSON response
+  n2->>n1: format status and body
 ```
 
 _Sequence mode uses the same compact, editable relationship syntax._

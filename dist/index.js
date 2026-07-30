@@ -90881,11 +90881,82 @@ function renderFileTree(attrs) {
 }
 
 function renderDiagram(attrs) {
+  const mermaid = diagramSourceToMermaid(attrs.source, attrs.type);
   return [
     attrs.title ? `#### ${escapeHeading(attrs.title)}` : "",
-    fencedCode(attrs.source || "", attrs.type === "mermaid" ? "mermaid" : "text"),
+    fencedCode(mermaid || attrs.source || "", mermaid ? "mermaid" : "text"),
     attrs.caption ? `_${attrs.caption}_` : ""
   ].filter(Boolean).join("\n\n");
+}
+
+function diagramSourceToMermaid(source, type) {
+  const { actors, edges } = parseDiagramSource(source);
+  if (edges.length === 0) {
+    return "";
+  }
+
+  const actorIds = new Map(actors.map((actor, index) => [actor, `n${index + 1}`]));
+  if (type === "sequence") {
+    return [
+      "sequenceDiagram",
+      ...actors.map((actor) => `  participant ${actorIds.get(actor)} as "${escapeMermaidText(actor)}"`),
+      ...edges.map((edge) => {
+        const label = edge.label || `${edge.from} to ${edge.to}`;
+        return `  ${actorIds.get(edge.from)}->>${actorIds.get(edge.to)}: ${escapeMermaidText(label)}`;
+      })
+    ].join("\n");
+  }
+
+  return [
+    "flowchart LR",
+    ...actors.map((actor) => `  ${actorIds.get(actor)}["${escapeMermaidText(actor)}"]`),
+    ...edges.map((edge) => {
+      const label = edge.label
+        ? `-->|"${escapeMermaidText(edge.label)}"|`
+        : "-->";
+      return `  ${actorIds.get(edge.from)} ${label} ${actorIds.get(edge.to)}`;
+    })
+  ].join("\n");
+}
+
+function parseDiagramSource(source) {
+  const actors = [];
+  const edges = [];
+  const lines = String(source || "").split(/\r\n|\r|\n/).slice(0, 30);
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) {
+      continue;
+    }
+    const match = line.match(/^(.+?)\s*(?:-->|->)\s*(.+?)(?:\s*:\s*(.+))?$/u);
+    if (!match) {
+      continue;
+    }
+    const from = match[1].trim();
+    const to = match[2].trim();
+    const label = (match[3] || "").trim();
+    if (!from || !to) {
+      continue;
+    }
+
+    for (const actor of [from, to]) {
+      if (!actors.includes(actor) && actors.length < 8) {
+        actors.push(actor);
+      }
+    }
+    if (actors.includes(from) && actors.includes(to) && edges.length < 24) {
+      edges.push({ from, to, label });
+    }
+  }
+
+  return { actors, edges };
+}
+
+function escapeMermaidText(value) {
+  return String(value || "")
+    .replace(/\s+/g, " ")
+    .replace(/[#";|[\]{}()<>%&`\\]/g, (character) => `#${character.codePointAt(0)};`);
 }
 
 function renderFields(attrs) {
@@ -91943,7 +92014,7 @@ function upgradeLegacyBlockSyntax(markdown, options = {}) {
   const protectedRanges = [];
   reverse_collectNodeRanges(tree, (node) => node.type === "code" || node.type === "inlineCode", protectedRanges);
   const ranges = findSpecialMarkdownRanges(source)
-    .filter((range) => range.type === "gutenberg");
+    .filter((range) => range.type === "gutenberg" || range.type === "docspress-block");
   const selfClosingLine = /^<!--\s*wp:[a-z][a-z0-9_-]*(?:\/[a-z][a-z0-9_-]*)?[^\r\n]*\/-->[ \t]*$/gm;
   let match;
   while ((match = selfClosingLine.exec(source))) {

@@ -22,7 +22,7 @@ Write ordinary Markdown for ordinary content and use DocsPress blocks where docu
   "attrs": {
     "tone": "note",
     "title": "One Markdown tree, two block systems",
-    "content": "\u003cp\u003eCommon Markdown becomes WordPress core blocks. Serialized DocsPress comments remain custom dynamic blocks rendered by the companion plugin.\u003c/p\u003e",
+    "content": "\u003cp\u003eCommon Markdown becomes WordPress core blocks. Readable DocsPress envelopes become custom dynamic blocks rendered by the companion plugin.\u003c/p\u003e",
     "collapsible": false
   }
 }
