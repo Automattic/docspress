@@ -246,6 +246,25 @@ function docspress_playground_component_inventory() {
 	return implode( "\n\n", array( $heading, $paragraph, $table ) );
 }
 
+/**
+ * Replace the source snapshot with one inventory from the running site.
+ *
+ * The Markdown kitchen sink keeps a readable runtime snapshot for GitHub.
+ * Playground replaces that final section instead of appending a duplicate.
+ *
+ * @param string $content Generated Gutenberg content.
+ * @return string
+ */
+function docspress_playground_with_component_inventory( $content ) {
+	$source_heading = "<!-- wp:heading -->\n<h2>Playground runtime</h2>\n<!-- /wp:heading -->";
+	$position       = strrpos( $content, $source_heading );
+	$base_content   = false === $position
+		? rtrim( $content )
+		: rtrim( substr( $content, 0, $position ) );
+
+	return $base_content . "\n\n" . docspress_playground_component_inventory();
+}
+
 $generated_path = __DIR__ . '/generated-docs.json';
 if ( ! file_exists( $generated_path ) ) {
 	wp_die( 'Missing generated Playground docs. Run npm run playground:docs.' );
@@ -284,7 +303,7 @@ foreach ( $generated['pages'] as $page ) {
 	}
 
 	if ( 'docs/reference/kitchen-sink' === $page['key'] ) {
-		$page['content'] .= "\n\n" . docspress_playground_component_inventory();
+		$page['content'] = docspress_playground_with_component_inventory( $page['content'] );
 	}
 
 	$order_key = $parent_key ? $parent_key : 'root';

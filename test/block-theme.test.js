@@ -204,6 +204,17 @@ describe("DocsPress block theme constraints", () => {
     expect(generated.generatedBy).toBe("scripts/build-playground-docs.mjs");
     expect(generated.pages.length).toBeGreaterThan(20);
     expect(generated.pages.some((page) => page.key === "docs")).toBe(true);
+    const kitchenSink = generated.pages.find(
+      (page) => page.key === "docs/reference/kitchen-sink"
+    );
+    expect(kitchenSink?.content.match(/<h2>Playground runtime<\/h2>/g)).toHaveLength(1);
+    expect(setup).toContain("docspress_playground_with_component_inventory");
+    expect(setup).toContain(
+      "$page['content'] = docspress_playground_with_component_inventory"
+    );
+    expect(setup).not.toContain(
+      "$page['content'] .= \"\\n\\n\" . docspress_playground_component_inventory()"
+    );
     expect(setup).toContain("'permalink_structure', '/%postname%/'");
     expect(readme).toContain(
       "https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-docs.json"
