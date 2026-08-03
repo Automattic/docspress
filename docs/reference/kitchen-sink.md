@@ -31,7 +31,7 @@ This Page is the acceptance surface for the DocsPress theme and all fifteen Docs
   "name": "docspress/audience-paths",
   "attrs": {
     "compact": true,
-    "eyebrow": "Choose a starting point",
+    "eyebrow": "Compact · three columns",
     "title": "Where are your docs today?",
     "description": "Independent documentation roots can meet readers at the state of their repository.",
     "paths": [
@@ -70,7 +70,7 @@ This Page is the acceptance surface for the DocsPress theme and all fifteen Docs
   }
 }
 -->
-_Choose a starting point_
+_Compact · three columns_
 
 ## Where are your docs today?
 
@@ -93,6 +93,101 @@ Generate source-grounded documentation with AI before publishing.
 Review the product benefits and open a working preview before changing a repository.
 
 [Explore why DocsPress](/docs/why-docspress/)
+<!-- /docspress:block -->
+
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/audience-paths",
+  "attrs": {
+    "compact": true,
+    "eyebrow": "Compact · one column",
+    "title": "One route, one clear next step",
+    "description": "A focused path keeps its icon, copy, and action on one shared left edge.",
+    "paths": [
+      {
+        "title": "Publish an existing documentation tree",
+        "description": "Connect Markdown that already lives beside the code, preview the Page hierarchy, and publish when it is ready.",
+        "url": "/docs/publish-existing-docs/",
+        "cta": "Publish existing docs",
+        "icon": "document",
+        "accent": "blue",
+        "newTab": false
+      }
+    ],
+    "columns": 1,
+    "tone": "paper",
+    "textAlign": "left",
+    "showNumbers": false
+  }
+}
+-->
+_Compact · one column_
+
+## One route, one clear next step
+
+A focused path keeps its icon, copy, and action on one shared left edge.
+
+### Publish an existing documentation tree
+
+Connect Markdown that already lives beside the code, preview the Page hierarchy, and publish when it is ready.
+
+[Publish existing docs](/docs/publish-existing-docs/)
+<!-- /docspress:block -->
+
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/audience-paths",
+  "attrs": {
+    "compact": false,
+    "eyebrow": "Standard · two columns",
+    "title": "Choose how the documentation begins",
+    "description": "Compare two equally weighted routes without changing the established two-column treatment.",
+    "paths": [
+      {
+        "title": "Bring maintained Markdown",
+        "description": "Connect a reviewed docs folder and synchronize it with WordPress Pages.",
+        "url": "/docs/publish-existing-docs/",
+        "cta": "Connect existing docs",
+        "icon": "document",
+        "accent": "green",
+        "newTab": false
+      },
+      {
+        "title": "Generate docs from source",
+        "description": "Use source-grounded agent skills to create a reviewable documentation tree.",
+        "url": "/docs/create-docs-with-ai/",
+        "cta": "Generate documentation",
+        "icon": "sparkles",
+        "accent": "gold",
+        "newTab": false
+      }
+    ],
+    "columns": 2,
+    "tone": "theme",
+    "textAlign": "left",
+    "showNumbers": true
+  }
+}
+-->
+_Standard · two columns_
+
+## Choose how the documentation begins
+
+Compare two equally weighted routes without changing the established two-column treatment.
+
+### Bring maintained Markdown
+
+Connect a reviewed docs folder and synchronize it with WordPress Pages.
+
+[Connect existing docs](/docs/publish-existing-docs/)
+
+### Generate docs from source
+
+Use source-grounded agent skills to create a reviewable documentation tree.
+
+[Generate documentation](/docs/create-docs-with-ai/)
 <!-- /docspress:block -->
 
 ## Colorful Code
@@ -1255,7 +1350,7 @@ This inventory is generated from the running WordPress installation.
 | Component | Type | Version | Status |
 | --- | --- | --- | --- |
 | WordPress | Core | 7.0.2 | Running |
-| DocsPress | Theme | 0.10.5 | Active |
+| DocsPress | Theme | 0.10.6 | Active |
 | Akismet Anti-spam: Spam Protection | Plugin | 5.7 | Active |
-| DocsPress Blocks | Plugin | 0.10.5 | Active |
+| DocsPress Blocks | Plugin | 0.10.6 | Active |
 | Jetpack | Plugin | 16.1-a.3 | Active |

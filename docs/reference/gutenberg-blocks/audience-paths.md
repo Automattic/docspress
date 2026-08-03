@@ -3,7 +3,7 @@ title: Audience Paths
 sidebar_position: 20
 ---
 
-Use `docspress/audience-paths` to route readers into distinct documentation branches. Each path is a complete, keyboard-accessible card with its own title, summary, action, icon, accent, and destination.
+Use `docspress/audience-paths` to route readers into distinct documentation branches. Each path is a complete, keyboard-accessible card with its own title, summary, accent, and destination. Icons and visible bottom actions are optional for the whole block.
 
 ## When to use it
 
@@ -11,7 +11,7 @@ Choose Audience Paths when readers arrive with different goals, roles, or starti
 
 ## Edit the block
 
-Edit the section eyebrow, title, description, and card copy in the canvas. Use the sidebar to set each destination, icon, accent, and new-tab behavior. You can add up to six paths, select one to three columns, center or left-align text, show path numbers, reduce spacing with **Compact layout**, or choose a theme, paper, ink, or blueprint tone.
+Edit the section eyebrow, title, description, and card copy in the canvas. Use the sidebar to set each destination, icon, accent, and new-tab behavior. You can add up to six paths, select one to three columns, center or left-align text, show path numbers, hide icons, hide bottom links, reduce spacing with **Compact layout**, or choose a theme, paper, ink, or blueprint tone.
 
 Use the spacious layout for a landing-page decision. Use Compact layout for a router inside an article. Point paths to normal WordPress Page roots so their child Pages form predictable sidebar branches.
 
@@ -107,6 +107,24 @@ Use the spacious layout for a landing-page decision. Use Compact layout for a ro
         "deprecated": false
       },
       {
+        "name": "showIcons",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "\u003cp\u003eShows the decorative icon badge on every path.\u003c/p\u003e",
+        "values": "true, false",
+        "deprecated": false
+      },
+      {
+        "name": "showLinks",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "\u003cp\u003eShows the bottom action row. Hiding it does not disable the card destination.\u003c/p\u003e",
+        "values": "true, false",
+        "deprecated": false
+      },
+      {
         "name": "panelColor / accentColor",
         "type": "string",
         "required": false,
@@ -136,6 +154,8 @@ Section content and layout accepted by <code>docspress/audience-paths</code>.
 | `textAlign` | enum | No | left | <p>Card content alignment.</p> |
 | `compact` | boolean | No | false | <p>Reduces panel spacing, card height, and type scale.</p> |
 | `showNumbers` | boolean | No | false | <p>Shows each path number.</p> |
+| `showIcons` | boolean | No | true | <p>Shows the decorative icon badge on every path.</p> |
+| `showLinks` | boolean | No | true | <p>Shows the bottom action row. Hiding it does not disable the card destination.</p> |
 | `panelColor / accentColor` | string | No |  | <p>Optional hexadecimal color overrides.</p> |
 <!-- /docspress:block -->
 
@@ -455,9 +475,146 @@ Measure first, then change one variable.
 [Performance guide](#performance)
 <!-- /docspress:block -->
 
+### Text-only paths without icons
+
+Use a single compact column when the wording should carry the decision and decorative icon badges would add noise.
+
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/audience-paths",
+  "attrs": {
+    "eyebrow": "Choose a reading path",
+    "title": "How do you want to learn?",
+    "description": "Start with an explanation or move directly into a guided task.",
+    "paths": [
+      {
+        "title": "Understand the model",
+        "description": "Learn the concepts, boundaries, and vocabulary before changing a project.",
+        "url": "#concepts",
+        "cta": "Read the concepts",
+        "icon": "document",
+        "accent": "blue",
+        "newTab": false
+      },
+      {
+        "title": "Build the first version",
+        "description": "Follow a small end-to-end example and verify the result as you go.",
+        "url": "#tutorial",
+        "cta": "Start the tutorial",
+        "icon": "terminal",
+        "accent": "green",
+        "newTab": false
+      }
+    ],
+    "columns": 1,
+    "tone": "paper",
+    "textAlign": "left",
+    "compact": true,
+    "showNumbers": false,
+    "showIcons": false,
+    "showLinks": true
+  }
+}
+-->
+_Choose a reading path_
+
+## How do you want to learn?
+
+Start with an explanation or move directly into a guided task.
+
+### Understand the model
+
+Learn the concepts, boundaries, and vocabulary before changing a project.
+
+[Read the concepts](#concepts)
+
+### Build the first version
+
+Follow a small end-to-end example and verify the result as you go.
+
+[Start the tutorial](#tutorial)
+<!-- /docspress:block -->
+
+### Linked cards without bottom actions
+
+Hide the repeated action row when concise three-column cards already make their destinations clear. The full card remains clickable.
+
+<!-- docspress:block
+{
+  "version": 1,
+  "name": "docspress/audience-paths",
+  "attrs": {
+    "eyebrow": "Browse the reference",
+    "title": "Choose an area",
+    "description": "Each complete card opens its matching reference section.",
+    "paths": [
+      {
+        "title": "Configuration",
+        "description": "Review supported settings and defaults.",
+        "url": "#configuration",
+        "cta": "Open configuration",
+        "icon": "settings",
+        "accent": "blue",
+        "newTab": false
+      },
+      {
+        "title": "Authentication",
+        "description": "Choose credentials and protect secrets.",
+        "url": "#authentication",
+        "cta": "Open authentication",
+        "icon": "security",
+        "accent": "gold",
+        "newTab": false
+      },
+      {
+        "title": "Troubleshooting",
+        "description": "Match symptoms to the next diagnostic check.",
+        "url": "#troubleshooting",
+        "cta": "Open troubleshooting",
+        "icon": "bug",
+        "accent": "coral",
+        "newTab": false
+      }
+    ],
+    "columns": 3,
+    "tone": "theme",
+    "textAlign": "left",
+    "compact": true,
+    "showNumbers": false,
+    "showIcons": true,
+    "showLinks": false
+  }
+}
+-->
+_Browse the reference_
+
+## Choose an area
+
+Each complete card opens its matching reference section.
+
+### Configuration
+
+Review supported settings and defaults.
+
+[Open configuration](#configuration)
+
+### Authentication
+
+Choose credentials and protect secrets.
+
+[Open authentication](#authentication)
+
+### Troubleshooting
+
+Match symptoms to the next diagnostic check.
+
+[Open troubleshooting](#troubleshooting)
+<!-- /docspress:block -->
+
 ## Published behavior and accessibility
 
-A destination card is one native link rather than nested links, so it works without JavaScript and has a predictable keyboard focus target. New-tab destinations receive safe relationship attributes. Empty URLs intentionally render static cards.
+A destination card is one native link rather than nested links, so it works without JavaScript and has a predictable keyboard focus target. Turning off **Show bottom links** removes only the visible action row; the card remains linked and the readable Markdown fallback keeps its destination. Turning off **Show icons** removes decorative badges without removing information. New-tab destinations receive safe relationship attributes. Empty URLs intentionally render static cards.
 
 Keep the paths mutually exclusive enough that a reader can choose quickly. Start each title with the reader’s state or goal, keep descriptions parallel, and use consistent action labels.
 

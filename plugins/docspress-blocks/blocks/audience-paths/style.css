@@ -272,10 +272,12 @@ a.docspress-audience-paths__card:focus-visible {
 .docspress-audience-paths--compact .docspress-audience-paths__card {
 	display: grid;
 	grid-template-areas:
-		"icon copy"
-		"cta cta";
-	grid-template-columns: 36px minmax(0, 1fr);
-	gap: 12px;
+		"icon"
+		"copy"
+		"cta";
+	grid-template-columns: minmax(0, 1fr);
+	grid-template-rows: auto minmax(0, 1fr) auto;
+	gap: 0;
 	min-height: 0;
 	padding: 16px;
 }
@@ -300,6 +302,7 @@ a.docspress-audience-paths__card:focus-visible {
 
 .docspress-audience-paths--compact .docspress-audience-paths__card-copy {
 	grid-area: copy;
+	margin-top: 14px;
 }
 
 .docspress-audience-paths--compact.docspress-audience-paths--no-numbers .docspress-audience-paths__card-title {
@@ -316,8 +319,34 @@ a.docspress-audience-paths__card:focus-visible {
 
 .docspress-audience-paths--compact .docspress-audience-paths__cta {
 	grid-area: cta;
-	margin: 0;
+	margin: 18px 0 0;
 	padding-top: 0;
+}
+
+.docspress-audience-paths--compact.docspress-audience-paths--no-icons .docspress-audience-paths__card {
+	grid-template-areas:
+		"copy"
+		"cta";
+	grid-template-columns: minmax(0, 1fr);
+	grid-template-rows: minmax(0, 1fr) auto;
+}
+
+.docspress-audience-paths--compact.docspress-audience-paths--no-links .docspress-audience-paths__card {
+	grid-template-areas:
+		"icon"
+		"copy";
+	grid-template-columns: minmax(0, 1fr);
+	grid-template-rows: auto minmax(0, 1fr);
+}
+
+.docspress-audience-paths--compact.docspress-audience-paths--no-icons.docspress-audience-paths--no-links .docspress-audience-paths__card {
+	grid-template-areas: "copy";
+	grid-template-columns: minmax(0, 1fr);
+	grid-template-rows: minmax(0, 1fr);
+}
+
+.docspress-audience-paths--compact.docspress-audience-paths--no-icons .docspress-audience-paths__card-copy {
+	margin-top: 0;
 }
 
 a.docspress-audience-paths__card:hover .docspress-audience-paths__cta-icon {
@@ -354,11 +383,12 @@ a.docspress-audience-paths__card:hover .docspress-audience-paths__cta-icon {
 }
 
 @container (max-width: 480px) {
-	.docspress-audience-paths--compact .docspress-audience-paths__grid {
+	.docspress-audience-paths--compact.docspress-audience-paths--columns-2 .docspress-audience-paths__grid,
+	.docspress-audience-paths--compact.docspress-audience-paths--columns-3 .docspress-audience-paths__grid {
 		grid-template-columns: minmax(0, 1fr);
 	}
 
-	.docspress-audience-paths--compact .docspress-audience-paths__item:last-child {
+	.docspress-audience-paths--compact.docspress-audience-paths--columns-3 .docspress-audience-paths__item:last-child:nth-child(odd) {
 		grid-column: auto;
 	}
 }

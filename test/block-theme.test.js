@@ -207,7 +207,28 @@ describe("DocsPress block theme constraints", () => {
     const kitchenSink = generated.pages.find(
       (page) => page.key === "docs/reference/kitchen-sink"
     );
+    const kitchenSinkAudiencePathExamples = [
+      ...(kitchenSink?.content.matchAll(
+        /<!-- wp:docspress\/audience-paths ([^\n]+) \/-->/g
+      ) ?? []),
+    ].map((match) => JSON.parse(match[1]));
+    const audiencePathsGuide = generated.pages.find(
+      (page) => page.key === "docs/reference/gutenberg-blocks/audience-paths"
+    );
+    const documentedAudiencePathExamples = [
+      ...(audiencePathsGuide?.content.matchAll(
+        /<!-- wp:docspress\/audience-paths ([^\n]+) \/-->/g
+      ) ?? []),
+    ].map((match) => JSON.parse(match[1]));
     expect(kitchenSink?.content.match(/<h2>Playground runtime<\/h2>/g)).toHaveLength(1);
+    expect(kitchenSinkAudiencePathExamples).toHaveLength(3);
+    expect(kitchenSinkAudiencePathExamples.map((example) => example.columns).sort()).toEqual([1, 2, 3]);
+    expect(documentedAudiencePathExamples).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ columns: 1, showIcons: false, showLinks: true }),
+        expect.objectContaining({ columns: 3, showIcons: true, showLinks: false }),
+      ])
+    );
     expect(setup).toContain("docspress_playground_with_component_inventory");
     expect(setup).toContain("function docspress_playground_should_use_live_inventory()");
     expect(setup).toContain("return 'production' !== wp_get_environment_type();");
@@ -1400,6 +1421,29 @@ describe("DocsPress block theme constraints", () => {
     );
     expect(audienceStyles).toContain("container-type: inline-size;");
     expect(audienceStyles).toContain("@container (max-width: 820px)");
+    expect(audienceStyles).toMatch(
+      /\.docspress-audience-paths--compact \.docspress-audience-paths__card\s*\{[^}]*grid-template-areas:\s*"icon"\s*"copy"\s*"cta";[^}]*grid-template-columns:\s*minmax\(0, 1fr\);/s
+    );
+    expect(audienceStyles).toMatch(
+      /@container \(max-width: 480px\)[\s\S]*?\.docspress-audience-paths--compact\.docspress-audience-paths--columns-3 \.docspress-audience-paths__grid\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\);/
+    );
+    expect(audienceStyles).toMatch(
+      /\.docspress-audience-paths--compact\.docspress-audience-paths--no-icons \.docspress-audience-paths__card\s*\{[^}]*grid-template-areas:\s*"copy"\s*"cta";[^}]*grid-template-columns:\s*minmax\(0, 1fr\);/s
+    );
+    expect(audienceStyles).toMatch(
+      /\.docspress-audience-paths--compact\.docspress-audience-paths--no-links \.docspress-audience-paths__card\s*\{[^}]*grid-template-areas:\s*"icon"\s*"copy";/s
+    );
+    expect(audienceStyles).not.toContain('"icon copy"');
+    for (const source of [audienceEditor, audienceRender]) {
+      expect(source).toContain("showIcons");
+      expect(source).toContain("showLinks");
+      expect(source).toContain("docspress-audience-paths--no-icons");
+      expect(source).toContain("docspress-audience-paths--no-links");
+    }
+    expect(audienceEditor).toContain("Show icons");
+    expect(audienceEditor).toContain("Show bottom links");
+    expect(audienceRender).toContain("$show_icons");
+    expect(audienceRender).toContain("$show_links && $path['cta']");
     expect(audienceEditor).not.toContain("textColor:");
     expect(audienceRender).not.toContain("'textColor'");
     expect(functions).toContain(

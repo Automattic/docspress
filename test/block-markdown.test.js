@@ -178,6 +178,34 @@ describe("readable DocsPress Markdown blocks", () => {
     }
   });
 
+  it("preserves audience path destinations when visual icons and bottom links are hidden", () => {
+    const attrs = {
+      eyebrow: "Start",
+      title: "Choose a path",
+      description: "Pick the route that matches your task.",
+      paths: [
+        {
+          title: "Existing docs",
+          description: "Use the Markdown workflow.",
+          url: "/docs/",
+          cta: "Open docs",
+          icon: "document",
+          accent: "blue",
+          newTab: false
+        }
+      ],
+      showIcons: false,
+      showLinks: false
+    };
+    const markdown = blocksToMarkdown(rawCustomBlock("docspress/audience-paths", attrs));
+    const roundTripped = firstNamedBlock(markdownToBlocks(markdown, { fallbackTitle: "Docs" }).blocks);
+
+    expect(markdown).toContain('"showIcons": false');
+    expect(markdown).toContain('"showLinks": false');
+    expect(markdown).toContain("[Open docs](/docs/)");
+    expect(roundTripped?.attrs).toEqual(attrs);
+  });
+
   it("uses a blockquote alert for callouts while keeping Gutenberg-only config hidden", () => {
     const attrs = {
       tone: "warning",

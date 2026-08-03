@@ -75,6 +75,8 @@ function docspress_blocks_render_audience_paths( $attributes ) {
 	$text_align   = docspress_blocks_allowed_value( isset( $attributes['textAlign'] ) ? $attributes['textAlign'] : '', array( 'left', 'center' ), 'left' );
 	$compact      = ! empty( $attributes['compact'] );
 	$show_numbers = ! empty( $attributes['showNumbers'] );
+	$show_icons   = ! array_key_exists( 'showIcons', $attributes ) || ! empty( $attributes['showIcons'] );
+	$show_links   = ! array_key_exists( 'showLinks', $attributes ) || ! empty( $attributes['showLinks'] );
 	$classes      = array(
 		'docspress-audience-paths',
 		'docspress-audience-paths--' . $tone,
@@ -85,6 +87,12 @@ function docspress_blocks_render_audience_paths( $attributes ) {
 
 	if ( ! $show_numbers ) {
 		$classes[] = 'docspress-audience-paths--no-numbers';
+	}
+	if ( ! $show_icons ) {
+		$classes[] = 'docspress-audience-paths--no-icons';
+	}
+	if ( ! $show_links ) {
+		$classes[] = 'docspress-audience-paths--no-links';
 	}
 	if ( $compact ) {
 		$classes[] = 'docspress-audience-paths--compact';
@@ -127,14 +135,16 @@ function docspress_blocks_render_audience_paths( $attributes ) {
 						<?php endif; ?>
 					>
 						<span class="docspress-audience-paths__number" aria-hidden="true"><?php echo esc_html( str_pad( (string) ( $index + 1 ), 2, '0', STR_PAD_LEFT ) ); ?></span>
-						<span class="docspress-audience-paths__icon" aria-hidden="true">
-							<?php echo docspress_blocks_render_audience_path_icon( $path['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-						</span>
+						<?php if ( $show_icons ) : ?>
+							<span class="docspress-audience-paths__icon" aria-hidden="true">
+								<?php echo docspress_blocks_render_audience_path_icon( $path['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+							</span>
+						<?php endif; ?>
 						<div class="docspress-audience-paths__card-copy">
 							<?php if ( $path['title'] ) : ?><h3 class="docspress-audience-paths__card-title"><?php echo esc_html( $path['title'] ); ?></h3><?php endif; ?>
 							<?php if ( $path['description'] ) : ?><p class="docspress-audience-paths__card-description"><?php echo esc_html( $path['description'] ); ?></p><?php endif; ?>
 						</div>
-						<?php if ( $path['cta'] ) : ?>
+						<?php if ( $show_links && $path['cta'] ) : ?>
 							<span class="docspress-audience-paths__cta">
 								<span class="docspress-audience-paths__cta-label"><?php echo esc_html( $path['cta'] ); ?></span>
 								<span class="docspress-audience-paths__cta-icon" aria-hidden="true">
@@ -185,6 +195,8 @@ function docspress_blocks_register_audience_paths() {
 				'textAlign'    => array( 'type' => 'string', 'default' => 'left' ),
 				'compact'      => array( 'type' => 'boolean', 'default' => false ),
 				'showNumbers'  => array( 'type' => 'boolean', 'default' => false ),
+				'showIcons'    => array( 'type' => 'boolean', 'default' => true ),
+				'showLinks'    => array( 'type' => 'boolean', 'default' => true ),
 				'panelColor'   => array( 'type' => 'string', 'default' => '' ),
 				'accentColor'  => array( 'type' => 'string', 'default' => '' ),
 			),

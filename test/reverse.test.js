@@ -51,8 +51,8 @@ function replaceCustomBlock(body, name, mutate) {
 const customBlockCases = [
   {
     name: "docspress/audience-paths",
-    omit: "showNumbers",
-    change: ["tone", "ink"],
+    omit: "showLinks",
+    change: ["showIcons", false],
     attributes: {
       eyebrow: "Choose a starting point",
       title: "Where are your docs today?",
@@ -81,6 +81,8 @@ const customBlockCases = [
       tone: "theme",
       textAlign: "left",
       showNumbers: false,
+      showIcons: true,
+      showLinks: true,
       panelColor: "",
       accentColor: ""
     }

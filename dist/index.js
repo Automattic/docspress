@@ -90429,6 +90429,8 @@ const CUSTOM_BLOCK_DEFAULTS = {
     textAlign: "left",
     compact: false,
     showNumbers: false,
+    showIcons: true,
+    showLinks: true,
     panelColor: "",
     accentColor: ""
   },
@@ -91850,6 +91852,8 @@ const reverse_CUSTOM_BLOCK_DEFAULTS = {
     textAlign: "left",
     compact: false,
     showNumbers: false,
+    showIcons: true,
+    showLinks: true,
     panelColor: "",
     accentColor: ""
   },
