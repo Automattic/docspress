@@ -100,6 +100,8 @@
 			textAlign: { type: 'string', default: 'left' },
 			compact: { type: 'boolean', default: false },
 			showNumbers: { type: 'boolean', default: false },
+			showIcons: { type: 'boolean', default: true },
+			showLinks: { type: 'boolean', default: true },
 			panelColor: { type: 'string', default: '' },
 			accentColor: { type: 'string', default: '' }
 		},
@@ -113,6 +115,8 @@
 				`docspress-audience-paths--align-${ attributes.textAlign }`,
 				attributes.compact ? 'docspress-audience-paths--compact' : '',
 				attributes.showNumbers ? '' : 'docspress-audience-paths--no-numbers',
+				attributes.showIcons ? '' : 'docspress-audience-paths--no-icons',
+				attributes.showLinks ? '' : 'docspress-audience-paths--no-links',
 				attributes.panelColor ? 'docspress-audience-paths--has-panel-color' : '',
 				attributes.accentColor ? 'docspress-audience-paths--has-accent-color' : '',
 				'docspress-audience-paths--editor',
@@ -196,6 +200,17 @@
 							label: __( 'Show path numbers', 'docspress-blocks' ),
 							checked: attributes.showNumbers,
 							onChange: ( showNumbers ) => setAttributes( { showNumbers } )
+						} ),
+						el( ToggleControl, {
+							label: __( 'Show icons', 'docspress-blocks' ),
+							checked: attributes.showIcons,
+							onChange: ( showIcons ) => setAttributes( { showIcons } )
+						} ),
+						el( ToggleControl, {
+							label: __( 'Show bottom links', 'docspress-blocks' ),
+							help: __( 'Hide the visible action row. Cards with destinations remain clickable.', 'docspress-blocks' ),
+							checked: attributes.showLinks,
+							onChange: ( showLinks ) => setAttributes( { showLinks } )
 						} )
 					),
 					...paths.map( ( path, index ) => el(
@@ -306,7 +321,7 @@
 								'div',
 								{ className: `docspress-audience-paths__card docspress-audience-paths__card--${ path.accent || 'blue' }` },
 								el( 'span', { className: 'docspress-audience-paths__number', 'aria-hidden': true }, String( index + 1 ).padStart( 2, '0' ) ),
-								el(
+								attributes.showIcons && el(
 									'span',
 									{ className: 'docspress-audience-paths__icon', 'aria-hidden': true },
 									renderIcon( path.icon )
@@ -331,7 +346,7 @@
 										placeholder: __( 'What will this reader find?', 'docspress-blocks' )
 									} )
 								),
-								el(
+								attributes.showLinks && el(
 									'span',
 									{ className: 'docspress-audience-paths__cta' },
 									el( RichText, {
