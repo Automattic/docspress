@@ -1478,6 +1478,17 @@ describe("DocsPress block theme constraints", () => {
     }
   });
 
+  it("keeps content images at their intrinsic size instead of upscaling them", async () => {
+    const styles = await fs.readFile(path.join(root, "theme", "style.css"), "utf8");
+    const figureImageRule =
+      styles.match(/\n\.entry-content \.wp-block-image img\s*\{([^}]*)\}/)?.[1] ?? "";
+    const imageRule = styles.match(/\n\.entry-content img\s*\{([^}]*)\}/)?.[1] ?? "";
+
+    expect(figureImageRule).not.toMatch(/(?:^|\s)width\s*:/);
+    expect(imageRule).toMatch(/max-width:\s*100%;/);
+    expect(imageRule).toMatch(/height:\s*auto;/);
+  });
+
   it("lets Global Styles flow through the homepage shell and custom blocks", async () => {
     const theme = JSON.parse(await fs.readFile(path.join(root, "theme", "theme.json"), "utf8"));
     const styles = await fs.readFile(path.join(root, "theme", "style.css"), "utf8");

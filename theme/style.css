@@ -1472,7 +1472,6 @@ body.command-search-open {
 
 .entry-content .wp-block-image img {
 	display: block;
-	width: 100%;
 	border: 1px solid var(--dp-line);
 	box-shadow: 0 10px 28px color-mix(in srgb, var(--dp-ink) 8%, transparent);
 }
