@@ -423,7 +423,6 @@ function docspress_render_docs_navigation( $attributes ) {
 			<?php if ( $show_filter ) : ?><p class="sidebar-no-results" data-no-results><?php esc_html_e( 'No pages match that filter.', 'docspress' ); ?></p><?php endif; ?>
 		</div>
 	</aside>
-	<button class="drawer-scrim" type="button" data-drawer-close aria-label="<?php esc_attr_e( 'Close documentation menu', 'docspress' ); ?>"></button>
 	<?php
 	return ob_get_clean();
 }
@@ -893,10 +892,11 @@ function docspress_render_menu_toggle( $attributes ) {
 	$label = sanitize_text_field( docspress_component_attribute( $attributes, 'label', __( 'Open documentation menu', 'docspress' ) ) );
 	$wrapper = get_block_wrapper_attributes( array( 'class' => 'docspress-menu-toggle' ) );
 	return sprintf(
-		'<div %1$s><button class="menu-toggle" type="button" data-drawer-toggle aria-expanded="false" aria-controls="docs-sidebar" aria-label="%2$s">%3$s</button></div>',
+		'<div %1$s><button class="menu-toggle" type="button" data-drawer-toggle aria-expanded="false" aria-controls="docs-sidebar" aria-label="%2$s">%3$s</button></div><button class="drawer-scrim" type="button" data-drawer-close aria-label="%4$s"></button>',
 		$wrapper,
 		esc_attr( $label ),
-		docspress_icon( 'menu' )
+		docspress_icon( 'menu' ),
+		esc_attr__( 'Close documentation menu', 'docspress' )
 	);
 }
 

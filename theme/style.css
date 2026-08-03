@@ -3186,6 +3186,54 @@ body.command-search-open {
 	body.has-docs-sidebar .docspress-menu-toggle {
 		display: block;
 	}
+
+	/*
+	 * Pages without a docs sidebar (home, posts, archives, search, 404) have
+	 * nothing for the header drawer trigger to open. Let it reveal the
+	 * primary navigation instead, using the same slide-in drawer treatment
+	 * as the docs sidebar below.
+	 */
+	body:not(:has(.docs-sidebar)) .header-inner > .primary-navigation {
+		display: flex;
+		position: fixed;
+		top: var(--dp-header-height);
+		left: 0;
+		z-index: 90;
+		flex-direction: column;
+		align-items: stretch;
+		width: min(86vw, 320px);
+		height: calc(100vh - var(--dp-header-height));
+		margin-left: 0;
+		padding: 16px 12px;
+		overflow-y: auto;
+		background: var(--dp-canvas);
+		box-shadow: var(--dp-shadow);
+		transform: translateX(-105%);
+		transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+
+	body.admin-bar:not(:has(.docs-sidebar)) .header-inner > .primary-navigation {
+		top: calc(var(--dp-header-height) + 46px);
+		height: calc(100vh - var(--dp-header-height) - 46px);
+	}
+
+	body.drawer-open:not(:has(.docs-sidebar)) .header-inner > .primary-navigation {
+		transform: translateX(0);
+	}
+
+	body:not(:has(.docs-sidebar)) .primary-navigation ul {
+		flex-direction: column;
+		align-items: stretch;
+		width: 100%;
+	}
+
+	body:not(:has(.docs-sidebar)) .primary-navigation a {
+		width: 100%;
+	}
+
+	body.drawer-open:not(:has(.docs-sidebar)) .drawer-scrim {
+		display: block;
+	}
 }
 
 @media (max-width: 860px) {
