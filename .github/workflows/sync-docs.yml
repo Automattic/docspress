@@ -7,6 +7,8 @@ on:
       - "docs/**/*.md"
       - "docs/**/*.markdown"
       - "docs/**/*.json"
+      - "docs/**/*.yml"
+      - "docs/**/*.yaml"
       - ".github/workflows/sync-docs.yml"
   schedule:
     - cron: "3/5 * * * *"

@@ -128,7 +128,7 @@ The Page template composes the documentation navigation, breadcrumbs, title, man
 
 The Docs Navigation, Command Search, and Adjacent Navigation blocks default to a root Page path of `docs`. Change **Documentation root slug** in each block when the synchronization workflow uses another `root-slug`.
 
-Automatic navigation follows the synchronized Page hierarchy. `sidebar_position` maps to native Page `menu_order`; `sidebar_collapsed` sets an individual section’s initial disclosure state. The Docs Navigation block separately controls whether the full desktop sidebar can be collapsed, whether it starts collapsed, and the visitor-facing collapse/expand labels. It can instead render any classic WordPress menu by name, slug, or ID for sites that already maintain one.
+Automatic navigation follows the synchronized Page hierarchy. `sidebar_position` maps to native Page `menu_order`; `sidebar_collapsed` sets an individual section’s initial disclosure state. The optional Action-level `sidebars-file` adds advanced route-based contexts while sites without it retain one automatic tree. Docs Navigation and Adjacent Navigation automatically stay within the current Page's configured context. The Docs Navigation block separately controls whether the full desktop sidebar can be collapsed, whether it starts collapsed, and the visitor-facing collapse/expand labels. It can instead render any classic WordPress menu by name, slug, or ID for sites that already maintain one.
 
 ## GitHub editing
 

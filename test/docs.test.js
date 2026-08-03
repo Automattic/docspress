@@ -109,6 +109,51 @@ describe("collectDesiredPages", () => {
     expect(Object.hasOwn(readSentinel(guides.content), "sidebarCollapsed")).toBe(false);
   });
 
+  it("keeps one automatic sidebar by default and opts into contextual sidebars", async () => {
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
+    await fs.mkdir(path.join(cwd, "docs", "guides"), { recursive: true });
+    await fs.mkdir(path.join(cwd, "docs", "apis", "rest"), { recursive: true });
+    await fs.writeFile(path.join(cwd, "docs", "index.md"), "# Docs");
+    await fs.writeFile(path.join(cwd, "docs", "guides", "start.md"), "# Start");
+    await fs.writeFile(path.join(cwd, "docs", "apis", "index.md"), "# APIs");
+    await fs.writeFile(path.join(cwd, "docs", "apis", "rest", "v3.md"), "# REST API v3");
+    await fs.writeFile(path.join(cwd, "docs", "sidebars.yml"), [
+      "version: 1",
+      "default: docs",
+      "sidebars:",
+      "  docs: .",
+      "  api: apis"
+    ].join("\n"));
+
+    const simplePages = await collectDesiredPages({
+      cwd,
+      docsDir: "docs",
+      rootSlug: "docs",
+      rootTitle: "Docs",
+      status: "draft"
+    });
+    expect(simplePages.every((page) => !page.sidebarId)).toBe(true);
+
+    const contextualPages = await collectDesiredPages({
+      cwd,
+      docsDir: "docs",
+      sidebarsFile: "docs/sidebars.yml",
+      rootSlug: "docs",
+      rootTitle: "Docs",
+      status: "draft"
+    });
+    const root = contextualPages.find((page) => page.key === "docs");
+    const guide = contextualPages.find((page) => page.key === "docs/guides/start");
+    const api = contextualPages.find((page) => page.key === "docs/apis");
+    const rest = contextualPages.find((page) => page.key === "docs/apis/rest/v3");
+
+    expect(root).toMatchObject({ sidebarId: "docs", sidebarRoot: true });
+    expect(guide).toMatchObject({ sidebarId: "docs", sidebarRoot: false });
+    expect(api).toMatchObject({ sidebarId: "api", sidebarRoot: true });
+    expect(rest).toMatchObject({ sidebarId: "api", sidebarRoot: false });
+    expect(readSentinel(api.content)).toMatchObject({ sidebarId: "api", sidebarRoot: true });
+  });
+
   it("rejects invalid sidebar frontmatter with the source path", async () => {
     const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
     await fs.mkdir(path.join(cwd, "docs"), { recursive: true });
@@ -208,6 +253,45 @@ describe("collectDesiredPages", () => {
     expect(pages.find((page) => page.key === "docs")?.title).toBe("Manifest Root");
     expect(pages.find((page) => page.key === "docs/guides/getting-started")?.title).toBe("Start Here");
     expect(pages.find((page) => page.key === "docs/guides/getting-started")?.content).not.toContain("Source Start");
+  });
+
+  it("assigns manifest Pages to sidebars by their logical routes", async () => {
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
+    await fs.mkdir(path.join(cwd, "docs", "source"), { recursive: true });
+    await fs.writeFile(path.join(cwd, "docs", "source", "api.md"), "# Source API");
+    await fs.writeFile(path.join(cwd, "docs", "manifest.json"), JSON.stringify({
+      pages: [
+        { id: "root", slug: "" },
+        { id: "api", slug: "apis", parent: "root" },
+        { id: "reference", slug: "reference", parent: "api", markdown_source: "source/api.md" }
+      ]
+    }));
+    await fs.writeFile(path.join(cwd, "docs", "sidebars.yml"), [
+      "version: 1",
+      "default: docs",
+      "sidebars:",
+      "  docs: .",
+      "  api: apis"
+    ].join("\n"));
+
+    const pages = await collectDesiredPages({
+      cwd,
+      docsDir: "docs",
+      manifestFile: "docs/manifest.json",
+      sidebarsFile: "docs/sidebars.yml",
+      rootSlug: "docs",
+      rootTitle: "Docs",
+      status: "draft"
+    });
+
+    expect(pages.find((page) => page.key === "docs/apis")).toMatchObject({
+      sidebarId: "api",
+      sidebarRoot: true
+    });
+    expect(pages.find((page) => page.key === "docs/apis/reference")).toMatchObject({
+      sidebarId: "api",
+      sidebarRoot: false
+    });
   });
 
   it.each([

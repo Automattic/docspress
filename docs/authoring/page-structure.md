@@ -86,6 +86,12 @@ sidebar_collapsed: true
 
 A hand-built WordPress sidebar menu keeps its menu-item order, but Page-backed parent items still inherit `sidebar_collapsed`. Removing a previously synchronized `sidebar_position` resets that source-owned Page order to `0`; DocsPress leaves legacy manual Page order untouched when frontmatter never owned it. Invalid field values stop collection and identify the source file instead of publishing an ambiguous navigation state.
 
+## Contextual sidebars
+
+The automatic Page tree remains the default and needs no configuration. Larger sites can opt into a repository-level route map that gives API, extension, CLI, or other sections their own automatic navigation context.
+
+Read [Use contextual sidebars](../guides/contextual-sidebars.md) for the complete configuration, route rules, migration behavior, and runnable WordPress Playground example.
+
 ## Missing parents
 
 When a nested file has no section index, DocsPress creates a managed placeholder Page for the missing parent. Add a real `index.md` when that section needs useful introductory content.

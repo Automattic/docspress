@@ -5,6 +5,7 @@ import { headingBlock, paragraphBlock, sourceLinkBlock } from "./gutenberg.js";
 import { markdownToBlocks } from "./markdown.js";
 import { hashPageState } from "./page-state.js";
 import { prependSentinel } from "./sentinel.js";
+import { applySidebarsRegistry, readSidebarsRegistry } from "./sidebars.js";
 import { escapeAttribute, escapeHtml, normalizeBoolean, slugify, titleFromSlug, toPosixPath } from "./utils.js";
 import { readVersionsRegistry } from "./versions.js";
 
@@ -13,8 +14,10 @@ const INDEX_FILENAMES = new Set(["index", "readme"]);
 export async function collectDesiredPages(options) {
   const versionsRegistry = options.versionsRegistry
     || (options.versionsFile ? await readVersionsRegistry(options) : null);
+  const sidebarsRegistry = options.sidebarsRegistry
+    || (options.sidebarsFile ? await readSidebarsRegistry(options) : null);
   if (versionsRegistry) {
-    return collectVersionedPages({ ...options, versionsRegistry });
+    return collectVersionedPages({ ...options, versionsRegistry, sidebarsRegistry });
   }
 
   const context = createContext(options);
@@ -25,6 +28,7 @@ export async function collectDesiredPages(options) {
   ensurePlaceholderHierarchy(byRoute, options.rootTitle);
   await applyRedirects(byRoute, options, context);
   ensurePlaceholderHierarchy(byRoute, options.rootTitle);
+  applySidebarsRegistry(byRoute, sidebarsRegistry);
   const linkResolver = createLinkResolver(byRoute, context, options);
   convertMarkdownPages(byRoute, options, linkResolver);
 
@@ -114,6 +118,7 @@ async function collectVersionedPages(options) {
       }, context);
       ensurePlaceholderHierarchy(byRoute, options.rootTitle);
     }
+    applySidebarsRegistry(byRoute, options.sidebarsRegistry);
 
     for (const page of byRoute.values()) {
       page.docsVersion = version;
@@ -701,6 +706,10 @@ function finalizePage(page, options) {
   }
   if (Object.hasOwn(page, "sidebarCollapsed")) {
     sentinel.sidebarCollapsed = page.sidebarCollapsed;
+  }
+  if (page.sidebarId) {
+    sentinel.sidebarId = page.sidebarId;
+    sentinel.sidebarRoot = Boolean(page.sidebarRoot);
   }
   const content = prependSentinel(body, sentinel);
 

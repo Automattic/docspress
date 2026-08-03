@@ -71,6 +71,7 @@ function docspress_blocks_versions_register() {
 		'_docspress_github_ref',
 		'_docspress_github_server_url',
 		'_docspress_docs_root',
+		'_docspress_sidebar_id',
 	);
 	foreach ( $post_meta as $key ) {
 		register_post_meta(
@@ -88,20 +89,22 @@ function docspress_blocks_versions_register() {
 			)
 		);
 	}
-	register_post_meta(
-		'page',
-		'_docspress_version_container',
-		array(
-			'type'              => 'boolean',
-			'single'            => true,
-			'default'           => false,
-			'sanitize_callback' => 'rest_sanitize_boolean',
-			'auth_callback'     => static function ( $allowed, $meta_key, $post_id ) {
-				return current_user_can( 'edit_post', (int) $post_id );
-			},
-			'show_in_rest'      => true,
-		)
-	);
+	foreach ( array( '_docspress_version_container', '_docspress_sidebar_root' ) as $key ) {
+		register_post_meta(
+			'page',
+			$key,
+			array(
+				'type'              => 'boolean',
+				'single'            => true,
+				'default'           => false,
+				'sanitize_callback' => 'rest_sanitize_boolean',
+				'auth_callback'     => static function ( $allowed, $meta_key, $post_id ) {
+					return current_user_can( 'edit_post', (int) $post_id );
+				},
+				'show_in_rest'      => true,
+			)
+		);
+	}
 
 	register_setting(
 		'docspress_versions_repository',

@@ -590,6 +590,88 @@ function docspress_get_managed_metadata( $post_id = 0 ) {
 }
 
 /**
+ * Return synchronization-owned sidebar metadata for a Page.
+ *
+ * Registered post meta is the fast path. The sentinel fallback keeps Pages
+ * published before the matching theme metadata registration usable.
+ *
+ * @param int $post_id Page ID.
+ * @return array{id:string,root:bool}
+ */
+function docspress_get_sidebar_metadata( $post_id = 0 ) {
+	static $cache = array();
+
+	$post_id = $post_id ? absint( $post_id ) : get_queried_object_id();
+	if ( ! $post_id ) {
+		return array( 'id' => '', 'root' => false );
+	}
+	if ( isset( $cache[ $post_id ] ) ) {
+		return $cache[ $post_id ];
+	}
+
+	$id = sanitize_key( (string) get_post_meta( $post_id, '_docspress_sidebar_id', true ) );
+	$root = metadata_exists( 'post', $post_id, '_docspress_sidebar_root' )
+		? rest_sanitize_boolean( get_post_meta( $post_id, '_docspress_sidebar_root', true ) )
+		: false;
+	if ( ! $id ) {
+		$managed = docspress_get_managed_metadata( $post_id );
+		$id      = isset( $managed['sidebarId'] ) ? sanitize_key( (string) $managed['sidebarId'] ) : '';
+		$root    = $id && ! empty( $managed['sidebarRoot'] );
+	}
+
+	$cache[ $post_id ] = array( 'id' => $id, 'root' => (bool) $root );
+	return $cache[ $post_id ];
+}
+
+/**
+ * Resolve the current Page's contextual sidebar and its root Page.
+ *
+ * @param int $post_id Page ID.
+ * @return array{id:string,root_id:int}|null
+ */
+function docspress_get_sidebar_context( $post_id = 0 ) {
+	$post_id = $post_id ? absint( $post_id ) : get_queried_object_id();
+	$current = docspress_get_sidebar_metadata( $post_id );
+	if ( ! $post_id || ! $current['id'] ) {
+		return null;
+	}
+
+	$candidates = array_merge( array( $post_id ), get_post_ancestors( $post_id ) );
+	foreach ( $candidates as $candidate_id ) {
+		$metadata = docspress_get_sidebar_metadata( $candidate_id );
+		if ( $metadata['id'] === $current['id'] && $metadata['root'] ) {
+			return array( 'id' => $current['id'], 'root_id' => (int) $candidate_id );
+		}
+	}
+
+	return null;
+}
+
+/**
+ * Keep only Pages assigned to one source-configured sidebar.
+ *
+ * @param WP_Post[] $pages      Documentation Pages.
+ * @param string    $sidebar_id Sidebar ID.
+ * @return WP_Post[]
+ */
+function docspress_filter_pages_by_sidebar( $pages, $sidebar_id ) {
+	$sidebar_id = sanitize_key( (string) $sidebar_id );
+	if ( ! $sidebar_id ) {
+		return $pages;
+	}
+
+	return array_values(
+		array_filter(
+			$pages,
+			static function ( $page ) use ( $sidebar_id ) {
+				$metadata = docspress_get_sidebar_metadata( $page->ID );
+				return $metadata['id'] === $sidebar_id;
+			}
+		)
+	);
+}
+
+/**
  * Return a Page's requested initial sidebar state.
  *
  * @param int $post_id Page ID.
