@@ -13,6 +13,10 @@ function desiredPage(key, overrides = {}) {
   if (Object.hasOwn(overrides, "sidebarCollapsed")) {
     sentinel.sidebarCollapsed = overrides.sidebarCollapsed;
   }
+  if (overrides.sidebarId) {
+    sentinel.sidebarId = overrides.sidebarId;
+    sentinel.sidebarRoot = Boolean(overrides.sidebarRoot);
+  }
 
   return {
     key,
@@ -36,6 +40,10 @@ function existingPage(id, key, options = {}) {
   if (Object.hasOwn(options, "sidebarCollapsed")) {
     sentinel.sidebarCollapsed = options.sidebarCollapsed;
   }
+  if (options.sidebarId) {
+    sentinel.sidebarId = options.sidebarId;
+    sentinel.sidebarRoot = Boolean(options.sidebarRoot);
+  }
   const content = options.managed === false
     ? "<p>Manual page</p>"
     : prependSentinel("<p>Managed page</p>", sentinel);
@@ -47,7 +55,8 @@ function existingPage(id, key, options = {}) {
     menuOrder: options.menuOrder ?? 0,
     content,
     title: key,
-    status: options.status || "draft"
+    status: options.status || "draft",
+    meta: options.meta || {}
   };
 }
 
@@ -224,5 +233,73 @@ describe("syncPages", () => {
     expect(client.calls).toEqual([
       ["update", 1, expect.objectContaining({ menu_order: 0 })]
     ]);
+  });
+
+  it("synchronizes and clears opt-in contextual sidebar metadata", async () => {
+    const configured = desiredPage("docs", {
+      sidebarId: "api",
+      sidebarRoot: true
+    });
+    const legacy = existingPage(1, "docs", {
+      sidebarId: "api",
+      sidebarRoot: true,
+      meta: {}
+    });
+    const configureClient = mockClient([legacy]);
+
+    const configuredResult = await syncPages({
+      desiredPages: [configured],
+      client: configureClient,
+      dryRun: false,
+      rootSlug: "docs",
+      logger: { info() {} }
+    });
+
+    expect(configuredResult.updated).toBe(1);
+    expect(configureClient.calls[0][2].meta).toEqual({
+      _docspress_sidebar_id: "api",
+      _docspress_sidebar_root: true
+    });
+
+    const stale = existingPage(1, "docs", {
+      sidebarId: "api",
+      sidebarRoot: true,
+      meta: {
+        _docspress_sidebar_id: "api",
+        _docspress_sidebar_root: true
+      }
+    });
+    const clearClient = mockClient([stale]);
+
+    const clearedResult = await syncPages({
+      desiredPages: [desiredPage("docs")],
+      client: clearClient,
+      dryRun: false,
+      rootSlug: "docs",
+      logger: { info() {} }
+    });
+
+    expect(clearedResult.updated).toBe(1);
+    expect(clearClient.calls[0][2].meta).toEqual({
+      _docspress_sidebar_id: "",
+      _docspress_sidebar_root: false
+    });
+
+    const inconsistentClient = mockClient([existingPage(1, "docs", {
+      meta: { _docspress_sidebar_root: true }
+    })]);
+    const repairedResult = await syncPages({
+      desiredPages: [desiredPage("docs")],
+      client: inconsistentClient,
+      dryRun: false,
+      rootSlug: "docs",
+      logger: { info() {} }
+    });
+
+    expect(repairedResult.updated).toBe(1);
+    expect(inconsistentClient.calls[0][2].meta).toEqual({
+      _docspress_sidebar_id: "",
+      _docspress_sidebar_root: false
+    });
   });
 });

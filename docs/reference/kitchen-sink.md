@@ -1350,7 +1350,7 @@ This inventory is generated from the running WordPress installation.
 | Component | Type | Version | Status |
 | --- | --- | --- | --- |
 | WordPress | Core | 7.0.2 | Running |
-| DocsPress | Theme | 0.10.6 | Active |
+| DocsPress | Theme | 0.10.7 | Active |
 | Akismet Anti-spam: Spam Protection | Plugin | 5.7 | Active |
-| DocsPress Blocks | Plugin | 0.10.6 | Active |
+| DocsPress Blocks | Plugin | 0.10.7 | Active |
 | Jetpack | Plugin | 16.1-a.3 | Active |

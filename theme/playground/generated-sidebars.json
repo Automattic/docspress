@@ -1,0 +1,124 @@
+{
+  "generatedBy": "scripts/build-playground-sidebars.mjs",
+  "rootSlug": "docs",
+  "sidebars": [
+    {
+      "id": "docs",
+      "root": "",
+      "order": 0
+    },
+    {
+      "id": "api",
+      "root": "apis",
+      "order": 1
+    },
+    {
+      "id": "extensions",
+      "root": "extensions",
+      "order": 2
+    }
+  ],
+  "github": {
+    "serverUrl": "https://github.com",
+    "repository": "Automattic/docspress",
+    "ref": "main"
+  },
+  "pages": [
+    {
+      "key": "docs",
+      "parentKey": null,
+      "slug": "docs",
+      "title": "Acme developer documentation",
+      "content": "<!-- docspress:{\"version\":1,\"key\":\"docs\",\"source\":\"examples/contextual-sidebars/docs/index.md\",\"hash\":\"5d32dc2acb58db7b6c2df79f01ae282df3c012a917b835b2dfa89f111e29bd2c\",\"sourceContentBase64\":\"LS0tCnRpdGxlOiBBY21lIGRldmVsb3BlciBkb2N1bWVudGF0aW9uCnNpZGViYXJfcG9zaXRpb246IDAKc2lkZWJhcl9jb2xsYXBzZWQ6IGZhbHNlCi0tLQoKVGhpcyBleGFtcGxlIGtlZXBzIGdlbmVyYWwgZ3VpZGVzIGluIHRoZSBkZWZhdWx0IGRvY3VtZW50YXRpb24gc2lkZWJhciB3aGlsZSBBUEkgYW5kIGV4dGVuc2lvbiBQYWdlcyByZWNlaXZlIGZvY3VzZWQgbmF2aWdhdGlvbiB0cmVlcy4KClJlYWQgdGhlIFtxdWlja3N0YXJ0XShndWlkZXMvcXVpY2tzdGFydC5tZCksIGJyb3dzZSB0aGUgW1JFU1QgQVBJXShhcGlzL3Jlc3QtYXBpLm1kKSwgb3IgW2J1aWxkIGFuIGV4dGVuc2lvbl0oZXh0ZW5zaW9ucy9idWlsZC1hbi1leHRlbnNpb24ubWQpLgo=\",\"sidebarPosition\":0,\"sidebarCollapsed\":false,\"sidebarId\":\"docs\",\"sidebarRoot\":true} -->\n<!-- wp:paragraph -->\n<p>This example keeps general guides in the default documentation sidebar while API and extension Pages receive focused navigation trees.</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:paragraph -->\n<p>Read the <a href=\"/docs/guides/quickstart/\">quickstart</a>, browse the <a href=\"/docs/apis/rest-api/\">REST API</a>, or <a href=\"/docs/extensions/build-an-extension/\">build an extension</a>.</p>\n<!-- /wp:paragraph -->",
+      "sourcePath": "examples/contextual-sidebars/docs/index.md",
+      "depth": 1,
+      "menuOrder": 0,
+      "sidebarId": "docs",
+      "sidebarRoot": true
+    },
+    {
+      "key": "docs/apis",
+      "parentKey": "docs",
+      "slug": "apis",
+      "title": "API reference",
+      "content": "<!-- docspress:{\"version\":1,\"key\":\"docs/apis\",\"source\":\"examples/contextual-sidebars/docs/apis/index.md\",\"hash\":\"c182e0083bc3e20ae3bdb9b6fe9d05c7c64445600a61dde7bc4c4a765a6a2056\",\"sourceContentBase64\":\"LS0tCnRpdGxlOiBBUEkgcmVmZXJlbmNlCnNpZGViYXJfcG9zaXRpb246IDEwCnNpZGViYXJfY29sbGFwc2VkOiBmYWxzZQotLS0KClRoZSBBUEkgcm91dGUgaXMgdGhlIHJvb3Qgb2YgaXRzIG93biBjb250ZXh0dWFsIHNpZGViYXIuCgpSZXR1cm4gdG8gdGhlIFtnZW5lcmFsIHF1aWNrc3RhcnRdKC4uL2d1aWRlcy9xdWlja3N0YXJ0Lm1kKSBvciBleHBsb3JlIFtleHRlbnNpb24gZGV2ZWxvcG1lbnRdKC4uL2V4dGVuc2lvbnMvYnVpbGQtYW4tZXh0ZW5zaW9uLm1kKS4K\",\"sidebarPosition\":10,\"sidebarCollapsed\":false,\"sidebarId\":\"api\",\"sidebarRoot\":true} -->\n<!-- wp:paragraph -->\n<p>The API route is the root of its own contextual sidebar.</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:paragraph -->\n<p>Return to the <a href=\"/docs/guides/quickstart/\">general quickstart</a> or explore <a href=\"/docs/extensions/build-an-extension/\">extension development</a>.</p>\n<!-- /wp:paragraph -->",
+      "sourcePath": "examples/contextual-sidebars/docs/apis/index.md",
+      "depth": 2,
+      "menuOrder": 10,
+      "sidebarId": "api",
+      "sidebarRoot": true
+    },
+    {
+      "key": "docs/extensions",
+      "parentKey": "docs",
+      "slug": "extensions",
+      "title": "Extensions",
+      "content": "<!-- docspress:{\"version\":1,\"key\":\"docs/extensions\",\"source\":\"examples/contextual-sidebars/docs/extensions/index.md\",\"hash\":\"4b060287b23b92deb7f28143216483aa066fadfa59ecdfc27a448d0798887acb\",\"sourceContentBase64\":\"LS0tCnRpdGxlOiBFeHRlbnNpb25zCnNpZGViYXJfcG9zaXRpb246IDEwCnNpZGViYXJfY29sbGFwc2VkOiBmYWxzZQotLS0KCkV4dGVuc2lvbiBkZXZlbG9wbWVudCBoYXMgYSBzZXBhcmF0ZSBjb250ZXh0dWFsIHNpZGViYXIgZnJvbSB0aGUgZ2VuZXJhbCBndWlkZXMgYW5kIEFQSSByZWZlcmVuY2UuCg==\",\"sidebarPosition\":10,\"sidebarCollapsed\":false,\"sidebarId\":\"extensions\",\"sidebarRoot\":true} -->\n<!-- wp:paragraph -->\n<p>Extension development has a separate contextual sidebar from the general guides and API reference.</p>\n<!-- /wp:paragraph -->",
+      "sourcePath": "examples/contextual-sidebars/docs/extensions/index.md",
+      "depth": 2,
+      "menuOrder": 10,
+      "sidebarId": "extensions",
+      "sidebarRoot": true
+    },
+    {
+      "key": "docs/guides",
+      "parentKey": "docs",
+      "slug": "guides",
+      "title": "Guides",
+      "content": "<!-- docspress:{\"version\":1,\"key\":\"docs/guides\",\"source\":\"examples/contextual-sidebars/docs/guides/index.md\",\"hash\":\"cdd770d989a811dee845fb4448e195658a57b02fda9ce6311fce0184de60bc2b\",\"sourceContentBase64\":\"LS0tCnRpdGxlOiBHdWlkZXMKc2lkZWJhcl9wb3NpdGlvbjogMTAKc2lkZWJhcl9jb2xsYXBzZWQ6IGZhbHNlCi0tLQoKR2VuZXJhbCBwcm9kdWN0IGd1aWRlcyBzdGF5IGluIHRoZSBkZWZhdWx0IGRvY3VtZW50YXRpb24gc2lkZWJhci4K\",\"sidebarPosition\":10,\"sidebarCollapsed\":false,\"sidebarId\":\"docs\",\"sidebarRoot\":false} -->\n<!-- wp:paragraph -->\n<p>General product guides stay in the default documentation sidebar.</p>\n<!-- /wp:paragraph -->",
+      "sourcePath": "examples/contextual-sidebars/docs/guides/index.md",
+      "depth": 2,
+      "menuOrder": 10,
+      "sidebarId": "docs",
+      "sidebarRoot": false
+    },
+    {
+      "key": "docs/apis/rest-api",
+      "parentKey": "docs/apis",
+      "slug": "rest-api",
+      "title": "REST API",
+      "content": "<!-- docspress:{\"version\":1,\"key\":\"docs/apis/rest-api\",\"source\":\"examples/contextual-sidebars/docs/apis/rest-api.md\",\"hash\":\"a4472ff12d2090eac97f942e07788cc6200d54c35a2e23a602cca15742660236\",\"sourceContentBase64\":\"LS0tCnRpdGxlOiBSRVNUIEFQSQpzaWRlYmFyX3Bvc2l0aW9uOiAxMAotLS0KClNlbmQgSlNPTiByZXF1ZXN0cyB0byB0aGUgQWNtZSBSRVNUIEFQSToKCmBgYGh0dHAKR0VUIC92MS93aWRnZXRzCkF1dGhvcml6YXRpb246IEJlYXJlciA8YWNjZXNzLXRva2VuPgpgYGAKCkFQSSBwcmV2aW91cy9uZXh0IGxpbmtzIHN0YXkgaW5zaWRlIHRoaXMgZm9jdXNlZCBuYXZpZ2F0aW9uIGNvbnRleHQuCg==\",\"sidebarPosition\":10,\"sidebarId\":\"api\",\"sidebarRoot\":false} -->\n<!-- wp:paragraph -->\n<p>Send JSON requests to the Acme REST API:</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:code -->\n<pre class=\"wp-block-code\"><code class=\"language-http\">GET /v1/widgets\nAuthorization: Bearer &lt;access-token&gt;</code></pre>\n<!-- /wp:code -->\n\n<!-- wp:paragraph -->\n<p>API previous/next links stay inside this focused navigation context.</p>\n<!-- /wp:paragraph -->",
+      "sourcePath": "examples/contextual-sidebars/docs/apis/rest-api.md",
+      "depth": 3,
+      "menuOrder": 10,
+      "sidebarId": "api",
+      "sidebarRoot": false
+    },
+    {
+      "key": "docs/apis/webhooks",
+      "parentKey": "docs/apis",
+      "slug": "webhooks",
+      "title": "Webhooks",
+      "content": "<!-- docspress:{\"version\":1,\"key\":\"docs/apis/webhooks\",\"source\":\"examples/contextual-sidebars/docs/apis/webhooks.md\",\"hash\":\"affa3936b6ca9151864593f208bb7509bc238e3f385798587bcafe63ff404e21\",\"sourceContentBase64\":\"LS0tCnRpdGxlOiBXZWJob29rcwpzaWRlYmFyX3Bvc2l0aW9uOiAyMAotLS0KClN1YnNjcmliZSB0byB3aWRnZXQgbGlmZWN5Y2xlIGV2ZW50cyBhbmQgdmVyaWZ5IGVhY2ggd2ViaG9vayBzaWduYXR1cmUgYmVmb3JlIHByb2Nlc3NpbmcgaXRzIHBheWxvYWQuCg==\",\"sidebarPosition\":20,\"sidebarId\":\"api\",\"sidebarRoot\":false} -->\n<!-- wp:paragraph -->\n<p>Subscribe to widget lifecycle events and verify each webhook signature before processing its payload.</p>\n<!-- /wp:paragraph -->",
+      "sourcePath": "examples/contextual-sidebars/docs/apis/webhooks.md",
+      "depth": 3,
+      "menuOrder": 20,
+      "sidebarId": "api",
+      "sidebarRoot": false
+    },
+    {
+      "key": "docs/extensions/build-an-extension",
+      "parentKey": "docs/extensions",
+      "slug": "build-an-extension",
+      "title": "Build an extension",
+      "content": "<!-- docspress:{\"version\":1,\"key\":\"docs/extensions/build-an-extension\",\"source\":\"examples/contextual-sidebars/docs/extensions/build-an-extension.md\",\"hash\":\"15ffc360f6609e14e2e78a0f82670c747355836e60671e314f6a27aa3a147285\",\"sourceContentBase64\":\"LS0tCnRpdGxlOiBCdWlsZCBhbiBleHRlbnNpb24Kc2lkZWJhcl9wb3NpdGlvbjogMTAKLS0tCgpDcmVhdGUgYW4gZXh0ZW5zaW9uIHBhY2thZ2UsIHJlZ2lzdGVyIGl0cyBlbnRyeSBwb2ludCwgYW5kIHRlc3QgaXQgYWdhaW5zdCBhIGRldmVsb3BtZW50IHN0b3JlLgoKVXNlIHRoZSBbUkVTVCBBUEldKC4uL2FwaXMvcmVzdC1hcGkubWQpIHdoZW4gdGhlIGV4dGVuc2lvbiBuZWVkcyByZW1vdGUgZGF0YS4K\",\"sidebarPosition\":10,\"sidebarId\":\"extensions\",\"sidebarRoot\":false} -->\n<!-- wp:paragraph -->\n<p>Create an extension package, register its entry point, and test it against a development store.</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:paragraph -->\n<p>Use the <a href=\"/docs/apis/rest-api/\">REST API</a> when the extension needs remote data.</p>\n<!-- /wp:paragraph -->",
+      "sourcePath": "examples/contextual-sidebars/docs/extensions/build-an-extension.md",
+      "depth": 3,
+      "menuOrder": 10,
+      "sidebarId": "extensions",
+      "sidebarRoot": false
+    },
+    {
+      "key": "docs/guides/quickstart",
+      "parentKey": "docs/guides",
+      "slug": "quickstart",
+      "title": "Quickstart",
+      "content": "<!-- docspress:{\"version\":1,\"key\":\"docs/guides/quickstart\",\"source\":\"examples/contextual-sidebars/docs/guides/quickstart.md\",\"hash\":\"8e43e2c3f178715012e5dfd40799306d1fed5f541dc37594af86ee56df2e24f8\",\"sourceContentBase64\":\"LS0tCnRpdGxlOiBRdWlja3N0YXJ0CnNpZGViYXJfcG9zaXRpb246IDEwCi0tLQoKSW5zdGFsbCB0aGUgQWNtZSBTREssIGNyZWF0ZSBhIGNsaWVudCwgYW5kIG1ha2UgeW91ciBmaXJzdCByZXF1ZXN0LgoKQ29udGludWUgdG8gdGhlIFtSRVNUIEFQSSByZWZlcmVuY2VdKC4uL2FwaXMvcmVzdC1hcGkubWQpIHdoZW4geW91IG5lZWQgZW5kcG9pbnQgZGV0YWlscy4K\",\"sidebarPosition\":10,\"sidebarId\":\"docs\",\"sidebarRoot\":false} -->\n<!-- wp:paragraph -->\n<p>Install the Acme SDK, create a client, and make your first request.</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:paragraph -->\n<p>Continue to the <a href=\"/docs/apis/rest-api/\">REST API reference</a> when you need endpoint details.</p>\n<!-- /wp:paragraph -->",
+      "sourcePath": "examples/contextual-sidebars/docs/guides/quickstart.md",
+      "depth": 3,
+      "menuOrder": 10,
+      "sidebarId": "docs",
+      "sidebarRoot": false
+    }
+  ]
+}

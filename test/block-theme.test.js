@@ -1666,6 +1666,26 @@ describe("DocsPress block theme constraints", () => {
     expect(styles).toContain('.docs-nav a[aria-current="page"]');
   });
 
+  it("scopes automatic navigation and adjacent links to opt-in contextual sidebars", async () => {
+    const functions = await fs.readFile(path.join(root, "theme", "functions.php"), "utf8");
+    const php = await fs.readFile(path.join(root, "theme", "inc", "blocks.php"), "utf8");
+    const plugin = await fs.readFile(
+      path.join(root, "plugins", "docspress-blocks", "includes", "versioning.php"),
+      "utf8"
+    );
+
+    for (const metadataKey of ["_docspress_sidebar_id", "_docspress_sidebar_root"]) {
+      expect(php).toContain(metadataKey);
+      expect(plugin).toContain(metadataKey);
+    }
+    expect(functions).toContain("function docspress_get_sidebar_metadata");
+    expect(functions).toContain("function docspress_get_sidebar_context");
+    expect(functions).toContain("function docspress_filter_pages_by_sidebar");
+    expect(php).toContain("'pages' === $source ? docspress_get_sidebar_context() : null");
+    expect(php).toContain("docspress_get_sidebar_context( $current_id )");
+    expect(php).toContain("docspress_filter_pages_by_sidebar( $pages, $sidebar_context['id'] )");
+  });
+
   it("keeps command-search data and controls available in rendered block templates", async () => {
     const php = await fs.readFile(path.join(root, "theme", "inc", "blocks.php"), "utf8");
     const runtime = await fs.readFile(path.join(root, "theme", "assets", "js", "docs.js"), "utf8");

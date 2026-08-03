@@ -25,6 +25,10 @@ inputs:
     description: Optional JSON manifest that defines page order, slugs, parents, titles, and Markdown sources.
     required: false
     default: ""
+  sidebars-file:
+    description: Optional YAML or JSON registry that assigns documentation route roots to contextual sidebars.
+    required: false
+    default: ""
   redirects-file:
     description: Optional JSON map of old docs paths to new docs paths or external URLs. Creates managed moved-page placeholders.
     required: false

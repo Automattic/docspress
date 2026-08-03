@@ -24,6 +24,7 @@
     "migrate:markdown-blocks": "node scripts/migrate-readable-blocks.mjs",
     "package": "npm run lint && npm test && npm run build",
     "playground:docs": "node scripts/build-playground-docs.mjs",
+    "playground:sidebars": "node scripts/build-playground-sidebars.mjs",
     "playground:stock": "node scripts/build-playground-stock.mjs",
     "playground:versioning": "node scripts/build-playground-versioning.mjs",
     "test": "vitest run",

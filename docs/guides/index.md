@@ -15,6 +15,7 @@ Move from a reviewed manual draft to maintainable synchronization in either dire
 - [WordPress to GitHub](wordpress-to-github.md) explains how Gutenberg edits become Markdown changes on a rolling pull request.
 - [Keep documentation synchronized](continuous-sync.md) combines both directions with conflict detection and merge-loop prevention.
 - [Use manifests and redirects](manifests-and-redirects.md) covers stable routes, explicit parents, virtual section Pages, and moved-page placeholders.
+- [Use contextual sidebars](contextual-sidebars.md) keeps the simple automatic tree as the default and adds route-scoped navigation for larger documentation sites.
 - [Version API documentation](versioning.md) publishes root, directory, suffix, or manifest-backed API releases with native WordPress management, clean latest routes, customizable switching, and exact reverse-sync destinations.
 
 <!-- docspress:block

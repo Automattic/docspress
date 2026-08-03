@@ -93221,6 +93221,14 @@ function pagePayload(page, parentId, managed, options = {}) {
     };
   }
 
+  const sidebarMeta = sidebarPageMeta(page, managed);
+  if (sidebarMeta) {
+    payload.meta = {
+      ...(payload.meta || {}),
+      ...sidebarMeta
+    };
+  }
+
   return payload;
 }
 
@@ -93243,6 +93251,19 @@ function managedMetadataMatches(desired, managed, options = {}) {
   const sourceContentMatches = desiredHasSourceContent
     ? managedHasSourceContent && managed.sentinel.sourceContentBase64 === desiredSentinel.sourceContentBase64
     : !managedHasSourceContent;
+  const desiredHasSidebar = Boolean(desired.sidebarId);
+  const managedHasSidebar = Boolean(
+    managed.sentinel?.sidebarId
+      || managed.sentinel?.sidebarRoot
+      || managed.meta?._docspress_sidebar_id
+      || normalizeBooleanMeta(managed.meta?._docspress_sidebar_root)
+  );
+  const sidebarMatches = desiredHasSidebar
+    ? managed.sentinel?.sidebarId === desired.sidebarId
+      && normalizeBooleanMeta(managed.sentinel?.sidebarRoot) === Boolean(desired.sidebarRoot)
+      && String(managed.meta?._docspress_sidebar_id || "") === desired.sidebarId
+      && normalizeBooleanMeta(managed.meta?._docspress_sidebar_root) === Boolean(desired.sidebarRoot)
+    : !managedHasSidebar;
 
   const desiredVersion = desired.docsVersion?.id || "";
   const versionMatches = String(managed.meta?._docspress_version_id || "") === desiredVersion;
@@ -93263,6 +93284,7 @@ function managedMetadataMatches(desired, managed, options = {}) {
   return positionMatches
     && collapsedMatches
     && sourceContentMatches
+    && sidebarMatches
     && versionMatches
     && logicalRouteMatches
     && identityMatches
@@ -93271,6 +93293,29 @@ function managedMetadataMatches(desired, managed, options = {}) {
     && githubMatches
     && containerMatches
     && taxonomyMatches;
+}
+
+function sidebarPageMeta(page, managed) {
+  if (page.sidebarId) {
+    return {
+      _docspress_sidebar_id: page.sidebarId,
+      _docspress_sidebar_root: Boolean(page.sidebarRoot)
+    };
+  }
+
+  if (
+    managed?.sentinel?.sidebarId
+      || managed?.sentinel?.sidebarRoot
+      || managed?.meta?._docspress_sidebar_id
+      || normalizeBooleanMeta(managed?.meta?._docspress_sidebar_root)
+  ) {
+    return {
+      _docspress_sidebar_id: "",
+      _docspress_sidebar_root: false
+    };
+  }
+
+  return null;
 }
 
 function githubSourceMeta(page, options = {}) {
@@ -93765,6 +93810,163 @@ function mergeConflicts(...groups) {
 
 // EXTERNAL MODULE: ./node_modules/fast-glob/out/index.js
 var out = __nccwpck_require__(5648);
+;// CONCATENATED MODULE: ./src/sidebars.js
+
+
+
+
+
+const SIDEBAR_ID_PATTERN = /^[a-z0-9][a-z0-9_-]*$/;
+const ROUTE_SEGMENT_PATTERN = /^[a-z0-9][a-z0-9-]*$/;
+const SIDEBARS_FILE_EXTENSIONS = new Set([".json", ".yaml", ".yml"]);
+
+async function readSidebarsRegistry(options = {}) {
+  const cwd = options.cwd || process.cwd();
+  const sidebarsFile = utils_toPosixPath(options.sidebarsFile || "");
+  if (!sidebarsFile) {
+    return null;
+  }
+
+  const extension = external_node_path_namespaceObject.extname(sidebarsFile).toLowerCase();
+  if (!SIDEBARS_FILE_EXTENSIONS.has(extension)) {
+    throw new Error(`Docspress sidebars file must use .json, .yaml, or .yml: ${sidebarsFile}`);
+  }
+
+  const absolutePath = external_node_path_namespaceObject.resolve(cwd, sidebarsFile);
+  const relativePath = external_node_path_namespaceObject.relative(cwd, absolutePath);
+  if (!relativePath || relativePath.startsWith("..") || external_node_path_namespaceObject.isAbsolute(relativePath)) {
+    throw new Error(`The Docspress sidebars file must stay inside the checked-out repository: ${sidebarsFile}`);
+  }
+
+  const [realCwd, realFile] = await Promise.all([
+    promises_namespaceObject.realpath(cwd),
+    promises_namespaceObject.realpath(absolutePath)
+  ]);
+  const realRelativePath = external_node_path_namespaceObject.relative(realCwd, realFile);
+  if (!realRelativePath || realRelativePath.startsWith("..") || external_node_path_namespaceObject.isAbsolute(realRelativePath)) {
+    throw new Error(`The Docspress sidebars file must stay inside the checked-out repository: ${sidebarsFile}`);
+  }
+
+  const source = await promises_namespaceObject.readFile(realFile, "utf8");
+  let data;
+  try {
+    data = extension === ".json"
+      ? JSON.parse(source)
+      : gray_matter.engines.yaml.parse(source);
+  } catch (error) {
+    throw new Error(`Could not parse Docspress sidebars file ${sidebarsFile}: ${error.message}`);
+  }
+
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    throw new Error(`Docspress sidebars file must contain an object: ${sidebarsFile}`);
+  }
+  if (data.version !== undefined && data.version !== 1) {
+    throw new Error(`Docspress sidebars file has an unsupported version: ${data.version}`);
+  }
+  if (!data.sidebars || typeof data.sidebars !== "object" || Array.isArray(data.sidebars)) {
+    throw new Error(`Docspress sidebars file must contain a sidebars object: ${sidebarsFile}`);
+  }
+
+  const entries = Object.entries(data.sidebars).map(([rawId, configuredRoot], order) => {
+    const id = normalizeSidebarId(rawId);
+    const root = normalizeSidebarRoot(configuredRoot, id);
+    return { id, root, order };
+  });
+  if (entries.length === 0) {
+    throw new Error(`Docspress sidebars file must configure at least one sidebar: ${sidebarsFile}`);
+  }
+
+  if (!data.default) {
+    throw new Error("Docspress sidebars default must reference a configured sidebar: (missing)");
+  }
+  const defaultId = normalizeSidebarId(data.default);
+  const defaultSidebar = entries.find(({ id }) => id === defaultId);
+  if (!defaultSidebar) {
+    throw new Error(`Docspress sidebars default must reference a configured sidebar: ${data.default || "(missing)"}`);
+  }
+  if (defaultSidebar.root !== "") {
+    throw new Error(`The default Docspress sidebar (${defaultId}) must use the root '.'.`);
+  }
+
+  const roots = new Map();
+  for (const entry of entries) {
+    const existing = roots.get(entry.root);
+    if (existing) {
+      throw new Error(`Docspress sidebars ${existing} and ${entry.id} use the same root: ${entry.root || "."}`);
+    }
+    roots.set(entry.root, entry.id);
+  }
+
+  return {
+    file: sidebarsFile,
+    default: defaultId,
+    entries
+  };
+}
+
+function applySidebarsRegistry(byRoute, registry) {
+  if (!registry) {
+    return byRoute;
+  }
+
+  for (const sidebar of registry.entries) {
+    if (sidebar.root && !byRoute.has(sidebar.root)) {
+      throw new Error(`Docspress sidebar ${sidebar.id} references a missing route: ${sidebar.root}`);
+    }
+  }
+
+  const ordered = [...registry.entries].sort((left, right) => (
+    routeDepth(right.root) - routeDepth(left.root) || left.order - right.order
+  ));
+
+  for (const page of byRoute.values()) {
+    const sidebar = ordered.find(({ root }) => routeContains(root, page.routeKey));
+    if (!sidebar) {
+      throw new Error(`Docspress could not assign route ${page.routeKey || "."} to a sidebar.`);
+    }
+    page.sidebarId = sidebar.id;
+    page.sidebarRoot = page.routeKey === sidebar.root;
+  }
+
+  return byRoute;
+}
+
+function normalizeSidebarId(value) {
+  const id = String(value || "").trim();
+  if (!SIDEBAR_ID_PATTERN.test(id)) {
+    throw new Error(`Invalid Docspress sidebar id: ${id || "(missing)"}`);
+  }
+  return id;
+}
+
+function normalizeSidebarRoot(value, id) {
+  if (typeof value !== "string") {
+    throw new Error(`Docspress sidebar ${id} must map to a route string.`);
+  }
+
+  const raw = value.trim().replace(/\\/g, "/");
+  if (raw === ".") {
+    return "";
+  }
+  if (!raw || raw.startsWith("/") || raw.includes(":") || raw.includes("?") || raw.includes("#")) {
+    throw new Error(`Docspress sidebar ${id} has an invalid root: ${value || "(empty)"}`);
+  }
+
+  const segments = raw.replace(/\/+$/, "").split("/");
+  if (segments.some((segment) => !ROUTE_SEGMENT_PATTERN.test(segment))) {
+    throw new Error(`Docspress sidebar ${id} has an invalid root: ${value}`);
+  }
+  return segments.join("/");
+}
+
+function routeContains(root, route) {
+  return root === "" || route === root || route.startsWith(`${root}/`);
+}
+
+function routeDepth(route) {
+  return route ? route.split("/").length : 0;
+}
+
 ;// CONCATENATED MODULE: ./src/versions.js
 
 
@@ -93934,13 +94136,16 @@ function normalizeRelativePath(value, label) {
 
 
 
+
 const INDEX_FILENAMES = new Set(["index", "readme"]);
 
 async function collectDesiredPages(options) {
   const versionsRegistry = options.versionsRegistry
     || (options.versionsFile ? await readVersionsRegistry(options) : null);
+  const sidebarsRegistry = options.sidebarsRegistry
+    || (options.sidebarsFile ? await readSidebarsRegistry(options) : null);
   if (versionsRegistry) {
-    return collectVersionedPages({ ...options, versionsRegistry });
+    return collectVersionedPages({ ...options, versionsRegistry, sidebarsRegistry });
   }
 
   const context = createContext(options);
@@ -93951,6 +94156,7 @@ async function collectDesiredPages(options) {
   ensurePlaceholderHierarchy(byRoute, options.rootTitle);
   await applyRedirects(byRoute, options, context);
   ensurePlaceholderHierarchy(byRoute, options.rootTitle);
+  applySidebarsRegistry(byRoute, sidebarsRegistry);
   const linkResolver = createLinkResolver(byRoute, context, options);
   convertMarkdownPages(byRoute, options, linkResolver);
 
@@ -94040,6 +94246,7 @@ async function collectVersionedPages(options) {
       }, context);
       ensurePlaceholderHierarchy(byRoute, options.rootTitle);
     }
+    applySidebarsRegistry(byRoute, options.sidebarsRegistry);
 
     for (const page of byRoute.values()) {
       page.docsVersion = version;
@@ -94628,6 +94835,10 @@ function finalizePage(page, options) {
   if (Object.hasOwn(page, "sidebarCollapsed")) {
     sentinel.sidebarCollapsed = page.sidebarCollapsed;
   }
+  if (page.sidebarId) {
+    sentinel.sidebarId = page.sidebarId;
+    sentinel.sidebarRoot = Boolean(page.sidebarRoot);
+  }
   const content = prependSentinel(body, sentinel);
 
   return {
@@ -95181,6 +95392,7 @@ async function main() {
     token: getInput("wordpress-access-token", { required: true }),
     docsDir: getInput("docs-dir") || "docs",
     manifestFile: getInput("manifest-file") || "",
+    sidebarsFile: getInput("sidebars-file") || "",
     redirectsFile: getInput("redirects-file") || "",
     versionsFile: getInput("versions-file") || "",
     rootSlug: getInput("root-slug") || "docs",
@@ -95221,6 +95433,7 @@ async function main() {
     cwd: process.cwd(),
     docsDir: config.docsDir,
     manifestFile: config.manifestFile,
+    sidebarsFile: config.sidebarsFile,
     redirectsFile: config.redirectsFile,
     versionsFile: config.versionsFile,
     versionsRegistry,
