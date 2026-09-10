@@ -63,7 +63,7 @@
   "devDependencies": {
     "@vercel/ncc": "^0.38.4",
     "eslint": "^9.31.0",
-    "vitest": "^3.2.4"
+    "vitest": "^5.0.0"
   },
   "overrides": {
     "undici": "^6.27.0"
