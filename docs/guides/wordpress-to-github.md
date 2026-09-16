@@ -6,25 +6,25 @@ Use WordPress-to-GitHub synchronization when an editor changes a managed Page in
 
 ## Requirements
 
-- The same `WP_ACCESS_TOKEN` used for publishing; DocsPress uses it to read editable Page content.
+- The same `WP_ACCESS_TOKEN` used for publishing; Autodocs Publish uses it to read editable Page content.
 - `contents: write` and `pull-requests: write` permissions for the workflow's `GITHUB_TOKEN`.
-- **Allow GitHub Actions to create and approve pull requests** enabled under the repository's [Actions settings](https://github.com/Automattic/docspress/settings/actions).
+- **Allow GitHub Actions to create and approve pull requests** enabled under the repository's [Actions settings](https://github.com/Automattic/autodocs-publish/settings/actions).
 - A scheduled or manually dispatched workflow, because WordPress editor saves do not directly start a GitHub workflow.
 
-![GitHub Actions workflow permissions with Allow GitHub Actions to create and approve pull requests enabled](http://fkadocs.atomicsites.blog/wp-content/themes/docspress/assets/images/github-actions/allow-actions-create-pull-requests.png "Enable the pull request setting and save it before asking DocsPress to create proposals.")
+![GitHub Actions workflow permissions with Allow GitHub Actions to create and approve pull requests enabled](http://fkadocs.atomicsites.blog/wp-content/themes/autodocs-publish/assets/images/github-actions/allow-actions-create-pull-requests.png "Enable the pull request setting and save it before asking Autodocs Publish to create proposals.")
 
 ## Poll WordPress and propose Markdown
 
 Use `mode: propose` when this workflow should only import WordPress changes:
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/colorful-code",
+  "name": "autodocs-publish/colorful-code",
   "attrs": {
     "language": "yaml",
     "filename": ".github/workflows/sync-docs.yml",
-    "code": "name: Propose WordPress documentation changes\n\non:\n  schedule:\n    - cron: \"3/5 * * * *\"\n  workflow_dispatch:\n\npermissions:\n  contents: write\n  pull-requests: write\n\nconcurrency:\n  group: docspress-sync\n  cancel-in-progress: false\n\njobs:\n  sync:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n      - uses: Automattic/docspress@14d318924a81fb95ce4d3aaa9c3b547bf76b7768\n        with:\n          mode: propose\n          wordpress-site: example.wordpress.com\n          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n          docs-dir: docs\n          root-slug: docs\n          pull-request-base: main\n          pull-request-branch: docspress/wordpress-sync\n          dry-run: false",
+    "code": "name: Propose WordPress documentation changes\n\non:\n  schedule:\n    - cron: \"3/5 * * * *\"\n  workflow_dispatch:\n\npermissions:\n  contents: write\n  pull-requests: write\n\nconcurrency:\n  group: autodocs-publish-sync\n  cancel-in-progress: false\n\njobs:\n  sync:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n      - uses: Automattic/autodocs-publish@d32d09b6450caf17deb092040c5775b744af94c2\n        with:\n          mode: propose\n          wordpress-site: example.wordpress.com\n          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n          docs-dir: docs\n          root-slug: docs\n          pull-request-base: main\n          pull-request-branch: autodocs-publish/wordpress-sync\n          dry-run: false",
     "highlightedLines": "3-6,8-10,23-24,28-31",
     "showLineNumbers": true,
     "caption": "A scheduled proposal workflow reads Gutenberg changes and maintains one rolling pull request."
@@ -46,7 +46,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: docspress-sync
+  group: autodocs-publish-sync
   cancel-in-progress: false
 
 jobs:
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-      - uses: Automattic/docspress@14d318924a81fb95ce4d3aaa9c3b547bf76b7768
+      - uses: Automattic/autodocs-publish@d32d09b6450caf17deb092040c5775b744af94c2
         with:
           mode: propose
           wordpress-site: example.wordpress.com
@@ -62,16 +62,16 @@ jobs:
           docs-dir: docs
           root-slug: docs
           pull-request-base: main
-          pull-request-branch: docspress/wordpress-sync
+          pull-request-branch: autodocs-publish/wordpress-sync
           dry-run: false
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 GitHub schedules can start later than the exact cron minute. Run `workflow_dispatch` when an editor needs an immediate proposal.
 
 ## Review the rolling pull request
 
-DocsPress maintains one action-owned branch, `docspress/wordpress-sync`, instead of opening duplicate pull requests on every poll. Each run refreshes that branch from the latest base and updates the proposal.
+Autodocs Publish maintains one action-owned branch, `autodocs-publish/wordpress-sync`, instead of opening duplicate pull requests on every poll. Each run refreshes that branch from the latest base and updates the proposal.
 
 The pull request uses a Conventional Commits title derived from its files, such as `docs(sync-and-rest-api): sync changes from WordPress`. Its description names the direction, lists changed Markdown files, and explains that the branch is managed and may be refreshed.
 
@@ -79,7 +79,7 @@ Review the Markdown diff exactly like any other documentation change. When it is
 
 ## Preserve the Markdown structure
 
-DocsPress compares Gutenberg blocks semantically and rewrites only matching Markdown regions. Unchanged frontmatter, spacing, code-fence languages, tables, and readable block envelopes stay intact. Plain core blocks become ordinary Markdown. DocsPress blocks become semantic Markdown previews with hidden config; attributed, structural, dynamic, and unrecognized core blocks use a lossless envelope rather than exposing raw `wp:*` comments.
+Autodocs Publish compares Gutenberg blocks semantically and rewrites only matching Markdown regions. Unchanged frontmatter, spacing, code-fence languages, tables, and readable block envelopes stay intact. Plain core blocks become ordinary Markdown. Autodocs Publish blocks become semantic Markdown previews with hidden config; attributed, structural, dynamic, and unrecognized core blocks use a lossless envelope rather than exposing raw `wp:*` comments.
 
 Reverse synchronization updates the title and content of an existing managed Page. WordPress-created or deleted Pages and editor changes to slug, parent, or publication status remain outside reverse-sync scope.
 
@@ -92,20 +92,20 @@ if: >-
   github.event_name != 'push' ||
   !contains(
     github.event.head_commit.message,
-    format('from {0}/docspress/wordpress-sync', github.repository_owner)
+    format('from {0}/autodocs-publish/wordpress-sync', github.repository_owner)
   )
 ```
 
 If `pull-request-branch` changes, use the same branch name in the condition. The Action also recognizes a managed merge internally and exits successfully with `skipped=true` when a caller omits the job condition.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "warning",
     "title": "Two-sided edits require a decision",
-    "content": "\u003cp\u003eIf Markdown and the WordPress Page both changed differently since their shared synchronization marker, DocsPress reports a conflict and writes neither side. Choose the intended version, align the other side, and run again.\u003c/p\u003e",
+    "content": "\u003cp\u003eIf Markdown and the WordPress Page both changed differently since their shared synchronization marker, Autodocs Publish reports a conflict and writes neither side. Choose the intended version, align the other side, and run again.\u003c/p\u003e",
     "collapsible": false
   }
 }
@@ -114,7 +114,7 @@ If `pull-request-branch` changes, use the same branch name in the condition. The
 >
 > **Two-sided edits require a decision**
 >
-> If Markdown and the WordPress Page both changed differently since their shared synchronization marker, DocsPress reports a conflict and writes neither side. Choose the intended version, align the other side, and run again.
-<!-- /docspress:block -->
+> If Markdown and the WordPress Page both changed differently since their shared synchronization marker, Autodocs Publish reports a conflict and writes neither side. Choose the intended version, align the other side, and run again.
+<!-- /autodocs-publish:block -->
 
 The complete combined example lives in [Keep documentation synchronized](continuous-sync.md).

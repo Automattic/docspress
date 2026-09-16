@@ -31,7 +31,7 @@ async function main() {
     githubServerUrl: core.getInput("github-server-url") || process.env.GITHUB_SERVER_URL || "https://github.com",
     githubToken: core.getInput("github-token"),
     pullRequestBase: core.getInput("pull-request-base") || "",
-    pullRequestBranch: core.getInput("pull-request-branch") || "docspress/wordpress-sync",
+    pullRequestBranch: core.getInput("pull-request-branch") || "autodocs-publish/wordpress-sync",
     pullRequestTitle: core.getInput("pull-request-title"),
     status: core.getInput("status") || "publish",
     deleteMode: core.getInput("delete-mode") || "trash",
@@ -74,13 +74,13 @@ async function main() {
     status: config.status
   });
 
-  core.info(`Docspress found ${desiredPages.length} desired page(s) in ${config.docsDir}.`);
+  core.info(`Autodocs Publish found ${desiredPages.length} desired page(s) in ${config.docsDir}.`);
 
   const client = new WordPressClient({
     baseUrl: config.baseUrl,
     site: config.site,
     token: config.token,
-    taxonomies: versionsRegistry ? ["docspress_versions"] : []
+    taxonomies: versionsRegistry ? ["autodocs_publish_versions"] : []
   });
 
   const result = config.mode === "publish"
@@ -127,7 +127,7 @@ async function main() {
     for (const conflict of result.conflictDetails) {
       core.error(`Conflict ${conflict.key}: ${conflict.reason}`);
     }
-    core.setFailed(`Docspress found ${result.conflicts} synchronization conflict(s).`);
+    core.setFailed(`Autodocs Publish found ${result.conflicts} synchronization conflict(s).`);
   }
 }
 
@@ -150,7 +150,7 @@ async function writeSummary(result) {
   }
 
   core.summary
-    .addHeading(`Docspress ${result.dryRun ? "Dry Run" : "Sync"} Summary`)
+    .addHeading(`Autodocs Publish ${result.dryRun ? "Dry Run" : "Sync"} Summary`)
     .addTable([
       [{ data: "Created", header: true }, String(result.created)],
       [{ data: "Updated", header: true }, String(result.updated)],

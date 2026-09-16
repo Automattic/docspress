@@ -17,14 +17,14 @@ Start with the [manual two-way dry run](../publish-existing-docs/first-sync.md).
 
 This standalone workflow runs only when documentation or its workflow changes on `main`:
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/colorful-code",
+  "name": "autodocs-publish/colorful-code",
   "attrs": {
     "language": "yaml",
     "filename": ".github/workflows/sync-docs.yml",
-    "code": "name: Publish DocsPress documentation\n\non:\n  push:\n    branches: [main]\n    paths:\n      - \"docs/**/*.md\"\n      - \"docs/**/*.markdown\"\n      - \"docs/**/*.json\"\n      - \".github/workflows/sync-docs.yml\"\n  workflow_dispatch:\n\npermissions:\n  contents: read\n\njobs:\n  sync:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n      - uses: Automattic/docspress@14d318924a81fb95ce4d3aaa9c3b547bf76b7768\n        with:\n          mode: publish\n          wordpress-site: example.wordpress.com\n          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n          docs-dir: docs\n          root-slug: docs\n          root-title: Docs\n          status: publish\n          delete-mode: trash\n          dry-run: false",
+    "code": "name: Publish documentation with Autodocs Publish\n\non:\n  push:\n    branches: [main]\n    paths:\n      - \"docs/**/*.md\"\n      - \"docs/**/*.markdown\"\n      - \"docs/**/*.json\"\n      - \".github/workflows/sync-docs.yml\"\n  workflow_dispatch:\n\npermissions:\n  contents: read\n\njobs:\n  sync:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n      - uses: Automattic/autodocs-publish@d32d09b6450caf17deb092040c5775b744af94c2\n        with:\n          mode: publish\n          wordpress-site: example.wordpress.com\n          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n          docs-dir: docs\n          root-slug: docs\n          root-title: Docs\n          status: publish\n          delete-mode: trash\n          dry-run: false",
     "highlightedLines": "3-10,13-14,21-23,28-30",
     "showLineNumbers": true,
     "caption": "A path-scoped push publishes merged Markdown without granting GitHub pull request permissions."
@@ -34,7 +34,7 @@ This standalone workflow runs only when documentation or its workflow changes on
 **.github/workflows/sync-docs.yml — A path-scoped push publishes merged Markdown without granting GitHub pull request permissions.**
 
 ```yaml
-name: Publish DocsPress documentation
+name: Publish documentation with Autodocs Publish
 
 on:
   push:
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-      - uses: Automattic/docspress@14d318924a81fb95ce4d3aaa9c3b547bf76b7768
+      - uses: Automattic/autodocs-publish@d32d09b6450caf17deb092040c5775b744af94c2
         with:
           mode: publish
           wordpress-site: example.wordpress.com
@@ -66,7 +66,7 @@ jobs:
           delete-mode: trash
           dry-run: false
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 Replace the site domain and pin revisions you have reviewed. Keep `status: draft` until publishing directly from `main` is an approved editorial policy.
 
@@ -74,14 +74,14 @@ Replace the site domain and pin revisions you have reviewed. Keep `status: draft
 
 1. Discovers Markdown and optional manifest or redirect files under `docs-dir`.
 2. Converts supported Markdown into serialized Gutenberg blocks.
-3. Compares the desired tree with WordPress Pages carrying the DocsPress management marker.
+3. Compares the desired tree with WordPress Pages carrying the Autodocs Publish management marker.
 4. Creates or updates only those managed Pages.
 5. Moves a managed Page to Trash when its Markdown source disappears and `delete-mode: trash` is active.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "danger",
     "title": "A deleted file can remove a Page",
@@ -95,11 +95,11 @@ Replace the site domain and pin revisions you have reviewed. Keep `status: draft
 > **A deleted file can remove a Page**
 >
 > Automatic publication includes removals. Keep `delete-mode: trash` unless permanent deletion is an explicit requirement, and review the Deleted counter on every rollout.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Use the unified workflow for two-way editing
 
-Do not run a separate `publish` workflow beside a WordPress proposal workflow for the same Page tree. Use one [continuous `reconcile` workflow](continuous-sync.md) so DocsPress evaluates both versions against the same synchronization marker and stops on genuine two-sided edits.
+Do not run a separate `publish` workflow beside a WordPress proposal workflow for the same Page tree. Use one [continuous `reconcile` workflow](continuous-sync.md) so Autodocs Publish evaluates both versions against the same synchronization marker and stops on genuine two-sided edits.
 
 In `reconcile` mode, a normal Markdown push still follows the GitHub-to-WordPress path. The difference is that a newer WordPress edit is preserved for the [WordPress-to-GitHub](wordpress-to-github.md) pull request path instead of being overwritten.
 

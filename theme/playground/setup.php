@@ -1,10 +1,10 @@
 <?php
 /**
- * Seed the source-backed DocsPress documentation in WordPress Playground.
+ * Seed the source-backed Autodocs Publish documentation in WordPress Playground.
  *
  * Run npm run playground:docs from the repository root after changing docs/.
  *
- * @package DocsPress
+ * @package Autodocs Publish
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,8 +21,8 @@ require_once ABSPATH . 'wp-admin/includes/taxonomy.php';
  * @param int   $order     Menu order within the parent.
  * @return int
  */
-function docspress_playground_upsert_page( $page, $parent_id, $order ) {
-	$theme_asset_source = 'https://raw.githubusercontent.com/Automattic/docspress/main/theme/';
+function autodocs_publish_playground_upsert_page( $page, $parent_id, $order ) {
+	$theme_asset_source = 'https://raw.githubusercontent.com/Automattic/autodocs-publish/main/theme/';
 	$theme_asset_local  = trailingslashit( get_template_directory_uri() );
 	$content            = str_replace( $theme_asset_source, $theme_asset_local, (string) $page['content'] );
 	$existing = get_posts(
@@ -54,7 +54,7 @@ function docspress_playground_upsert_page( $page, $parent_id, $order ) {
 	}
 
 	if ( $page_id && ! is_wp_error( $page_id ) && ! empty( $page['sourcePath'] ) ) {
-		update_post_meta( $page_id, '_docspress_source_path', sanitize_text_field( $page['sourcePath'] ) );
+		update_post_meta( $page_id, '_autodocs_publish_source_path', sanitize_text_field( $page['sourcePath'] ) );
 	}
 
 	return is_wp_error( $page_id ) ? 0 : (int) $page_id;
@@ -66,7 +66,7 @@ function docspress_playground_upsert_page( $page, $parent_id, $order ) {
  * @param string $name Menu name.
  * @return int
  */
-function docspress_playground_menu( $name ) {
+function autodocs_publish_playground_menu( $name ) {
 	$menu = wp_get_nav_menu_object( $name );
 	if ( $menu ) {
 		return (int) $menu->term_id;
@@ -81,7 +81,7 @@ function docspress_playground_menu( $name ) {
  *
  * @param int $menu_id Menu term ID.
  */
-function docspress_playground_clear_menu( $menu_id ) {
+function autodocs_publish_playground_clear_menu( $menu_id ) {
 	foreach ( (array) wp_get_nav_menu_items( $menu_id ) as $item ) {
 		wp_delete_post( $item->ID, true );
 	}
@@ -96,7 +96,7 @@ function docspress_playground_clear_menu( $menu_id ) {
  * @param int    $menu_parent_id Parent menu item ID.
  * @return int
  */
-function docspress_playground_add_page_menu_item( $menu_id, $page_id, $title, $menu_parent_id = 0 ) {
+function autodocs_publish_playground_add_page_menu_item( $menu_id, $page_id, $title, $menu_parent_id = 0 ) {
 	$item_id = wp_update_nav_menu_item(
 		$menu_id,
 		0,
@@ -123,7 +123,7 @@ function docspress_playground_add_page_menu_item( $menu_id, $page_id, $title, $m
  * @param array  $overrides Additional wp_insert_post fields.
  * @return int
  */
-function docspress_playground_upsert_content( $post_type, $slug, $title, $content, $overrides = array() ) {
+function autodocs_publish_playground_upsert_content( $post_type, $slug, $title, $content, $overrides = array() ) {
 	$existing = get_page_by_path( $slug, OBJECT, $post_type );
 	$post     = array_merge(
 		array(
@@ -157,11 +157,11 @@ function docspress_playground_upsert_content( $post_type, $slug, $title, $conten
  * @param int    $parent_id Parent comment ID.
  * @return int
  */
-function docspress_playground_upsert_comment( $post_id, $key, $author, $content, $parent_id = 0 ) {
+function autodocs_publish_playground_upsert_comment( $post_id, $key, $author, $content, $parent_id = 0 ) {
 	$existing = get_comments(
 		array(
 			'post_id'    => $post_id,
-			'meta_key'   => '_docspress_playground_comment',
+			'meta_key'   => '_autodocs_publish_playground_comment',
 			'meta_value' => $key,
 			'number'     => 1,
 			'status'     => 'all',
@@ -186,7 +186,7 @@ function docspress_playground_upsert_comment( $post_id, $key, $author, $content,
 	}
 
 	if ( $comment_id ) {
-		update_comment_meta( $comment_id, '_docspress_playground_comment', $key );
+		update_comment_meta( $comment_id, '_autodocs_publish_playground_comment', $key );
 	}
 
 	return (int) $comment_id;
@@ -197,7 +197,7 @@ function docspress_playground_upsert_comment( $post_id, $key, $author, $content,
  *
  * @return string
  */
-function docspress_playground_component_inventory() {
+function autodocs_publish_playground_component_inventory() {
 	if ( ! function_exists( 'get_plugins' ) ) {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	}
@@ -255,14 +255,14 @@ function docspress_playground_component_inventory() {
  * @param string $content Generated Gutenberg content.
  * @return string
  */
-function docspress_playground_with_component_inventory( $content ) {
+function autodocs_publish_playground_with_component_inventory( $content ) {
 	$source_heading = "<!-- wp:heading -->\n<h2>Playground runtime</h2>\n<!-- /wp:heading -->";
 	$position       = strrpos( $content, $source_heading );
 	$base_content   = false === $position
 		? rtrim( $content )
 		: rtrim( substr( $content, 0, $position ) );
 
-	return $base_content . "\n\n" . docspress_playground_component_inventory();
+	return $base_content . "\n\n" . autodocs_publish_playground_component_inventory();
 }
 
 /**
@@ -275,7 +275,7 @@ function docspress_playground_with_component_inventory( $content ) {
  *
  * @return bool
  */
-function docspress_playground_should_use_live_inventory() {
+function autodocs_publish_playground_should_use_live_inventory() {
 	return 'production' !== wp_get_environment_type();
 }
 
@@ -318,14 +318,14 @@ foreach ( $generated['pages'] as $page ) {
 
 	if (
 		'docs/reference/kitchen-sink' === $page['key']
-		&& docspress_playground_should_use_live_inventory()
+		&& autodocs_publish_playground_should_use_live_inventory()
 	) {
-		$page['content'] = docspress_playground_with_component_inventory( $page['content'] );
+		$page['content'] = autodocs_publish_playground_with_component_inventory( $page['content'] );
 	}
 
 	$order_key = $parent_key ? $parent_key : 'root';
 	$order     = isset( $order_by_parent[ $order_key ] ) ? $order_by_parent[ $order_key ] : 0;
-	$page_id   = docspress_playground_upsert_page( $page, $parent_id, $order * 10 );
+	$page_id   = autodocs_publish_playground_upsert_page( $page, $parent_id, $order * 10 );
 	if ( ! $page_id ) {
 		wp_die( esc_html( 'Could not create generated documentation Page: ' . $page['key'] ) );
 	}
@@ -348,18 +348,18 @@ if ( ! $publish_existing_id || ! $create_docs_id ) {
 	wp_die( 'The generated documentation does not contain both homepage starting paths.' );
 }
 
-$updates_id = docspress_playground_upsert_content( 'page', 'updates', 'Updates', '' );
+$updates_id = autodocs_publish_playground_upsert_content( 'page', 'updates', 'Updates', '' );
 $hero_attributes = array(
 	'eyebrow'         => 'AI-native documentation for WordPress',
 	'title'           => 'One source for readers, search, and agents.',
-	'description'     => 'Keep Markdown beside your code. DocsPress publishes native Gutenberg Pages, exposes exact .md twins and /llms.txt, and carries WordPress edits back to GitHub as reviewable pull requests.',
+	'description'     => 'Keep Markdown beside your code. Autodocs Publish publishes native Gutenberg Pages, exposes exact .md twins and /llms.txt, and carries WordPress edits back to GitHub as reviewable pull requests.',
 	'primaryLabel'    => 'Explore AI-ready docs',
 	'primaryUrl'      => home_url( '/docs/guides/ai-friendly-documentation/' ),
 	'secondaryLabel'  => 'Demonstrate Site Editor',
-	'secondaryUrl'    => 'https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground',
+	'secondaryUrl'    => 'https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fautodocs-publish%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=Autodocs%20Publish%20Theme%20Playground',
 	'secondaryNewTab' => true,
 	'mediaUrl'        => get_theme_file_uri( 'assets/images/homepage-octocat-wapuu.webp' ),
-	'mediaAlt'        => 'Octocat and Wapuu high-five beside the DocsPress workflow.',
+	'mediaAlt'        => 'Octocat and Wapuu high-five beside the Autodocs Publish workflow.',
 	'visualVariant'   => 'sync-diagram',
 	'mediaWidth'      => 46,
 	'imageScale'      => 100,
@@ -382,7 +382,7 @@ $audience_paths_attributes = array(
 		),
 		array(
 			'title'       => 'My code needs documentation',
-			'description' => 'Give a coding agent the DocsPress skills, generate source-grounded Markdown, review it, and publish.',
+			'description' => 'Give a coding agent the Autodocs Publish skills, generate source-grounded Markdown, review it, and publish.',
 			'url'         => get_permalink( $create_docs_id ),
 			'cta'         => 'Create docs with AI',
 			'icon'        => 'sparkles',
@@ -411,7 +411,7 @@ $sync_flow_attributes = array(
 		),
 		array(
 			'title'   => 'Publish through GitHub Actions',
-			'content' => '<p>DocsPress converts the tree into native Gutenberg Pages and stores the exact source beside each Page.</p>',
+			'content' => '<p>Autodocs Publish converts the tree into native Gutenberg Pages and stores the exact source beside each Page.</p>',
 		),
 		array(
 			'title'   => 'Edit in WordPress when it helps',
@@ -429,7 +429,7 @@ $sync_result_attributes = array(
 	'content' => '<p>The WordPress experience, <code>/llms.txt</code> index, and page-level <code>.md</code> routes stay aligned with the same source-owned Markdown.</p>',
 	'meta'    => 'Markdown → Gutenberg → Markdown',
 );
-$home_content = '<!-- wp:docspress/hero ' . serialize_block_attributes( $hero_attributes ) . ' /-->'
+$home_content = '<!-- wp:autodocs-publish/hero ' . serialize_block_attributes( $hero_attributes ) . ' /-->'
 	. "\n\n"
 	. <<<'HTML'
 <!-- wp:group {"align":"wide","className":"home-proof-strip","layout":{"type":"default"}} -->
@@ -484,7 +484,7 @@ $home_content = '<!-- wp:docspress/hero ' . serialize_block_attributes( $hero_at
 <h3 class="wp-block-heading">Fully customizable</h3>
 <!-- /wp:heading -->
 <!-- wp:paragraph -->
-<p>Change templates, navigation, styles, and every DocsPress block with native WordPress controls.</p>
+<p>Change templates, navigation, styles, and every Autodocs Publish block with native WordPress controls.</p>
 <!-- /wp:paragraph --></div>
 <!-- /wp:column -->
 
@@ -534,7 +534,7 @@ $home_content = '<!-- wp:docspress/hero ' . serialize_block_attributes( $hero_at
 <!-- wp:column {"verticalAlignment":"center","className":"home-feature-demo"} -->
 <div class="wp-block-column is-vertically-aligned-center home-feature-demo">
 HTML;
-$home_content .= '<!-- wp:docspress/colorful-code ' . serialize_block_attributes( $ai_index_code_attributes ) . ' /-->';
+$home_content .= '<!-- wp:autodocs-publish/colorful-code ' . serialize_block_attributes( $ai_index_code_attributes ) . ' /-->';
 $home_content .= <<<'HTML'
 </div>
 <!-- /wp:column --></div>
@@ -551,7 +551,7 @@ $home_content .= <<<'HTML'
 <h2 class="wp-block-heading">Markdown moves both ways without losing review.</h2>
 <!-- /wp:heading -->
 <!-- wp:paragraph -->
-<p>DocsPress keeps documentation beside the product it explains, while WordPress remains a first-class editorial and publishing surface.</p>
+<p>Autodocs Publish keeps documentation beside the product it explains, while WordPress remains a first-class editorial and publishing surface.</p>
 <!-- /wp:paragraph -->
 <!-- wp:paragraph -->
 <p><a href="/docs/guides/continuous-sync/">Follow the continuous synchronization guide →</a></p>
@@ -561,13 +561,13 @@ $home_content .= <<<'HTML'
 <!-- wp:column {"verticalAlignment":"top","className":"home-sync-flow"} -->
 <div class="wp-block-column is-vertically-aligned-top home-sync-flow">
 HTML;
-$home_content .= '<!-- wp:docspress/flow ' . serialize_block_attributes( $sync_flow_attributes ) . ' /-->';
+$home_content .= '<!-- wp:autodocs-publish/flow ' . serialize_block_attributes( $sync_flow_attributes ) . ' /-->';
 $home_content .= <<<'HTML'
 </div>
 <!-- /wp:column --></div>
 <!-- /wp:columns -->
 HTML;
-$home_content .= '<!-- wp:docspress/result ' . serialize_block_attributes( $sync_result_attributes ) . ' /-->';
+$home_content .= '<!-- wp:autodocs-publish/result ' . serialize_block_attributes( $sync_result_attributes ) . ' /-->';
 $home_content .= <<<'HTML'
 </section>
 <!-- /wp:group -->
@@ -620,7 +620,7 @@ $home_content .= <<<'HTML'
 <!-- wp:group {"className":"home-download-card__actions","layout":{"type":"flex","flexWrap":"wrap"}} -->
 <div class="wp-block-group home-download-card__actions"><!-- wp:buttons -->
 <div class="wp-block-buttons"><!-- wp:button -->
-<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://github.com/Automattic/docspress/releases/latest/download/docspress-theme.zip">Download theme .zip</a></div>
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://github.com/Automattic/autodocs-publish/releases/latest/download/autodocs-publish-theme.zip">Download theme .zip</a></div>
 <!-- /wp:button --></div>
 <!-- /wp:buttons --></div>
 <!-- /wp:group -->
@@ -660,7 +660,7 @@ $home_content .= <<<'HTML'
 <!-- wp:group {"className":"home-download-card__actions","layout":{"type":"flex","flexWrap":"wrap"}} -->
 <div class="wp-block-group home-download-card__actions"><!-- wp:buttons -->
 <div class="wp-block-buttons"><!-- wp:button -->
-<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://github.com/Automattic/docspress/releases/latest/download/docspress-blocks.zip">Download plugins .zip</a></div>
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://github.com/Automattic/autodocs-publish/releases/latest/download/autodocs-publish-blocks.zip">Download plugins .zip</a></div>
 <!-- /wp:button --></div>
 <!-- /wp:buttons -->
 
@@ -676,9 +676,9 @@ $home_content .= <<<'HTML'
 <!-- /wp:group --></section>
 <!-- /wp:group -->
 HTML;
-$home_content .= "\n\n" . '<!-- wp:docspress/audience-paths ' . serialize_block_attributes( $audience_paths_attributes ) . ' /-->';
+$home_content .= "\n\n" . '<!-- wp:autodocs-publish/audience-paths ' . serialize_block_attributes( $audience_paths_attributes ) . ' /-->';
 
-$home_id = docspress_playground_upsert_content(
+$home_id = autodocs_publish_playground_upsert_content(
 	'page',
 	'home',
 	'AI-native documentation from GitHub to WordPress',
@@ -688,27 +688,27 @@ $home_id = docspress_playground_upsert_content(
 	)
 );
 
-$release_post_id = docspress_playground_upsert_content(
+$release_post_id = autodocs_publish_playground_upsert_content(
 	'post',
 	'native-discussions-arrive',
-	'Native discussions arrive in DocsPress',
+	'Native discussions arrive in Autodocs Publish',
 	'<!-- wp:paragraph --><p>The theme now treats WordPress comments as a first-class publishing surface. Threaded replies, moderation, avatars, paging, and comment status remain powered by WordPress core.</p><!-- /wp:paragraph --><!-- wp:heading --><h2 class="wp-block-heading">Designed for real conversations</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Theme controls decide where discussion appears and how it is presented, while site owners keep using <strong>Settings → Discussion</strong> for policy and workflow.</p><!-- /wp:paragraph -->',
 	array(
-		'post_excerpt'   => 'Threaded replies and the complete WordPress discussion workflow now share the DocsPress reading system.',
+		'post_excerpt'   => 'Threaded replies and the complete WordPress discussion workflow now share the Autodocs Publish reading system.',
 		'comment_status' => 'open',
 	)
 );
-$workflow_post_id = docspress_playground_upsert_content(
+$workflow_post_id = autodocs_publish_playground_upsert_content(
 	'post',
 	'publishing-workflow-notes',
 	'Publishing workflow notes',
 	'<!-- wp:paragraph --><p>A documentation site can also tell the story behind each release. Use normal WordPress posts for announcements and keep reference material in the synchronized Page tree.</p><!-- /wp:paragraph --><!-- wp:list --><ul class="wp-block-list"><li>Draft and preview in WordPress.</li><li>Organize updates with categories and tags.</li><li>Let readers subscribe through native feeds.</li></ul><!-- /wp:list -->',
 	array(
-		'post_excerpt'   => 'Use posts for release notes and announcements while DocsPress Pages remain source-backed.',
+		'post_excerpt'   => 'Use posts for release notes and announcements while Autodocs Publish Pages remain source-backed.',
 		'comment_status' => 'open',
 	)
 );
-$community_post_id = docspress_playground_upsert_content(
+$community_post_id = autodocs_publish_playground_upsert_content(
 	'post',
 	'community-feedback-loop',
 	'Close the community feedback loop',
@@ -724,20 +724,20 @@ $community_category = wp_create_category( 'Community' );
 if ( $release_post_id ) {
 	wp_set_post_categories( $release_post_id, array_filter( array( $updates_category, $community_category ) ) );
 	wp_set_post_tags( $release_post_id, array( 'comments', 'theme' ) );
-	$first_comment = docspress_playground_upsert_comment(
+	$first_comment = autodocs_publish_playground_upsert_comment(
 		$release_post_id,
 		'release-question',
 		'Maya Reader',
 		'<p>Can I keep discussions enabled on release notes while leaving synchronized reference Pages closed?</p>'
 	);
-	docspress_playground_upsert_comment(
+	autodocs_publish_playground_upsert_comment(
 		$release_post_id,
 		'release-answer',
-		'DocsPress Team',
+		'Autodocs Publish Team',
 		'<p>Yes. WordPress stores comment status per post, and the theme also provides separate visibility controls for Pages and posts.</p>',
 		$first_comment
 	);
-	docspress_playground_upsert_comment(
+	autodocs_publish_playground_upsert_comment(
 		$release_post_id,
 		'release-feedback',
 		'Theo Builder',
@@ -753,43 +753,43 @@ if ( $community_post_id ) {
 	wp_set_post_tags( $community_post_id, array( 'feedback', 'documentation' ) );
 }
 
-$header_menu = docspress_playground_menu( 'DocsPress Header' );
+$header_menu = autodocs_publish_playground_menu( 'Autodocs Publish Header' );
 if ( $header_menu ) {
-	docspress_playground_clear_menu( $header_menu );
+	autodocs_publish_playground_clear_menu( $header_menu );
 	if ( $home_id ) {
-		docspress_playground_add_page_menu_item( $header_menu, $home_id, 'Home' );
+		autodocs_publish_playground_add_page_menu_item( $header_menu, $home_id, 'Home' );
 	}
-	docspress_playground_add_page_menu_item( $header_menu, $docs_id, 'Docs' );
+	autodocs_publish_playground_add_page_menu_item( $header_menu, $docs_id, 'Docs' );
 	if ( $updates_id ) {
-		docspress_playground_add_page_menu_item( $header_menu, $updates_id, 'Updates' );
+		autodocs_publish_playground_add_page_menu_item( $header_menu, $updates_id, 'Updates' );
 	}
-	if ( isset( $ids_by_key['docs/why-docspress'] ) ) {
-		docspress_playground_add_page_menu_item( $header_menu, $ids_by_key['docs/why-docspress'], 'Why DocsPress?' );
+	if ( isset( $ids_by_key['docs/why-autodocs-publish'] ) ) {
+		autodocs_publish_playground_add_page_menu_item( $header_menu, $ids_by_key['docs/why-autodocs-publish'], 'Why Autodocs Publish?' );
 	}
 	if ( $kitchen_sink_id ) {
-		docspress_playground_add_page_menu_item( $header_menu, $kitchen_sink_id, 'Kitchen Sink' );
+		autodocs_publish_playground_add_page_menu_item( $header_menu, $kitchen_sink_id, 'Kitchen Sink' );
 	}
 	wp_update_nav_menu_item(
 		$header_menu,
 		0,
 		array(
 			'menu-item-title'  => 'GitHub',
-			'menu-item-url'    => 'https://github.com/Automattic/docspress',
+			'menu-item-url'    => 'https://github.com/Automattic/autodocs-publish',
 			'menu-item-type'   => 'custom',
 			'menu-item-status' => 'publish',
 		)
 	);
 }
 
-$sidebar_menu = docspress_playground_menu( 'DocsPress Sidebar' );
+$sidebar_menu = autodocs_publish_playground_menu( 'Autodocs Publish Sidebar' );
 if ( $sidebar_menu ) {
-	docspress_playground_clear_menu( $sidebar_menu );
+	autodocs_publish_playground_clear_menu( $sidebar_menu );
 	$menu_ids_by_page = array( 0 => 0 );
 	foreach ( $generated['pages'] as $page ) {
 		$page_id       = $ids_by_key[ $page['key'] ];
 		$parent_id     = $page['parentKey'] ? $ids_by_key[ $page['parentKey'] ] : 0;
 		$menu_parent_id = isset( $menu_ids_by_page[ $parent_id ] ) ? $menu_ids_by_page[ $parent_id ] : 0;
-		$menu_ids_by_page[ $page_id ] = docspress_playground_add_page_menu_item(
+		$menu_ids_by_page[ $page_id ] = autodocs_publish_playground_add_page_menu_item(
 			$sidebar_menu,
 			$page_id,
 			$page['title'],
@@ -798,16 +798,16 @@ if ( $sidebar_menu ) {
 	}
 }
 
-$footer_menu = docspress_playground_menu( 'DocsPress Footer' );
+$footer_menu = autodocs_publish_playground_menu( 'Autodocs Publish Footer' );
 if ( $footer_menu ) {
-	docspress_playground_clear_menu( $footer_menu );
-	docspress_playground_add_page_menu_item( $footer_menu, $docs_id, 'Documentation' );
+	autodocs_publish_playground_clear_menu( $footer_menu );
+	autodocs_publish_playground_add_page_menu_item( $footer_menu, $docs_id, 'Documentation' );
 	if ( $updates_id ) {
-		docspress_playground_add_page_menu_item( $footer_menu, $updates_id, 'Updates' );
+		autodocs_publish_playground_add_page_menu_item( $footer_menu, $updates_id, 'Updates' );
 	}
 }
 
-update_option( 'blogname', 'DocsPress' );
+update_option( 'blogname', 'Autodocs Publish' );
 update_option( 'blogdescription', 'Markdown in GitHub. Native documentation in WordPress.' );
 update_option( 'show_on_front', 'page' );
 update_option( 'page_on_front', $home_id );
@@ -819,10 +819,10 @@ update_option( 'page_comments', 1 );
 update_option( 'comments_per_page', 5 );
 
 update_option(
-	'docspress_playground_runtime',
+	'autodocs_publish_playground_runtime',
 	array(
 		'jetpack_active'          => in_array( 'jetpack/jetpack.php', (array) get_option( 'active_plugins', array() ), true ),
-		'docspress_blocks_active' => in_array( 'docspress-blocks/docspress-blocks.php', (array) get_option( 'active_plugins', array() ), true ),
+		'autodocs_publish_blocks_active' => in_array( 'autodocs-publish-blocks/autodocs-publish-blocks.php', (array) get_option( 'active_plugins', array() ), true ),
 		'page_count'              => count( $generated['pages'] ),
 		'home_page'               => $home_id,
 		'posts_page'              => $updates_id,

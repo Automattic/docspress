@@ -61,8 +61,8 @@ describe("planReconciliation", () => {
   });
 
   it("ignores equivalent WordPress escaping in Gutenberg block attributes", () => {
-    const baseBlock = '<!-- wp:docspress/example {"value":"first\\\\nsecond"} /-->';
-    const wordpressBlock = '<!-- wp:docspress/example {"value":"first\\u005cnsecond"} /-->';
+    const baseBlock = '<!-- wp:autodocs-publish/example {"value":"first\\\\nsecond"} /-->';
+    const wordpressBlock = '<!-- wp:autodocs-publish/example {"value":"first\\u005cnsecond"} /-->';
     const base = desiredPage({ body: `${baseBlock}\n\n${paragraph("Base")}` });
     const desired = desiredPage({ body: `${baseBlock}\n\n${paragraph("Edited in GitHub")}` });
     const plan = planReconciliation({

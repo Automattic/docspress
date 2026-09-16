@@ -1,9 +1,9 @@
 {
 	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
 	"meta": {
-		"title": "Local docs in DocsPress",
-		"author": "DocsPress",
-		"description": "Mount a repository docs directory, convert its Markdown files into native WordPress Pages, and open the editable DocsPress site."
+		"title": "Local docs in Autodocs Publish",
+		"author": "Autodocs Publish",
+		"description": "Mount a repository docs directory, convert its Markdown files into native WordPress Pages, and open the editable Autodocs Publish site."
 	},
 	"preferredVersions": {
 		"php": "8.3",
@@ -19,33 +19,33 @@
 			"step": "installPlugin",
 			"pluginData": {
 				"resource": "git:directory",
-				"url": "https://github.com/Automattic/docspress",
+				"url": "https://github.com/Automattic/autodocs-publish",
 				"ref": "main",
 				"refType": "branch",
-				"path": "plugins/docspress-blocks"
+				"path": "plugins/autodocs-publish-blocks"
 			},
 			"options": {
 				"activate": true,
-				"targetFolderName": "docspress-blocks"
+				"targetFolderName": "autodocs-publish-blocks"
 			}
 		},
 		{
 			"step": "installTheme",
 			"themeData": {
 				"resource": "git:directory",
-				"url": "https://github.com/Automattic/docspress",
+				"url": "https://github.com/Automattic/autodocs-publish",
 				"ref": "main",
 				"refType": "branch",
 				"path": "theme"
 			},
 			"options": {
 				"activate": true,
-				"targetFolderName": "docspress"
+				"targetFolderName": "autodocs-publish"
 			}
 		},
 		{
 			"step": "runPHP",
-			"code": "<?php require_once '/wordpress/wp-load.php'; wp_clean_themes_cache(); $slug = 'docspress'; foreach ( array( 'theme', 'docspress' ) as $candidate_slug ) { $candidate = wp_get_theme( $candidate_slug ); $importer = get_theme_root( $candidate_slug ) . '/' . $candidate_slug . '/playground/import-local-docs.php'; if ( $candidate->exists() && 'DocsPress' === $candidate->get( 'Name' ) && file_exists( $importer ) ) { $slug = $candidate_slug; break; } } $theme = wp_get_theme( $slug ); $importer = get_theme_root( $slug ) . '/' . $slug . '/playground/import-local-docs.php'; if ( ! $theme->exists() || 'DocsPress' !== $theme->get( 'Name' ) || ! file_exists( $importer ) ) { wp_die( 'DocsPress local documentation importer is unavailable.' ); } switch_theme( $slug ); require $importer;"
+			"code": "<?php require_once '/wordpress/wp-load.php'; wp_clean_themes_cache(); $slug = 'autodocs-publish'; foreach ( array( 'theme', 'autodocs-publish' ) as $candidate_slug ) { $candidate = wp_get_theme( $candidate_slug ); $importer = get_theme_root( $candidate_slug ) . '/' . $candidate_slug . '/playground/import-local-docs.php'; if ( $candidate->exists() && 'Autodocs Publish' === $candidate->get( 'Name' ) && file_exists( $importer ) ) { $slug = $candidate_slug; break; } } $theme = wp_get_theme( $slug ); $importer = get_theme_root( $slug ) . '/' . $slug . '/playground/import-local-docs.php'; if ( ! $theme->exists() || 'Autodocs Publish' !== $theme->get( 'Name' ) || ! file_exists( $importer ) ) { wp_die( 'Autodocs Publish local documentation importer is unavailable.' ); } switch_theme( $slug ); require $importer;"
 		}
 	]
 }

@@ -1,8 +1,8 @@
 <?php
 /**
- * DocsPress block theme functions.
+ * Autodocs Publish block theme functions.
  *
- * @package DocsPress
+ * @package Autodocs Publish
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,8 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Set up the block theme.
  */
-function docspress_setup() {
-	load_theme_textdomain( 'docspress', get_template_directory() . '/languages' );
+function autodocs_publish_setup() {
+	load_theme_textdomain( 'autodocs-publish', get_template_directory() . '/languages' );
 
 	add_theme_support( 'automatic-feed-links' );
 	add_theme_support( 'block-template-parts' );
@@ -34,13 +34,197 @@ function docspress_setup() {
 	add_theme_support( 'wp-block-styles' );
 	add_editor_style( 'style.css' );
 }
-add_action( 'after_setup_theme', 'docspress_setup' );
+add_action( 'after_setup_theme', 'autodocs_publish_setup' );
+
+/**
+ * Carry Site Editor data across the physical theme-directory rename.
+ *
+ * Theme mods and Site Editor posts are scoped to the stylesheet directory,
+ * not the Theme Name header. Keep the old scope attached so rolling back the
+ * rename remains possible, and never replace data already saved in the new
+ * scope.
+ */
+function autodocs_publish_migrate_legacy_theme_slug_data() {
+	$active_theme       = wp_get_theme();
+	$current_stylesheet = get_stylesheet();
+	$legacy_stylesheet  = 'docspress';
+	$migration_key      = 'autodocs_publish_theme_slug_migration_' . sanitize_key( $current_stylesheet );
+
+	if (
+		'autodocs-publish' !== $active_theme->get( 'TextDomain' ) ||
+		$legacy_stylesheet === $current_stylesheet ||
+		'1' === get_option( $migration_key )
+	) {
+		return;
+	}
+
+	$legacy_mods  = get_option( 'theme_mods_' . $legacy_stylesheet, null );
+	$current_mods = get_option( 'theme_mods_' . $current_stylesheet, null );
+	if ( is_array( $legacy_mods ) ) {
+		$merged_mods = array_replace( $legacy_mods, is_array( $current_mods ) ? $current_mods : array() );
+		if ( null === $current_mods ) {
+			add_option( 'theme_mods_' . $current_stylesheet, $merged_mods, '', false );
+		} elseif ( $merged_mods !== $current_mods ) {
+			update_option( 'theme_mods_' . $current_stylesheet, $merged_mods, false );
+		}
+	}
+
+	if ( ! taxonomy_exists( 'wp_theme' ) ) {
+		return;
+	}
+
+	$legacy_term = get_term_by( 'slug', sanitize_title( $legacy_stylesheet ), 'wp_theme' );
+	$migration_failed = false;
+	if ( $legacy_term instanceof WP_Term ) {
+		$post_types = array( 'wp_template', 'wp_template_part', 'wp_global_styles' );
+		$legacy_ids = get_posts(
+			array(
+				'fields'         => 'ids',
+				'no_found_rows'  => true,
+				'post_status'    => 'any',
+				'post_type'      => $post_types,
+				'posts_per_page' => -1,
+				'tax_query'      => array(
+					array(
+						'field'    => 'term_id',
+						'taxonomy' => 'wp_theme',
+						'terms'    => array( (int) $legacy_term->term_id ),
+					),
+				),
+			)
+		);
+
+		foreach ( $legacy_ids as $legacy_id ) {
+			$legacy_post = get_post( $legacy_id );
+			if ( ! $legacy_post instanceof WP_Post ) {
+				continue;
+			}
+
+			$canonical_query = array(
+				'fields'         => 'ids',
+				'no_found_rows'  => true,
+				'post_status'    => 'any',
+				'post_type'      => $legacy_post->post_type,
+				'posts_per_page' => 1,
+				'post__not_in'   => array( (int) $legacy_id ),
+				'tax_query'      => array(
+					array(
+						'field'    => 'slug',
+						'taxonomy' => 'wp_theme',
+						'terms'    => array( sanitize_title( $current_stylesheet ) ),
+					),
+				),
+			);
+			if ( 'wp_global_styles' !== $legacy_post->post_type ) {
+				$canonical_query['name'] = $legacy_post->post_name;
+			}
+
+			if ( get_posts( $canonical_query ) ) {
+				continue;
+			}
+
+			$result = wp_set_object_terms( (int) $legacy_id, $current_stylesheet, 'wp_theme', true );
+			if ( is_wp_error( $result ) ) {
+				$migration_failed = true;
+			}
+		}
+	}
+
+	if ( ! $migration_failed ) {
+		update_option( $migration_key, '1', false );
+	}
+}
+add_action( 'init', 'autodocs_publish_migrate_legacy_theme_slug_data', 8 );
+
+/**
+ * Copy persisted data from the pre-rename identifiers without overwriting any
+ * value already written by Autodocs Publish.
+ */
+function autodocs_publish_migrate_legacy_brand_data() {
+	if ( '1' === get_option( 'autodocs_publish_legacy_brand_migration' ) ) {
+		return;
+	}
+
+	$option_map = array(
+		'docspress_post_title_typography_migration' => 'autodocs_publish_post_title_typography_migration',
+		'docspress_repository_latest_version'       => 'autodocs_publish_repository_latest_version',
+		'docspress_version_override'                => 'autodocs_publish_version_override',
+		'docspress_docs_root_slug'                  => 'autodocs_publish_docs_root_slug',
+	);
+	foreach ( $option_map as $legacy_key => $current_key ) {
+		$legacy_value = get_option( $legacy_key, null );
+		if ( null !== $legacy_value && null === get_option( $current_key, null ) ) {
+			add_option( $current_key, $legacy_value, '', false );
+		}
+	}
+
+	$meta_map = array(
+		'_docspress_version_id'               => '_autodocs_publish_version_id',
+		'_docspress_logical_route'            => '_autodocs_publish_logical_route',
+		'_docspress_page_identity'            => '_autodocs_publish_page_identity',
+		'_docspress_source_type'              => '_autodocs_publish_source_type',
+		'_docspress_source_path'              => '_autodocs_publish_source_path',
+		'_docspress_github_path'              => '_autodocs_publish_github_path',
+		'_docspress_github_repository'        => '_autodocs_publish_github_repository',
+		'_docspress_github_ref'               => '_autodocs_publish_github_ref',
+		'_docspress_github_server_url'        => '_autodocs_publish_github_server_url',
+		'_docspress_docs_root'                => '_autodocs_publish_docs_root',
+		'_docspress_version_container'        => '_autodocs_publish_version_container',
+		'_docspress_sidebar_id'               => '_autodocs_publish_sidebar_id',
+		'_docspress_sidebar_root'             => '_autodocs_publish_sidebar_root',
+		'docspress_helpful_votes'             => 'autodocs_publish_helpful_votes',
+		'docspress_unhelpful_votes'           => 'autodocs_publish_unhelpful_votes',
+		'docspress_feedback_enabled'          => 'autodocs_publish_feedback_enabled',
+	);
+	$page_ids = get_posts(
+		array(
+			'fields'         => 'ids',
+			'no_found_rows'  => true,
+			'post_status'    => 'any',
+			'post_type'      => 'page',
+			'posts_per_page' => -1,
+		)
+	);
+	foreach ( $page_ids as $page_id ) {
+		foreach ( $meta_map as $legacy_key => $current_key ) {
+			if ( metadata_exists( 'post', $page_id, $legacy_key ) && ! metadata_exists( 'post', $page_id, $current_key ) ) {
+				update_post_meta( $page_id, $current_key, get_post_meta( $page_id, $legacy_key, true ) );
+			}
+		}
+	}
+
+	update_option( 'autodocs_publish_legacy_brand_migration', '1', false );
+}
+add_action( 'init', 'autodocs_publish_migrate_legacy_brand_data', 11 );
+
+/**
+ * Give legacy block aliases the canonical root class expected by the renamed
+ * theme and companion plugin styles.
+ *
+ * @param string $content Rendered block HTML.
+ * @param array  $block   Parsed block data.
+ * @return string
+ */
+function autodocs_publish_add_canonical_legacy_block_class( $content, $block ) {
+	$name = isset( $block['blockName'] ) ? (string) $block['blockName'] : '';
+	if ( 0 !== strpos( $name, 'docspress/' ) || ! class_exists( 'WP_HTML_Tag_Processor' ) ) {
+		return $content;
+	}
+
+	$processor = new WP_HTML_Tag_Processor( $content );
+	if ( $processor->next_tag() ) {
+		$processor->add_class( 'wp-block-autodocs-publish-' . sanitize_html_class( substr( $name, strlen( 'docspress/' ) ) ) );
+		return $processor->get_updated_html();
+	}
+	return $content;
+}
+add_filter( 'render_block', 'autodocs_publish_add_canonical_legacy_block_class', 10, 2 );
 
 /**
  * Refresh WordPress's persistent theme.json cache after bundled style files
  * change. This matters for mounted Playground themes as well as upgrades.
  */
-function docspress_maybe_refresh_theme_json_cache() {
+function autodocs_publish_maybe_refresh_theme_json_cache() {
 	$files = array_merge(
 		array( get_theme_file_path( 'theme.json' ) ),
 		(array) glob( get_theme_file_path( 'styles/theme/*.json' ) ),
@@ -56,24 +240,24 @@ function docspress_maybe_refresh_theme_json_cache() {
 	}
 
 	$signature = md5( implode( '|', $versions ) );
-	if ( get_option( 'docspress_theme_json_signature' ) === $signature ) {
+	if ( get_option( 'autodocs_publish_theme_json_signature' ) === $signature ) {
 		return;
 	}
 
 	if ( function_exists( 'wp_clean_theme_json_cache' ) ) {
 		wp_clean_theme_json_cache();
 	}
-	update_option( 'docspress_theme_json_signature', $signature, false );
+	update_option( 'autodocs_publish_theme_json_signature', $signature, false );
 }
-add_action( 'after_setup_theme', 'docspress_maybe_refresh_theme_json_cache', 100 );
+add_action( 'after_setup_theme', 'autodocs_publish_maybe_refresh_theme_json_cache', 100 );
 
 /**
- * Check whether Post Title typography matches a retired DocsPress default.
+ * Check whether Post Title typography matches a retired Autodocs Publish default.
  *
  * @param array<string,mixed> $typography Typography settings.
  * @return bool
  */
-function docspress_is_legacy_post_title_typography( $typography ) {
+function autodocs_publish_is_legacy_post_title_typography( $typography ) {
 	if ( ! is_array( $typography ) ) {
 		return false;
 	}
@@ -95,7 +279,7 @@ function docspress_is_legacy_post_title_typography( $typography ) {
 }
 
 /**
- * Remove typography locks copied into Global Styles by older DocsPress style
+ * Remove typography locks copied into Global Styles by older Autodocs Publish style
  * variations so Core Post Title follows the site's Heading element settings.
  *
  * The filter is intentionally narrow: a deliberate Post Title override that
@@ -104,7 +288,7 @@ function docspress_is_legacy_post_title_typography( $typography ) {
  * @param WP_Theme_JSON_Data $theme_json User-origin Global Styles data.
  * @return WP_Theme_JSON_Data
  */
-function docspress_inherit_post_title_typography_from_headings( $theme_json ) {
+function autodocs_publish_inherit_post_title_typography_from_headings( $theme_json ) {
 	if ( ! $theme_json instanceof WP_Theme_JSON_Data ) {
 		return $theme_json;
 	}
@@ -118,7 +302,7 @@ function docspress_inherit_post_title_typography_from_headings( $theme_json ) {
 		return $theme_json;
 	}
 
-	if ( ! docspress_is_legacy_post_title_typography( $typography ) ) {
+	if ( ! autodocs_publish_is_legacy_post_title_typography( $typography ) ) {
 		return $theme_json;
 	}
 
@@ -139,15 +323,15 @@ function docspress_inherit_post_title_typography_from_headings( $theme_json ) {
 
 	return new WP_Theme_JSON_Data( $data, 'custom' );
 }
-add_filter( 'wp_theme_json_data_user', 'docspress_inherit_post_title_typography_from_headings' );
+add_filter( 'wp_theme_json_data_user', 'autodocs_publish_inherit_post_title_typography_from_headings' );
 
 /**
  * Remove the retired Post Title typography lock from the saved Global Styles
  * post so the Site Editor canvas and REST responses inherit Headings too.
  */
-function docspress_migrate_legacy_post_title_typography() {
+function autodocs_publish_migrate_legacy_post_title_typography() {
 	if (
-		'1' === get_option( 'docspress_post_title_typography_migration' ) ||
+		'1' === get_option( 'autodocs_publish_post_title_typography_migration' ) ||
 		! current_user_can( 'edit_theme_options' ) ||
 		! class_exists( 'WP_Theme_JSON_Resolver' )
 	) {
@@ -158,7 +342,7 @@ function docspress_migrate_legacy_post_title_typography() {
 	$post    = $post_id ? get_post( $post_id ) : null;
 
 	if ( ! $post instanceof WP_Post ) {
-		update_option( 'docspress_post_title_typography_migration', '1', false );
+		update_option( 'autodocs_publish_post_title_typography_migration', '1', false );
 		return;
 	}
 
@@ -167,7 +351,7 @@ function docspress_migrate_legacy_post_title_typography() {
 		? $data['styles']['blocks']['core/post-title']['typography']
 		: array();
 
-	if ( docspress_is_legacy_post_title_typography( $typography ) ) {
+	if ( autodocs_publish_is_legacy_post_title_typography( $typography ) ) {
 		unset(
 			$data['styles']['blocks']['core/post-title']['typography']['fontFamily'],
 			$data['styles']['blocks']['core/post-title']['typography']['fontWeight']
@@ -197,9 +381,9 @@ function docspress_migrate_legacy_post_title_typography() {
 		}
 	}
 
-	update_option( 'docspress_post_title_typography_migration', '1', false );
+	update_option( 'autodocs_publish_post_title_typography_migration', '1', false );
 }
-add_action( 'admin_init', 'docspress_migrate_legacy_post_title_typography' );
+add_action( 'admin_init', 'autodocs_publish_migrate_legacy_post_title_typography' );
 
 /**
  * Give the reusable discussion shell its own meaningful template-part area.
@@ -207,45 +391,63 @@ add_action( 'admin_init', 'docspress_migrate_legacy_post_title_typography' );
  * @param array<int,array<string,mixed>> $areas Registered areas.
  * @return array<int,array<string,mixed>>
  */
-function docspress_template_part_areas( $areas ) {
+function autodocs_publish_template_part_areas( $areas ) {
 	$areas[] = array(
 		'area'        => 'comments',
 		'area_tag'    => 'section',
-		'label'       => __( 'Comments', 'docspress' ),
-		'description' => __( 'Reusable discussion and reply-form layouts.', 'docspress' ),
+		'label'       => __( 'Comments', 'autodocs-publish' ),
+		'description' => __( 'Reusable discussion and reply-form layouts.', 'autodocs-publish' ),
 		'icon'        => 'sidebar',
 	);
 	return $areas;
 }
-add_filter( 'default_wp_template_part_areas', 'docspress_template_part_areas' );
+add_filter( 'default_wp_template_part_areas', 'autodocs_publish_template_part_areas' );
 
 /**
- * Install the bundled DocsPress icon as the initial editable Site Logo.
+ * Install the bundled Autodocs Publish icon as the initial editable Site Logo.
  *
  * WordPress stores the Site Logo as a Media Library attachment. Seeding the
  * bundled PNG once lets the core Site Logo block display, replace, crop, or
  * remove it normally. The marker prevents a deliberately removed logo from
  * being restored on a later request.
  */
-function docspress_maybe_seed_default_site_logo() {
-	if ( get_option( 'docspress_default_site_logo_seeded' ) ) {
+function autodocs_publish_maybe_seed_default_site_logo() {
+	if ( get_option( 'autodocs_publish_default_site_logo_seeded' ) ) {
 		return;
 	}
 
-	$current_logo_id = absint( get_option( 'site_logo' ) );
-	if ( ! $current_logo_id ) {
+	$legacy_seeded_value = get_option( 'docspress_default_site_logo_seeded', false );
+	$is_legacy_upgrade   = false !== $legacy_seeded_value;
+	$legacy_logo_id      = absint( $legacy_seeded_value );
+	$is_legacy_default   = $legacy_logo_id
+		&& '1' === (string) get_post_meta( $legacy_logo_id, '_docspress_default_site_logo', true );
+	$current_logo_id     = absint( get_option( 'site_logo' ) );
+	$current_icon_id     = absint( get_option( 'site_icon' ) );
+
+	// Before the rename the seeder always wrote site_logo. A now-empty value is
+	// therefore an explicit removal, even if a stale custom_logo mod remains.
+	if ( ! $is_legacy_upgrade && ! $current_logo_id ) {
 		$current_logo_id = absint( get_theme_mod( 'custom_logo' ) );
 	}
 
-	if ( $current_logo_id && wp_attachment_is_image( $current_logo_id ) ) {
-		update_option( 'docspress_default_site_logo_seeded', $current_logo_id );
+	$replace_logo = $is_legacy_default && $current_logo_id === $legacy_logo_id;
+	$replace_icon = $is_legacy_default && $current_icon_id === $legacy_logo_id;
+	$seed_logo    = ! $is_legacy_upgrade && ( ! $current_logo_id || ! wp_attachment_is_image( $current_logo_id ) );
+	$seed_icon    = $seed_logo && ! $current_icon_id;
+
+	if ( ! $replace_logo && ! $replace_icon && ! $seed_logo && ! $seed_icon ) {
+		update_option(
+			'autodocs_publish_default_site_logo_seeded',
+			$current_logo_id ? $current_logo_id : ( $current_icon_id ? $current_icon_id : 'removed' ),
+			false
+		);
 		return;
 	}
 
 	$existing_default = get_posts(
 		array(
 			'fields'         => 'ids',
-			'meta_key'       => '_docspress_default_site_logo',
+			'meta_key'       => '_autodocs_publish_default_site_logo',
 			'meta_value'     => '1',
 			'post_status'    => 'inherit',
 			'post_type'      => 'attachment',
@@ -256,7 +458,7 @@ function docspress_maybe_seed_default_site_logo() {
 	if ( $existing_default ) {
 		$logo_id = absint( $existing_default[0] );
 	} else {
-		$source = get_theme_file_path( 'assets/images/docspress-hybrid-logo.png' );
+		$source = get_theme_file_path( 'assets/images/autodocs-publish-mark.png' );
 		if ( ! is_readable( $source ) ) {
 			return;
 		}
@@ -266,7 +468,7 @@ function docspress_maybe_seed_default_site_logo() {
 			return;
 		}
 
-		$upload = wp_upload_bits( 'docspress-logo.png', null, $image );
+		$upload = wp_upload_bits( 'autodocs-publish-logo.png', null, $image );
 		if ( ! empty( $upload['error'] ) ) {
 			return;
 		}
@@ -277,7 +479,7 @@ function docspress_maybe_seed_default_site_logo() {
 				'guid'           => $upload['url'],
 				'post_mime_type' => $filetype['type'],
 				'post_status'    => 'inherit',
-				'post_title'     => __( 'DocsPress logo', 'docspress' ),
+				'post_title'     => __( 'Autodocs Publish logo', 'autodocs-publish' ),
 			),
 			$upload['file']
 		);
@@ -291,27 +493,29 @@ function docspress_maybe_seed_default_site_logo() {
 		if ( $metadata ) {
 			wp_update_attachment_metadata( $logo_id, $metadata );
 		}
-		update_post_meta( $logo_id, '_wp_attachment_image_alt', __( 'DocsPress', 'docspress' ) );
-		update_post_meta( $logo_id, '_docspress_default_site_logo', '1' );
+		update_post_meta( $logo_id, '_wp_attachment_image_alt', __( 'Autodocs Publish', 'autodocs-publish' ) );
+		update_post_meta( $logo_id, '_autodocs_publish_default_site_logo', '1' );
 	}
 
-	update_option( 'site_logo', $logo_id );
-	if ( ! absint( get_option( 'site_icon' ) ) ) {
+	if ( $seed_logo || $replace_logo ) {
+		update_option( 'site_logo', $logo_id );
+	}
+	if ( $seed_icon || $replace_icon ) {
 		update_option( 'site_icon', $logo_id );
 	}
-	update_option( 'docspress_default_site_logo_seeded', $logo_id );
+	update_option( 'autodocs_publish_default_site_logo_seeded', $logo_id, false );
 }
-add_action( 'init', 'docspress_maybe_seed_default_site_logo', 20 );
+add_action( 'init', 'autodocs_publish_maybe_seed_default_site_logo', 20 );
 
 /**
  * Enqueue the shared theme runtime.
  */
-function docspress_assets() {
+function autodocs_publish_assets() {
 	$theme = wp_get_theme();
 
-	wp_enqueue_style( 'docspress-style', get_stylesheet_uri(), array(), $theme->get( 'Version' ) );
+	wp_enqueue_style( 'autodocs-publish-style', get_stylesheet_uri(), array(), $theme->get( 'Version' ) );
 	wp_enqueue_script(
-		'docspress-navigation',
+		'autodocs-publish-navigation',
 		get_theme_file_uri( 'assets/js/docs.js' ),
 		array(),
 		$theme->get( 'Version' ),
@@ -321,24 +525,24 @@ function docspress_assets() {
 		)
 	);
 }
-add_action( 'wp_enqueue_scripts', 'docspress_assets' );
+add_action( 'wp_enqueue_scripts', 'autodocs_publish_assets' );
 
 /**
- * Load styles for DocsPress controls rendered in the editor interface.
+ * Load styles for Autodocs Publish controls rendered in the editor interface.
  */
-function docspress_block_editor_ui_assets() {
+function autodocs_publish_block_editor_ui_assets() {
 	$theme      = wp_get_theme();
 	$style_path = get_theme_file_path( 'assets/css/block-editor.css' );
 	$version    = is_readable( $style_path ) ? (string) filemtime( $style_path ) : $theme->get( 'Version' );
 
 	wp_enqueue_style(
-		'docspress-block-editor',
+		'autodocs-publish-block-editor',
 		get_theme_file_uri( 'assets/css/block-editor.css' ),
 		array(),
 		$version
 	);
 }
-add_action( 'enqueue_block_editor_assets', 'docspress_block_editor_ui_assets' );
+add_action( 'enqueue_block_editor_assets', 'autodocs_publish_block_editor_ui_assets' );
 
 /**
  * Return a small inline icon.
@@ -346,7 +550,7 @@ add_action( 'enqueue_block_editor_assets', 'docspress_block_editor_ui_assets' );
  * @param string $name Icon name.
  * @return string
  */
-function docspress_icon( $name ) {
+function autodocs_publish_icon( $name ) {
 	$icons = array(
 		'book'     => '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4.8c2.6-.7 4.9-.2 7 1.4v13c-2.1-1.6-4.4-2.1-7-1.4v-13Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M19 4.8c-2.6-.7-4.9-.2-7 1.4v13c2.1-1.6 4.4-2.1 7-1.4v-13Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
 		'github'   => '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.58 2 12.23c0 4.51 2.87 8.34 6.84 9.69.5.1.68-.22.68-.49 0-.24-.01-1.05-.01-1.9-2.78.62-3.37-1.2-3.37-1.2-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.35 1.12 2.92.85.09-.66.35-1.12.64-1.37-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.04 1.03-2.76-.1-.26-.45-1.3.1-2.72 0 0 .84-.28 2.75 1.05A9.36 9.36 0 0 1 12 6.92c.85 0 1.69.12 2.49.34 1.91-1.33 2.75-1.05 2.75-1.05.55 1.42.2 2.46.1 2.72.64.72 1.03 1.64 1.03 2.76 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.8 0 .27.18.59.69.49A10.25 10.25 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z"/></svg>',
@@ -368,17 +572,17 @@ function docspress_icon( $name ) {
  * @param string $root_slug Page path or slug.
  * @return int
  */
-function docspress_get_docs_root_id( $root_slug = 'docs' ) {
+function autodocs_publish_get_docs_root_id( $root_slug = 'docs' ) {
 	$root_slug = trim( sanitize_text_field( (string) $root_slug ), '/' );
-	if ( function_exists( 'docspress_blocks_versions_find_page' ) ) {
-		$context = function_exists( 'docspress_blocks_versions_page_context' )
-			? docspress_blocks_versions_page_context()
+	if ( function_exists( 'autodocs_publish_blocks_versions_find_page' ) ) {
+		$context = function_exists( 'autodocs_publish_blocks_versions_page_context' )
+			? autodocs_publish_blocks_versions_page_context()
 			: null;
 		$version = $context && ! empty( $context['version'] )
 			? $context['version']
-			: docspress_blocks_versions_effective_slug();
+			: autodocs_publish_blocks_versions_effective_slug();
 		$root = $context && ! empty( $context['root'] ) ? $context['root'] : $root_slug;
-		$page = $version ? docspress_blocks_versions_find_page( $version, '', $root ) : null;
+		$page = $version ? autodocs_publish_blocks_versions_find_page( $version, '', $root ) : null;
 		if ( $page instanceof WP_Post ) {
 			return (int) $page->ID;
 		}
@@ -404,7 +608,7 @@ function docspress_get_docs_root_id( $root_slug = 'docs' ) {
  * Keep the Site Editor Design and Styles canvases focused on the complete
  * documentation template instead of the homepage or an individual Page.
  */
-function docspress_site_editor_preview_context() {
+function autodocs_publish_site_editor_preview_context() {
 	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 	if ( ! $screen || 'site-editor' !== $screen->id ) {
 		return;
@@ -415,15 +619,15 @@ function docspress_site_editor_preview_context() {
 	$version     = is_readable( $script_path ) ? (string) filemtime( $script_path ) : $theme->get( 'Version' );
 
 	wp_enqueue_script(
-		'docspress-site-editor-preview',
+		'autodocs-publish-site-editor-preview',
 		get_theme_file_uri( 'assets/js/site-editor-preview.js' ),
 		array( 'wp-compose', 'wp-element', 'wp-hooks' ),
 		$version,
 		true
 	);
 	wp_add_inline_script(
-		'docspress-site-editor-preview',
-		'window.docspressSiteEditorPreview = ' . wp_json_encode(
+		'autodocs-publish-site-editor-preview',
+		'window.autodocsPublishSiteEditorPreview = ' . wp_json_encode(
 			array(
 				'archivePostId' => get_stylesheet() . '//archive',
 				'postId'        => get_stylesheet() . '//page',
@@ -433,13 +637,13 @@ function docspress_site_editor_preview_context() {
 		'before'
 	);
 }
-add_action( 'enqueue_block_editor_assets', 'docspress_site_editor_preview_context' );
+add_action( 'enqueue_block_editor_assets', 'autodocs_publish_site_editor_preview_context' );
 
 /**
  * Give a direct visit to the bare Site Editor URL a deterministic Design
  * preview before WordPress can restore another previously visited section.
  */
-function docspress_redirect_site_editor_design_preview() {
+function autodocs_publish_redirect_site_editor_design_preview() {
 	global $pagenow;
 
 	if (
@@ -464,7 +668,7 @@ function docspress_redirect_site_editor_design_preview() {
 	wp_safe_redirect( $url );
 	exit;
 }
-add_action( 'admin_init', 'docspress_redirect_site_editor_design_preview' );
+add_action( 'admin_init', 'autodocs_publish_redirect_site_editor_design_preview' );
 
 /**
  * Get published Pages within a documentation tree.
@@ -473,10 +677,10 @@ add_action( 'admin_init', 'docspress_redirect_site_editor_design_preview' );
  * @param string $sort      menu_order, title, newest, or oldest.
  * @return WP_Post[]
  */
-function docspress_get_docs_pages( $root_slug = 'docs', $sort = 'menu_order' ) {
+function autodocs_publish_get_docs_pages( $root_slug = 'docs', $sort = 'menu_order' ) {
 	static $page_cache = array();
 
-	$root_id = docspress_get_docs_root_id( $root_slug );
+	$root_id = autodocs_publish_get_docs_root_id( $root_slug );
 	$sort    = in_array( $sort, array( 'menu_order', 'title', 'newest', 'oldest' ), true ) ? $sort : 'menu_order';
 	$key     = $root_id . ':' . $sort;
 	if ( isset( $page_cache[ $key ] ) ) {
@@ -497,17 +701,17 @@ function docspress_get_docs_pages( $root_slug = 'docs', $sort = 'menu_order' ) {
 		)
 	);
 
-	if ( function_exists( 'docspress_blocks_versions_page_context' ) ) {
-		$context = docspress_blocks_versions_page_context();
+	if ( function_exists( 'autodocs_publish_blocks_versions_page_context' ) ) {
+		$context = autodocs_publish_blocks_versions_page_context();
 		$version = $context && ! empty( $context['version'] )
 			? $context['version']
-			: docspress_blocks_versions_effective_slug();
+			: autodocs_publish_blocks_versions_effective_slug();
 		if ( $version ) {
 			$pages = array_values(
 				array_filter(
 					$pages,
 					static function ( $page ) use ( $version ) {
-						return $version === sanitize_key( (string) get_post_meta( $page->ID, '_docspress_version_id', true ) );
+						return $version === sanitize_key( (string) get_post_meta( $page->ID, '_autodocs_publish_version_id', true ) );
 					}
 				)
 			);
@@ -549,7 +753,7 @@ function docspress_get_docs_pages( $root_slug = 'docs', $sort = 'menu_order' ) {
  * @param WP_Post[] $pages Documentation Pages.
  * @return array<int,WP_Post[]>
  */
-function docspress_group_pages_by_parent( $pages ) {
+function autodocs_publish_group_pages_by_parent( $pages ) {
 	$grouped = array();
 	foreach ( $pages as $page ) {
 		$parent = (int) $page->post_parent;
@@ -562,12 +766,12 @@ function docspress_group_pages_by_parent( $pages ) {
 }
 
 /**
- * Read DocsPress management metadata from a Page.
+ * Read Autodocs Publish management metadata from a Page.
  *
  * @param int $post_id Page ID.
  * @return array<string,mixed>
  */
-function docspress_get_managed_metadata( $post_id = 0 ) {
+function autodocs_publish_get_managed_metadata( $post_id = 0 ) {
 	static $cache = array();
 
 	$post_id = $post_id ? absint( $post_id ) : get_queried_object_id();
@@ -580,7 +784,7 @@ function docspress_get_managed_metadata( $post_id = 0 ) {
 
 	$content = (string) get_post_field( 'post_content', $post_id, 'raw' );
 	$cache[ $post_id ] = array();
-	if ( $content && preg_match( '/<!--\s*docspress:(.*?)\s*-->/s', $content, $matches ) ) {
+	if ( $content && preg_match( '/<!--\s*(?:autodocs-publish|docspress):(.*?)\s*-->/s', $content, $matches ) ) {
 		$parsed = json_decode( trim( $matches[1] ), true );
 		if ( is_array( $parsed ) && 1 === (int) ( isset( $parsed['version'] ) ? $parsed['version'] : 0 ) ) {
 			$cache[ $post_id ] = $parsed;
@@ -598,7 +802,7 @@ function docspress_get_managed_metadata( $post_id = 0 ) {
  * @param int $post_id Page ID.
  * @return array{id:string,root:bool}
  */
-function docspress_get_sidebar_metadata( $post_id = 0 ) {
+function autodocs_publish_get_sidebar_metadata( $post_id = 0 ) {
 	static $cache = array();
 
 	$post_id = $post_id ? absint( $post_id ) : get_queried_object_id();
@@ -609,12 +813,12 @@ function docspress_get_sidebar_metadata( $post_id = 0 ) {
 		return $cache[ $post_id ];
 	}
 
-	$id = sanitize_key( (string) get_post_meta( $post_id, '_docspress_sidebar_id', true ) );
-	$root = metadata_exists( 'post', $post_id, '_docspress_sidebar_root' )
-		? rest_sanitize_boolean( get_post_meta( $post_id, '_docspress_sidebar_root', true ) )
+	$id = sanitize_key( (string) get_post_meta( $post_id, '_autodocs_publish_sidebar_id', true ) );
+	$root = metadata_exists( 'post', $post_id, '_autodocs_publish_sidebar_root' )
+		? rest_sanitize_boolean( get_post_meta( $post_id, '_autodocs_publish_sidebar_root', true ) )
 		: false;
 	if ( ! $id ) {
-		$managed = docspress_get_managed_metadata( $post_id );
+		$managed = autodocs_publish_get_managed_metadata( $post_id );
 		$id      = isset( $managed['sidebarId'] ) ? sanitize_key( (string) $managed['sidebarId'] ) : '';
 		$root    = $id && ! empty( $managed['sidebarRoot'] );
 	}
@@ -629,16 +833,16 @@ function docspress_get_sidebar_metadata( $post_id = 0 ) {
  * @param int $post_id Page ID.
  * @return array{id:string,root_id:int}|null
  */
-function docspress_get_sidebar_context( $post_id = 0 ) {
+function autodocs_publish_get_sidebar_context( $post_id = 0 ) {
 	$post_id = $post_id ? absint( $post_id ) : get_queried_object_id();
-	$current = docspress_get_sidebar_metadata( $post_id );
+	$current = autodocs_publish_get_sidebar_metadata( $post_id );
 	if ( ! $post_id || ! $current['id'] ) {
 		return null;
 	}
 
 	$candidates = array_merge( array( $post_id ), get_post_ancestors( $post_id ) );
 	foreach ( $candidates as $candidate_id ) {
-		$metadata = docspress_get_sidebar_metadata( $candidate_id );
+		$metadata = autodocs_publish_get_sidebar_metadata( $candidate_id );
 		if ( $metadata['id'] === $current['id'] && $metadata['root'] ) {
 			return array( 'id' => $current['id'], 'root_id' => (int) $candidate_id );
 		}
@@ -654,7 +858,7 @@ function docspress_get_sidebar_context( $post_id = 0 ) {
  * @param string    $sidebar_id Sidebar ID.
  * @return WP_Post[]
  */
-function docspress_filter_pages_by_sidebar( $pages, $sidebar_id ) {
+function autodocs_publish_filter_pages_by_sidebar( $pages, $sidebar_id ) {
 	$sidebar_id = sanitize_key( (string) $sidebar_id );
 	if ( ! $sidebar_id ) {
 		return $pages;
@@ -664,7 +868,7 @@ function docspress_filter_pages_by_sidebar( $pages, $sidebar_id ) {
 		array_filter(
 			$pages,
 			static function ( $page ) use ( $sidebar_id ) {
-				$metadata = docspress_get_sidebar_metadata( $page->ID );
+				$metadata = autodocs_publish_get_sidebar_metadata( $page->ID );
 				return $metadata['id'] === $sidebar_id;
 			}
 		)
@@ -677,8 +881,8 @@ function docspress_filter_pages_by_sidebar( $pages, $sidebar_id ) {
  * @param int $post_id Page ID.
  * @return bool|null
  */
-function docspress_get_sidebar_collapsed( $post_id = 0 ) {
-	$metadata = docspress_get_managed_metadata( $post_id );
+function autodocs_publish_get_sidebar_collapsed( $post_id = 0 ) {
+	$metadata = autodocs_publish_get_managed_metadata( $post_id );
 	return array_key_exists( 'sidebarCollapsed', $metadata ) && is_bool( $metadata['sidebarCollapsed'] )
 		? $metadata['sidebarCollapsed']
 		: null;
@@ -694,12 +898,12 @@ function docspress_get_sidebar_collapsed( $post_id = 0 ) {
  * @param int       $max_depth  Maximum level, zero for unlimited.
  * @param array     $grouped    Pages grouped by parent.
  */
-function docspress_render_page_tree( $pages, $parent_id = 0, $root_id = 0, $level = 1, $max_depth = 0, $grouped = null ) {
+function autodocs_publish_render_page_tree( $pages, $parent_id = 0, $root_id = 0, $level = 1, $max_depth = 0, $grouped = null ) {
 	if ( $max_depth && $level > $max_depth ) {
 		return;
 	}
 
-	$grouped = null === $grouped ? docspress_group_pages_by_parent( $pages ) : $grouped;
+	$grouped = null === $grouped ? autodocs_publish_group_pages_by_parent( $pages ) : $grouped;
 	$children = $root_id && 0 === $parent_id
 		? array_values(
 			array_filter(
@@ -718,7 +922,7 @@ function docspress_render_page_tree( $pages, $parent_id = 0, $root_id = 0, $leve
 	echo '<ul>';
 	foreach ( $children as $page ) {
 		$current   = (int) get_queried_object_id() === (int) $page->ID;
-		$collapsed = docspress_get_sidebar_collapsed( $page->ID );
+		$collapsed = autodocs_publish_get_sidebar_collapsed( $page->ID );
 		printf(
 			'<li data-doc-title="%1$s"><a href="%2$s"%3$s%4$s><span class="nav-dot" aria-hidden="true"></span><span>%5$s</span></a>',
 			esc_attr( wp_strip_all_tags( $page->post_title ) ),
@@ -727,7 +931,7 @@ function docspress_render_page_tree( $pages, $parent_id = 0, $root_id = 0, $leve
 			null === $collapsed ? '' : ' data-sidebar-collapsed="' . ( $collapsed ? 'true' : 'false' ) . '"',
 			esc_html( $page->post_title )
 		);
-		docspress_render_page_tree( $pages, (int) $page->ID, 0, $level + 1, $max_depth, $grouped );
+		autodocs_publish_render_page_tree( $pages, (int) $page->ID, 0, $level + 1, $max_depth, $grouped );
 		echo '</li>';
 	}
 	echo '</ul>';
@@ -744,13 +948,13 @@ function docspress_render_page_tree( $pages, $parent_id = 0, $root_id = 0, $leve
  * @param array     $grouped    Pages grouped by parent.
  * @return WP_Post[]
  */
-function docspress_flatten_page_tree( $pages, $root_id = 0, $parent = 0, $level = 1, $max_depth = 0, $grouped = null ) {
+function autodocs_publish_flatten_page_tree( $pages, $root_id = 0, $parent = 0, $level = 1, $max_depth = 0, $grouped = null ) {
 	if ( $max_depth && $level > $max_depth ) {
 		return array();
 	}
 
 	$flat     = array();
-	$grouped  = null === $grouped ? docspress_group_pages_by_parent( $pages ) : $grouped;
+	$grouped  = null === $grouped ? autodocs_publish_group_pages_by_parent( $pages ) : $grouped;
 	$children = $root_id && 0 === $parent
 		? array_values(
 			array_filter(
@@ -764,7 +968,7 @@ function docspress_flatten_page_tree( $pages, $root_id = 0, $parent = 0, $level 
 
 	foreach ( $children as $page ) {
 		$flat[] = $page;
-		$flat   = array_merge( $flat, docspress_flatten_page_tree( $pages, 0, (int) $page->ID, $level + 1, $max_depth, $grouped ) );
+		$flat   = array_merge( $flat, autodocs_publish_flatten_page_tree( $pages, 0, (int) $page->ID, $level + 1, $max_depth, $grouped ) );
 	}
 	return $flat;
 }
@@ -777,7 +981,7 @@ function docspress_flatten_page_tree( $pages, $root_id = 0, $parent = 0, $level 
  * @param int    $max_level Highest heading level.
  * @return array{content:string,toc:array<int,array{level:int,id:string,title:string}>}
  */
-function docspress_prepare_content( $content, $min_level = 2, $max_level = 3 ) {
+function autodocs_publish_prepare_content( $content, $min_level = 2, $max_level = 3 ) {
 	$toc       = array();
 	$used      = array();
 	$min_level = min( 6, max( 1, absint( $min_level ) ) );
@@ -834,31 +1038,31 @@ function docspress_prepare_content( $content, $min_level = 2, $max_level = 3 ) {
  * @param string $block_content Rendered block.
  * @return string
  */
-function docspress_post_content_anchors( $block_content ) {
-	return is_page() ? docspress_prepare_content( $block_content, 2, 6 )['content'] : $block_content;
+function autodocs_publish_post_content_anchors( $block_content ) {
+	return is_page() ? autodocs_publish_prepare_content( $block_content, 2, 6 )['content'] : $block_content;
 }
-add_filter( 'render_block_core/post-content', 'docspress_post_content_anchors' );
+add_filter( 'render_block_core/post-content', 'autodocs_publish_post_content_anchors' );
 
 /**
  * Return version taxonomy terms when the site registers them.
  *
  * @return array{terms:WP_Term[],current:int}
  */
-function docspress_get_versions() {
-	if ( function_exists( 'docspress_blocks_versions_terms' ) ) {
-		$terms = docspress_blocks_versions_terms();
-		$context = function_exists( 'docspress_blocks_versions_page_context' ) ? docspress_blocks_versions_page_context() : null;
+function autodocs_publish_get_versions() {
+	if ( function_exists( 'autodocs_publish_blocks_versions_terms' ) ) {
+		$terms = autodocs_publish_blocks_versions_terms();
+		$context = function_exists( 'autodocs_publish_blocks_versions_page_context' ) ? autodocs_publish_blocks_versions_page_context() : null;
 		$current = $context && ! empty( $context['term'] ) ? (int) $context['term']->term_id : 0;
 		return array( 'terms' => $terms, 'current' => $current );
 	}
 
-	if ( ! taxonomy_exists( 'docspress_version' ) ) {
+	if ( ! taxonomy_exists( 'autodocs_publish_version' ) ) {
 		return array( 'terms' => array(), 'current' => 0 );
 	}
 
-	$terms = get_terms( array( 'taxonomy' => 'docspress_version', 'hide_empty' => true ) );
+	$terms = get_terms( array( 'taxonomy' => 'autodocs_publish_version', 'hide_empty' => true ) );
 	$terms = is_wp_error( $terms ) ? array() : $terms;
-	$current_terms = is_page() ? wp_get_post_terms( get_queried_object_id(), 'docspress_version' ) : array();
+	$current_terms = is_page() ? wp_get_post_terms( get_queried_object_id(), 'autodocs_publish_version' ) : array();
 	$current_id = ( $current_terms && ! is_wp_error( $current_terms ) ) ? (int) $current_terms[0]->term_id : 0;
 	return array( 'terms' => $terms, 'current' => $current_id );
 }
@@ -869,7 +1073,7 @@ function docspress_get_versions() {
  * @param mixed $source Untrusted source path.
  * @return string
  */
-function docspress_normalize_markdown_source_path( $source ) {
+function autodocs_publish_normalize_markdown_source_path( $source ) {
 	if ( ! is_string( $source ) ) {
 		return '';
 	}
@@ -892,15 +1096,21 @@ function docspress_normalize_markdown_source_path( $source ) {
  * @param int $post_id Page ID.
  * @return string
  */
-function docspress_get_markdown_source_path( $post_id = 0 ) {
+function autodocs_publish_get_markdown_source_path( $post_id = 0 ) {
 	$post_id  = $post_id ? absint( $post_id ) : get_queried_object_id();
-	$metadata = docspress_get_managed_metadata( $post_id );
+	$metadata = autodocs_publish_get_managed_metadata( $post_id );
 	$source   = isset( $metadata['source'] ) ? $metadata['source'] : '';
 	if ( ! $source && $post_id ) {
-		$source = get_post_meta( $post_id, '_docspress_source_path', true );
+		$source = get_post_meta( $post_id, '_autodocs_publish_source_path', true );
 	}
-	$source = apply_filters( 'docspress_markdown_source_path', $source, $post_id, $metadata );
-	return docspress_normalize_markdown_source_path( $source );
+	$source = apply_filters( 'autodocs_publish_markdown_source_path', $source, $post_id, $metadata );
+	$source = apply_filters_deprecated(
+		'docspress_markdown_source_path',
+		array( $source, $post_id, $metadata ),
+		'0.11.0',
+		'autodocs_publish_markdown_source_path'
+	);
+	return autodocs_publish_normalize_markdown_source_path( $source );
 }
 
 /**
@@ -911,8 +1121,8 @@ function docspress_get_markdown_source_path( $post_id = 0 ) {
  * @param string $ref        Branch or tag.
  * @return string
  */
-function docspress_get_github_edit_url( $post_id = 0, $repository = 'https://github.com/Automattic/docspress', $ref = 'main' ) {
-	$source = docspress_get_markdown_source_path( $post_id );
+function autodocs_publish_get_github_edit_url( $post_id = 0, $repository = 'https://github.com/Automattic/autodocs-publish', $ref = 'main' ) {
+	$source = autodocs_publish_get_markdown_source_path( $post_id );
 	if ( ! $source ) {
 		return '';
 	}

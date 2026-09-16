@@ -3,7 +3,7 @@ title: File Tree
 sidebar_position: 130
 ---
 
-Use `docspress/file-tree` to show the relevant part of a repository or directory hierarchy. Two-space indentation defines depth, and a trailing `/` identifies a folder.
+Use `autodocs-publish/file-tree` to show the relevant part of a repository or directory hierarchy. Two-space indentation defines depth, and a trailing `/` identifies a folder.
 
 ## When to use it
 
@@ -25,13 +25,13 @@ Tabs normalize to two spaces. Nesting is capped at 12 levels. A label ending in 
 
 ## Attributes
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "File Tree attributes",
-    "description": "Root, hierarchy, and disclosure behavior accepted by \u003ccode\u003edocspress/file-tree\u003c/code\u003e.",
+    "description": "Root, hierarchy, and disclosure behavior accepted by \u003ccode\u003eautodocs-publish/file-tree\u003c/code\u003e.",
     "fields": [
       {
         "name": "root",
@@ -86,7 +86,7 @@ Tabs normalize to two spaces. Nesting is capped at 12 levels. A label ending in 
 -->
 #### File Tree attributes
 
-Root, hierarchy, and disclosure behavior accepted by <code>docspress/file-tree</code>.
+Root, hierarchy, and disclosure behavior accepted by <code>autodocs-publish/file-tree</code>.
 
 | Field | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -95,16 +95,16 @@ Root, hierarchy, and disclosure behavior accepted by <code>docspress/file-tree</
 | `caption` | string | No |  | <p>Optional formatted explanation.</p> |
 | `collapsible` | boolean | No | true | <p>Uses native folder disclosures when a folder has children.</p> |
 | `open` | boolean | No | true | <p>Initial state of collapsible folders.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Creative examples
 
 ### Focused documentation tree
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/file-tree",
+  "name": "autodocs-publish/file-tree",
   "attrs": {
     "root": "repository/",
     "tree": "docs/\n  index.md\n  guides/\n    continuous-sync.md\npackage.json",
@@ -125,14 +125,14 @@ package.json
 ```
 
 _A relevant source tree._
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Collapsed monorepo map
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/file-tree",
+  "name": "autodocs-publish/file-tree",
   "attrs": {
     "root": "workspace/",
     "tree": "apps/\n  docs-site/\n    package.json\n  admin/\n    package.json\npackages/\n  blocks/\n    src/\n  sync-client/\n    src/\npnpm-workspace.yaml",
@@ -159,24 +159,24 @@ pnpm-workspace.yaml
 ```
 
 _Start collapsed when the hierarchy matters more than individual files._
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Generated plugin package
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/file-tree",
+  "name": "autodocs-publish/file-tree",
   "attrs": {
-    "root": "docspress-blocks/",
-    "tree": "blocks/\n  api-request/\n    block.php\n    editor.js\n    style.css\n    view.js\nassets/\n  code.css\nincludes/\n  code-surface.php\ndocspress-blocks.php\nreadme.txt",
+    "root": "autodocs-publish-blocks/",
+    "tree": "blocks/\n  api-request/\n    block.php\n    editor.js\n    style.css\n    view.js\nassets/\n  code.css\nincludes/\n  code-surface.php\nautodocs-publish-blocks.php\nreadme.txt",
     "caption": "A non-collapsible release package keeps every relevant artifact visible.",
     "collapsible": false,
     "open": true
   }
 }
 -->
-#### docspress-blocks/
+#### autodocs-publish-blocks/
 
 ```text
 blocks/
@@ -189,12 +189,12 @@ assets/
   code.css
 includes/
   code-surface.php
-docspress-blocks.php
+autodocs-publish-blocks.php
 readme.txt
 ```
 
 _A non-collapsible release package keeps every relevant artifact visible._
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Published behavior and accessibility
 

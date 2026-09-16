@@ -1,0 +1,157 @@
+.wp-block-autodocs-publish-terminal-session {
+	--adpb-terminal-accent: var(--adp-blue, #6f8cff);
+	--adpb-terminal-bg: color-mix(in srgb, var(--adp-ink, #171a22) 94%, #000);
+	--adpb-terminal-panel: color-mix(in srgb, var(--adp-ink, #171a22) 84%, #000);
+	--adpb-terminal-line: rgba(255, 255, 255, 0.15);
+	--adpb-terminal-text: #f5f7fa;
+	--adpb-terminal-muted: #aeb6c6;
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 0;
+	margin-block: clamp(1.5rem, 3vw, 2.25rem);
+	overflow: hidden;
+	border: 1px solid color-mix(in srgb, var(--adp-ink, #171a22) 30%, var(--adp-line-strong, #cfd4dc));
+	border-radius: var(--adp-radius, 10px);
+	background: var(--adpb-terminal-bg);
+	box-shadow: none;
+	color: var(--adpb-terminal-text);
+}
+
+.autodocs-publish-preset-autodocs-publish .wp-block-autodocs-publish-terminal-session,
+.autodocs-publish-blocks--preset-autodocs-publish.wp-block-autodocs-publish-terminal-session {
+	--adpb-terminal-accent: #fec408;
+}
+
+.autodocs-publish-preset-wordpress .wp-block-autodocs-publish-terminal-session,
+.autodocs-publish-preset-wordpress-com .wp-block-autodocs-publish-terminal-session,
+.autodocs-publish-blocks--preset-wordpress.wp-block-autodocs-publish-terminal-session,
+.autodocs-publish-blocks--preset-wordpress-com.wp-block-autodocs-publish-terminal-session {
+	--adpb-terminal-accent: #8da0ff;
+}
+
+.autodocs-publish-preset-jetpack .wp-block-autodocs-publish-terminal-session,
+.autodocs-publish-blocks--preset-jetpack.wp-block-autodocs-publish-terminal-session {
+	--adpb-terminal-accent: #7de36c;
+}
+
+.autodocs-publish-terminal__bar {
+	display: grid;
+	min-height: 43px;
+	grid-template-columns: auto minmax(0, 1fr) auto auto;
+	align-items: center;
+	gap: 9px;
+	box-sizing: border-box;
+	padding: 6px 8px 6px 13px;
+	border-bottom: 1px solid var(--adpb-terminal-line);
+	background: var(--adpb-terminal-panel);
+}
+
+.autodocs-publish-terminal__icon {
+	color: var(--adpb-terminal-accent);
+	font: 760 0.8rem/1 var(--adp-font-mono, "SFMono-Regular", Consolas, monospace);
+}
+
+.autodocs-publish-terminal__title {
+	overflow: hidden;
+	color: var(--adpb-terminal-text);
+	font: 650 0.75rem/1.2 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.autodocs-publish-terminal__shell {
+	color: var(--adpb-terminal-muted);
+	font: 600 0.68rem/1 var(--adp-font-mono, "SFMono-Regular", Consolas, monospace);
+}
+
+.autodocs-publish-terminal__copy {
+	display: inline-flex;
+	min-height: 28px;
+	align-items: center;
+	gap: 5px;
+	margin: 0;
+	padding: 3px 7px;
+	border: 1px solid var(--adpb-terminal-line);
+	border-radius: var(--adp-radius, 10px);
+	background: rgba(255, 255, 255, 0.04);
+	color: var(--adpb-terminal-text);
+	cursor: pointer;
+	font: 650 0.68rem/1 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.autodocs-publish-terminal__copy svg {
+	width: 14px;
+	height: 14px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.6;
+}
+
+.autodocs-publish-terminal__copy:hover,
+.autodocs-publish-terminal__copy:focus-visible,
+.autodocs-publish-terminal__copy.is-copied {
+	border-color: var(--adpb-terminal-accent);
+	color: var(--adpb-terminal-accent);
+}
+
+.autodocs-publish-terminal__body {
+	box-sizing: border-box;
+	padding: 18px 20px 20px;
+}
+
+.autodocs-publish-terminal__command {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	gap: 10px;
+	align-items: start;
+}
+
+.autodocs-publish-terminal__prompt {
+	color: var(--adpb-terminal-accent);
+	font: 700 0.87rem/1.65 var(--adp-font-mono, "SFMono-Regular", Consolas, monospace);
+}
+
+.autodocs-publish-terminal__command pre,
+.autodocs-publish-terminal__output,
+.entry-content .autodocs-publish-terminal__command pre,
+.entry-content .autodocs-publish-terminal__output {
+	max-width: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: auto;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--adpb-terminal-text);
+	font: 500 0.87rem/1.65 var(--adp-font-mono, "SFMono-Regular", Consolas, monospace);
+	white-space: pre;
+}
+
+.autodocs-publish-terminal__command code,
+.autodocs-publish-terminal__output code {
+	background: transparent;
+	color: inherit;
+	font: inherit;
+}
+
+.autodocs-publish-terminal__output,
+.entry-content .autodocs-publish-terminal__output {
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid var(--adpb-terminal-line);
+	color: var(--adpb-terminal-muted);
+}
+
+html[data-theme="dark"] .wp-block-autodocs-publish-terminal-session {
+	--adpb-terminal-bg: color-mix(in srgb, var(--adp-canvas, #11141b) 74%, #000);
+	--adpb-terminal-panel: color-mix(in srgb, var(--adp-paper, #171b23) 70%, #000);
+	box-shadow: none;
+}
+
+@media (max-width: 520px) {
+	.autodocs-publish-terminal__shell,
+	.autodocs-publish-terminal__copy b {
+		display: none;
+	}
+}

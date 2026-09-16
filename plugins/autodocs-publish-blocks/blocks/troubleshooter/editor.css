@@ -1,0 +1,30 @@
+.autodocs-publish-troubleshooter__branch-editor {
+	display: grid;
+	gap: 4px;
+	margin: 0 0 14px;
+	padding: 12px;
+	border: 1px solid #dcdcde;
+	border-radius: var(--adp-radius, 10px);
+	background: #f6f7f7;
+}
+
+.autodocs-publish-troubleshooter__editor-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.autodocs-publish-troubleshooter--editor .autodocs-publish-troubleshooter__choice {
+	pointer-events: none;
+}
+
+.autodocs-publish-troubleshooter--editor .autodocs-publish-troubleshooter__choice b {
+	color: var(--adpb-trouble-accent);
+	font-weight: 700;
+}
+
+.autodocs-publish-troubleshooter__editor-note {
+	margin: 4px 0 0;
+	color: var(--adpb-trouble-muted);
+	font: 600 0.68rem/1.4 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}

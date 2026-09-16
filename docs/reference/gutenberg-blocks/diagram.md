@@ -3,7 +3,7 @@ title: Diagram
 sidebar_position: 70
 ---
 
-Use `docspress/diagram` to turn a compact relationship list into a flow or sequence diagram. GitHub renders the Markdown preview as Mermaid, while WordPress renders a theme-native accessible SVG without loading a browser diagram library.
+Use `autodocs-publish/diagram` to turn a compact relationship list into a flow or sequence diagram. GitHub renders the Markdown preview as Mermaid, while WordPress renders a theme-native accessible SVG without loading a browser diagram library.
 
 ## When to use it
 
@@ -19,17 +19,17 @@ Source -> Target: optional label
 
 Lines beginning with `#` are comments. The parser considers the first 30 source lines and renders at most eight actors and 24 relationships. Extra relationships are discarded, so keep the model deliberately small.
 
-DocsPress generates the Mermaid syntax; keep authoring the compact relationship format above. A `flow` diagram becomes a `flowchart LR`, and a `sequence` diagram becomes a `sequenceDiagram`.
+Autodocs Publish generates the Mermaid syntax; keep authoring the compact relationship format above. A `flow` diagram becomes a `flowchart LR`, and a `sequence` diagram becomes a `sequenceDiagram`.
 
 ## Attributes
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Diagram attributes",
-    "description": "Labels and relationship source accepted by \u003ccode\u003edocspress/diagram\u003c/code\u003e.",
+    "description": "Labels and relationship source accepted by \u003ccode\u003eautodocs-publish/diagram\u003c/code\u003e.",
     "fields": [
       {
         "name": "title",
@@ -75,7 +75,7 @@ DocsPress generates the Mermaid syntax; keep authoring the compact relationship 
 -->
 #### Diagram attributes
 
-Labels and relationship source accepted by <code>docspress/diagram</code>.
+Labels and relationship source accepted by <code>autodocs-publish/diagram</code>.
 
 | Field | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -83,7 +83,7 @@ Labels and relationship source accepted by <code>docspress/diagram</code>.
 | `type` | enum | No | flow | <p>Visual arrangement of actors and connections.</p> |
 | `source` | string | Yes | Starter relationships | <p>One <code>Source -> Target: label</code> relationship per line.</p> |
 | `caption` | string | No |  | <p>Optional formatted explanation below the SVG.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 The block supports `wide` alignment in addition to the [shared design controls](index.md#add-and-edit-a-block).
 
@@ -91,14 +91,14 @@ The block supports `wide` alignment in addition to the [shared design controls](
 
 ### Documentation publishing sequence
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/diagram",
+  "name": "autodocs-publish/diagram",
   "attrs": {
     "title": "Documentation publishing flow",
     "type": "sequence",
-    "source": "Author -\u003e DocsPress: commit Markdown\nDocsPress -\u003e WordPress: publish blocks\nWordPress -\u003e Reader: serve documentation",
+    "source": "Author -\u003e Autodocs Publish: commit Markdown\nAutodocs Publish -\u003e WordPress: publish blocks\nWordPress -\u003e Reader: serve documentation",
     "caption": "The source remains concise and editable in Gutenberg."
   }
 }
@@ -108,7 +108,7 @@ The block supports `wide` alignment in addition to the [shared design controls](
 ```mermaid
 sequenceDiagram
   participant n1 as "Author"
-  participant n2 as "DocsPress"
+  participant n2 as "Autodocs Publish"
   participant n3 as "WordPress"
   participant n4 as "Reader"
   n1->>n2: commit Markdown
@@ -117,14 +117,14 @@ sequenceDiagram
 ```
 
 _The source remains concise and editable in Gutenberg._
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Reader feedback loop
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/diagram",
+  "name": "autodocs-publish/diagram",
   "attrs": {
     "title": "From reader question to verified improvement",
     "type": "flow",
@@ -151,14 +151,14 @@ flowchart LR
 ```
 
 _A feedback loop makes the reader part of documentation quality._
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Cache-miss request sequence
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/diagram",
+  "name": "autodocs-publish/diagram",
   "attrs": {
     "title": "What happens on a documentation cache miss",
     "type": "sequence",
@@ -184,10 +184,10 @@ sequenceDiagram
 ```
 
 _The sequence keeps infrastructure actors and response direction explicit._
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Published behavior and accessibility
 
-On GitHub, DocsPress projects the compact source into a fenced `mermaid` block so the repository view renders the diagram. In WordPress, DocsPress produces a theme-native SVG with an image role and accessible label. Labels are escaped for each target syntax and remain in the authoritative config. No third-party diagram code runs on the WordPress page.
+On GitHub, Autodocs Publish projects the compact source into a fenced `mermaid` block so the repository view renders the diagram. In WordPress, Autodocs Publish produces a theme-native SVG with an image role and accessible label. Labels are escaped for each target syntax and remain in the authoritative config. No third-party diagram code runs on the WordPress page.
 
 Use distinct actor names, short edge labels, and one direction of reading. Describe the important conclusion in nearby prose so the page does not depend on vision alone.

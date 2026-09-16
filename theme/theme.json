@@ -1,7 +1,7 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/theme.json",
 	"version": 3,
-	"title": "DocsPress",
+	"title": "Autodocs Publish",
 	"settings": {
 		"appearanceTools": true,
 		"useRootPaddingAwareAlignments": true,
@@ -25,8 +25,8 @@
 			"duotone": [
 				{
 					"colors": [ "#005cb3", "#fec408" ],
-					"name": "DocsPress blue and Wapuu yellow",
-					"slug": "docspress"
+					"name": "Autodocs blue and signal yellow",
+					"slug": "autodocs-publish"
 				},
 				{
 					"colors": [ "#1e1e1e", "#3858e9" ],
@@ -42,8 +42,8 @@
 			"gradients": [
 				{
 					"gradient": "linear-gradient(135deg, #005cb3 0%, #3858e9 55%, #fec408 100%)",
-					"name": "DocsPress signal",
-					"slug": "docspress-signal"
+					"name": "Autodocs Publish signal",
+					"slug": "autodocs-publish-signal"
 				},
 				{
 					"gradient": "linear-gradient(135deg, #3858e9 0%, #5300be 100%)",
@@ -63,7 +63,7 @@
 				{ "slug": "highlight", "color": "#fec408", "name": "Highlight" },
 				{ "slug": "highlight-strong", "color": "#fe8301", "name": "Highlight strong" },
 				{ "slug": "paper", "color": "#ffffff", "name": "Paper" },
-				{ "slug": "header-surface", "color": "color-mix(in srgb, var(--dp-paper) 92%, transparent)", "name": "Header surface" },
+				{ "slug": "header-surface", "color": "color-mix(in srgb, var(--adp-paper) 92%, transparent)", "name": "Header surface" },
 				{ "slug": "canvas", "color": "#f5faff", "name": "Canvas" },
 				{ "slug": "ink", "color": "#232323", "name": "Ink" },
 				{ "slug": "copy", "color": "#3d4348", "name": "Copy" },
@@ -97,29 +97,29 @@
 			"headingWeight": "900",
 			"entryKickerGap": "6px",
 			"entryKickerPadding": "4px 10px 4px 8px",
-			"entryKickerBorder": "2px solid var(--dp-ink)",
+			"entryKickerBorder": "2px solid var(--adp-ink)",
 			"entryKickerRadius": "999px",
-			"entryKickerBackground": "var(--dp-highlight)",
-			"entryKickerShadow": "3px 3px 0 var(--dp-highlight-strong)",
-			"entryKickerColor": "var(--dp-ink)",
-			"entryKickerDarkBorder": "2px solid color-mix(in srgb, var(--dp-highlight) 72%, var(--dp-line))",
-			"entryKickerDarkBackground": "color-mix(in srgb, var(--dp-highlight) 12%, var(--dp-paper))",
-			"entryKickerDarkShadow": "3px 3px 0 color-mix(in srgb, var(--dp-highlight-strong) 48%, var(--dp-paper))",
-			"entryKickerDarkColor": "var(--dp-highlight)",
-			"entryKickerDarkMarkerBackground": "var(--dp-highlight-strong)",
+			"entryKickerBackground": "var(--adp-highlight)",
+			"entryKickerShadow": "3px 3px 0 var(--adp-highlight-strong)",
+			"entryKickerColor": "var(--adp-ink)",
+			"entryKickerDarkBorder": "2px solid color-mix(in srgb, var(--adp-highlight) 72%, var(--adp-line))",
+			"entryKickerDarkBackground": "color-mix(in srgb, var(--adp-highlight) 12%, var(--adp-paper))",
+			"entryKickerDarkShadow": "3px 3px 0 color-mix(in srgb, var(--adp-highlight-strong) 48%, var(--adp-paper))",
+			"entryKickerDarkColor": "var(--adp-highlight)",
+			"entryKickerDarkMarkerBackground": "var(--adp-highlight-strong)",
 			"entryKickerLetterSpacing": "0.08em",
 			"entryKickerMarkerWidth": "6px",
 			"entryKickerMarkerHeight": "6px",
 			"entryKickerMarkerRadius": "50%",
-			"entryKickerMarkerBackground": "var(--dp-highlight-strong)",
+			"entryKickerMarkerBackground": "var(--adp-highlight-strong)",
 			"entryTitleSize": "clamp(42px, 5.6vw, 68px)",
-			"entryTitleWeight": "var(--dp-heading-weight)",
+			"entryTitleWeight": "var(--adp-heading-weight)",
 			"entryTitleLetterSpacing": "-0.06em",
 			"entryTitleLineHeight": "0.98",
 			"entryRuleWidth": "74px",
 			"entryRuleHeight": "4px",
 			"entryRuleRadius": "999px",
-			"entryRuleBackground": "linear-gradient(90deg, var(--dp-blue) 0 72%, var(--dp-highlight) 72% 100%)",
+			"entryRuleBackground": "linear-gradient(90deg, var(--adp-blue) 0 72%, var(--adp-highlight) 72% 100%)",
 			"searchWidth": "680px",
 			"searchHeight": "640px",
 			"searchRadius": "14px",
@@ -185,7 +185,7 @@
 			"fontFamilies": [
 				{
 					"slug": "ui",
-					"name": "DocsPress UI",
+					"name": "Autodocs Publish UI",
 					"fontFamily": "\"Nunito Sans\", \"Trebuchet MS\", sans-serif"
 				},
 				{
@@ -236,8 +236,8 @@
 	},
 	"styles": {
 		"color": {
-			"background": "var(--dp-paper)",
-			"text": "var(--dp-copy)"
+			"background": "var(--adp-paper)",
+			"text": "var(--adp-copy)"
 		},
 		"spacing": {
 			"blockGap": "var:preset|spacing|50",
@@ -320,7 +320,7 @@
 			"caption": {
 				"color": {
 					"background": "transparent",
-					"text": "var(--dp-muted)"
+					"text": "var(--adp-muted)"
 				},
 				"typography": {
 					"fontFamily": "inherit",
@@ -340,7 +340,7 @@
 			"heading": {
 				"color": {
 					"background": "transparent",
-					"text": "var(--dp-ink)"
+					"text": "var(--adp-ink)"
 				},
 				"typography": {
 					"fontFamily": "var:preset|font-family|ui",
@@ -479,7 +479,7 @@
 			"link": {
 				"color": {
 					"background": "transparent",
-					"text": "var(--dp-blue-dark)"
+					"text": "var(--adp-blue-dark)"
 				},
 				"typography": {
 					"fontFamily": "inherit",
@@ -497,7 +497,7 @@
 				},
 				":hover": {
 					"color": {
-						"text": "var(--dp-blue)"
+						"text": "var(--adp-blue)"
 					}
 				}
 			}
@@ -564,7 +564,7 @@
 					}
 				}
 			},
-			"docspress/version-switcher": {
+			"autodocs-publish/version-switcher": {
 				"typography": {
 					"fontFamily": "var:custom|font-ui",
 					"fontSize": "0.9375rem",
@@ -576,7 +576,7 @@
 					}
 				}
 			},
-			"docspress/version-notice": {
+			"autodocs-publish/version-notice": {
 				"border": {
 					"color": "var:preset|color|line",
 					"radius": "var:custom|version-notice-radius",

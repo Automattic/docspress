@@ -6,7 +6,7 @@ const root = process.cwd();
 const blockRoot = path.join(
   root,
   "plugins",
-  "docspress-blocks",
+  "autodocs-publish-blocks",
   "blocks",
   "audience-paths"
 );
@@ -129,10 +129,10 @@ describe("Audience Paths icon system", () => {
       fs.readFile(path.join(blockRoot, "editor.js"), "utf8")
     ]);
 
-    expect(block).toContain("docspress_blocks_audience_path_icon_editor_data()");
-    expect(block).toContain("docspress_blocks_render_audience_path_icon");
-    expect(editor).toContain("window.docspressAudiencePathIcons");
-    expect(editor).toContain("label: __( 'Icon', 'docspress-blocks' )");
+    expect(block).toContain("autodocs_publish_blocks_audience_path_icon_editor_data()");
+    expect(block).toContain("autodocs_publish_blocks_render_audience_path_icon");
+    expect(editor).toContain("window.autodocsPublishAudiencePathIcons");
+    expect(editor).toContain("label: __( 'Icon', 'autodocs-publish-blocks' )");
     expect(editor).not.toContain("Use a short symbol, emoji, or abbreviation.");
   });
 });

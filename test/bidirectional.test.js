@@ -51,7 +51,7 @@ function mockClient(pages) {
 
 describe("syncBidirectional", () => {
   it("opens a proposal for a WordPress-only edit without replacing the Page", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-bidirectional-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-bidirectional-"));
     await fs.mkdir(path.join(cwd, "docs"));
     await fs.writeFile(path.join(cwd, "docs", "index.md"), "# Docs\n\nBase\n");
     const desired = desiredPage();
@@ -75,7 +75,7 @@ describe("syncBidirectional", () => {
   });
 
   it("keeps a WordPress-only edit intact while reconcile opens its pull request", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-bidirectional-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-bidirectional-"));
     await fs.mkdir(path.join(cwd, "docs"));
     await fs.writeFile(path.join(cwd, "docs", "index.md"), "# Docs\n\nBase\n");
     const desired = desiredPage();
@@ -99,7 +99,7 @@ describe("syncBidirectional", () => {
   });
 
   it("publishes GitHub-only Pages while preserving a WordPress-only Page", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-bidirectional-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-bidirectional-"));
     await fs.mkdir(path.join(cwd, "docs"));
     await fs.writeFile(path.join(cwd, "docs", "wordpress.md"), "# WordPress\n\nBase\n");
     await fs.writeFile(path.join(cwd, "docs", "github.md"), "# GitHub\n\nEdited in GitHub\n");
@@ -143,7 +143,7 @@ describe("syncBidirectional", () => {
   });
 
   it("publishes a GitHub-only edit in reconcile mode", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-bidirectional-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-bidirectional-"));
     await fs.mkdir(path.join(cwd, "docs"));
     await fs.writeFile(path.join(cwd, "docs", "index.md"), "# Docs\n\nEdited in GitHub\n");
     const base = desiredPage();
@@ -165,7 +165,7 @@ describe("syncBidirectional", () => {
   });
 
   it("fails preflight without mutations when both sides changed", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-bidirectional-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-bidirectional-"));
     await fs.mkdir(path.join(cwd, "docs"));
     await fs.writeFile(path.join(cwd, "docs", "index.md"), "# Docs\n\nGitHub\n");
     const base = desiredPage();

@@ -3,7 +3,7 @@ title: Flow
 sidebar_position: 60
 ---
 
-Use `docspress/flow` for a connected, automatically numbered procedure. It gives a multi-step task more visual continuity than a normal ordered list while preserving semantic list markup.
+Use `autodocs-publish/flow` for a connected, automatically numbered procedure. It gives a multi-step task more visual continuity than a normal ordered list while preserving semantic list markup.
 
 ## When to use it
 
@@ -15,13 +15,13 @@ Add, remove, and reorder steps in Gutenberg. Give each step a concise action tit
 
 ## Attributes
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Flow attributes",
-    "description": "Numbering and steps accepted by \u003ccode\u003edocspress/flow\u003c/code\u003e.",
+    "description": "Numbering and steps accepted by \u003ccode\u003eautodocs-publish/flow\u003c/code\u003e.",
     "fields": [
       {
         "name": "start",
@@ -49,13 +49,13 @@ Add, remove, and reorder steps in Gutenberg. Give each step a concise action tit
 -->
 #### Flow attributes
 
-Numbering and steps accepted by <code>docspress/flow</code>.
+Numbering and steps accepted by <code>autodocs-publish/flow</code>.
 
 | Field | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `start` | number | No | 1 | <p>First visible step number, clamped to 1–99.</p> |
 | `steps` | array | Yes | Three starter steps | <p>One to 20 ordered step objects.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 Each step has a formatted `title` and formatted `content`. Empty or invalid step data falls back to the three starter steps so the block never publishes as an unexplained empty shell.
 
@@ -63,10 +63,10 @@ Each step has a formatted `title` and formatted `content`. Empty or invalid step
 
 ### Configure and verify
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/flow",
+  "name": "autodocs-publish/flow",
   "attrs": {
     "start": 1,
     "steps": [
@@ -97,14 +97,14 @@ Each step has a formatted `title` and formatted `content`. Empty or invalid step
 3. **Verify**
 
    Run the check and confirm the expected result.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Continue a release checklist
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/flow",
+  "name": "autodocs-publish/flow",
   "attrs": {
     "start": 4,
     "steps": [
@@ -135,14 +135,14 @@ Each step has a formatted `title` and formatted `content`. Empty or invalid step
 6. **Observe the first readers**
 
    Watch error rate, search exits, and support messages for fifteen minutes.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Restore service during an incident
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/flow",
+  "name": "autodocs-publish/flow",
   "attrs": {
     "start": 1,
     "steps": [
@@ -181,7 +181,7 @@ Each step has a formatted `title` and formatted `content`. Empty or invalid step
 4. **Confirm recovery**
 
    Repeat the original failing journey and document the observed result.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Published behavior and accessibility
 
@@ -189,10 +189,10 @@ The block renders as an ordered list with an explicit starting value. Numbers ar
 
 Start each title with an imperative verb. Keep one reader action per step, and place the observable success condition at the end of the step.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "tip",
     "title": "Show the verification step",
@@ -207,4 +207,4 @@ Start each title with an imperative verb. Keep one reader action per step, and p
 > **Show the verification step**
 >
 > A procedure is easier to trust when its last step tells readers exactly how to confirm that the task succeeded.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->

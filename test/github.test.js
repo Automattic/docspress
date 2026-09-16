@@ -1,15 +1,19 @@
 import { describe, expect, it, vi } from "vitest";
-import { DOCSPRESS_PR_MARKER, GitHubPullRequestClient } from "../src/github.js";
+import { AUTODOCS_PUBLISH_PR_MARKER, GitHubPullRequestClient } from "../src/github.js";
 
 function mockOctokit(options = {}) {
   const branchExists = options.branchExists || false;
+  const legacyBranchExists = options.legacyBranchExists || false;
   const pulls = (options.pulls || []).map((pull) => ({
-    head: { ref: "docspress/wordpress-sync", repo: { full_name: "o/r" } },
+    head: { ref: "autodocs-publish/wordpress-sync", repo: { full_name: "o/r" } },
     ...pull
   }));
   const git = {
     getRef: vi.fn(async ({ ref }) => {
-      if (ref === "heads/docspress/wordpress-sync" && !branchExists) {
+      if (ref === "heads/autodocs-publish/wordpress-sync" && !branchExists) {
+        throw Object.assign(new Error("Not found"), { status: 404 });
+      }
+      if (ref === "heads/docspress/wordpress-sync" && !legacyBranchExists) {
         throw Object.assign(new Error("Not found"), { status: 404 });
       }
       return { data: { object: { sha: ref === "heads/main" ? "base-sha" : "branch-sha" } } };
@@ -95,7 +99,7 @@ describe("GitHubPullRequestClient", () => {
   it("force-refreshes an existing managed rolling pull request", async () => {
     const octokit = mockOctokit({
       branchExists: true,
-      pulls: [{ number: 9, state: "open", body: DOCSPRESS_PR_MARKER, html_url: "https://github.com/o/r/pull/9" }]
+      pulls: [{ number: 9, state: "open", body: AUTODOCS_PUBLISH_PR_MARKER, html_url: "https://github.com/o/r/pull/9" }]
     });
     const result = await client(octokit).syncChanges([{ path: "docs/index.md", content: "# Docs\n" }]);
 
@@ -104,13 +108,63 @@ describe("GitHubPullRequestClient", () => {
     expect(octokit.rest.pulls.update).toHaveBeenCalledWith(expect.objectContaining({ pull_number: 9 }));
   });
 
+  it("reuses a legacy managed branch and rewrites the pull request body canonically", async () => {
+    const legacyMarker = "<!-- docspress:wordpress-sync -->";
+    const octokit = mockOctokit({
+      legacyBranchExists: true,
+      pulls: [{
+        number: 9,
+        state: "open",
+        body: legacyMarker,
+        html_url: "https://github.com/o/r/pull/9",
+        head: { ref: "docspress/wordpress-sync", repo: { full_name: "o/r" } }
+      }]
+    });
+
+    const result = await client(octokit).syncChanges([{ path: "docs/index.md", content: "# Docs\n" }]);
+    const update = octokit.rest.pulls.update.mock.calls[0][0];
+
+    expect(result.status).toBe("updated");
+    expect(octokit.rest.git.updateRef).toHaveBeenCalledWith(expect.objectContaining({
+      ref: "heads/docspress/wordpress-sync",
+      force: true
+    }));
+    expect(octokit.rest.git.createRef).not.toHaveBeenCalled();
+    expect(octokit.rest.pulls.create).not.toHaveBeenCalled();
+    expect(update.body).toContain(AUTODOCS_PUBLISH_PR_MARKER);
+    expect(update.body).not.toContain(legacyMarker);
+  });
+
+  it("does not adopt an unmarked legacy pull request", async () => {
+    const octokit = mockOctokit({
+      legacyBranchExists: true,
+      pulls: [{
+        number: 9,
+        state: "open",
+        body: "A pull request maintained by someone else.",
+        html_url: "https://github.com/o/r/pull/9",
+        head: { ref: "docspress/wordpress-sync", repo: { full_name: "o/r" } }
+      }]
+    });
+
+    const result = await client(octokit).syncChanges([{ path: "docs/index.md", content: "# Docs\n" }]);
+
+    expect(result.status).toBe("created");
+    expect(octokit.rest.git.createRef).toHaveBeenCalledWith(expect.objectContaining({
+      ref: "refs/heads/autodocs-publish/wordpress-sync"
+    }));
+    expect(octokit.rest.pulls.create).toHaveBeenCalledWith(expect.objectContaining({
+      head: "autodocs-publish/wordpress-sync"
+    }));
+  });
+
   it("finds a managed closed pull request by filtering the repository pull list", async () => {
     const octokit = mockOctokit({
       branchExists: true,
       pulls: [{
         number: 9,
         state: "closed",
-        body: DOCSPRESS_PR_MARKER,
+        body: AUTODOCS_PUBLISH_PR_MARKER,
         html_url: "https://github.com/o/r/pull/9"
       }]
     });
@@ -126,7 +180,7 @@ describe("GitHubPullRequestClient", () => {
   it("closes and removes a managed proposal when changes disappear", async () => {
     const octokit = mockOctokit({
       branchExists: true,
-      pulls: [{ number: 9, state: "open", body: DOCSPRESS_PR_MARKER, html_url: "https://github.com/o/r/pull/9" }]
+      pulls: [{ number: 9, state: "open", body: AUTODOCS_PUBLISH_PR_MARKER, html_url: "https://github.com/o/r/pull/9" }]
     });
     const result = await client(octokit).syncChanges([]);
 

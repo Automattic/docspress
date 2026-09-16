@@ -1,0 +1,32 @@
+.editor-styles-wrapper .autodocs-publish-flow--editor {
+	margin-block: 1.5rem;
+}
+
+.autodocs-publish-flow--editor .autodocs-publish-flow__list {
+	margin: 0;
+	padding: 0;
+}
+
+.autodocs-publish-flow--editor .autodocs-publish-flow__step-controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin-top: 10px;
+	opacity: 0;
+	transition: opacity 120ms ease;
+}
+
+.autodocs-publish-flow--editor .autodocs-publish-flow__step:focus-within .autodocs-publish-flow__step-controls,
+.autodocs-publish-flow--editor .autodocs-publish-flow__step:hover .autodocs-publish-flow__step-controls {
+	opacity: 1;
+}
+
+.autodocs-publish-flow--editor .autodocs-publish-flow__add {
+	margin: 18px 0 0 68px;
+}
+
+@media (max-width: 560px) {
+	.autodocs-publish-flow--editor .autodocs-publish-flow__add {
+		margin-left: 50px;
+	}
+}

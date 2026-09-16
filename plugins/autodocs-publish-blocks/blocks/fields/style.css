@@ -1,0 +1,288 @@
+.wp-block-autodocs-publish-fields {
+	--adpb-fields-accent: var(--adp-blue, #3858e9);
+	--adpb-fields-paper: var(--adp-paper, #fff);
+	--adpb-fields-canvas: var(--adp-canvas, #f6f7f9);
+	--adpb-fields-border: var(--adp-line-strong, #cfd4dc);
+	--adpb-fields-ink: var(--adp-ink, #171a22);
+	--adpb-fields-copy: var(--adp-copy, #2c3338);
+	--adpb-fields-muted: var(--adp-muted, #6f7685);
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 0;
+	margin-block: clamp(1.25rem, 2.5vw, 1.75rem);
+	overflow: hidden;
+	border: 1px solid var(--adpb-fields-border);
+	border-radius: var(--adp-radius, 10px);
+	background: var(--adpb-fields-paper);
+	color: var(--adpb-fields-copy);
+	container-type: inline-size;
+}
+
+.autodocs-publish-preset-autodocs-publish .wp-block-autodocs-publish-fields,
+.autodocs-publish-blocks--preset-autodocs-publish.wp-block-autodocs-publish-fields {
+	--adpb-fields-accent: #005cb3;
+}
+
+.autodocs-publish-preset-jetpack .wp-block-autodocs-publish-fields,
+.autodocs-publish-blocks--preset-jetpack.wp-block-autodocs-publish-fields {
+	--adpb-fields-accent: #069e08;
+}
+
+.autodocs-publish-fields__header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 13px 16px 12px;
+	border-bottom: 1px solid var(--adpb-fields-border);
+	background: var(--adpb-fields-paper);
+	box-shadow: inset 3px 0 0 var(--adpb-fields-accent);
+}
+
+.autodocs-publish-fields__eyebrow {
+	display: none;
+}
+
+.autodocs-publish-fields__title {
+	margin: 0;
+	color: var(--adpb-fields-ink);
+	font: 800 clamp(1rem, 1.8vw, 1.14rem)/1.2 var(--adp-font-heading, var(--adp-font-ui, sans-serif));
+	letter-spacing: -0.025em;
+}
+
+.autodocs-publish-fields__description,
+.autodocs-publish-fields__description p {
+	max-width: 52rem;
+	margin: 4px 0 0;
+	color: var(--adpb-fields-muted);
+	font: 500 0.77rem/1.42 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.autodocs-publish-fields__count {
+	flex: none;
+	padding: 3px 0;
+	color: var(--adpb-fields-muted);
+	font: 680 0.6rem/1.2 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.autodocs-publish-fields__search {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	padding: 0 14px;
+	border-bottom: 1px solid var(--adpb-fields-border);
+	background: color-mix(in srgb, var(--adpb-fields-canvas) 58%, var(--adpb-fields-paper));
+	transition: box-shadow 140ms ease;
+}
+
+.autodocs-publish-fields__search:focus-within {
+	box-shadow: inset 3px 0 0 var(--adpb-fields-accent);
+}
+
+.autodocs-publish-fields__search svg {
+	width: 14px;
+	fill: none;
+	stroke: var(--adpb-fields-muted);
+	stroke-width: 1.7;
+}
+
+.autodocs-publish-fields__search input {
+	min-height: 36px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--adpb-fields-ink);
+	font: 520 0.76rem/1.2 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.autodocs-publish-fields__list {
+	margin: 0;
+	padding: 0;
+}
+
+.autodocs-publish-fields__item {
+	display: grid;
+	grid-template-columns: minmax(9rem, 0.72fr) minmax(0, 1.6fr);
+	gap: 18px;
+	margin: 0;
+	padding: 10px 16px;
+	transition: background-color 120ms ease;
+}
+
+.autodocs-publish-fields__item + .autodocs-publish-fields__item {
+	border-top: 1px solid var(--adpb-fields-border);
+}
+
+.autodocs-publish-fields__item:hover {
+	background: color-mix(in srgb, var(--adpb-fields-accent) 2.5%, var(--adpb-fields-paper));
+}
+
+.autodocs-publish-fields__item[hidden] {
+	display: none;
+}
+
+.autodocs-publish-fields__item.is-deprecated {
+	background: color-mix(in srgb, #c9352b 3%, var(--adpb-fields-paper));
+}
+
+.autodocs-publish-fields__term {
+	display: flex;
+	align-items: baseline;
+	align-content: flex-start;
+	flex-wrap: wrap;
+	gap: 3px 7px;
+	margin: 0;
+}
+
+.wp-block-autodocs-publish-fields .autodocs-publish-fields__term > code {
+	padding: 0;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--adpb-fields-ink);
+	font: 720 0.8rem/1.35 var(--adp-font-mono, "SFMono-Regular", Consolas, monospace);
+	overflow-wrap: anywhere;
+}
+
+.autodocs-publish-fields__type,
+.autodocs-publish-fields__badge {
+	padding: 0 0 0 7px;
+	border: 0;
+	border-left: 1px solid var(--adpb-fields-border);
+	border-radius: 0;
+	background: transparent;
+	font: 700 0.56rem/1.2 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	letter-spacing: 0.035em;
+	text-transform: uppercase;
+}
+
+.autodocs-publish-fields__type {
+	color: var(--adpb-fields-accent);
+}
+
+.autodocs-publish-fields__badge {
+	color: var(--adpb-fields-muted);
+}
+
+.autodocs-publish-fields__badge.is-required {
+	color: var(--adpb-fields-accent);
+}
+
+.autodocs-publish-fields__badge.is-deprecated {
+	color: color-mix(in srgb, #c9352b 80%, var(--adpb-fields-ink));
+}
+
+.autodocs-publish-fields__definition {
+	min-width: 0;
+	margin: 0;
+}
+
+.autodocs-publish-fields__copy,
+.autodocs-publish-fields__copy p {
+	margin: 0;
+	color: var(--adpb-fields-copy);
+	font: 500 0.82rem/1.45 var(--adp-font-copy, var(--adp-font-ui, sans-serif));
+}
+
+.autodocs-publish-fields__metadata {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px 14px;
+	margin-top: 4px;
+}
+
+.autodocs-publish-fields__metadata span {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 5px;
+	min-width: 0;
+}
+
+.autodocs-publish-fields__metadata span + span::before {
+	width: 1px;
+	height: 0.7rem;
+	margin-right: 9px;
+	background: var(--adpb-fields-border);
+	content: "";
+}
+
+.autodocs-publish-fields__metadata b {
+	color: var(--adpb-fields-muted);
+	font: 720 0.55rem/1.2 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	letter-spacing: 0.055em;
+	text-transform: uppercase;
+}
+
+.wp-block-autodocs-publish-fields .autodocs-publish-fields__metadata code {
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--adpb-fields-ink);
+	font: 580 0.67rem/1.35 var(--adp-font-mono, "SFMono-Regular", Consolas, monospace);
+	overflow-wrap: anywhere;
+}
+
+.autodocs-publish-fields__empty {
+	margin: 0;
+	padding: 18px;
+	color: var(--adpb-fields-muted);
+	font: 550 0.76rem/1.4 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	text-align: center;
+}
+
+.wp-block-autodocs-publish-fields.is-compact .autodocs-publish-fields__item {
+	padding-block: 8px;
+}
+
+.wp-block-autodocs-publish-fields.is-compact .autodocs-publish-fields__header {
+	padding-block: 10px;
+}
+
+.wp-block-autodocs-publish-fields.is-compact .autodocs-publish-fields__description,
+.wp-block-autodocs-publish-fields.is-compact .autodocs-publish-fields__description p {
+	margin-top: 3px;
+}
+
+@container (max-width: 560px) {
+	.autodocs-publish-fields__item {
+		grid-template-columns: minmax(7.5rem, 0.72fr) minmax(0, 1.6fr);
+		gap: 12px;
+		padding-inline: 12px;
+	}
+}
+
+@container (max-width: 420px) {
+	.autodocs-publish-fields__header {
+		display: grid;
+		gap: 6px;
+	}
+
+	.autodocs-publish-fields__count {
+		justify-self: start;
+	}
+
+	.autodocs-publish-fields__item {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 5px;
+	}
+
+	.autodocs-publish-fields__metadata span + span::before {
+		display: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.autodocs-publish-fields__item,
+	.autodocs-publish-fields__search {
+		transition: none;
+	}
+}

@@ -11,8 +11,9 @@ const outputPath = path.join(rootDir, "theme", "playground", "generated-docs.jso
 const pages = await collectDesiredPages({
   cwd: rootDir,
   docsDir: "docs",
+  redirectsFile: "docs/redirects.json",
   rootSlug: "docs",
-  rootTitle: "DocsPress documentation",
+  rootTitle: "Autodocs Publish documentation",
   createH1: false,
   rewriteLinks: true,
   editLink: false,

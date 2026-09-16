@@ -1,0 +1,7 @@
+.editor-styles-wrapper .autodocs-publish-result--editor {
+	margin-block: 1.25rem;
+}
+
+.autodocs-publish-result--editor .autodocs-publish-result__kicker {
+	text-transform: uppercase;
+}

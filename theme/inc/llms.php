@@ -2,7 +2,7 @@
 /**
  * LLM-friendly documentation endpoints.
  *
- * @package DocsPress
+ * @package Autodocs Publish
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Register the public llms.txt and per-Page Markdown routes.
  */
-function docspress_register_llms_rewrite_rules() {
-	add_rewrite_rule( '^llms\.txt/?$', 'index.php?docspress_llms=1', 'top' );
-	add_rewrite_rule( '^(.+)\.md/?$', 'index.php?docspress_markdown_path=$matches[1]', 'top' );
+function autodocs_publish_register_llms_rewrite_rules() {
+	add_rewrite_rule( '^llms\.txt/?$', 'index.php?autodocs_publish_llms=1', 'top' );
+	add_rewrite_rule( '^(.+)\.md/?$', 'index.php?autodocs_publish_markdown_path=$matches[1]', 'top' );
 }
-add_action( 'init', 'docspress_register_llms_rewrite_rules' );
+add_action( 'init', 'autodocs_publish_register_llms_rewrite_rules' );
 
 /**
  * Make the rewrite variables available to WordPress.
@@ -24,36 +24,36 @@ add_action( 'init', 'docspress_register_llms_rewrite_rules' );
  * @param string[] $query_vars Public query variables.
  * @return string[]
  */
-function docspress_llms_query_vars( $query_vars ) {
-	$query_vars[] = 'docspress_llms';
-	$query_vars[] = 'docspress_markdown_path';
+function autodocs_publish_llms_query_vars( $query_vars ) {
+	$query_vars[] = 'autodocs_publish_llms';
+	$query_vars[] = 'autodocs_publish_markdown_path';
 	return $query_vars;
 }
-add_filter( 'query_vars', 'docspress_llms_query_vars' );
+add_filter( 'query_vars', 'autodocs_publish_llms_query_vars' );
 
 /**
  * Flush the routes once when the theme is activated.
  */
-function docspress_flush_llms_rewrite_rules() {
-	docspress_register_llms_rewrite_rules();
+function autodocs_publish_flush_llms_rewrite_rules() {
+	autodocs_publish_register_llms_rewrite_rules();
 	flush_rewrite_rules();
-	update_option( 'docspress_llms_rewrite_version', '1', false );
+	update_option( 'autodocs_publish_llms_rewrite_version', '1', false );
 }
-add_action( 'after_switch_theme', 'docspress_flush_llms_rewrite_rules' );
+add_action( 'after_switch_theme', 'autodocs_publish_flush_llms_rewrite_rules' );
 
 /**
  * Flush once after upgrading an already-active theme to the endpoint schema.
  */
-function docspress_maybe_flush_llms_rewrite_rules() {
+function autodocs_publish_maybe_flush_llms_rewrite_rules() {
 	$rewrite_version = '1';
-	if ( $rewrite_version === get_option( 'docspress_llms_rewrite_version' ) ) {
+	if ( $rewrite_version === get_option( 'autodocs_publish_llms_rewrite_version' ) ) {
 		return;
 	}
 
 	flush_rewrite_rules( false );
-	update_option( 'docspress_llms_rewrite_version', $rewrite_version, false );
+	update_option( 'autodocs_publish_llms_rewrite_version', $rewrite_version, false );
 }
-add_action( 'init', 'docspress_maybe_flush_llms_rewrite_rules', 20 );
+add_action( 'init', 'autodocs_publish_maybe_flush_llms_rewrite_rules', 20 );
 
 /**
  * Keep source metadata out of rendered HTML while retaining it in raw content.
@@ -61,10 +61,10 @@ add_action( 'init', 'docspress_maybe_flush_llms_rewrite_rules', 20 );
  * @param string $content Raw Page content.
  * @return string
  */
-function docspress_strip_managed_source_metadata( $content ) {
-	return preg_replace( '/<!--\s*docspress:.*?\s*-->\s*/s', '', (string) $content, 1 );
+function autodocs_publish_strip_managed_source_metadata( $content ) {
+	return preg_replace( '/<!--\s*(?:autodocs-publish|docspress):.*?\s*-->\s*/s', '', (string) $content, 1 );
 }
-add_filter( 'the_content', 'docspress_strip_managed_source_metadata', 1 );
+add_filter( 'the_content', 'autodocs_publish_strip_managed_source_metadata', 1 );
 
 /**
  * Decode the original Markdown synchronized with a published Page.
@@ -75,7 +75,7 @@ add_filter( 'the_content', 'docspress_strip_managed_source_metadata', 1 );
  * @param int $post_id Page ID.
  * @return string|null
  */
-function docspress_get_markdown_source_content( $post_id ) {
+function autodocs_publish_get_markdown_source_content( $post_id ) {
 	$post_id = absint( $post_id );
 	if ( ! $post_id || 'page' !== get_post_type( $post_id ) || 'publish' !== get_post_status( $post_id ) ) {
 		return null;
@@ -85,11 +85,11 @@ function docspress_get_markdown_source_content( $post_id ) {
 		return null;
 	}
 
-	if ( ! docspress_get_markdown_source_path( $post_id ) ) {
+	if ( ! autodocs_publish_get_markdown_source_path( $post_id ) ) {
 		return null;
 	}
 
-	$metadata = docspress_get_managed_metadata( $post_id );
+	$metadata = autodocs_publish_get_managed_metadata( $post_id );
 	if ( ! isset( $metadata['sourceContentBase64'] ) || ! is_string( $metadata['sourceContentBase64'] ) ) {
 		return null;
 	}
@@ -107,18 +107,18 @@ function docspress_get_markdown_source_content( $post_id ) {
  *
  * @return WP_Post[]
  */
-function docspress_get_llms_pages() {
-	$pages   = docspress_get_docs_pages();
-	$root_id = docspress_get_docs_root_id();
+function autodocs_publish_get_llms_pages() {
+	$pages   = autodocs_publish_get_docs_pages();
+	$root_id = autodocs_publish_get_docs_root_id();
 	$ordered = $root_id
-		? docspress_flatten_page_tree( $pages, $root_id )
-		: docspress_flatten_page_tree( $pages );
+		? autodocs_publish_flatten_page_tree( $pages, $root_id )
+		: autodocs_publish_flatten_page_tree( $pages );
 
 	return array_values(
 		array_filter(
 			$ordered,
 			static function ( $page ) {
-				return null !== docspress_get_markdown_source_content( $page->ID );
+				return null !== autodocs_publish_get_markdown_source_content( $page->ID );
 			}
 		)
 	);
@@ -130,7 +130,7 @@ function docspress_get_llms_pages() {
  * @param mixed $value Text value.
  * @return string
  */
-function docspress_llms_escape_text( $value ) {
+function autodocs_publish_llms_escape_text( $value ) {
 	$value = wp_specialchars_decode( wp_strip_all_tags( (string) $value ), ENT_QUOTES );
 	$value = preg_replace( '/\s+/u', ' ', trim( $value ) );
 	return str_replace( array( '\\', '[', ']' ), array( '\\\\', '\[', '\]' ), $value );
@@ -142,9 +142,9 @@ function docspress_llms_escape_text( $value ) {
  * @param WP_Post $page Documentation Page.
  * @return string
  */
-function docspress_get_markdown_url( $page ) {
-	if ( function_exists( 'docspress_blocks_versions_page_url' ) && get_post_meta( $page->ID, '_docspress_version_id', true ) ) {
-		return untrailingslashit( docspress_blocks_versions_page_url( $page->ID ) ) . '.md';
+function autodocs_publish_get_markdown_url( $page ) {
+	if ( function_exists( 'autodocs_publish_blocks_versions_page_url' ) && get_post_meta( $page->ID, '_autodocs_publish_version_id', true ) ) {
+		return untrailingslashit( autodocs_publish_blocks_versions_page_url( $page->ID ) ) . '.md';
 	}
 
 	$path = trim( get_page_uri( $page ), '/' );
@@ -160,27 +160,27 @@ function docspress_get_markdown_url( $page ) {
  *
  * @return string
  */
-function docspress_build_llms_txt() {
-	$title   = docspress_llms_escape_text( get_bloginfo( 'name' ) );
-	$summary = docspress_llms_escape_text( get_bloginfo( 'description' ) );
-	$pages   = docspress_get_llms_pages();
+function autodocs_publish_build_llms_txt() {
+	$title   = autodocs_publish_llms_escape_text( get_bloginfo( 'name' ) );
+	$summary = autodocs_publish_llms_escape_text( get_bloginfo( 'description' ) );
+	$pages   = autodocs_publish_get_llms_pages();
 	$lines   = array(
 		'# ' . ( $title ? $title : 'Documentation' ),
 		'',
-		'> ' . ( $summary ? $summary : 'Documentation published from Markdown with DocsPress.' ),
+		'> ' . ( $summary ? $summary : 'Documentation published from Markdown with Autodocs Publish.' ),
 		'',
 		'## Documentation',
 		'',
 	);
 
 	foreach ( $pages as $page ) {
-		$url = docspress_get_markdown_url( $page );
+		$url = autodocs_publish_get_markdown_url( $page );
 		if ( ! $url ) {
 			continue;
 		}
 
-		$line        = '- [' . docspress_llms_escape_text( get_the_title( $page ) ) . '](' . esc_url_raw( $url ) . ')';
-		$description = docspress_llms_escape_text( get_post_field( 'post_excerpt', $page->ID ) );
+		$line        = '- [' . autodocs_publish_llms_escape_text( get_the_title( $page ) ) . '](' . esc_url_raw( $url ) . ')';
+		$description = autodocs_publish_llms_escape_text( get_post_field( 'post_excerpt', $page->ID ) );
 		if ( $description ) {
 			$line .= ': ' . $description;
 		}
@@ -193,7 +193,13 @@ function docspress_build_llms_txt() {
 	 * @param string    $content Generated llms.txt content.
 	 * @param WP_Post[] $pages   Source-backed documentation Pages.
 	 */
-	return (string) apply_filters( 'docspress_llms_txt', implode( "\n", $lines ) . "\n", $pages );
+	$content = (string) apply_filters( 'autodocs_publish_llms_txt', implode( "\n", $lines ) . "\n", $pages );
+	return (string) apply_filters_deprecated(
+		'docspress_llms_txt',
+		array( $content, $pages ),
+		'0.11.0',
+		'autodocs_publish_llms_txt'
+	);
 }
 
 /**
@@ -203,7 +209,7 @@ function docspress_build_llms_txt() {
  * @param string $content_type MIME type.
  * @param int    $status       HTTP status.
  */
-function docspress_send_llms_response( $content, $content_type, $status = 200 ) {
+function autodocs_publish_send_llms_response( $content, $content_type, $status = 200 ) {
 	status_header( $status );
 	header( 'Content-Type: ' . $content_type . '; charset=utf-8' );
 	header( 'X-Content-Type-Options: nosniff' );
@@ -214,33 +220,33 @@ function docspress_send_llms_response( $content, $content_type, $status = 200 ) 
 /**
  * Resolve LLM-friendly requests before WordPress renders an HTML template.
  */
-function docspress_render_llms_endpoint() {
-	if ( get_query_var( 'docspress_llms' ) ) {
-		docspress_send_llms_response( docspress_build_llms_txt(), 'text/plain' );
+function autodocs_publish_render_llms_endpoint() {
+	if ( get_query_var( 'autodocs_publish_llms' ) ) {
+		autodocs_publish_send_llms_response( autodocs_publish_build_llms_txt(), 'text/plain' );
 	}
 
-	$requested_path = get_query_var( 'docspress_markdown_path' );
+	$requested_path = get_query_var( 'autodocs_publish_markdown_path' );
 	if ( ! is_string( $requested_path ) || '' === $requested_path ) {
 		return;
 	}
 
 	$requested_path = trim( rawurldecode( wp_unslash( $requested_path ) ), '/' );
 	if ( ! $requested_path || false !== strpos( $requested_path, "\0" ) ) {
-		docspress_send_llms_response( "Not found.\n", 'text/plain', 404 );
+		autodocs_publish_send_llms_response( "Not found.\n", 'text/plain', 404 );
 	}
 
 	foreach ( explode( '/', $requested_path ) as $segment ) {
 		if ( '' === $segment || '.' === $segment || '..' === $segment ) {
-			docspress_send_llms_response( "Not found.\n", 'text/plain', 404 );
+			autodocs_publish_send_llms_response( "Not found.\n", 'text/plain', 404 );
 		}
 	}
 
 	$page     = get_page_by_path( $requested_path, OBJECT, 'page' );
-	$markdown = $page instanceof WP_Post ? docspress_get_markdown_source_content( $page->ID ) : null;
+	$markdown = $page instanceof WP_Post ? autodocs_publish_get_markdown_source_content( $page->ID ) : null;
 	if ( null === $markdown ) {
-		docspress_send_llms_response( "Not found.\n", 'text/plain', 404 );
+		autodocs_publish_send_llms_response( "Not found.\n", 'text/plain', 404 );
 	}
 
-	docspress_send_llms_response( $markdown, 'text/markdown' );
+	autodocs_publish_send_llms_response( $markdown, 'text/markdown' );
 }
-add_action( 'template_redirect', 'docspress_render_llms_endpoint', 0 );
+add_action( 'template_redirect', 'autodocs_publish_render_llms_endpoint', 0 );

@@ -2,7 +2,7 @@
 /**
  * Small, conservative front-end performance improvements.
  *
- * @package DocsPress
+ * @package Autodocs Publish
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * REST API discovery, feeds, and oEmbed discovery remain available because the
  * theme supports normal posts, discussions, embeds, and external publishing.
  */
-function docspress_performance_setup() {
+function autodocs_publish_performance_setup() {
 	remove_action( 'wp_head', 'rsd_link' );
 	remove_action( 'wp_head', 'wlwmanifest_link' );
 	remove_action( 'wp_head', 'wp_generator' );
@@ -25,15 +25,15 @@ function docspress_performance_setup() {
 	remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
 	remove_action( 'admin_print_styles', 'print_emoji_styles' );
 }
-add_action( 'init', 'docspress_performance_setup' );
+add_action( 'init', 'autodocs_publish_performance_setup' );
 
 /**
  * Mark the theme interaction script deferred.
  */
-function docspress_performance_assets() {
-	wp_script_add_data( 'docspress-navigation', 'strategy', 'defer' );
+function autodocs_publish_performance_assets() {
+	wp_script_add_data( 'autodocs-publish-navigation', 'strategy', 'defer' );
 }
-add_action( 'wp_enqueue_scripts', 'docspress_performance_assets', 100 );
+add_action( 'wp_enqueue_scripts', 'autodocs_publish_performance_assets', 100 );
 
 // Let WordPress enqueue block styles only when their blocks are rendered.
 add_filter( 'should_load_separate_core_block_assets', '__return_true' );
@@ -43,10 +43,10 @@ add_filter( 'should_load_separate_core_block_assets', '__return_true' );
  *
  * @return false
  */
-function docspress_disable_emoji_svg_url() {
+function autodocs_publish_disable_emoji_svg_url() {
 	return false;
 }
-add_filter( 'emoji_svg_url', 'docspress_disable_emoji_svg_url' );
+add_filter( 'emoji_svg_url', 'autodocs_publish_disable_emoji_svg_url' );
 
 /**
  * Make the custom logo eager and high priority because it is visible immediately.
@@ -56,7 +56,7 @@ add_filter( 'emoji_svg_url', 'docspress_disable_emoji_svg_url' );
  * @param string|int[]         $size       Image size.
  * @return array<string,string>
  */
-function docspress_logo_loading_attributes( $attributes, $attachment, $size ) {
+function autodocs_publish_logo_loading_attributes( $attributes, $attachment, $size ) {
 	$logo_id = absint( get_theme_mod( 'custom_logo' ) );
 	if ( $logo_id && (int) $attachment->ID === $logo_id ) {
 		$attributes['loading']       = 'eager';
@@ -66,4 +66,4 @@ function docspress_logo_loading_attributes( $attributes, $attachment, $size ) {
 
 	return $attributes;
 }
-add_filter( 'wp_get_attachment_image_attributes', 'docspress_logo_loading_attributes', 10, 3 );
+add_filter( 'wp_get_attachment_image_attributes', 'autodocs_publish_logo_loading_attributes', 10, 3 );

@@ -10,7 +10,9 @@ import { unified } from "unified";
 import {
   coreBlockToMarkdownEnvelope,
   customBlockToMarkdown,
-  findMarkdownBlockRanges
+  findMarkdownBlockRanges,
+  isAutodocsPublishBlockName,
+  normalizeAutodocsPublishBlockName
 } from "./block-markdown.js";
 import { markdownToBlocks, titleFromMarkdown } from "./markdown.js";
 import { stripSentinel } from "./sentinel.js";
@@ -29,7 +31,7 @@ const REVERSE_BLOCKS = new Set([
 const markdownParser = unified().use(remarkParse).use(remarkGfm);
 const BLOCK_TOKEN_PATTERN = /<!--\s+(\/)?wp:([a-z][a-z0-9_-]*\/)?([a-z][a-z0-9_-]*)\s+({(?:(?=([^}]+|}+(?=})|(?!}\s+\/?-->)[^])*)\5|[^]*?)}\s+)?(\/)?-->/g;
 const CUSTOM_BLOCK_DEFAULTS = {
-  "docspress/api-request": {
+  "autodocs-publish/api-request": {
     method: "GET",
     endpoint: "/wp-json/wp/v2/pages",
     headers: "Accept: application/json\nAuthorization: Bearer $WP_ACCESS_TOKEN",
@@ -45,7 +47,7 @@ const CUSTOM_BLOCK_DEFAULTS = {
     allowedOrigins: "",
     timeout: 10000
   },
-  "docspress/audience-paths": {
+  "autodocs-publish/audience-paths": {
     eyebrow: "Choose a starting point",
     title: "Where are your docs today?",
     description: "Follow the path that matches your repository.",
@@ -79,22 +81,22 @@ const CUSTOM_BLOCK_DEFAULTS = {
     panelColor: "",
     accentColor: ""
   },
-  "docspress/callout": {
+  "autodocs-publish/callout": {
     tone: "note",
     title: "Good to know",
     content: "<p>Add the detail readers need at exactly the right moment.</p>",
     collapsible: false,
     open: true
   },
-  "docspress/code-tabs": {
+  "autodocs-publish/code-tabs": {
     tabs: [
       { label: "JavaScript", language: "javascript", filename: "example.js", code: "const docs = await publish();" },
-      { label: "PHP", language: "php", filename: "example.php", code: "$docs = docspress_publish();" }
+      { label: "PHP", language: "php", filename: "example.php", code: "$docs = autodocs_publish_publish();" }
     ],
     showLineNumbers: true,
     caption: ""
   },
-  "docspress/code-playground": {
+  "autodocs-publish/code-playground": {
     title: "Live example",
     html: "<button class=\"demo-button\">Publish docs</button>",
     css: ".demo-button {\n  padding: 0.75rem 1rem;\n  border: 0;\n  border-radius: 0.4rem;\n  background: #3858e9;\n  color: white;\n  font: inherit;\n}",
@@ -104,10 +106,10 @@ const CUSTOM_BLOCK_DEFAULTS = {
     showConsole: true,
     allowNetwork: false
   },
-  "docspress/colorful-code": {
+  "autodocs-publish/colorful-code": {
     language: "javascript",
     filename: "",
-    code: "const hello = \"DocsPress\";\nconsole.log( hello );",
+    code: "const hello = \"Autodocs Publish\";\nconsole.log( hello );",
     highlightedLines: "",
     showLineNumbers: true,
     caption: "",
@@ -115,13 +117,13 @@ const CUSTOM_BLOCK_DEFAULTS = {
     copyMode: "all",
     annotations: []
   },
-  "docspress/diagram": {
+  "autodocs-publish/diagram": {
     title: "Publishing flow",
     type: "flow",
-    source: "Markdown -> DocsPress: collect\nDocsPress -> WordPress: publish\nWordPress -> Reader: serve",
+    source: "Markdown -> Autodocs Publish: collect\nAutodocs Publish -> WordPress: publish\nWordPress -> Reader: serve",
     caption: ""
   },
-  "docspress/fields": {
+  "autodocs-publish/fields": {
     title: "Configuration fields",
     description: "Typed options, defaults, and constraints in one scannable reference.",
     fields: [
@@ -156,14 +158,14 @@ const CUSTOM_BLOCK_DEFAULTS = {
     searchable: true,
     compact: false
   },
-  "docspress/file-tree": {
+  "autodocs-publish/file-tree": {
     root: "project/",
     tree: "docs/\n  getting-started.md\n  api/\n    endpoints.md\npackage.json",
     caption: "",
     collapsible: true,
     open: true
   },
-  "docspress/flow": {
+  "autodocs-publish/flow": {
     start: 1,
     steps: [
       { title: "Choose", content: "<p>Select the option that matches your project.</p>" },
@@ -171,7 +173,7 @@ const CUSTOM_BLOCK_DEFAULTS = {
       { title: "Verify", content: "<p>Run the check and confirm the expected result.</p>" }
     ]
   },
-  "docspress/hero": {
+  "autodocs-publish/hero": {
     eyebrow: "Documentation, publishing, and community",
     title: "Docs that stay connected to your GitHub repo",
     description: "Write beside your code. Publish a WordPress experience that guides every reader to the docs written for them.",
@@ -199,30 +201,30 @@ const CUSTOM_BLOCK_DEFAULTS = {
     visualColor: "",
     accentColor: ""
   },
-  "docspress/prompt": {
-    prompt: "Use $docspress-install to review this repository's documentation setup. Return a short plan before writing code.",
+  "autodocs-publish/prompt": {
+    prompt: "Use $autodocs-publish-install to review this repository's documentation setup. Return a short plan before writing code.",
     model: "GPT-5",
     mode: "code",
     thinking: true,
-    context: "$docspress-install, @repository, src/sync.js, docs/",
+    context: "$autodocs-publish-install, @repository, src/sync.js, docs/",
     caption: "Prompt example"
   },
-  "docspress/result": {
+  "autodocs-publish/result": {
     status: "success",
     title: "Deployment completed",
     content: "<p>All documentation pages are up to date.</p>",
     meta: "12 pages · 1.8s"
   },
-  "docspress/terminal-session": {
+  "autodocs-publish/terminal-session": {
     title: "Terminal",
     shell: "bash",
     prompt: "$",
-    command: "npx docspress publish ./docs",
+    command: "npx autodocs-publish publish ./docs",
     output: "✓ Read 12 documents\n✓ Published 12 WordPress pages"
   },
-  "docspress/troubleshooter": {
+  "autodocs-publish/troubleshooter": {
     title: "Find the next step",
-    intro: "Answer two quick questions to get the right DocsPress workflow.",
+    intro: "Answer two quick questions to get the right Autodocs Publish workflow.",
     startId: "source",
     questions: [
       {
@@ -247,7 +249,7 @@ const CUSTOM_BLOCK_DEFAULTS = {
         id: "install",
         status: "warning",
         title: "Connect the publishing target",
-        content: "<p>Run the DocsPress installer, add the WordPress access token, and verify the repository connection before publishing.</p>"
+        content: "<p>Run the Autodocs Publish installer, add the WordPress access token, and verify the repository connection before publishing.</p>"
       },
       {
         id: "sync",
@@ -264,13 +266,13 @@ const CUSTOM_BLOCK_DEFAULTS = {
     ],
     showProgress: true
   },
-  "docspress/version-notice": {
+  "autodocs-publish/version-notice": {
     message: "You are viewing {current}. The latest version is {latest}.",
     latestLinkLabel: "Switch to latest",
     showIcon: true,
     dismissible: false
   },
-  "docspress/version-switcher": {
+  "autodocs-publish/version-switcher": {
     label: "Version",
     showLabel: true,
     presentation: "select",
@@ -300,7 +302,7 @@ export function upgradeLegacyBlockSyntax(markdown, options = {}) {
   const protectedRanges = [];
   collectNodeRanges(tree, (node) => node.type === "code" || node.type === "inlineCode", protectedRanges);
   const ranges = findSpecialMarkdownRanges(source)
-    .filter((range) => range.type === "gutenberg" || range.type === "docspress-block");
+    .filter((range) => range.type === "gutenberg" || range.type === "autodocs-publish-block");
   const selfClosingLine = /^<!--\s*wp:[a-z][a-z0-9_-]*(?:\/[a-z][a-z0-9_-]*)?[^\r\n]*\/-->[ \t]*$/gm;
   let match;
   while ((match = selfClosingLine.exec(source))) {
@@ -503,7 +505,7 @@ function blockFingerprint(chunk) {
 
   const block = normalizeBlockForComparison(chunk.block);
   const name = block.blockName;
-  if (name.startsWith("docspress/")) {
+  if (isAutodocsPublishBlockName(name)) {
     return stableJson({ name, attrs: effectiveCustomAttributes(name, block.attrs) });
   }
 
@@ -536,19 +538,24 @@ function normalizeBlockForComparison(block) {
   if (block.blockName === "core/list" && attrs.ordered === false) {
     delete attrs.ordered;
   }
-  return { ...block, attrs };
+  return {
+    ...block,
+    blockName: normalizeAutodocsPublishBlockName(block.blockName),
+    attrs
+  };
 }
 
 function effectiveCustomAttributes(name, attributes) {
+  const normalizedName = normalizeAutodocsPublishBlockName(name);
   return {
-    ...(CUSTOM_BLOCK_DEFAULTS[name] || {}),
+    ...(CUSTOM_BLOCK_DEFAULTS[normalizedName] || {}),
     ...(attributes || {})
   };
 }
 
 function blockChunkToSourceMarkdown(chunk, service, originalChunk) {
   const name = chunk.block?.blockName || "";
-  if (name.startsWith("docspress/")) {
+  if (isAutodocsPublishBlockName(name)) {
     return serializeCustomBlockForMarkdown(chunk.block, originalChunk?.block, service);
   }
 
@@ -565,16 +572,17 @@ function blockChunkToSourceMarkdown(chunk, service, originalChunk) {
 }
 
 function serializeCustomBlockForMarkdown(block, originalBlock, service) {
+  const name = normalizeAutodocsPublishBlockName(block.blockName);
   const attrs = mergeCustomAttributes(
-    block.blockName,
+    name,
     originalBlock?.attrs || {},
     block.attrs || {}
   );
-  return customBlockToMarkdown(block.blockName, attrs, service);
+  return customBlockToMarkdown(name, attrs, service);
 }
 
 function mergeCustomAttributes(name, original, live) {
-  const defaults = CUSTOM_BLOCK_DEFAULTS[name] || {};
+  const defaults = CUSTOM_BLOCK_DEFAULTS[normalizeAutodocsPublishBlockName(name)] || {};
   const result = {};
   const keys = new Set([...Object.keys(defaults), ...Object.keys(original), ...Object.keys(live)]);
 
@@ -641,14 +649,14 @@ function sourceBlockLayout(existing, desired, desiredBlockCount) {
       continue;
     }
     if (count !== 1) {
-      throw new Error(`Docspress cannot safely map a Markdown source region that produces ${count} Gutenberg blocks.`);
+      throw new Error(`Autodocs Publish cannot safely map a Markdown source region that produces ${count} Gutenberg blocks.`);
     }
     blockRanges.push({ start: entry.start, end: entry.end });
   }
 
   if (blockRanges.length !== desiredBlockCount) {
     throw new Error(
-      `Docspress cannot safely map ${desiredBlockCount} Gutenberg blocks onto ${blockRanges.length} Markdown source regions for ${desired.sourcePath}.`
+      `Autodocs Publish cannot safely map ${desiredBlockCount} Gutenberg blocks onto ${blockRanges.length} Markdown source regions for ${desired.sourcePath}.`
     );
   }
 
@@ -790,12 +798,12 @@ export async function createReverseChanges(options) {
     const manifest = JSON.parse(existingManifest);
     const entries = Array.isArray(manifest) ? manifest : manifest.pages || manifest.items;
     if (!Array.isArray(entries)) {
-      throw new Error(`Docspress manifest must contain a pages array: ${manifestPath}`);
+      throw new Error(`Autodocs Publish manifest must contain a pages array: ${manifestPath}`);
     }
     for (const [id, title] of titles.entries()) {
       const entry = entries.find((candidate) => String(candidate?.id || candidate?.slug || "") === id);
       if (!entry) {
-        throw new Error(`Docspress could not find manifest entry ${id} while applying a WordPress title change.`);
+        throw new Error(`Autodocs Publish could not find manifest entry ${id} while applying a WordPress title change.`);
       }
       entry.title = title;
     }
@@ -833,7 +841,7 @@ function createTurndownService(resolveLink) {
     strongDelimiter: "**"
   });
   service.use(gfm);
-  service.addRule("docspress-links", {
+  service.addRule("autodocs-publish-links", {
     filter: "a",
     replacement(content, node) {
       const href = resolveLink ? resolveLink(node.getAttribute("href") || "") : node.getAttribute("href") || "";
@@ -851,7 +859,7 @@ function blockChunkToMarkdown(chunk, service, options = {}) {
   }
 
   const name = chunk.block.blockName;
-  if (name.startsWith("docspress/")) {
+  if (isAutodocsPublishBlockName(name)) {
     return customBlockToMarkdown(name, chunk.block.attrs || {}, service);
   }
   if (!canConvertBlock(chunk.block)) {
@@ -970,8 +978,8 @@ function removeGeneratedSourceLink(chunks) {
       continue;
     }
     const isSourceLink = chunk.block?.blockName === "core/paragraph" && (
-      chunk.block.attrs?.className === "docspress-source-link" ||
-      /class=["'][^"']*docspress-source-link/.test(chunk.block.innerHTML)
+      chunk.block.attrs?.className === "autodocs-publish-source-link" ||
+      /class=["'][^"']*autodocs-publish-source-link/.test(chunk.block.innerHTML)
     );
     if (isSourceLink) {
       chunks.splice(index, 1);
@@ -1136,7 +1144,7 @@ function replaceFirstTitleHeading(body, title) {
   const tree = markdownParser.parse(body);
   const heading = tree.children.find((node) => node.type === "heading" && node.depth === 1);
   if (!heading?.position?.start || !heading?.position?.end) {
-    throw new Error("Docspress could not find the Markdown H1 that supplies the Page title.");
+    throw new Error("Autodocs Publish could not find the Markdown H1 that supplies the Page title.");
   }
   const start = heading.position.start.offset;
   const end = heading.position.end.offset;

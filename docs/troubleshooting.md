@@ -10,28 +10,28 @@ Start with the GitHub Actions summary, then match the symptom to the narrowest s
 | Symptom | Check |
 | --- | --- |
 | `401` or “Invalid token” | Confirm `WP_ACCESS_TOKEN` exists in the correct repository and was not revoked. |
-| WordPress.com reports required `global` scope | Regenerate the token with the DocsPress helper, whose default scope is `global`. |
-| Self-hosted endpoint rejects Bearer authentication | Confirm the site has a trusted Bearer-token mechanism; DocsPress does not provision one. |
+| WordPress.com reports required `global` scope | Regenerate the token with the Autodocs Publish helper, whose default scope is `global`. |
+| Self-hosted endpoint rejects Bearer authentication | Confirm the site has a trusted Bearer-token mechanism; Autodocs Publish does not provision one. |
 | WordPress.com endpoint is missing the site | Set `wordpress-site` to the site domain or ID. |
 
 Do not print the token while debugging. Verify only the secret name with `gh secret list`.
 
 ## An unmanaged Page conflict stops the run
 
-DocsPress found a WordPress Page at a desired path without a valid management sentinel. This is intentional protection.
+Autodocs Publish found a WordPress Page at a desired path without a valid management sentinel. This is intentional protection.
 
 Choose one safe resolution:
 
 1. change the documentation route or `root-slug`;
 2. move the manual Page to a different path;
-3. migrate its content deliberately before allowing DocsPress to own that route.
+3. migrate its content deliberately before allowing Autodocs Publish to own that route.
 
 Never inject a fake sentinel merely to bypass the conflict.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/result",
+  "name": "autodocs-publish/result",
   "attrs": {
     "status": "warning",
     "title": "Conflict requires a content decision",
@@ -47,7 +47,7 @@ Never inject a fake sentinel merely to bypass the conflict.
 > The Action leaves the manual Page untouched and reports the exact key in conflict details.
 >
 > _0 writes to conflicting path_
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## A parent Page is unavailable
 
@@ -71,15 +71,15 @@ Do not place both `index.md` and `README.md` in one folder. Also check for filen
 
 ## Links still point to Markdown
 
-Confirm `rewrite-links: true` and use a relative link to a discovered documentation source. DocsPress leaves unknown local files, external URLs, anchors, and protocol links unchanged.
+Confirm `rewrite-links: true` and use a relative link to a discovered documentation source. Autodocs Publish leaves unknown local files, external URLs, anchors, and protocol links unchanged.
 
 ## Custom blocks do not render
 
-Confirm the matching DocsPress Blocks plugin is installed and active. Validate the `docspress:block` config version, block name, attributes, enums, and escaped newlines against the [block reference](reference/gutenberg-blocks/index.md). Legacy `wp:docspress/*` comment JSON is still accepted.
+Confirm the matching Autodocs Publish Blocks plugin is installed and active. Validate the `autodocs-publish:block` config version, block name, attributes, enums, and escaped newlines against the [block reference](reference/gutenberg-blocks/index.md).
 
 ## The theme shows duplicate H1 headings
 
-Set `create-h1: false`. The DocsPress theme prints the WordPress Page title as the document H1; Markdown body sections should start at `##`.
+Set `create-h1: false`. The Autodocs Publish theme prints the WordPress Page title as the document H1; Markdown body sections should start at `##`.
 
 ## Search or navigation misses Pages
 
@@ -89,12 +89,12 @@ The theme searches and lists published Pages in the configured documentation roo
 
 Review package scripts before executing them, then run:
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/terminal-session",
+  "name": "autodocs-publish/terminal-session",
   "attrs": {
-    "title": "Verify DocsPress",
+    "title": "Verify Autodocs Publish",
     "shell": "bash",
     "prompt": "$",
     "command": "npm test\nnpm run lint\nnpm run build",
@@ -102,13 +102,13 @@ Review package scripts before executing them, then run:
   }
 }
 -->
-#### Verify DocsPress
+#### Verify Autodocs Publish
 
 ```bash
 $ npm test
 $ npm run lint
 $ npm run build
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 `dist/index.js` is committed. Rebuild it whenever Action source changes, but do not rebuild it for documentation-only edits unless the package process requires it.

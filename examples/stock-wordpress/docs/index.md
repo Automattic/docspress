@@ -1,11 +1,11 @@
 ---
-title: DocsPress on stock WordPress
+title: Autodocs Publish on stock WordPress
 sidebar_position: 1
 ---
 
-DocsPress publishes ordinary Markdown as native WordPress Pages. The companion theme and Blocks plugin improve the documentation experience, but neither is required for an unversioned sync.
+Autodocs Publish turns ordinary Markdown into native WordPress Pages. The companion theme and Blocks plugin improve the documentation experience, but neither is required for an unversioned sync.
 
-> This Playground intentionally uses the active stock WordPress theme and installs no DocsPress plugin.
+> This Playground intentionally uses the active stock WordPress theme and installs no Autodocs Publish plugin.
 
 ## What this proves
 

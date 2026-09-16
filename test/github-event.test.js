@@ -4,9 +4,9 @@ import { isManagedPullRequestMerge } from "../src/github-event.js";
 describe("isManagedPullRequestMerge", () => {
   const managedMerge = {
     eventName: "push",
-    repository: "Automattic/docspress",
-    branch: "docspress/wordpress-sync",
-    commitMessage: "Merge pull request #4 from Automattic/docspress/wordpress-sync\n\ndocs(sync-and-rest-api): sync changes from WordPress"
+    repository: "Automattic/autodocs-publish",
+    branch: "autodocs-publish/wordpress-sync",
+    commitMessage: "Merge pull request #4 from Automattic/autodocs-publish/wordpress-sync\n\ndocs(sync-and-rest-api): sync changes from WordPress"
   };
 
   it("recognizes a merge from the action-owned reverse-sync branch", () => {

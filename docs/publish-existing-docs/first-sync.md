@@ -8,15 +8,15 @@ Follow these steps once to connect an existing Markdown tree to WordPress safely
 
 Create a repository secret named `WP_ACCESS_TOKEN`. The [authentication guide](./authentication.md) explains how to generate the token without exposing it. The same token reads editor content for WordPress-to-GitHub proposals and writes Pages for GitHub-to-WordPress publication.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/terminal-session",
+  "name": "autodocs-publish/terminal-session",
   "attrs": {
     "title": "Add the repository secret",
     "shell": "bash",
     "prompt": "$",
-    "command": "gh secret set WP_ACCESS_TOKEN \u002d\u002drepo OWNER/REPOSITORY",
+    "command": "gh secret set WP_ACCESS_TOKEN \u002d\u002drepo OWNER/REPO",
     "output": "✓ Set Actions secret WP_ACCESS_TOKEN"
   }
 }
@@ -24,7 +24,7 @@ Create a repository secret named `WP_ACCESS_TOKEN`. The [authentication guide](.
 #### Add the repository secret
 
 ```bash
-$ gh secret set WP_ACCESS_TOKEN --repo OWNER/REPOSITORY
+$ gh secret set WP_ACCESS_TOKEN --repo OWNER/REPO
 ```
 
 **Output**
@@ -32,13 +32,13 @@ $ gh secret set WP_ACCESS_TOKEN --repo OWNER/REPOSITORY
 ```text
 ✓ Set Actions secret WP_ACCESS_TOKEN
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## 2. Allow pull request creation
 
-Open [Settings → Actions → General for the repository](https://github.com/Automattic/docspress/settings/actions). Under **Workflow permissions**, enable **Allow GitHub Actions to create and approve pull requests**, then select **Save**. For another repository, use the equivalent page under its owner and repository name.
+Open [Settings → Actions → General for the repository](https://github.com/Automattic/autodocs-publish/settings/actions). Under **Workflow permissions**, enable **Allow GitHub Actions to create and approve pull requests**, then select **Save**. For another repository, use the equivalent page under its owner and repository name.
 
-![GitHub Actions workflow permissions with Allow GitHub Actions to create and approve pull requests enabled](http://fkadocs.atomicsites.blog/wp-content/themes/docspress/assets/images/github-actions/allow-actions-create-pull-requests.png "Enable the pull request setting and save it before running WordPress-to-GitHub synchronization.")
+![GitHub Actions workflow permissions with Allow GitHub Actions to create and approve pull requests enabled](http://fkadocs.atomicsites.blog/wp-content/themes/autodocs-publish/assets/images/github-actions/allow-actions-create-pull-requests.png "Enable the pull request setting and save it before running WordPress-to-GitHub synchronization.")
 
 The workflow's `GITHUB_TOKEN` creates the proposal branch and pull request. You do not need another stored GitHub token.
 
@@ -46,14 +46,14 @@ The workflow's `GITHUB_TOKEN` creates the proposal branch and pull request. You 
 
 Create `.github/workflows/sync-docs.yml` with a manual trigger, `mode: reconcile`, draft status, a recoverable deletion policy, and dry-run mode:
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/colorful-code",
+  "name": "autodocs-publish/colorful-code",
   "attrs": {
     "language": "yaml",
     "filename": ".github/workflows/sync-docs.yml",
-    "code": "name: Sync DocsPress documentation\n\non:\n  workflow_dispatch:\n\npermissions:\n  contents: write\n  pull-requests: write\n\nconcurrency:\n  group: docspress-sync\n  cancel-in-progress: false\n\njobs:\n  sync:\n    # Skip a push created by merging the managed WordPress proposal.\n    if: \u003e-\n      github.event_name != 'push' ||\n      !contains(\n        github.event.head_commit.message,\n        format('from {0}/docspress/wordpress-sync', github.repository_owner)\n      )\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n      - uses: Automattic/docspress@14d318924a81fb95ce4d3aaa9c3b547bf76b7768\n        with:\n          mode: reconcile\n          wordpress-site: example.wordpress.com\n          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n          docs-dir: docs\n          root-slug: docs\n          root-title: Docs\n          create-h1: false\n          rewrite-links: true\n          edit-link: false\n          pull-request-branch: docspress/wordpress-sync\n          status: draft\n          delete-mode: trash\n          dry-run: true",
+    "code": "name: Sync documentation with Autodocs Publish\n\non:\n  workflow_dispatch:\n\npermissions:\n  contents: write\n  pull-requests: write\n\nconcurrency:\n  group: autodocs-publish-sync\n  cancel-in-progress: false\n\njobs:\n  sync:\n    # Skip a push created by merging the managed WordPress proposal.\n    if: \u003e-\n      github.event_name != 'push' ||\n      !contains(\n        github.event.head_commit.message,\n        format('from {0}/autodocs-publish/wordpress-sync', github.repository_owner)\n      )\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n      - uses: Automattic/autodocs-publish@d32d09b6450caf17deb092040c5775b744af94c2\n        with:\n          mode: reconcile\n          wordpress-site: example.wordpress.com\n          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n          docs-dir: docs\n          root-slug: docs\n          root-title: Docs\n          create-h1: false\n          rewrite-links: true\n          edit-link: false\n          pull-request-branch: autodocs-publish/wordpress-sync\n          status: draft\n          delete-mode: trash\n          dry-run: true",
     "highlightedLines": "3-4,6-8,17-22,25-28,37-40",
     "showLineNumbers": true,
     "caption": "The workflow understands both directions, but starts manually and cannot change either system while dry-run is true."
@@ -63,7 +63,7 @@ Create `.github/workflows/sync-docs.yml` with a manual trigger, `mode: reconcile
 **.github/workflows/sync-docs.yml — The workflow understands both directions, but starts manually and cannot change either system while dry-run is true.**
 
 ```yaml
-name: Sync DocsPress documentation
+name: Sync documentation with Autodocs Publish
 
 on:
   workflow_dispatch:
@@ -73,7 +73,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: docspress-sync
+  group: autodocs-publish-sync
   cancel-in-progress: false
 
 jobs:
@@ -83,12 +83,12 @@ jobs:
       github.event_name != 'push' ||
       !contains(
         github.event.head_commit.message,
-        format('from {0}/docspress/wordpress-sync', github.repository_owner)
+        format('from {0}/autodocs-publish/wordpress-sync', github.repository_owner)
       )
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-      - uses: Automattic/docspress@14d318924a81fb95ce4d3aaa9c3b547bf76b7768
+      - uses: Automattic/autodocs-publish@d32d09b6450caf17deb092040c5775b744af94c2
         with:
           mode: reconcile
           wordpress-site: example.wordpress.com
@@ -99,12 +99,12 @@ jobs:
           create-h1: false
           rewrite-links: true
           edit-link: false
-          pull-request-branch: docspress/wordpress-sync
+          pull-request-branch: autodocs-publish/wordpress-sync
           status: draft
           delete-mode: trash
           dry-run: true
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 Replace `example.wordpress.com` with the site domain. Keep both Actions pinned to reviewed commit SHAs.
 
@@ -121,24 +121,24 @@ Replace `example.wordpress.com` with the site domain. Keep both Actions pinned t
 
 Run the workflow from a trusted terminal:
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/terminal-session",
+  "name": "autodocs-publish/terminal-session",
   "attrs": {
-    "title": "Run DocsPress",
+    "title": "Run Autodocs Publish",
     "shell": "bash",
     "prompt": "$",
-    "command": "gh workflow run sync-docs.yml \u002d\u002drepo OWNER/REPOSITORY\ngh run watch \u002d\u002drepo OWNER/REPOSITORY \u002d\u002dexit-status",
+    "command": "gh workflow run sync-docs.yml \u002d\u002drepo OWNER/REPO\ngh run watch \u002d\u002drepo OWNER/REPO \u002d\u002dexit-status",
     "output": "✓ sync completed successfully"
   }
 }
 -->
-#### Run DocsPress
+#### Run Autodocs Publish
 
 ```bash
-$ gh workflow run sync-docs.yml --repo OWNER/REPOSITORY
-$ gh run watch --repo OWNER/REPOSITORY --exit-status
+$ gh workflow run sync-docs.yml --repo OWNER/REPO
+$ gh run watch --repo OWNER/REPO --exit-status
 ```
 
 **Output**
@@ -146,23 +146,23 @@ $ gh run watch --repo OWNER/REPOSITORY --exit-status
 ```text
 ✓ sync completed successfully
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-You can also open **Actions → Sync DocsPress documentation → Run workflow** in GitHub.
+You can also open **Actions → Sync documentation with Autodocs Publish → Run workflow** in GitHub.
 
 ## 5. Confirm the run succeeded
 
-The run overview should report **Success** and show a completed `sync` job. The screenshot below is cropped from a [real authenticated DocsPress run](https://github.com/Automattic/docspress/actions/runs/29799038783), so the important state remains readable.
+The run overview should report **Success** and show a completed `sync` job. The screenshot below is cropped from a [real authenticated Autodocs Publish run](https://github.com/Automattic/autodocs-publish/actions/runs/29799038783), so the important state remains readable.
 
-![The GitHub Actions run overview cropped to the successful status, duration, revision, and sync job](http://fkadocs.atomicsites.blog/wp-content/themes/docspress/assets/images/github-actions/workflow-run-overview.jpg "Confirm Success, the expected revision, and a completed sync job before continuing.")
+![The GitHub Actions run overview cropped to the successful status, duration, revision, and sync job](http://fkadocs.atomicsites.blog/wp-content/themes/autodocs-publish/assets/images/github-actions/workflow-run-overview.jpg "Confirm Success, the expected revision, and a completed sync job before continuing.")
 
 This production example performed a real synchronization. Your first run remains safe because its workflow uses `status: draft` and `dry-run: true`.
 
 ## 6. Read the Sync Summary
 
-Scroll to **Docspress Dry Run Summary** on the same run overview. This is the quickest way to decide whether the planned synchronization is correct.
+Scroll to **Autodocs Publish Dry Run Summary** on the same run overview. This is the quickest way to decide whether the planned synchronization is correct.
 
-![The DocsPress Sync Summary cropped to the created, updated, deleted, unchanged, and conflict counters](http://fkadocs.atomicsites.blog/wp-content/themes/docspress/assets/images/github-actions/sync-summary.jpg "Review every counter before allowing WordPress or GitHub writes.")
+![The Autodocs Publish Sync Summary cropped to the created, updated, deleted, unchanged, and conflict counters](http://fkadocs.atomicsites.blog/wp-content/themes/autodocs-publish/assets/images/github-actions/sync-summary.jpg "Review every counter before allowing WordPress or GitHub writes.")
 
 | Counter | What to verify |
 | --- | --- |
@@ -185,10 +185,10 @@ dry-run: false
 
 Keep `status: draft`, dispatch the workflow again, and inspect the generated WordPress Pages. Check the hierarchy, Gutenberg blocks, rewritten links, and any proposed Markdown pull request before publishing or merging anything.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/result",
+  "name": "autodocs-publish/result",
   "attrs": {
     "status": "success",
     "title": "First two-way draft verified",
@@ -204,7 +204,7 @@ Keep `status: draft`, dispatch the workflow again, and inspect the generated Wor
 > The Page hierarchy, Gutenberg content, Markdown proposals, rewritten links, and managed boundaries are ready for editorial review.
 >
 > _next: choose automatic triggers_
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## 8. Enable the directions you need
 

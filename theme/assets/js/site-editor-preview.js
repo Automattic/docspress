@@ -1,7 +1,7 @@
 ( function () {
 	'use strict';
 
-	const context = window.docspressSiteEditorPreview;
+	const context = window.autodocsPublishSiteEditorPreview;
 	if ( ! context || ! context.postId || ! context.postType ) {
 		return;
 	}
@@ -60,7 +60,7 @@
 ( function ( compose, element, hooks ) {
 	'use strict';
 
-	const context = window.docspressSiteEditorPreview;
+	const context = window.autodocsPublishSiteEditorPreview;
 	if (
 		! context ||
 		! context.archivePostId ||
@@ -119,7 +119,7 @@
 
 	addFilter(
 		'editor.BlockEdit',
-		'docspress/archive-query-preview',
+		'autodocs-publish/archive-query-preview',
 		withArchiveQueryPreview
 	);
 } )( window.wp.compose, window.wp.element, window.wp.hooks );

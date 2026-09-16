@@ -257,16 +257,16 @@ describe("syncPages", () => {
 
     expect(configuredResult.updated).toBe(1);
     expect(configureClient.calls[0][2].meta).toEqual({
-      _docspress_sidebar_id: "api",
-      _docspress_sidebar_root: true
+      _autodocs_publish_sidebar_id: "api",
+      _autodocs_publish_sidebar_root: true
     });
 
     const stale = existingPage(1, "docs", {
       sidebarId: "api",
       sidebarRoot: true,
       meta: {
-        _docspress_sidebar_id: "api",
-        _docspress_sidebar_root: true
+        _autodocs_publish_sidebar_id: "api",
+        _autodocs_publish_sidebar_root: true
       }
     });
     const clearClient = mockClient([stale]);
@@ -281,12 +281,12 @@ describe("syncPages", () => {
 
     expect(clearedResult.updated).toBe(1);
     expect(clearClient.calls[0][2].meta).toEqual({
-      _docspress_sidebar_id: "",
-      _docspress_sidebar_root: false
+      _autodocs_publish_sidebar_id: "",
+      _autodocs_publish_sidebar_root: false
     });
 
     const inconsistentClient = mockClient([existingPage(1, "docs", {
-      meta: { _docspress_sidebar_root: true }
+      meta: { _autodocs_publish_sidebar_root: true }
     })]);
     const repairedResult = await syncPages({
       desiredPages: [desiredPage("docs")],
@@ -298,8 +298,8 @@ describe("syncPages", () => {
 
     expect(repairedResult.updated).toBe(1);
     expect(inconsistentClient.calls[0][2].meta).toEqual({
-      _docspress_sidebar_id: "",
-      _docspress_sidebar_root: false
+      _autodocs_publish_sidebar_id: "",
+      _autodocs_publish_sidebar_root: false
     });
   });
 });

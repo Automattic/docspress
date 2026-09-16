@@ -3,7 +3,7 @@ title: Prompt
 sidebar_position: 140
 ---
 
-Use `docspress/prompt` for a reusable AI prompt together with its intended model label, interaction mode, reasoning preference, context, and caption.
+Use `autodocs-publish/prompt` for a reusable AI prompt together with its intended model label, interaction mode, reasoning preference, context, and caption.
 
 ## When to use it
 
@@ -11,7 +11,7 @@ Choose Prompt when readers should copy and adapt an AI instruction. Use [Colorfu
 
 ## Context syntax
 
-`context` is a comma-separated list of up to 12 items. DocsPress classifies each item by prefix:
+`context` is a comma-separated list of up to 12 items. Autodocs Publish classifies each item by prefix:
 
 - `$skill-name` for an installed skill.
 - `@mention` for an agent or repository mention.
@@ -23,19 +23,19 @@ Invoke a skill as `$skill-name`. Do not tell an agent to read a `SKILL.md` path;
 
 ## Attributes
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Prompt attributes",
-    "description": "Instruction metadata and context accepted by \u003ccode\u003edocspress/prompt\u003c/code\u003e.",
+    "description": "Instruction metadata and context accepted by \u003ccode\u003eautodocs-publish/prompt\u003c/code\u003e.",
     "fields": [
       {
         "name": "prompt",
         "type": "string",
         "required": true,
-        "defaultValue": "DocsPress setup review prompt",
+        "defaultValue": "Autodocs Publish setup review prompt",
         "description": "\u003cp\u003eThe complete copyable instruction.\u003c/p\u003e",
         "values": "",
         "deprecated": false
@@ -71,7 +71,7 @@ Invoke a skill as `$skill-name`. Do not tell an agent to read a `SKILL.md` path;
         "name": "context",
         "type": "string",
         "required": false,
-        "defaultValue": "$docspress-install, @repository, src/sync.js, docs/",
+        "defaultValue": "$autodocs-publish-install, @repository, src/sync.js, docs/",
         "description": "\u003cp\u003eComma-separated skill, mention, image, URL, and file references; at most 12 items.\u003c/p\u003e",
         "values": "Up to 12 items",
         "deprecated": false
@@ -93,26 +93,26 @@ Invoke a skill as `$skill-name`. Do not tell an agent to read a `SKILL.md` path;
 -->
 #### Prompt attributes
 
-Instruction metadata and context accepted by <code>docspress/prompt</code>.
+Instruction metadata and context accepted by <code>autodocs-publish/prompt</code>.
 
 | Field | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `prompt` | string | Yes | DocsPress setup review prompt | <p>The complete copyable instruction.</p> |
+| `prompt` | string | Yes | Autodocs Publish setup review prompt | <p>The complete copyable instruction.</p> |
 | `model` | string | No | GPT-5 | <p>Display label for the intended model or agent.</p> |
 | `mode` | enum | No | code | <p>Interaction mode shown with the example. Invalid values normalize to chat when rendered.</p> |
 | `thinking` | boolean | No | true | <p>Shows that deliberate reasoning is expected.</p> |
-| `context` | string | No | $docspress-install, @repository, src/sync.js, docs/ | <p>Comma-separated skill, mention, image, URL, and file references; at most 12 items.</p> |
+| `context` | string | No | $autodocs-publish-install, @repository, src/sync.js, docs/ | <p>Comma-separated skill, mention, image, URL, and file references; at most 12 items.</p> |
 | `caption` | string | No | Prompt example | <p>Formatted explanation below the prompt.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Creative examples
 
 ### Find undocumented behavior
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/prompt",
+  "name": "autodocs-publish/prompt",
   "attrs": {
     "prompt": "Use $generate-docs-from-source to inspect the public exports and identify undocumented behavior.",
     "model": "Coding agent",
@@ -128,14 +128,14 @@ Instruction metadata and context accepted by <code>docspress/prompt</code>.
 > Use $generate-docs-from-source to inspect the public exports and identify undocumented behavior.
 
 _Model: Coding agent · Mode: code · Thinking: on · Context: $generate-docs-from-source, @repository, src/, test/_
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Plan an incident-runbook rehearsal
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/prompt",
+  "name": "autodocs-publish/prompt",
   "attrs": {
     "prompt": "Plan a 30-minute rehearsal for the documentation publishing incident runbook. Include roles, two injected failures, observable success criteria, and a short retrospective template. Do not change production systems.",
     "model": "Reasoning model",
@@ -151,14 +151,14 @@ _Model: Coding agent · Mode: code · Thinking: on · Context: $generate-docs-fr
 > Plan a 30-minute rehearsal for the documentation publishing incident runbook. Include roles, two injected failures, observable success criteria, and a short retrospective template. Do not change production systems.
 
 _Model: Reasoning model · Mode: plan · Thinking: on · Context: @operations, docs/runbooks/publishing.md, test/reconcile.test.js_
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Review a screenshot for reader friction
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/prompt",
+  "name": "autodocs-publish/prompt",
   "attrs": {
     "prompt": "Review the attached documentation screenshot from a first-time reader’s perspective. Identify the three moments with the highest cognitive load, explain the evidence visible in the image, and suggest the smallest copy or layout change for each.",
     "model": "Multimodal model",
@@ -174,7 +174,7 @@ _Model: Reasoning model · Mode: plan · Thinking: on · Context: @operations, d
 > Review the attached documentation screenshot from a first-time reader’s perspective. Identify the three moments with the highest cognitive load, explain the evidence visible in the image, and suggest the smallest copy or layout change for each.
 
 _Model: Multimodal model · Mode: ask · Thinking: off · Context: #homepage-screenshot, @documentation, docs/index.md_
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Published behavior and accessibility
 
@@ -182,10 +182,10 @@ Copy copies the prompt itself. Model, mode, reasoning, and context remain visibl
 
 Write an explicit deliverable and scope, state what evidence the agent should inspect, and never include a secret in prompt text or context.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "tip",
     "title": "Make the prompt verifiable",
@@ -200,4 +200,4 @@ Write an explicit deliverable and scope, state what evidence the agent should in
 > **Make the prompt verifiable**
 >
 > Ask for concrete checks, files, or outputs. A prompt that defines its evidence and completion condition is easier to reuse safely.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->

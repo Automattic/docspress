@@ -1,4 +1,4 @@
-name: Docspress
+name: Autodocs Publish
 description: Synchronize Markdown docs and WordPress Pages with Gutenberg content and pull requests.
 author: Fatih Kadir Akin
 
@@ -82,9 +82,9 @@ inputs:
     required: false
     default: ""
   pull-request-branch:
-    description: Dedicated branch maintained by Docspress for WordPress-to-GitHub changes.
+    description: Dedicated branch maintained by Autodocs Publish for WordPress-to-GitHub changes.
     required: false
-    default: docspress/wordpress-sync
+    default: autodocs-publish/wordpress-sync
   pull-request-title:
     description: Optional pull request and commit title override. Defaults to a conventional docs(scope) title derived from the changed Markdown files.
     required: false

@@ -11,7 +11,7 @@
 				{ "slug": "highlight", "color": "#212cff", "name": "Electric blue" },
 				{ "slug": "highlight-strong", "color": "#193acc", "name": "Highlight strong" },
 				{ "slug": "paper", "color": "#ffffff", "name": "White" },
-				{ "slug": "header-surface", "color": "color-mix(in srgb, var(--dp-paper) 92%, transparent)", "name": "Header surface" },
+				{ "slug": "header-surface", "color": "color-mix(in srgb, var(--adp-paper) 92%, transparent)", "name": "Header surface" },
 				{ "slug": "canvas", "color": "#f6f7f7", "name": "Studio grey" },
 				{ "slug": "ink", "color": "#1d1d1d", "name": "WordPress.com ink" },
 				{ "slug": "copy", "color": "#1d2327", "name": "Copy" },
@@ -55,12 +55,12 @@
 			"entryKickerBorder": "0",
 			"entryKickerRadius": "0",
 			"entryKickerBackground": "transparent",
-			"entryKickerShadow": "inset 0 -2px 0 var(--dp-blue)",
-			"entryKickerColor": "var(--dp-blue-dark)",
+			"entryKickerShadow": "inset 0 -2px 0 var(--adp-blue)",
+			"entryKickerColor": "var(--adp-blue-dark)",
 			"entryKickerDarkBorder": "0",
 			"entryKickerDarkBackground": "transparent",
-			"entryKickerDarkShadow": "inset 0 -2px 0 var(--dp-blue)",
-			"entryKickerDarkColor": "var(--dp-blue-dark)",
+			"entryKickerDarkShadow": "inset 0 -2px 0 var(--adp-blue)",
+			"entryKickerDarkColor": "var(--adp-blue-dark)",
 			"entryKickerDarkMarkerBackground": "transparent",
 			"entryKickerLetterSpacing": "0.12em",
 			"entryKickerMarkerWidth": "0",
@@ -74,7 +74,7 @@
 			"entryRuleWidth": "48px",
 			"entryRuleHeight": "4px",
 			"entryRuleRadius": "2px",
-			"entryRuleBackground": "var(--dp-blue)"
+			"entryRuleBackground": "var(--adp-blue)"
 		}
 	},
 	"styles": {
@@ -410,7 +410,7 @@
 					}
 				}
 			},
-			"docspress/version-switcher": {
+			"autodocs-publish/version-switcher": {
 				"border": {
 					"color": "var:preset|color|line",
 					"radius": "4px",
@@ -423,7 +423,7 @@
 					"fontWeight": "600"
 				}
 			},
-			"docspress/version-notice": {
+			"autodocs-publish/version-notice": {
 				"border": {
 					"color": "var:preset|color|line",
 					"radius": "4px",

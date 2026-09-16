@@ -3,7 +3,7 @@ title: Code Tabs
 sidebar_position: 40
 ---
 
-Use `docspress/code-tabs` for equivalent examples readers can switch between, such as package managers, programming languages, operating systems, or API clients.
+Use `autodocs-publish/code-tabs` for equivalent examples readers can switch between, such as package managers, programming languages, operating systems, or API clients.
 
 ## When to use it
 
@@ -15,13 +15,13 @@ Add, remove, and reorder tabs in Gutenberg. Give each tab a short unique label, 
 
 ## Attributes
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Code Tabs attributes",
-    "description": "Alternatives and presentation accepted by \u003ccode\u003edocspress/code-tabs\u003c/code\u003e.",
+    "description": "Alternatives and presentation accepted by \u003ccode\u003eautodocs-publish/code-tabs\u003c/code\u003e.",
     "fields": [
       {
         "name": "tabs",
@@ -58,21 +58,21 @@ Add, remove, and reorder tabs in Gutenberg. Give each tab a short unique label, 
 -->
 #### Code Tabs attributes
 
-Alternatives and presentation accepted by <code>docspress/code-tabs</code>.
+Alternatives and presentation accepted by <code>autodocs-publish/code-tabs</code>.
 
 | Field | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `tabs` | array | Yes | Two starter tabs | <p>Up to eight equivalent source examples.</p> |
 | `showLineNumbers` | boolean | No | true | <p>Shows one-based line numbers in every panel.</p> |
 | `caption` | string | No |  | <p>Optional formatted caption for the complete tab set.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 Each `tabs` item accepts:
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Tab object",
     "description": "Fields for one equivalent source example.",
@@ -129,7 +129,7 @@ Fields for one equivalent source example.
 | `language` | enum | No | plaintext | <p>Syntax language. Invalid values normalize to plaintext.</p> |
 | `filename` | string | No |  | <p>Optional display filename.</p> |
 | `code` | string | Yes |  | <p>Plain source text.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 Invalid languages fall back to `plaintext`. Only the first eight valid tabs render. An empty tab array renders no block.
 
@@ -137,23 +137,23 @@ Invalid languages fall back to `plaintext`. Only the first eight valid tabs rend
 
 ### Package-manager alternatives
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/code-tabs",
+  "name": "autodocs-publish/code-tabs",
   "attrs": {
     "tabs": [
       {
         "label": "npm",
         "language": "bash",
         "filename": "Terminal",
-        "code": "npm install docspress"
+        "code": "npm install autodocs-publish"
       },
       {
         "label": "pnpm",
         "language": "bash",
         "filename": "Terminal",
-        "code": "pnpm add docspress"
+        "code": "pnpm add autodocs-publish"
       }
     ],
     "showLineNumbers": false,
@@ -164,24 +164,24 @@ Invalid languages fall back to `plaintext`. Only the first eight valid tabs rend
 #### npm — Terminal
 
 ```bash
-npm install docspress
+npm install autodocs-publish
 ```
 
 #### pnpm — Terminal
 
 ```bash
-pnpm add docspress
+pnpm add autodocs-publish
 ```
 
 _Equivalent package-manager commands._
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Fetch one documentation Page
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/code-tabs",
+  "name": "autodocs-publish/code-tabs",
   "attrs": {
     "tabs": [
       {
@@ -233,32 +233,32 @@ page = requests.get(
 ```
 
 _The same read-only request in three clients, using a non-production hostname._
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Express one configuration in three formats
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/code-tabs",
+  "name": "autodocs-publish/code-tabs",
   "attrs": {
     "tabs": [
       {
         "label": "JSON",
         "language": "json",
-        "filename": "docspress.json",
+        "filename": "autodocs-publish.json",
         "code": "{\n  \"docsDir\": \"docs\",\n  \"status\": \"draft\"\n}"
       },
       {
         "label": "YAML",
         "language": "yaml",
-        "filename": "docspress.yml",
+        "filename": "autodocs-publish.yml",
         "code": "docsDir: docs\nstatus: draft"
       },
       {
         "label": "PHP",
         "language": "php",
-        "filename": "docspress.php",
+        "filename": "autodocs-publish.php",
         "code": "\u003c?php\nreturn [\n    'docsDir' =\u003e 'docs',\n    'status' =\u003e 'draft',\n];"
       }
     ],
@@ -267,7 +267,7 @@ _The same read-only request in three clients, using a non-production hostname._
   }
 }
 -->
-#### JSON — docspress.json
+#### JSON — autodocs-publish.json
 
 ```json
 {
@@ -276,14 +276,14 @@ _The same read-only request in three clients, using a non-production hostname._
 }
 ```
 
-#### YAML — docspress.yml
+#### YAML — autodocs-publish.yml
 
 ```yaml
 docsDir: docs
 status: draft
 ```
 
-#### PHP — docspress.php
+#### PHP — autodocs-publish.php
 
 ```php
 <?php
@@ -294,7 +294,7 @@ return [
 ```
 
 _Equivalent configuration values in formats used by different toolchains._
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Published behavior and accessibility
 
@@ -302,10 +302,10 @@ The block uses a semantic tab list and tab panels. Readers can move between tabs
 
 Put the most broadly useful choice first. Keep tab labels compact, avoid more than four choices when possible, and confirm that every example remains functionally equivalent after updates.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "note",
     "title": "Tabs are alternatives, not steps",
@@ -320,4 +320,4 @@ Put the most broadly useful choice first. Keep tab labels compact, avoid more th
 > **Tabs are alternatives, not steps**
 >
 > Every tab should solve the same task. If readers must use more than one panel, present the examples sequentially instead.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->

@@ -1,0 +1,150 @@
+.autodocs-publish-callout {
+	--adpb-callout-accent: var(--adp-blue, #3858e9);
+	--adpb-callout-surface: color-mix(in srgb, var(--adpb-callout-accent) 5%, var(--adp-paper, #fff));
+	--adpb-callout-border: color-mix(in srgb, var(--adpb-callout-accent) 24%, var(--adp-line, #dcdcde));
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	gap: 11px;
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 0;
+	max-width: 100%;
+	margin-block: clamp(1.25rem, 2.5vw, 2rem);
+	padding: 15px 17px 15px 14px;
+	border: 1px solid var(--adpb-callout-border);
+	border-radius: var(--adp-radius, 10px);
+	background: var(--adpb-callout-surface);
+	box-shadow: none;
+}
+
+.autodocs-publish-callout--tip {
+	--adpb-callout-accent: #008a20;
+}
+
+.autodocs-publish-callout--warning {
+	--adpb-callout-accent: #c05f00;
+}
+
+.autodocs-publish-callout--danger {
+	--adpb-callout-accent: #d63638;
+}
+
+.autodocs-publish-callout--success {
+	--adpb-callout-accent: #007c5c;
+}
+
+html[data-theme="dark"] .autodocs-publish-callout--tip {
+	--adpb-callout-accent: #61ce78;
+}
+
+html[data-theme="dark"] .autodocs-publish-callout--warning {
+	--adpb-callout-accent: #f1b354;
+}
+
+html[data-theme="dark"] .autodocs-publish-callout--danger {
+	--adpb-callout-accent: #ff8587;
+}
+
+html[data-theme="dark"] .autodocs-publish-callout--success {
+	--adpb-callout-accent: #55d6ae;
+}
+
+.autodocs-publish-callout__icon {
+	display: grid;
+	width: 26px;
+	height: 26px;
+	place-items: center;
+	border-radius: var(--adp-radius, 10px);
+	border: 1px solid color-mix(in srgb, var(--adpb-callout-accent) 22%, transparent);
+	background: color-mix(in srgb, var(--adpb-callout-accent) 11%, transparent);
+	color: var(--adpb-callout-accent);
+}
+
+.autodocs-publish-callout__icon svg {
+	width: 15px;
+	height: 15px;
+}
+
+.autodocs-publish-callout__title {
+	margin: 1px 0 4px;
+	color: color-mix(in srgb, var(--adpb-callout-accent) 76%, var(--adp-ink, #1d2327));
+	font: 740 0.88rem/1.3 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	letter-spacing: -0.01em;
+}
+
+.autodocs-publish-callout__content {
+	font-size: 0.92em;
+}
+
+.autodocs-publish-callout__content > :first-child {
+	margin-top: 0;
+}
+
+.autodocs-publish-callout__content > :last-child {
+	margin-bottom: 0;
+}
+
+details.autodocs-publish-callout {
+	display: block;
+	padding: 0;
+}
+
+details.autodocs-publish-callout > summary {
+	display: grid;
+	box-sizing: border-box;
+	width: 100%;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	gap: 11px;
+	align-items: center;
+	margin: 0;
+	padding: 13px 16px 13px 13px;
+	cursor: pointer;
+	list-style: none;
+}
+
+details.autodocs-publish-callout > summary::-webkit-details-marker {
+	display: none;
+}
+
+details.autodocs-publish-callout > summary::marker {
+	content: "";
+}
+
+details.autodocs-publish-callout > summary:focus-visible {
+	border-radius: var(--adp-radius, 10px);
+	outline: 2px solid color-mix(in srgb, var(--adpb-callout-accent) 58%, transparent);
+	outline-offset: -2px;
+}
+
+details.autodocs-publish-callout > summary .autodocs-publish-callout__title {
+	margin: 0;
+}
+
+details.autodocs-publish-callout > .autodocs-publish-callout__content {
+	display: block;
+	box-sizing: border-box;
+	width: 100%;
+	padding: 0 17px 15px 50px;
+}
+
+.autodocs-publish-callout__chevron {
+	color: var(--adpb-callout-accent);
+	font-size: 1.15rem;
+	transition: transform 160ms ease;
+}
+
+details[open] .autodocs-publish-callout__chevron {
+	transform: rotate(180deg);
+}
+
+@media (max-width: 560px) {
+	.autodocs-publish-callout {
+		padding-right: 14px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.autodocs-publish-callout__chevron {
+		transition: none;
+	}
+}

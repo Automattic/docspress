@@ -1,0 +1,46 @@
+/* Shared editor presentation for code-based blocks. */
+.autodocs-publish-code--editor .autodocs-publish-code__surface,
+.autodocs-publish-code-tabs--editor .autodocs-publish-code-tabs__surface {
+	box-shadow: var(--adpb-code-shadow);
+}
+
+.autodocs-publish-code__editor {
+	display: block;
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 190px;
+	margin: 0;
+	padding: 17px 22px;
+	resize: vertical;
+	border: 0;
+	border-radius: 0;
+	outline: 0;
+	background: var(--adpb-code-bg);
+	box-shadow: none;
+	color: var(--adpb-code-text);
+	font: 500 0.875rem/1.72 var(--adp-font-mono, "SFMono-Regular", Consolas, "Liberation Mono", monospace);
+	tab-size: 2;
+}
+
+.autodocs-publish-code__editor:focus {
+	box-shadow: inset 3px 0 0 var(--adpb-code-accent);
+}
+
+.autodocs-publish-code--editor .autodocs-publish-code__caption,
+.autodocs-publish-code-tabs--editor .autodocs-publish-code__caption {
+	min-height: 20px;
+	padding: 4px;
+}
+
+.autodocs-publish-code__annotation-editor {
+	margin-block: 12px;
+	padding: 12px;
+	border: 1px solid var(--adp-line, #d8e5ee);
+	border-radius: var(--adp-radius, 10px);
+	background: var(--adp-canvas, #f5faff);
+}
+
+.autodocs-publish-code__annotations--editor {
+	border: 1px solid var(--adpb-code-border);
+	border-top: 0;
+}

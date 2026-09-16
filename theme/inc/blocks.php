@@ -1,8 +1,8 @@
 <?php
 /**
- * Site Editor components for the DocsPress block theme.
+ * Site Editor components for the Autodocs Publish block theme.
  *
- * @package DocsPress
+ * @package Autodocs Publish
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,17 +12,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Register synchronization-owned contextual sidebar metadata.
  */
-function docspress_register_sidebar_meta() {
+function autodocs_publish_register_sidebar_meta() {
 	$auth_callback = static function ( $allowed, $meta_key, $post_id ) {
 		return current_user_can( 'edit_post', (int) $post_id );
 	};
 
 	register_post_meta(
 		'page',
-		'_docspress_sidebar_id',
+		'_autodocs_publish_sidebar_id',
 		array(
 			'type'              => 'string',
-			'description'       => __( 'Source-owned contextual documentation sidebar ID.', 'docspress' ),
+			'description'       => __( 'Source-owned contextual documentation sidebar ID.', 'autodocs-publish' ),
 			'single'            => true,
 			'default'           => '',
 			'sanitize_callback' => 'sanitize_key',
@@ -32,10 +32,10 @@ function docspress_register_sidebar_meta() {
 	);
 	register_post_meta(
 		'page',
-		'_docspress_sidebar_root',
+		'_autodocs_publish_sidebar_root',
 		array(
 			'type'              => 'boolean',
-			'description'       => __( 'Whether this Page is the root of its contextual documentation sidebar.', 'docspress' ),
+			'description'       => __( 'Whether this Page is the root of its contextual documentation sidebar.', 'autodocs-publish' ),
 			'single'            => true,
 			'default'           => false,
 			'sanitize_callback' => 'rest_sanitize_boolean',
@@ -44,22 +44,22 @@ function docspress_register_sidebar_meta() {
 		)
 	);
 }
-add_action( 'init', 'docspress_register_sidebar_meta', 9 );
+add_action( 'init', 'autodocs_publish_register_sidebar_meta', 9 );
 
 /**
  * Register aggregate documentation feedback as Page metadata.
  */
-function docspress_register_feedback_meta() {
+function autodocs_publish_register_feedback_meta() {
 	$auth_callback = static function ( $allowed, $meta_key, $post_id ) {
 		return current_user_can( 'edit_post', (int) $post_id );
 	};
 
 	register_post_meta(
 		'page',
-		'docspress_helpful_votes',
+		'autodocs_publish_helpful_votes',
 		array(
 			'type'              => 'integer',
-			'description'       => __( 'Helpful responses collected by the DocsPress feedback block.', 'docspress' ),
+			'description'       => __( 'Helpful responses collected by the Autodocs Publish feedback block.', 'autodocs-publish' ),
 			'single'            => true,
 			'default'           => 0,
 			'sanitize_callback' => 'absint',
@@ -69,10 +69,10 @@ function docspress_register_feedback_meta() {
 	);
 	register_post_meta(
 		'page',
-		'docspress_unhelpful_votes',
+		'autodocs_publish_unhelpful_votes',
 		array(
 			'type'              => 'integer',
-			'description'       => __( 'Unhelpful responses collected by the DocsPress feedback block.', 'docspress' ),
+			'description'       => __( 'Unhelpful responses collected by the Autodocs Publish feedback block.', 'autodocs-publish' ),
 			'single'            => true,
 			'default'           => 0,
 			'sanitize_callback' => 'absint',
@@ -82,10 +82,10 @@ function docspress_register_feedback_meta() {
 	);
 	register_post_meta(
 		'page',
-		'docspress_feedback_enabled',
+		'autodocs_publish_feedback_enabled',
 		array(
 			'type'              => 'boolean',
-			'description'       => __( 'Whether the DocsPress feedback prompt is shown on this Page.', 'docspress' ),
+			'description'       => __( 'Whether the Autodocs Publish feedback prompt is shown on this Page.', 'autodocs-publish' ),
 			'single'            => true,
 			'default'           => true,
 			'sanitize_callback' => 'rest_sanitize_boolean',
@@ -94,7 +94,7 @@ function docspress_register_feedback_meta() {
 		)
 	);
 }
-add_action( 'init', 'docspress_register_feedback_meta', 9 );
+add_action( 'init', 'autodocs_publish_register_feedback_meta', 9 );
 
 /**
  * Return the aggregate feedback counts for a Page.
@@ -102,9 +102,9 @@ add_action( 'init', 'docspress_register_feedback_meta', 9 );
  * @param int $post_id Page ID.
  * @return array{helpful:int,unhelpful:int,total:int}
  */
-function docspress_get_feedback_counts( $post_id ) {
-	$helpful   = absint( get_post_meta( $post_id, 'docspress_helpful_votes', true ) );
-	$unhelpful = absint( get_post_meta( $post_id, 'docspress_unhelpful_votes', true ) );
+function autodocs_publish_get_feedback_counts( $post_id ) {
+	$helpful   = absint( get_post_meta( $post_id, 'autodocs_publish_helpful_votes', true ) );
+	$unhelpful = absint( get_post_meta( $post_id, 'autodocs_publish_unhelpful_votes', true ) );
 
 	return array(
 		'helpful'   => $helpful,
@@ -119,19 +119,19 @@ function docspress_get_feedback_counts( $post_id ) {
  * @param WP_REST_Request $request REST request.
  * @return true|WP_Error
  */
-function docspress_can_submit_page_feedback( $request ) {
+function autodocs_publish_can_submit_page_feedback( $request ) {
 	$post = get_post( absint( $request['id'] ) );
 	if ( ! $post instanceof WP_Post || 'page' !== $post->post_type || 'publish' !== $post->post_status ) {
 		return new WP_Error(
-			'docspress_feedback_page_not_found',
-			__( 'That documentation Page is not available.', 'docspress' ),
+			'autodocs_publish_feedback_page_not_found',
+			__( 'That documentation Page is not available.', 'autodocs-publish' ),
 			array( 'status' => 404 )
 		);
 	}
 	if ( post_password_required( $post ) ) {
 		return new WP_Error(
-			'docspress_feedback_page_protected',
-			__( 'Feedback is unavailable for this protected Page.', 'docspress' ),
+			'autodocs_publish_feedback_page_protected',
+			__( 'Feedback is unavailable for this protected Page.', 'autodocs-publish' ),
 			array( 'status' => 403 )
 		);
 	}
@@ -145,31 +145,37 @@ function docspress_can_submit_page_feedback( $request ) {
  * @param WP_REST_Request $request REST request.
  * @return WP_REST_Response|WP_Error
  */
-function docspress_submit_page_feedback( $request ) {
+function autodocs_publish_submit_page_feedback( $request ) {
 	$post_id = absint( $request['id'] );
 	$vote    = sanitize_key( $request['vote'] );
 	if ( ! in_array( $vote, array( 'helpful', 'unhelpful' ), true ) ) {
 		return new WP_Error(
-			'docspress_feedback_invalid_vote',
-			__( 'Choose helpful or not helpful.', 'docspress' ),
+			'autodocs_publish_feedback_invalid_vote',
+			__( 'Choose helpful or not helpful.', 'autodocs-publish' ),
 			array( 'status' => 400 )
 		);
 	}
 
-	$meta_key = 'helpful' === $vote ? 'docspress_helpful_votes' : 'docspress_unhelpful_votes';
+	$meta_key = 'helpful' === $vote ? 'autodocs_publish_helpful_votes' : 'autodocs_publish_unhelpful_votes';
 	$current = absint( get_post_meta( $post_id, $meta_key, true ) );
 	$updated = update_post_meta( $post_id, $meta_key, $current + 1 );
 
 	if ( false === $updated ) {
 		return new WP_Error(
-			'docspress_feedback_not_saved',
-			__( 'The feedback response could not be saved.', 'docspress' ),
+			'autodocs_publish_feedback_not_saved',
+			__( 'The feedback response could not be saved.', 'autodocs-publish' ),
 			array( 'status' => 500 )
 		);
 	}
 
-	$counts = docspress_get_feedback_counts( $post_id );
-	do_action( 'docspress_page_feedback_recorded', $post_id, $vote, $counts );
+	$counts = autodocs_publish_get_feedback_counts( $post_id );
+	do_action( 'autodocs_publish_page_feedback_recorded', $post_id, $vote, $counts );
+	do_action_deprecated(
+		'docspress_page_feedback_recorded',
+		array( $post_id, $vote, $counts ),
+		'0.11.0',
+		'autodocs_publish_page_feedback_recorded'
+	);
 
 	$response = rest_ensure_response(
 		array(
@@ -185,33 +191,37 @@ function docspress_submit_page_feedback( $request ) {
 /**
  * Register the public documentation feedback endpoint.
  */
-function docspress_register_feedback_route() {
-	register_rest_route(
-		'docspress/v1',
-		'/feedback/(?P<id>\d+)',
-		array(
-			'methods'             => WP_REST_Server::CREATABLE,
-			'callback'            => 'docspress_submit_page_feedback',
-			'permission_callback' => 'docspress_can_submit_page_feedback',
-			'args'                => array(
-				'id'   => array(
-					'required'          => true,
-					'sanitize_callback' => 'absint',
-				),
-				'vote' => array(
-					'required'          => true,
-					'type'              => 'string',
-					'enum'              => array( 'helpful', 'unhelpful' ),
-					'sanitize_callback' => 'sanitize_key',
-					'validate_callback' => static function ( $value ) {
-						return in_array( sanitize_key( $value ), array( 'helpful', 'unhelpful' ), true );
-					},
-				),
+function autodocs_publish_register_feedback_route() {
+	$route_args = array(
+		'methods'             => WP_REST_Server::CREATABLE,
+		'callback'            => 'autodocs_publish_submit_page_feedback',
+		'permission_callback' => 'autodocs_publish_can_submit_page_feedback',
+		'args'                => array(
+			'id'   => array(
+				'required'          => true,
+				'sanitize_callback' => 'absint',
 			),
-		)
+			'vote' => array(
+				'required'          => true,
+				'type'              => 'string',
+				'enum'              => array( 'helpful', 'unhelpful' ),
+				'sanitize_callback' => 'sanitize_key',
+				'validate_callback' => static function ( $value ) {
+					return in_array( sanitize_key( $value ), array( 'helpful', 'unhelpful' ), true );
+				},
+			),
+		),
 	);
+
+	foreach ( array( 'autodocs-publish/v1', 'docspress/v1' ) as $namespace ) {
+		register_rest_route(
+			$namespace,
+			'/feedback/(?P<id>\d+)',
+			$route_args
+		);
+	}
 }
-add_action( 'rest_api_init', 'docspress_register_feedback_route' );
+add_action( 'rest_api_init', 'autodocs_publish_register_feedback_route' );
 
 /**
  * Native design supports shared by every shell component.
@@ -219,7 +229,7 @@ add_action( 'rest_api_init', 'docspress_register_feedback_route' );
  * @param array<int,string>|false $align Optional alignments.
  * @return array<string,mixed>
  */
-function docspress_component_supports( $align = false ) {
+function autodocs_publish_component_supports( $align = false ) {
 	$supports = array(
 		'anchor'     => true,
 		'className'  => true,
@@ -272,7 +282,7 @@ function docspress_component_supports( $align = false ) {
  * @param mixed  $fallback   Fallback value.
  * @return mixed
  */
-function docspress_component_attribute( $attributes, $key, $fallback ) {
+function autodocs_publish_component_attribute( $attributes, $key, $fallback ) {
 	return array_key_exists( $key, $attributes ) ? $attributes[ $key ] : $fallback;
 }
 
@@ -283,7 +293,7 @@ function docspress_component_attribute( $attributes, $key, $fallback ) {
  * @param int    $max_depth Maximum menu depth.
  * @return WP_Post[]
  */
-function docspress_get_menu_pages( $menu_slug, $max_depth = 0 ) {
+function autodocs_publish_get_menu_pages( $menu_slug, $max_depth = 0 ) {
 	$menu = $menu_slug ? wp_get_nav_menu_object( $menu_slug ) : false;
 	if ( ! $menu ) {
 		return array();
@@ -329,38 +339,38 @@ function docspress_get_menu_pages( $menu_slug, $max_depth = 0 ) {
  * @param array $attributes Block attributes.
  * @return string
  */
-function docspress_render_docs_navigation( $attributes ) {
-	$title       = sanitize_text_field( docspress_component_attribute( $attributes, 'title', __( 'Documentation', 'docspress' ) ) );
-	$width       = min( 360, max( 220, absint( docspress_component_attribute( $attributes, 'width', 266 ) ) ) );
-	$root_slug   = sanitize_text_field( docspress_component_attribute( $attributes, 'rootSlug', 'docs' ) );
-	$source      = docspress_component_attribute( $attributes, 'source', 'pages' );
+function autodocs_publish_render_docs_navigation( $attributes ) {
+	$title       = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'title', __( 'Documentation', 'autodocs-publish' ) ) );
+	$width       = min( 360, max( 220, absint( autodocs_publish_component_attribute( $attributes, 'width', 266 ) ) ) );
+	$root_slug   = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'rootSlug', 'docs' ) );
+	$source      = autodocs_publish_component_attribute( $attributes, 'source', 'pages' );
 	$source      = in_array( $source, array( 'pages', 'menu' ), true ) ? $source : 'pages';
-	$menu_slug   = sanitize_text_field( docspress_component_attribute( $attributes, 'menuSlug', '' ) );
-	$sort        = docspress_component_attribute( $attributes, 'sort', 'menu_order' );
+	$menu_slug   = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'menuSlug', '' ) );
+	$sort        = autodocs_publish_component_attribute( $attributes, 'sort', 'menu_order' );
 	$sort        = in_array( $sort, array( 'menu_order', 'title', 'newest', 'oldest' ), true ) ? $sort : 'menu_order';
-	$show_root   = (bool) docspress_component_attribute( $attributes, 'showRoot', true );
-	$max_depth   = min( 8, absint( docspress_component_attribute( $attributes, 'maxDepth', 0 ) ) );
-	$show_filter = (bool) docspress_component_attribute( $attributes, 'showFilter', true );
-	$placeholder = sanitize_text_field( docspress_component_attribute( $attributes, 'filterPlaceholder', __( 'Filter pages…', 'docspress' ) ) );
-	$empty       = sanitize_text_field( docspress_component_attribute( $attributes, 'emptyMessage', __( 'Publish Pages to populate this navigation.', 'docspress' ) ) );
-	$show_collapse = (bool) docspress_component_attribute( $attributes, 'showCollapse', true );
-	$start_collapsed = $show_collapse && (bool) docspress_component_attribute( $attributes, 'startCollapsed', false );
-	$collapse_label = sanitize_text_field( docspress_component_attribute( $attributes, 'collapseLabel', __( 'Collapse sidebar', 'docspress' ) ) );
-	$expand_label = sanitize_text_field( docspress_component_attribute( $attributes, 'expandLabel', __( 'Expand sidebar', 'docspress' ) ) );
-	$content_id  = wp_unique_id( 'docspress-sidebar-content-' );
-	$root_id     = docspress_get_docs_root_id( $root_slug );
-	$pages       = 'menu' === $source ? docspress_get_menu_pages( $menu_slug, $max_depth ) : docspress_get_docs_pages( $root_slug, $sort );
-	$sidebar_context = 'pages' === $source ? docspress_get_sidebar_context() : null;
+	$show_root   = (bool) autodocs_publish_component_attribute( $attributes, 'showRoot', true );
+	$max_depth   = min( 8, absint( autodocs_publish_component_attribute( $attributes, 'maxDepth', 0 ) ) );
+	$show_filter = (bool) autodocs_publish_component_attribute( $attributes, 'showFilter', true );
+	$placeholder = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'filterPlaceholder', __( 'Filter pages…', 'autodocs-publish' ) ) );
+	$empty       = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'emptyMessage', __( 'Publish Pages to populate this navigation.', 'autodocs-publish' ) ) );
+	$show_collapse = (bool) autodocs_publish_component_attribute( $attributes, 'showCollapse', true );
+	$start_collapsed = $show_collapse && (bool) autodocs_publish_component_attribute( $attributes, 'startCollapsed', false );
+	$collapse_label = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'collapseLabel', __( 'Collapse sidebar', 'autodocs-publish' ) ) );
+	$expand_label = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'expandLabel', __( 'Expand sidebar', 'autodocs-publish' ) ) );
+	$content_id  = wp_unique_id( 'autodocs-publish-sidebar-content-' );
+	$root_id     = autodocs_publish_get_docs_root_id( $root_slug );
+	$pages       = 'menu' === $source ? autodocs_publish_get_menu_pages( $menu_slug, $max_depth ) : autodocs_publish_get_docs_pages( $root_slug, $sort );
+	$sidebar_context = 'pages' === $source ? autodocs_publish_get_sidebar_context() : null;
 	if ( $sidebar_context ) {
 		$root_id = $sidebar_context['root_id'];
-		$pages   = docspress_filter_pages_by_sidebar( $pages, $sidebar_context['id'] );
+		$pages   = autodocs_publish_filter_pages_by_sidebar( $pages, $sidebar_context['id'] );
 	}
 	$wrapper     = get_block_wrapper_attributes(
 		array(
 			'class'      => 'docs-sidebar' . ( $start_collapsed ? ' is-sidebar-collapsed' : '' ),
 			'id'         => 'docs-sidebar',
-			'style'      => '--dp-component-width:' . $width . 'px',
-			'aria-label' => __( 'Documentation navigation', 'docspress' ),
+			'style'      => '--adp-component-width:' . $width . 'px',
+			'aria-label' => __( 'Documentation navigation', 'autodocs-publish' ),
 			'data-sidebar-start-collapsed' => $start_collapsed ? 'true' : 'false',
 		)
 	);
@@ -390,10 +400,10 @@ function docspress_render_docs_navigation( $attributes ) {
 		<div class="docs-sidebar-content" id="<?php echo esc_attr( $content_id ); ?>" data-sidebar-content>
 			<?php if ( $show_filter ) : ?>
 				<div class="sidebar-search">
-					<?php echo docspress_icon( 'search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					<label class="screen-reader-text" for="docspress-filter"><?php esc_html_e( 'Filter documentation pages', 'docspress' ); ?></label>
-					<input id="docspress-filter" type="search" placeholder="<?php echo esc_attr( $placeholder ); ?>" autocomplete="off" data-docs-filter>
-					<button class="sidebar-search-clear" type="button" data-search-clear aria-label="<?php esc_attr_e( 'Clear filter', 'docspress' ); ?>">×</button>
+					<?php echo autodocs_publish_icon( 'search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<label class="screen-reader-text" for="autodocs-publish-filter"><?php esc_html_e( 'Filter documentation pages', 'autodocs-publish' ); ?></label>
+					<input id="autodocs-publish-filter" type="search" placeholder="<?php echo esc_attr( $placeholder ); ?>" autocomplete="off" data-docs-filter>
+					<button class="sidebar-search-clear" type="button" data-search-clear aria-label="<?php esc_attr_e( 'Clear filter', 'autodocs-publish' ); ?>">×</button>
 				</div>
 			<?php endif; ?>
 
@@ -412,18 +422,18 @@ function docspress_render_docs_navigation( $attributes ) {
 					?>
 				<?php elseif ( $pages ) : ?>
 					<?php if ( $root_id && ! $show_root ) : ?>
-						<?php docspress_render_page_tree( $pages, $root_id, 0, 1, $max_depth ); ?>
+						<?php autodocs_publish_render_page_tree( $pages, $root_id, 0, 1, $max_depth ); ?>
 					<?php else : ?>
-						<?php docspress_render_page_tree( $pages, 0, $root_id, 1, $max_depth ); ?>
+						<?php autodocs_publish_render_page_tree( $pages, 0, $root_id, 1, $max_depth ); ?>
 					<?php endif; ?>
 				<?php else : ?>
 					<p class="docs-nav-empty"><?php echo esc_html( $empty ); ?></p>
 				<?php endif; ?>
 			</nav>
-			<?php if ( $show_filter ) : ?><p class="sidebar-no-results" data-no-results><?php esc_html_e( 'No pages match that filter.', 'docspress' ); ?></p><?php endif; ?>
+			<?php if ( $show_filter ) : ?><p class="sidebar-no-results" data-no-results><?php esc_html_e( 'No pages match that filter.', 'autodocs-publish' ); ?></p><?php endif; ?>
 		</div>
 	</aside>
-	<button class="drawer-scrim" type="button" data-drawer-close aria-label="<?php esc_attr_e( 'Close documentation menu', 'docspress' ); ?>"></button>
+	<button class="drawer-scrim" type="button" data-drawer-close aria-label="<?php esc_attr_e( 'Close documentation menu', 'autodocs-publish' ); ?>"></button>
 	<?php
 	return ob_get_clean();
 }
@@ -434,7 +444,7 @@ function docspress_render_docs_navigation( $attributes ) {
  * @param string $content Raw Page content.
  * @return string
  */
-function docspress_searchable_text( $content ) {
+function autodocs_publish_searchable_text( $content ) {
 	$content = preg_replace( '/<!--.*?-->/s', ' ', (string) $content );
 	$content = strip_shortcodes( $content );
 	$content = html_entity_decode( wp_strip_all_tags( $content, true ), ENT_QUOTES, get_bloginfo( 'charset' ) );
@@ -448,11 +458,11 @@ function docspress_searchable_text( $content ) {
  * @param WP_Post $page Page object.
  * @return string
  */
-function docspress_search_page_path( $page ) {
+function autodocs_publish_search_page_path( $page ) {
 	$labels = array();
-	$version = sanitize_key( (string) get_post_meta( $page->ID, '_docspress_version_id', true ) );
+	$version = sanitize_key( (string) get_post_meta( $page->ID, '_autodocs_publish_version_id', true ) );
 	foreach ( array_reverse( get_post_ancestors( $page ) ) as $ancestor_id ) {
-		if ( $version && $version !== sanitize_key( (string) get_post_meta( $ancestor_id, '_docspress_version_id', true ) ) ) {
+		if ( $version && $version !== sanitize_key( (string) get_post_meta( $ancestor_id, '_autodocs_publish_version_id', true ) ) ) {
 			continue;
 		}
 		$title = wp_strip_all_tags( get_the_title( $ancestor_id ) );
@@ -469,7 +479,7 @@ function docspress_search_page_path( $page ) {
  * @param WP_Post[] $pages Searchable Pages.
  * @return array<int,array<string,mixed>>
  */
-function docspress_search_index( $pages ) {
+function autodocs_publish_search_index( $pages ) {
 	$index = array();
 	$seen  = array();
 	foreach ( $pages as $page ) {
@@ -477,18 +487,24 @@ function docspress_search_index( $pages ) {
 			continue;
 		}
 		$seen[ $page->ID ] = true;
-		$content = docspress_searchable_text( $page->post_content );
+		$content = autodocs_publish_searchable_text( $page->post_content );
 		$excerpt = $page->post_excerpt ? wp_strip_all_tags( $page->post_excerpt ) : wp_trim_words( $content, 24, '…' );
 		$index[] = array(
 			'id'      => (int) $page->ID,
 			'title'   => html_entity_decode( wp_strip_all_tags( get_the_title( $page ) ), ENT_QUOTES, get_bloginfo( 'charset' ) ),
-			'path'    => docspress_search_page_path( $page ),
+			'path'    => autodocs_publish_search_page_path( $page ),
 			'excerpt' => html_entity_decode( $excerpt, ENT_QUOTES, get_bloginfo( 'charset' ) ),
 			'content' => $content,
 			'url'     => get_permalink( $page ),
 		);
 	}
-	return apply_filters( 'docspress_search_index', $index );
+	$index = apply_filters( 'autodocs_publish_search_index', $index );
+	return apply_filters_deprecated(
+		'docspress_search_index',
+		array( $index ),
+		'0.11.0',
+		'autodocs_publish_search_index'
+	);
 }
 
 /**
@@ -497,82 +513,82 @@ function docspress_search_index( $pages ) {
  * @param array $attributes Block attributes.
  * @return string
  */
-function docspress_render_command_search( $attributes ) {
-	$label       = sanitize_text_field( docspress_component_attribute( $attributes, 'label', __( 'Search docs', 'docspress' ) ) );
-	$placeholder = sanitize_text_field( docspress_component_attribute( $attributes, 'placeholder', __( 'Search documentation…', 'docspress' ) ) );
-	$suggested   = sanitize_text_field( docspress_component_attribute( $attributes, 'suggestedLabel', __( 'Suggested pages', 'docspress' ) ) );
-	$no_results  = sanitize_text_field( docspress_component_attribute( $attributes, 'noResultsLabel', __( 'No documentation matched that search.', 'docspress' ) ) );
-	$limit       = min( 20, max( 3, absint( docspress_component_attribute( $attributes, 'resultsLimit', 8 ) ) ) );
-	$root_slug   = sanitize_text_field( docspress_component_attribute( $attributes, 'rootSlug', 'docs' ) );
-	$width       = min( 960, max( 420, absint( docspress_component_attribute( $attributes, 'width', 680 ) ) ) );
-	$height      = min( 820, max( 320, absint( docspress_component_attribute( $attributes, 'height', 640 ) ) ) );
-	$radius      = min( 40, absint( docspress_component_attribute( $attributes, 'radius', 14 ) ) );
-	$opacity     = min( 90, max( 0, absint( docspress_component_attribute( $attributes, 'overlayOpacity', 44 ) ) ) );
-	$blur        = min( 20, max( 0, absint( docspress_component_attribute( $attributes, 'overlayBlur', 2 ) ) ) );
-	$show_paths  = (bool) docspress_component_attribute( $attributes, 'showPaths', true );
-	$show_excerpts = (bool) docspress_component_attribute( $attributes, 'showExcerpts', true );
-	$show_hints  = (bool) docspress_component_attribute( $attributes, 'showHints', true );
-	$dialog_id   = wp_unique_id( 'docspress-search-dialog-' );
+function autodocs_publish_render_command_search( $attributes ) {
+	$label       = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'label', __( 'Search docs', 'autodocs-publish' ) ) );
+	$placeholder = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'placeholder', __( 'Search documentation…', 'autodocs-publish' ) ) );
+	$suggested   = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'suggestedLabel', __( 'Suggested pages', 'autodocs-publish' ) ) );
+	$no_results  = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'noResultsLabel', __( 'No documentation matched that search.', 'autodocs-publish' ) ) );
+	$limit       = min( 20, max( 3, absint( autodocs_publish_component_attribute( $attributes, 'resultsLimit', 8 ) ) ) );
+	$root_slug   = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'rootSlug', 'docs' ) );
+	$width       = min( 960, max( 420, absint( autodocs_publish_component_attribute( $attributes, 'width', 680 ) ) ) );
+	$height      = min( 820, max( 320, absint( autodocs_publish_component_attribute( $attributes, 'height', 640 ) ) ) );
+	$radius      = min( 40, absint( autodocs_publish_component_attribute( $attributes, 'radius', 14 ) ) );
+	$opacity     = min( 90, max( 0, absint( autodocs_publish_component_attribute( $attributes, 'overlayOpacity', 44 ) ) ) );
+	$blur        = min( 20, max( 0, absint( autodocs_publish_component_attribute( $attributes, 'overlayBlur', 2 ) ) ) );
+	$show_paths  = (bool) autodocs_publish_component_attribute( $attributes, 'showPaths', true );
+	$show_excerpts = (bool) autodocs_publish_component_attribute( $attributes, 'showExcerpts', true );
+	$show_hints  = (bool) autodocs_publish_component_attribute( $attributes, 'showHints', true );
+	$dialog_id   = wp_unique_id( 'autodocs-publish-search-dialog-' );
 	$field_id    = $dialog_id . '-field';
 	$results_id  = $dialog_id . '-results';
-	$classes     = array( 'docspress-command-search' );
+	$classes     = array( 'autodocs-publish-command-search' );
 	if ( ! $show_paths ) {
-		$classes[] = 'docspress-search-hide-paths';
+		$classes[] = 'autodocs-publish-search-hide-paths';
 	}
 	if ( ! $show_excerpts ) {
-		$classes[] = 'docspress-search-hide-excerpts';
+		$classes[] = 'autodocs-publish-search-hide-excerpts';
 	}
 	if ( ! $show_hints ) {
-		$classes[] = 'docspress-search-hide-hints';
+		$classes[] = 'autodocs-publish-search-hide-hints';
 	}
 	$wrapper = get_block_wrapper_attributes(
 		array(
 			'class' => implode( ' ', $classes ),
-			'style' => '--dp-search-width:' . $width . 'px;--dp-search-height:' . $height . 'px;--dp-search-radius:' . $radius . 'px;--dp-search-overlay-opacity:' . $opacity . '%;--dp-search-overlay-blur:' . $blur . 'px',
+			'style' => '--adp-search-width:' . $width . 'px;--adp-search-height:' . $height . 'px;--adp-search-radius:' . $radius . 'px;--adp-search-overlay-opacity:' . $opacity . '%;--adp-search-overlay-blur:' . $blur . 'px',
 		)
 	);
 	$search_data = array(
-		'index'          => docspress_search_index( docspress_get_docs_pages( $root_slug ) ),
+		'index'          => autodocs_publish_search_index( autodocs_publish_get_docs_pages( $root_slug ) ),
 		'limit'          => $limit,
 		'suggestedLabel' => $suggested,
-		'resultsLabel'   => __( 'Search results', 'docspress' ),
+		'resultsLabel'   => __( 'Search results', 'autodocs-publish' ),
 		'noResultsLabel' => $no_results,
-		'resultSingular' => __( '1 result', 'docspress' ),
-		'resultPlural'   => __( '%d results', 'docspress' ),
+		'resultSingular' => __( '1 result', 'autodocs-publish' ),
+		'resultPlural'   => __( '%d results', 'autodocs-publish' ),
 	);
 
 	ob_start();
 	?>
 	<div <?php echo $wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-		<script type="application/json" data-docspress-search-data><?php echo wp_json_encode( $search_data, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></script>
+		<script type="application/json" data-autodocs-publish-search-data><?php echo wp_json_encode( $search_data, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></script>
 		<button class="header-button search-shortcut" type="button" data-docs-search-trigger aria-label="<?php echo esc_attr( $label ); ?>" aria-haspopup="dialog" aria-controls="<?php echo esc_attr( $dialog_id ); ?>" aria-expanded="false">
-			<?php echo docspress_icon( 'search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<?php echo autodocs_publish_icon( 'search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			<span><?php echo esc_html( $label ); ?></span><kbd data-search-shortcut-hint>⌘ K</kbd>
 		</button>
 		<dialog class="search-dialog" id="<?php echo esc_attr( $dialog_id ); ?>" data-docs-search-dialog aria-labelledby="<?php echo esc_attr( $field_id . '-label' ); ?>">
 			<div class="search-dialog-panel">
 				<form class="command-search" role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" data-command-search-form>
 					<div class="command-search-field">
-						<?php echo docspress_icon( 'search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-						<label class="screen-reader-text" id="<?php echo esc_attr( $field_id . '-label' ); ?>" for="<?php echo esc_attr( $field_id ); ?>"><?php esc_html_e( 'Search documentation', 'docspress' ); ?></label>
+						<?php echo autodocs_publish_icon( 'search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<label class="screen-reader-text" id="<?php echo esc_attr( $field_id . '-label' ); ?>" for="<?php echo esc_attr( $field_id ); ?>"><?php esc_html_e( 'Search documentation', 'autodocs-publish' ); ?></label>
 						<input id="<?php echo esc_attr( $field_id ); ?>" name="s" type="search" placeholder="<?php echo esc_attr( $placeholder ); ?>" autocomplete="off" spellcheck="false" aria-autocomplete="list" aria-controls="<?php echo esc_attr( $results_id ); ?>" data-docs-command-input>
 						<input type="hidden" name="post_type" value="page">
-						<button class="command-search-close" type="button" data-docs-search-close aria-label="<?php esc_attr_e( 'Close search', 'docspress' ); ?>"><span aria-hidden="true">×</span></button>
+						<button class="command-search-close" type="button" data-docs-search-close aria-label="<?php esc_attr_e( 'Close search', 'autodocs-publish' ); ?>"><span aria-hidden="true">×</span></button>
 					</div>
 					<div class="command-search-body">
 						<div class="command-search-status" aria-live="polite" aria-atomic="true" data-command-search-status></div>
 						<ul class="command-search-results" id="<?php echo esc_attr( $results_id ); ?>" role="listbox" data-command-search-results></ul>
 						<div class="command-search-empty" data-command-search-empty hidden>
-							<span class="command-search-empty-icon" aria-hidden="true"><?php echo docspress_icon( 'search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+							<span class="command-search-empty-icon" aria-hidden="true"><?php echo autodocs_publish_icon( 'search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 							<strong><?php echo esc_html( $no_results ); ?></strong>
-							<span><?php esc_html_e( 'Try another term or press Enter for the full WordPress search.', 'docspress' ); ?></span>
+							<span><?php esc_html_e( 'Try another term or press Enter for the full WordPress search.', 'autodocs-publish' ); ?></span>
 						</div>
 					</div>
 					<?php if ( $show_hints ) : ?>
 						<footer class="command-search-footer" aria-hidden="true">
-							<span><kbd>↑</kbd><kbd>↓</kbd> <?php esc_html_e( 'to navigate', 'docspress' ); ?></span>
-							<span><kbd>↵</kbd> <?php esc_html_e( 'to open', 'docspress' ); ?></span>
-							<span><kbd>Esc</kbd> <?php esc_html_e( 'to close', 'docspress' ); ?></span>
+							<span><kbd>↑</kbd><kbd>↓</kbd> <?php esc_html_e( 'to navigate', 'autodocs-publish' ); ?></span>
+							<span><kbd>↵</kbd> <?php esc_html_e( 'to open', 'autodocs-publish' ); ?></span>
+							<span><kbd>Esc</kbd> <?php esc_html_e( 'to close', 'autodocs-publish' ); ?></span>
 						</footer>
 					<?php endif; ?>
 				</form>
@@ -589,23 +605,23 @@ function docspress_render_command_search( $attributes ) {
  * @param array $attributes Block attributes.
  * @return string
  */
-function docspress_render_breadcrumbs( $attributes ) {
+function autodocs_publish_render_breadcrumbs( $attributes ) {
 	if ( ! is_page() ) {
 		return '';
 	}
 
-	$show_home = (bool) docspress_component_attribute( $attributes, 'showHome', false );
-	$home_label = sanitize_text_field( docspress_component_attribute( $attributes, 'homeLabel', __( 'Home', 'docspress' ) ) );
-	$separator = sanitize_text_field( docspress_component_attribute( $attributes, 'separator', '›' ) );
+	$show_home = (bool) autodocs_publish_component_attribute( $attributes, 'showHome', false );
+	$home_label = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'homeLabel', __( 'Home', 'autodocs-publish' ) ) );
+	$separator = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'separator', '›' ) );
 	$ancestors = array_reverse( get_post_ancestors( get_queried_object_id() ) );
-	if ( function_exists( 'docspress_blocks_versions_page_context' ) ) {
-		$context = docspress_blocks_versions_page_context();
+	if ( function_exists( 'autodocs_publish_blocks_versions_page_context' ) ) {
+		$context = autodocs_publish_blocks_versions_page_context();
 		if ( $context ) {
 			$ancestors = array_values(
 				array_filter(
 					$ancestors,
 					static function ( $ancestor_id ) use ( $context ) {
-						return $context['version'] === sanitize_key( (string) get_post_meta( $ancestor_id, '_docspress_version_id', true ) );
+						return $context['version'] === sanitize_key( (string) get_post_meta( $ancestor_id, '_autodocs_publish_version_id', true ) );
 					}
 				)
 			);
@@ -615,7 +631,7 @@ function docspress_render_breadcrumbs( $attributes ) {
 		return '';
 	}
 
-	$wrapper = get_block_wrapper_attributes( array( 'class' => 'breadcrumbs', 'aria-label' => __( 'Breadcrumbs', 'docspress' ) ) );
+	$wrapper = get_block_wrapper_attributes( array( 'class' => 'breadcrumbs', 'aria-label' => __( 'Breadcrumbs', 'autodocs-publish' ) ) );
 	ob_start();
 	?>
 	<nav <?php echo $wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><ol>
@@ -635,17 +651,17 @@ function docspress_render_breadcrumbs( $attributes ) {
  * @param array $attributes Block attributes.
  * @return string
  */
-function docspress_render_toc( $attributes ) {
+function autodocs_publish_render_toc( $attributes ) {
 	if ( ! is_singular() ) {
 		return '';
 	}
 
-	$title = sanitize_text_field( docspress_component_attribute( $attributes, 'title', __( 'On this page', 'docspress' ) ) );
-	$width = min( 320, max( 180, absint( docspress_component_attribute( $attributes, 'width', 226 ) ) ) );
-	$min_level = min( 6, max( 1, absint( docspress_component_attribute( $attributes, 'minLevel', 2 ) ) ) );
-	$max_level = min( 6, max( $min_level, absint( docspress_component_attribute( $attributes, 'maxLevel', 3 ) ) ) );
+	$title = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'title', __( 'On this page', 'autodocs-publish' ) ) );
+	$width = min( 320, max( 180, absint( autodocs_publish_component_attribute( $attributes, 'width', 226 ) ) ) );
+	$min_level = min( 6, max( 1, absint( autodocs_publish_component_attribute( $attributes, 'minLevel', 2 ) ) ) );
+	$max_level = min( 6, max( $min_level, absint( autodocs_publish_component_attribute( $attributes, 'maxLevel', 3 ) ) ) );
 	$content = apply_filters( 'the_content', get_post_field( 'post_content', get_queried_object_id() ) );
-	$toc = docspress_prepare_content( $content, $min_level, $max_level )['toc'];
+	$toc = autodocs_publish_prepare_content( $content, $min_level, $max_level )['toc'];
 	if ( ! $toc ) {
 		return '';
 	}
@@ -653,7 +669,7 @@ function docspress_render_toc( $attributes ) {
 	$wrapper = get_block_wrapper_attributes(
 		array(
 			'class'      => 'docs-toc',
-			'style'      => '--dp-component-width:' . $width . 'px',
+			'style'      => '--adp-component-width:' . $width . 'px',
 			'aria-label' => $title,
 		)
 	);
@@ -677,12 +693,12 @@ function docspress_render_toc( $attributes ) {
  * @param array $attributes Block attributes.
  * @return string
  */
-function docspress_render_page_summary( $attributes ) {
+function autodocs_publish_render_page_summary( $attributes ) {
 	if ( ! is_singular() ) {
 		return '';
 	}
 
-	$fallback = sanitize_text_field( docspress_component_attribute( $attributes, 'fallbackText', '' ) );
+	$fallback = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'fallbackText', '' ) );
 	$summary  = has_excerpt() ? get_the_excerpt() : $fallback;
 	if ( ! $summary ) {
 		return '';
@@ -702,34 +718,34 @@ function docspress_render_page_summary( $attributes ) {
  * @param array $attributes Block attributes.
  * @return string
  */
-function docspress_render_edit_links( $attributes ) {
+function autodocs_publish_render_edit_links( $attributes ) {
 	if ( ! is_singular() ) {
 		return '';
 	}
 
-	$show_wordpress = (bool) docspress_component_attribute( $attributes, 'showWordPress', true );
-	$show_github    = (bool) docspress_component_attribute( $attributes, 'showGitHub', true );
-	$wp_label       = sanitize_text_field( docspress_component_attribute( $attributes, 'wordpressLabel', __( 'Edit this page in WordPress', 'docspress' ) ) );
-	$github_label   = sanitize_text_field( docspress_component_attribute( $attributes, 'githubLabel', __( 'Propose changes on GitHub', 'docspress' ) ) );
-	$repository     = esc_url_raw( docspress_component_attribute( $attributes, 'repositoryUrl', 'https://github.com/Automattic/docspress' ) );
-	$ref            = sanitize_text_field( docspress_component_attribute( $attributes, 'ref', 'main' ) );
+	$show_wordpress = (bool) autodocs_publish_component_attribute( $attributes, 'showWordPress', true );
+	$show_github    = (bool) autodocs_publish_component_attribute( $attributes, 'showGitHub', true );
+	$wp_label       = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'wordpressLabel', __( 'Edit this page in WordPress', 'autodocs-publish' ) ) );
+	$github_label   = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'githubLabel', __( 'Propose changes on GitHub', 'autodocs-publish' ) ) );
+	$repository     = esc_url_raw( autodocs_publish_component_attribute( $attributes, 'repositoryUrl', 'https://github.com/Automattic/autodocs-publish' ) );
+	$ref            = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'ref', 'main' ) );
 	$post_id        = get_queried_object_id();
 	$wp_url         = get_edit_post_link( $post_id, '' );
 	$wp_url         = $wp_url ? $wp_url : wp_login_url( admin_url( 'post.php?post=' . $post_id . '&action=edit' ) );
-	$github_url     = docspress_get_github_edit_url( $post_id, $repository, $ref );
+	$github_url     = autodocs_publish_get_github_edit_url( $post_id, $repository, $ref );
 	if ( ! $show_wordpress && ( ! $show_github || ! $github_url ) ) {
 		return '';
 	}
 
-	$wrapper = get_block_wrapper_attributes( array( 'class' => 'page-actions', 'aria-label' => __( 'Page actions', 'docspress' ) ) );
+	$wrapper = get_block_wrapper_attributes( array( 'class' => 'page-actions', 'aria-label' => __( 'Page actions', 'autodocs-publish' ) ) );
 	ob_start();
 	?>
 	<nav <?php echo $wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 		<?php if ( $show_wordpress ) : ?>
-			<a class="page-action page-action-wordpress wp-element-button" href="<?php echo esc_url( $wp_url ); ?>"><?php echo docspress_icon( 'pencil' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><span><?php echo esc_html( $wp_label ); ?></span></a>
+			<a class="page-action page-action-wordpress wp-element-button" href="<?php echo esc_url( $wp_url ); ?>"><?php echo autodocs_publish_icon( 'pencil' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><span><?php echo esc_html( $wp_label ); ?></span></a>
 		<?php endif; ?>
 		<?php if ( $show_github && $github_url ) : ?>
-			<a class="page-action page-action-github wp-element-button" href="<?php echo esc_url( $github_url ); ?>" target="_blank" rel="noopener noreferrer"><?php echo docspress_icon( 'github' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><span><?php echo esc_html( $github_label ); ?></span></a>
+			<a class="page-action page-action-github wp-element-button" href="<?php echo esc_url( $github_url ); ?>" target="_blank" rel="noopener noreferrer"><?php echo autodocs_publish_icon( 'github' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><span><?php echo esc_html( $github_label ); ?></span></a>
 		<?php endif; ?>
 	</nav>
 	<?php
@@ -746,17 +762,17 @@ function docspress_render_edit_links( $attributes ) {
  * @param int    $max_depth  Maximum depth.
  * @return array{previous:?WP_Post,next:?WP_Post}
  */
-function docspress_get_adjacent_pages( $current_id, $root_slug = 'docs', $sort = 'menu_order', $show_root = true, $max_depth = 0 ) {
-	$root_id = docspress_get_docs_root_id( $root_slug );
-	$pages   = docspress_get_docs_pages( $root_slug, $sort );
-	$sidebar_context = docspress_get_sidebar_context( $current_id );
+function autodocs_publish_get_adjacent_pages( $current_id, $root_slug = 'docs', $sort = 'menu_order', $show_root = true, $max_depth = 0 ) {
+	$root_id = autodocs_publish_get_docs_root_id( $root_slug );
+	$pages   = autodocs_publish_get_docs_pages( $root_slug, $sort );
+	$sidebar_context = autodocs_publish_get_sidebar_context( $current_id );
 	if ( $sidebar_context ) {
 		$root_id = $sidebar_context['root_id'];
-		$pages   = docspress_filter_pages_by_sidebar( $pages, $sidebar_context['id'] );
+		$pages   = autodocs_publish_filter_pages_by_sidebar( $pages, $sidebar_context['id'] );
 	}
 	$ordered = $root_id && ! $show_root
-		? docspress_flatten_page_tree( $pages, 0, $root_id, 1, $max_depth )
-		: docspress_flatten_page_tree( $pages, $root_id, 0, 1, $max_depth );
+		? autodocs_publish_flatten_page_tree( $pages, 0, $root_id, 1, $max_depth )
+		: autodocs_publish_flatten_page_tree( $pages, $root_id, 0, 1, $max_depth );
 	$ids   = wp_list_pluck( $ordered, 'ID' );
 	$index = array_search( $current_id, $ids, true );
 	if ( false === $index ) {
@@ -774,25 +790,25 @@ function docspress_get_adjacent_pages( $current_id, $root_slug = 'docs', $sort =
  * @param array $attributes Block attributes.
  * @return string
  */
-function docspress_render_adjacent_navigation( $attributes ) {
+function autodocs_publish_render_adjacent_navigation( $attributes ) {
 	if ( ! is_page() ) {
 		return '';
 	}
 
-	$root_slug = sanitize_text_field( docspress_component_attribute( $attributes, 'rootSlug', 'docs' ) );
-	$sort = docspress_component_attribute( $attributes, 'sort', 'menu_order' );
+	$root_slug = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'rootSlug', 'docs' ) );
+	$sort = autodocs_publish_component_attribute( $attributes, 'sort', 'menu_order' );
 	$sort = in_array( $sort, array( 'menu_order', 'title', 'newest', 'oldest' ), true ) ? $sort : 'menu_order';
-	$show_root = (bool) docspress_component_attribute( $attributes, 'showRoot', true );
-	$max_depth = min( 8, absint( docspress_component_attribute( $attributes, 'maxDepth', 0 ) ) );
-	$previous_label = sanitize_text_field( docspress_component_attribute( $attributes, 'previousLabel', __( '← Previous', 'docspress' ) ) );
-	$next_label = sanitize_text_field( docspress_component_attribute( $attributes, 'nextLabel', __( 'Next →', 'docspress' ) ) );
-	$show_titles = (bool) docspress_component_attribute( $attributes, 'showTitles', true );
-	$adjacent = docspress_get_adjacent_pages( get_queried_object_id(), $root_slug, $sort, $show_root, $max_depth );
+	$show_root = (bool) autodocs_publish_component_attribute( $attributes, 'showRoot', true );
+	$max_depth = min( 8, absint( autodocs_publish_component_attribute( $attributes, 'maxDepth', 0 ) ) );
+	$previous_label = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'previousLabel', __( '← Previous', 'autodocs-publish' ) ) );
+	$next_label = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'nextLabel', __( 'Next →', 'autodocs-publish' ) ) );
+	$show_titles = (bool) autodocs_publish_component_attribute( $attributes, 'showTitles', true );
+	$adjacent = autodocs_publish_get_adjacent_pages( get_queried_object_id(), $root_slug, $sort, $show_root, $max_depth );
 	if ( ! $adjacent['previous'] && ! $adjacent['next'] ) {
 		return '';
 	}
 
-	$wrapper = get_block_wrapper_attributes( array( 'class' => 'docs-pagination', 'aria-label' => __( 'Documentation pages', 'docspress' ) ) );
+	$wrapper = get_block_wrapper_attributes( array( 'class' => 'docs-pagination', 'aria-label' => __( 'Documentation pages', 'autodocs-publish' ) ) );
 	ob_start();
 	?>
 	<nav <?php echo $wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
@@ -813,49 +829,49 @@ function docspress_render_adjacent_navigation( $attributes ) {
  * @param array $attributes Block attributes.
  * @return string
  */
-function docspress_render_was_this_helpful( $attributes ) {
-	$enabled      = (bool) docspress_component_attribute( $attributes, 'enabled', true );
+function autodocs_publish_render_was_this_helpful( $attributes ) {
+	$enabled      = (bool) autodocs_publish_component_attribute( $attributes, 'enabled', true );
 	$post_id      = get_queried_object_id();
 	$page_enabled = $post_id && (
-		! metadata_exists( 'post', $post_id, 'docspress_feedback_enabled' ) ||
-		rest_sanitize_boolean( get_post_meta( $post_id, 'docspress_feedback_enabled', true ) )
+		! metadata_exists( 'post', $post_id, 'autodocs_publish_feedback_enabled' ) ||
+		rest_sanitize_boolean( get_post_meta( $post_id, 'autodocs_publish_feedback_enabled', true ) )
 	);
 	if ( ! $enabled || ! $page_enabled || ! is_page() || ! $post_id || post_password_required( $post_id ) ) {
 		return '';
 	}
 
-	$question        = sanitize_text_field( docspress_component_attribute( $attributes, 'question', __( 'Was this helpful?', 'docspress' ) ) );
-	$helpful_label   = sanitize_text_field( docspress_component_attribute( $attributes, 'helpfulLabel', __( 'Yes', 'docspress' ) ) );
-	$unhelpful_label = sanitize_text_field( docspress_component_attribute( $attributes, 'unhelpfulLabel', __( 'No', 'docspress' ) ) );
-	$thanks_message  = sanitize_text_field( docspress_component_attribute( $attributes, 'thanksMessage', __( 'Thanks for your feedback.', 'docspress' ) ) );
-	$question_id     = wp_unique_id( 'docspress-feedback-question-' );
+	$question        = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'question', __( 'Was this helpful?', 'autodocs-publish' ) ) );
+	$helpful_label   = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'helpfulLabel', __( 'Yes', 'autodocs-publish' ) ) );
+	$unhelpful_label = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'unhelpfulLabel', __( 'No', 'autodocs-publish' ) ) );
+	$thanks_message  = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'thanksMessage', __( 'Thanks for your feedback.', 'autodocs-publish' ) ) );
+	$question_id     = wp_unique_id( 'autodocs-publish-feedback-question-' );
 	$wrapper         = get_block_wrapper_attributes(
 		array(
-			'class'                        => 'docspress-feedback',
-			'data-docspress-feedback'      => '',
+			'class'                        => 'autodocs-publish-feedback',
+			'data-autodocs-publish-feedback'      => '',
 			'data-feedback-page-id'        => (string) $post_id,
-			'data-feedback-endpoint'       => esc_url_raw( rest_url( 'docspress/v1/feedback/' . $post_id ) ),
+			'data-feedback-endpoint'       => esc_url_raw( rest_url( 'autodocs-publish/v1/feedback/' . $post_id ) ),
 			'data-feedback-thanks-message' => $thanks_message,
-			'data-feedback-saving-message' => __( 'Saving your response…', 'docspress' ),
-			'data-feedback-error-message'  => __( 'We could not save that response. Please try again.', 'docspress' ),
+			'data-feedback-saving-message' => __( 'Saving your response…', 'autodocs-publish' ),
+			'data-feedback-error-message'  => __( 'We could not save that response. Please try again.', 'autodocs-publish' ),
 		)
 	);
 
 	ob_start();
 	?>
 	<section <?php echo $wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-		<p class="docspress-feedback-question" id="<?php echo esc_attr( $question_id ); ?>"><?php echo esc_html( $question ); ?></p>
-		<div class="docspress-feedback-actions" role="group" aria-labelledby="<?php echo esc_attr( $question_id ); ?>">
-			<button class="docspress-feedback-button" type="button" data-feedback-vote="helpful" aria-pressed="false">
-				<?php echo docspress_icon( 'thumbs-up' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<p class="autodocs-publish-feedback-question" id="<?php echo esc_attr( $question_id ); ?>"><?php echo esc_html( $question ); ?></p>
+		<div class="autodocs-publish-feedback-actions" role="group" aria-labelledby="<?php echo esc_attr( $question_id ); ?>">
+			<button class="autodocs-publish-feedback-button" type="button" data-feedback-vote="helpful" aria-pressed="false">
+				<?php echo autodocs_publish_icon( 'thumbs-up' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<span><?php echo esc_html( $helpful_label ); ?></span>
 			</button>
-			<button class="docspress-feedback-button" type="button" data-feedback-vote="unhelpful" aria-pressed="false">
-				<?php echo docspress_icon( 'thumbs-down' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<button class="autodocs-publish-feedback-button" type="button" data-feedback-vote="unhelpful" aria-pressed="false">
+				<?php echo autodocs_publish_icon( 'thumbs-down' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<span><?php echo esc_html( $unhelpful_label ); ?></span>
 			</button>
 		</div>
-		<p class="docspress-feedback-status" data-feedback-status aria-live="polite"></p>
+		<p class="autodocs-publish-feedback-status" data-feedback-status aria-live="polite"></p>
 	</section>
 	<?php
 	return ob_get_clean();
@@ -867,18 +883,18 @@ function docspress_render_was_this_helpful( $attributes ) {
  * @param array $attributes Block attributes.
  * @return string
  */
-function docspress_render_color_toggle( $attributes ) {
-	$label = sanitize_text_field( docspress_component_attribute( $attributes, 'label', __( 'Switch color theme', 'docspress' ) ) );
-	$show_label = (bool) docspress_component_attribute( $attributes, 'showLabel', false );
-	$default_mode = sanitize_key( docspress_component_attribute( $attributes, 'defaultMode', 'light' ) );
+function autodocs_publish_render_color_toggle( $attributes ) {
+	$label = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'label', __( 'Switch color theme', 'autodocs-publish' ) ) );
+	$show_label = (bool) autodocs_publish_component_attribute( $attributes, 'showLabel', false );
+	$default_mode = sanitize_key( autodocs_publish_component_attribute( $attributes, 'defaultMode', 'light' ) );
 	$default_mode = in_array( $default_mode, array( 'light', 'dark', 'system' ), true ) ? $default_mode : 'light';
-	$wrapper = get_block_wrapper_attributes( array( 'class' => 'docspress-color-toggle' ) );
+	$wrapper = get_block_wrapper_attributes( array( 'class' => 'autodocs-publish-color-toggle' ) );
 	return sprintf(
 		'<div %1$s><button class="header-button" type="button" data-theme-toggle data-default-mode="%2$s" aria-label="%3$s">%4$s%5$s</button></div>',
 		$wrapper,
 		esc_attr( $default_mode ),
 		esc_attr( $label ),
-		docspress_icon( 'sun' ) . docspress_icon( 'moon' ),
+		autodocs_publish_icon( 'sun' ) . autodocs_publish_icon( 'moon' ),
 		$show_label ? '<span data-theme-label>' . esc_html( $label ) . '</span>' : ''
 	);
 }
@@ -889,26 +905,26 @@ function docspress_render_color_toggle( $attributes ) {
  * @param array $attributes Block attributes.
  * @return string
  */
-function docspress_render_menu_toggle( $attributes ) {
-	$label = sanitize_text_field( docspress_component_attribute( $attributes, 'label', __( 'Open documentation menu', 'docspress' ) ) );
-	$wrapper = get_block_wrapper_attributes( array( 'class' => 'docspress-menu-toggle' ) );
+function autodocs_publish_render_menu_toggle( $attributes ) {
+	$label = sanitize_text_field( autodocs_publish_component_attribute( $attributes, 'label', __( 'Open documentation menu', 'autodocs-publish' ) ) );
+	$wrapper = get_block_wrapper_attributes( array( 'class' => 'autodocs-publish-menu-toggle' ) );
 	return sprintf(
 		'<div %1$s><button class="menu-toggle" type="button" data-drawer-toggle aria-expanded="false" aria-controls="docs-sidebar" aria-label="%2$s">%3$s</button></div>',
 		$wrapper,
 		esc_attr( $label ),
-		docspress_icon( 'menu' )
+		autodocs_publish_icon( 'menu' )
 	);
 }
 
 /**
  * Register shell components and component-level block styles.
  */
-function docspress_register_blocks() {
+function autodocs_publish_register_blocks() {
 	$theme = wp_get_theme();
 	$editor_script_path = get_theme_file_path( 'assets/js/block-components.js' );
 	$editor_script_version = is_readable( $editor_script_path ) ? (string) filemtime( $editor_script_path ) : $theme->get( 'Version' );
 	wp_register_script(
-		'docspress-theme-blocks-editor',
+		'autodocs-publish-theme-blocks-editor',
 		get_theme_file_uri( 'assets/js/block-components.js' ),
 		array( 'wp-block-editor', 'wp-blocks', 'wp-components', 'wp-data', 'wp-editor', 'wp-element', 'wp-i18n', 'wp-plugins', 'wp-server-side-render' ),
 		$editor_script_version,
@@ -917,7 +933,7 @@ function docspress_register_blocks() {
 
 	$blocks = array(
 		'docs-navigation' => array(
-			'render_callback' => 'docspress_render_docs_navigation',
+			'render_callback' => 'autodocs_publish_render_docs_navigation',
 			'attributes'      => array(
 				'title'             => array( 'type' => 'string', 'default' => 'Documentation', 'role' => 'content' ),
 				'width'             => array( 'type' => 'number', 'default' => 266 ),
@@ -936,10 +952,10 @@ function docspress_register_blocks() {
 				'collapseLabel'     => array( 'type' => 'string', 'default' => 'Collapse sidebar', 'role' => 'content' ),
 				'expandLabel'       => array( 'type' => 'string', 'default' => 'Expand sidebar', 'role' => 'content' ),
 			),
-			'supports'        => docspress_component_supports(),
+			'supports'        => autodocs_publish_component_supports(),
 		),
 		'command-search' => array(
-			'render_callback' => 'docspress_render_command_search',
+			'render_callback' => 'autodocs_publish_render_command_search',
 			'attributes'      => array(
 				'label'          => array( 'type' => 'string', 'default' => 'Search docs', 'role' => 'content' ),
 				'placeholder'    => array( 'type' => 'string', 'default' => 'Search documentation…', 'role' => 'content' ),
@@ -956,48 +972,48 @@ function docspress_register_blocks() {
 				'showExcerpts'   => array( 'type' => 'boolean', 'default' => true ),
 				'showHints'      => array( 'type' => 'boolean', 'default' => true ),
 			),
-			'supports'        => docspress_component_supports(),
+			'supports'        => autodocs_publish_component_supports(),
 		),
 		'breadcrumbs' => array(
-			'render_callback' => 'docspress_render_breadcrumbs',
+			'render_callback' => 'autodocs_publish_render_breadcrumbs',
 			'attributes'      => array(
 				'showHome'  => array( 'type' => 'boolean', 'default' => false ),
 				'homeLabel' => array( 'type' => 'string', 'default' => 'Home', 'role' => 'content' ),
 				'separator' => array( 'type' => 'string', 'default' => '›', 'role' => 'content' ),
 			),
-			'supports'        => docspress_component_supports(),
+			'supports'        => autodocs_publish_component_supports(),
 		),
 		'table-of-contents' => array(
-			'render_callback' => 'docspress_render_toc',
+			'render_callback' => 'autodocs_publish_render_toc',
 			'attributes'      => array(
 				'title'    => array( 'type' => 'string', 'default' => 'On this page', 'role' => 'content' ),
 				'width'    => array( 'type' => 'number', 'default' => 226 ),
 				'minLevel' => array( 'type' => 'number', 'default' => 2 ),
 				'maxLevel' => array( 'type' => 'number', 'default' => 3 ),
 			),
-			'supports'        => docspress_component_supports(),
+			'supports'        => autodocs_publish_component_supports(),
 		),
 		'page-summary' => array(
-			'render_callback' => 'docspress_render_page_summary',
+			'render_callback' => 'autodocs_publish_render_page_summary',
 			'attributes'      => array(
 				'fallbackText' => array( 'type' => 'string', 'default' => '', 'role' => 'content' ),
 			),
-			'supports'        => docspress_component_supports(),
+			'supports'        => autodocs_publish_component_supports(),
 		),
 		'edit-links' => array(
-			'render_callback' => 'docspress_render_edit_links',
+			'render_callback' => 'autodocs_publish_render_edit_links',
 			'attributes'      => array(
 				'showWordPress'  => array( 'type' => 'boolean', 'default' => true ),
 				'wordpressLabel' => array( 'type' => 'string', 'default' => 'Edit this page in WordPress', 'role' => 'content' ),
 				'showGitHub'     => array( 'type' => 'boolean', 'default' => true ),
 				'githubLabel'    => array( 'type' => 'string', 'default' => 'Propose changes on GitHub', 'role' => 'content' ),
-				'repositoryUrl'  => array( 'type' => 'string', 'default' => 'https://github.com/Automattic/docspress' ),
+				'repositoryUrl'  => array( 'type' => 'string', 'default' => 'https://github.com/Automattic/autodocs-publish' ),
 				'ref'            => array( 'type' => 'string', 'default' => 'main' ),
 			),
-			'supports'        => docspress_component_supports(),
+			'supports'        => autodocs_publish_component_supports(),
 		),
 		'adjacent-navigation' => array(
-			'render_callback' => 'docspress_render_adjacent_navigation',
+			'render_callback' => 'autodocs_publish_render_adjacent_navigation',
 			'attributes'      => array(
 				'rootSlug'      => array( 'type' => 'string', 'default' => 'docs' ),
 				'sort'          => array( 'type' => 'string', 'default' => 'menu_order' ),
@@ -1007,10 +1023,10 @@ function docspress_register_blocks() {
 				'nextLabel'     => array( 'type' => 'string', 'default' => 'Next →', 'role' => 'content' ),
 				'showTitles'    => array( 'type' => 'boolean', 'default' => true ),
 			),
-			'supports'        => docspress_component_supports(),
+			'supports'        => autodocs_publish_component_supports(),
 		),
 		'was-this-helpful' => array(
-			'render_callback' => 'docspress_render_was_this_helpful',
+			'render_callback' => 'autodocs_publish_render_was_this_helpful',
 			'attributes'      => array(
 				'enabled'        => array( 'type' => 'boolean', 'default' => true ),
 				'question'       => array( 'type' => 'string', 'default' => 'Was this helpful?', 'role' => 'content' ),
@@ -1018,45 +1034,50 @@ function docspress_register_blocks() {
 				'unhelpfulLabel' => array( 'type' => 'string', 'default' => 'No', 'role' => 'content' ),
 				'thanksMessage'  => array( 'type' => 'string', 'default' => 'Thanks for your feedback.', 'role' => 'content' ),
 			),
-			'supports'        => docspress_component_supports(),
+			'supports'        => autodocs_publish_component_supports(),
 		),
 		'color-mode-toggle' => array(
-			'render_callback' => 'docspress_render_color_toggle',
+			'render_callback' => 'autodocs_publish_render_color_toggle',
 			'attributes'      => array(
 				'label'     => array( 'type' => 'string', 'default' => 'Switch color theme', 'role' => 'content' ),
 				'showLabel' => array( 'type' => 'boolean', 'default' => false ),
 				'defaultMode' => array( 'type' => 'string', 'default' => 'light' ),
 			),
-			'supports'        => docspress_component_supports(),
+			'supports'        => autodocs_publish_component_supports(),
 		),
 		'docs-menu-toggle' => array(
-			'render_callback' => 'docspress_render_menu_toggle',
+			'render_callback' => 'autodocs_publish_render_menu_toggle',
 			'attributes'      => array(
 				'label' => array( 'type' => 'string', 'default' => 'Open documentation menu', 'role' => 'content' ),
 			),
-			'supports'        => docspress_component_supports(),
+			'supports'        => autodocs_publish_component_supports(),
 		),
 	);
 
 	foreach ( $blocks as $slug => $args ) {
-		register_block_type(
-			'docspress/' . $slug,
-			array_merge(
-				array(
-					'api_version'   => 3,
-					'editor_script' => 'docspress-theme-blocks-editor',
-				),
-				$args
-			)
+		$block_args = array_merge(
+			array(
+				'api_version'   => 3,
+				'editor_script' => 'autodocs-publish-theme-blocks-editor',
+			),
+			$args
 		);
+		register_block_type( 'autodocs-publish/' . $slug, $block_args );
+
+		$legacy_args = $block_args;
+		$legacy_args['supports'] = array_merge(
+			isset( $legacy_args['supports'] ) && is_array( $legacy_args['supports'] ) ? $legacy_args['supports'] : array(),
+			array( 'inserter' => false )
+		);
+		register_block_type( 'docspress/' . $slug, $legacy_args );
 	}
 
-	register_block_style( 'core/navigation', array( 'name' => 'underline', 'label' => __( 'Underline', 'docspress' ) ) );
-	register_block_style( 'core/navigation', array( 'name' => 'framed', 'label' => __( 'Framed', 'docspress' ) ) );
-	register_block_style( 'core/button', array( 'name' => 'text-arrow', 'label' => __( 'Text with arrow', 'docspress' ) ) );
-	register_block_style( 'core/post-template', array( 'name' => 'doc-cards', 'label' => __( 'Documentation cards', 'docspress' ) ) );
+	register_block_style( 'core/navigation', array( 'name' => 'underline', 'label' => __( 'Underline', 'autodocs-publish' ) ) );
+	register_block_style( 'core/navigation', array( 'name' => 'framed', 'label' => __( 'Framed', 'autodocs-publish' ) ) );
+	register_block_style( 'core/button', array( 'name' => 'text-arrow', 'label' => __( 'Text with arrow', 'autodocs-publish' ) ) );
+	register_block_style( 'core/post-template', array( 'name' => 'doc-cards', 'label' => __( 'Documentation cards', 'autodocs-publish' ) ) );
 }
-add_action( 'init', 'docspress_register_blocks' );
+add_action( 'init', 'autodocs_publish_register_blocks' );
 
 /**
  * Find the Color Mode Toggle default inside a parsed template-part tree.
@@ -1064,15 +1085,15 @@ add_action( 'init', 'docspress_register_blocks' );
  * @param array<int,array<string,mixed>> $blocks Parsed blocks.
  * @return string
  */
-function docspress_find_color_mode_default( $blocks ) {
+function autodocs_publish_find_color_mode_default( $blocks ) {
 	foreach ( $blocks as $block ) {
-		if ( 'docspress/color-mode-toggle' === $block['blockName'] ) {
+		if ( in_array( $block['blockName'], array( 'autodocs-publish/color-mode-toggle', 'docspress/color-mode-toggle' ), true ) ) {
 			$mode = isset( $block['attrs']['defaultMode'] ) ? sanitize_key( $block['attrs']['defaultMode'] ) : 'light';
 			return in_array( $mode, array( 'light', 'dark', 'system' ), true ) ? $mode : 'light';
 		}
 
 		if ( ! empty( $block['innerBlocks'] ) ) {
-			$mode = docspress_find_color_mode_default( $block['innerBlocks'] );
+			$mode = autodocs_publish_find_color_mode_default( $block['innerBlocks'] );
 			if ( $mode ) {
 				return $mode;
 			}
@@ -1085,17 +1106,17 @@ function docspress_find_color_mode_default( $blocks ) {
 /**
  * Initialize visitor color mode before paint.
  */
-function docspress_color_mode_bootstrap() {
+function autodocs_publish_color_mode_bootstrap() {
 	$default_mode = 'light';
 	$header       = get_block_template( get_stylesheet() . '//header', 'wp_template_part' );
 	if ( $header && ! empty( $header->content ) ) {
-		$configured_mode = docspress_find_color_mode_default( parse_blocks( $header->content ) );
+		$configured_mode = autodocs_publish_find_color_mode_default( parse_blocks( $header->content ) );
 		if ( $configured_mode ) {
 			$default_mode = $configured_mode;
 		}
 	}
 	?>
-	<script id="docspress-color-mode">try{var d=<?php echo wp_json_encode( $default_mode ); ?>;var t=localStorage.getItem('docspress-color-mode');if(t==='light'||t==='dark'){document.documentElement.dataset.theme=t}else if(d==='light'||d==='dark'){document.documentElement.dataset.theme=d}else if(window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.dataset.theme='dark'}}catch(e){}</script>
+	<script id="autodocs-publish-color-mode">try{var d=<?php echo wp_json_encode( $default_mode ); ?>;var k='autodocs-publish-color-mode';var t=localStorage.getItem(k);if(t===null){t=localStorage.getItem('docspress-color-mode');if(t!==null){localStorage.setItem(k,t)}}var p='docspress-version-notice:';var n='autodocs-publish-version-notice:';for(var i=localStorage.length-1;i>=0;i--){var o=localStorage.key(i);if(o&&o.indexOf(p)===0&&localStorage.getItem(n+o.slice(p.length))===null){localStorage.setItem(n+o.slice(p.length),localStorage.getItem(o)||'dismissed')}}if(t==='light'||t==='dark'){document.documentElement.dataset.theme=t}else if(d==='light'||d==='dark'){document.documentElement.dataset.theme=d}else if(window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.dataset.theme='dark'}}catch(e){}</script>
 	<?php
 }
-add_action( 'wp_head', 'docspress_color_mode_bootstrap', 1 );
+add_action( 'wp_head', 'autodocs_publish_color_mode_bootstrap', 1 );

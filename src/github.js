@@ -1,6 +1,9 @@
 import * as github from "@actions/github";
 
-export const DOCSPRESS_PR_MARKER = "<!-- docspress:wordpress-sync -->";
+export const AUTODOCS_PUBLISH_PR_MARKER = "<!-- autodocs-publish:wordpress-sync -->";
+const AUTODOCS_PUBLISH_BRANCH = "autodocs-publish/wordpress-sync";
+const LEGACY_DOCSPRESS_BRANCH = "docspress/wordpress-sync";
+const LEGACY_DOCSPRESS_PR_MARKER = "<!-- docspress:wordpress-sync -->";
 export const githubContext = github.context;
 
 export class GitHubPullRequestClient {
@@ -17,23 +20,31 @@ export class GitHubPullRequestClient {
     this.owner = owner;
     this.repo = repo;
     this.base = options.base || "";
-    this.branch = options.branch || "docspress/wordpress-sync";
+    this.branch = options.branch || AUTODOCS_PUBLISH_BRANCH;
     this.title = String(options.title || "").trim();
     this.octokit = options.octokit || github.getOctokit(options.token);
   }
 
   async syncChanges(changes) {
     const base = await this.resolveBase();
-    const pulls = await this.listBranchPulls(base);
-    const managedPulls = pulls.filter((pull) => String(pull.body || "").includes(DOCSPRESS_PR_MARKER));
+    let branch = this.branch;
+    let pulls = await this.listBranchPulls(base, branch);
+    if (branch === AUTODOCS_PUBLISH_BRANCH && pulls.length === 0) {
+      const legacyPulls = await this.listBranchPulls(base, LEGACY_DOCSPRESS_BRANCH);
+      if (legacyPulls.some((pull) => pull.state === "open" && hasManagedPullRequestMarker(pull.body))) {
+        branch = LEGACY_DOCSPRESS_BRANCH;
+        pulls = legacyPulls;
+      }
+    }
+    const managedPulls = pulls.filter((pull) => hasManagedPullRequestMarker(pull.body));
     const unmarkedOpen = pulls.find((pull) => pull.state === "open" && !managedPulls.includes(pull));
     if (unmarkedOpen) {
-      throw new Error(`Refusing to overwrite unmarked pull request #${unmarkedOpen.number} on ${this.branch}.`);
+      throw new Error(`Refusing to overwrite unmarked pull request #${unmarkedOpen.number} on ${branch}.`);
     }
 
-    const branchRef = await this.getBranchRef();
+    const branchRef = await this.getBranchRef(branch);
     if (branchRef && managedPulls.length === 0) {
-      throw new Error(`Refusing to overwrite existing branch ${this.branch}; it is not marked as managed by Docspress.`);
+      throw new Error(`Refusing to overwrite existing branch ${branch}; it is not marked as managed by Autodocs Publish.`);
     }
 
     const openPull = managedPulls.find((pull) => pull.state === "open") || null;
@@ -50,7 +61,7 @@ export class GitHubPullRequestClient {
         await this.octokit.rest.git.deleteRef({
           owner: this.owner,
           repo: this.repo,
-          ref: `heads/${this.branch}`
+          ref: `heads/${branch}`
         });
       }
       return {
@@ -109,7 +120,7 @@ export class GitHubPullRequestClient {
       await this.octokit.rest.git.updateRef({
         owner: this.owner,
         repo: this.repo,
-        ref: `heads/${this.branch}`,
+        ref: `heads/${branch}`,
         sha: commit.data.sha,
         force: true
       });
@@ -117,7 +128,7 @@ export class GitHubPullRequestClient {
       await this.octokit.rest.git.createRef({
         owner: this.owner,
         repo: this.repo,
-        ref: `refs/heads/${this.branch}`,
+        ref: `refs/heads/${branch}`,
         sha: commit.data.sha
       });
     }
@@ -141,7 +152,7 @@ export class GitHubPullRequestClient {
     const created = await this.octokit.rest.pulls.create({
       owner: this.owner,
       repo: this.repo,
-      head: this.branch,
+      head: branch,
       base,
       title,
       body
@@ -164,7 +175,7 @@ export class GitHubPullRequestClient {
     return repository.data.default_branch;
   }
 
-  async listBranchPulls(base) {
+  async listBranchPulls(base, branch = this.branch) {
     const response = await this.octokit.rest.pulls.list({
       owner: this.owner,
       repo: this.repo,
@@ -174,17 +185,17 @@ export class GitHubPullRequestClient {
     });
     const repository = `${this.owner}/${this.repo}`.toLowerCase();
     return response.data.filter((pull) =>
-      pull.head?.ref === this.branch &&
+      pull.head?.ref === branch &&
       String(pull.head?.repo?.full_name || "").toLowerCase() === repository
     );
   }
 
-  async getBranchRef() {
+  async getBranchRef(branch = this.branch) {
     try {
       const response = await this.octokit.rest.git.getRef({
         owner: this.owner,
         repo: this.repo,
-        ref: `heads/${this.branch}`
+        ref: `heads/${branch}`
       });
       return response.data;
     } catch (error) {
@@ -196,6 +207,11 @@ export class GitHubPullRequestClient {
   }
 }
 
+function hasManagedPullRequestMarker(body) {
+  const value = String(body || "");
+  return value.includes(AUTODOCS_PUBLISH_PR_MARKER) || value.includes(LEGACY_DOCSPRESS_PR_MARKER);
+}
+
 function pullRequestBody(changes) {
   const versioned = changes.some((change) => change.versionId);
   const files = versioned
@@ -204,7 +220,7 @@ function pullRequestBody(changes) {
   const fileLabel = `${changes.length} Markdown ${changes.length === 1 ? "file" : "files"}`;
   const effectiveLatest = changes.find((change) => change.effectiveLatest)?.effectiveLatest || "";
   const latestLine = effectiveLatest ? `\n\nEffective latest version: \`${effectiveLatest}\`.` : "";
-  return `${DOCSPRESS_PR_MARKER}\n\n## Summary\n\nSynchronizes documentation edits made in WordPress back to their Markdown sources. This rolling pull request is maintained automatically by DocsPress.${latestLine}\n\n| Direction | Changes |\n| --- | ---: |\n| WordPress → GitHub | ${fileLabel} |\n\n## Changed files\n\n${files}\n\n## Review and merge\n\nReview these as normal documentation changes. After this pull request merges, the next DocsPress reconcile run refreshes the WordPress synchronization baseline.\n\n> This branch is owned by DocsPress and may be force-refreshed on every synchronization run.\n`;
+  return `${AUTODOCS_PUBLISH_PR_MARKER}\n\n## Summary\n\nSynchronizes documentation edits made in WordPress back to their Markdown sources. This rolling pull request is maintained automatically by Autodocs Publish.${latestLine}\n\n| Direction | Changes |\n| --- | ---: |\n| WordPress → GitHub | ${fileLabel} |\n\n## Changed files\n\n${files}\n\n## Review and merge\n\nReview these as normal documentation changes. After this pull request merges, the next Autodocs Publish reconcile run refreshes the WordPress synchronization baseline.\n\n> This branch is owned by Autodocs Publish and may be force-refreshed on every synchronization run.\n`;
 }
 
 function pullRequestTitle(changes) {

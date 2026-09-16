@@ -1,0 +1,11 @@
+.editor-styles-wrapper .wp-block-autodocs-publish-code-tabs {
+	max-width: min(100%, 860px);
+}
+
+.autodocs-publish-code-tabs--editor .autodocs-publish-code-tabs__panel {
+	display: block;
+}
+
+.autodocs-publish-code-tabs--editor .autodocs-publish-code__editor {
+	background: transparent;
+}

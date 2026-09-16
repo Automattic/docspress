@@ -3,7 +3,7 @@ title: Callout
 sidebar_position: 50
 ---
 
-Use `docspress/callout` to separate an important note, tip, warning, danger, or success message from the surrounding lesson.
+Use `autodocs-publish/callout` to separate an important note, tip, warning, danger, or success message from the surrounding lesson.
 
 ## When to use it
 
@@ -15,13 +15,13 @@ Edit the title and rich content in the canvas. Select the tone that matches the 
 
 ## Attributes
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Callout attributes",
-    "description": "Message and disclosure behavior accepted by \u003ccode\u003edocspress/callout\u003c/code\u003e.",
+    "description": "Message and disclosure behavior accepted by \u003ccode\u003eautodocs-publish/callout\u003c/code\u003e.",
     "fields": [
       {
         "name": "tone",
@@ -76,7 +76,7 @@ Edit the title and rich content in the canvas. Select the tone that matches the 
 -->
 #### Callout attributes
 
-Message and disclosure behavior accepted by <code>docspress/callout</code>.
+Message and disclosure behavior accepted by <code>autodocs-publish/callout</code>.
 
 | Field | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -85,16 +85,16 @@ Message and disclosure behavior accepted by <code>docspress/callout</code>.
 | `content` | string | No | Starter paragraph | <p>Formatted HTML content.</p> |
 | `collapsible` | boolean | No | false | <p>Uses a native disclosure when enabled.</p> |
 | `open` | boolean | No | true | <p>Initial state of a collapsible callout.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Creative examples
 
 ### Open preview tip
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "tip",
     "title": "Preview first",
@@ -109,14 +109,14 @@ Message and disclosure behavior accepted by <code>docspress/callout</code>.
 > **Preview first**
 >
 > Use a dry run before allowing Page writes.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Destructive-operation warning
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "danger",
     "title": "Stop before resetting production",
@@ -130,14 +130,14 @@ Message and disclosure behavior accepted by <code>docspress/callout</code>.
 > **Stop before resetting production**
 >
 > A hard reset can remove unreviewed content. Export the current state, name the recovery owner, and verify the exact target before continuing.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Collapsed background detail
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "note",
     "title": "Why the cache refresh takes a minute",
@@ -152,7 +152,7 @@ Message and disclosure behavior accepted by <code>docspress/callout</code>.
 > **Why the cache refresh takes a minute**
 >
 > Edge nodes refresh independently. The published Page is already authoritative, but a reader in another region may briefly receive the previous copy.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Tone guide
 

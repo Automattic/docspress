@@ -1,0 +1,312 @@
+.wp-block-autodocs-publish-troubleshooter {
+	--adpb-trouble-accent: var(--adp-blue, #3858e9);
+	--adpb-trouble-paper: var(--adp-paper, #fff);
+	--adpb-trouble-canvas: var(--adp-canvas, #f6f7f9);
+	--adpb-trouble-border: var(--adp-line-strong, #cfd4dc);
+	--adpb-trouble-ink: var(--adp-ink, #171a22);
+	--adpb-trouble-copy: var(--adp-copy, #2c3338);
+	--adpb-trouble-muted: var(--adp-muted, #6f7685);
+	box-sizing: border-box;
+	width: 100%;
+	margin-block: clamp(1.5rem, 3vw, 2.25rem);
+	overflow: hidden;
+	border: 1px solid var(--adpb-trouble-border);
+	border-radius: var(--adp-radius, 10px);
+	background: var(--adpb-trouble-paper);
+	color: var(--adpb-trouble-copy);
+}
+
+.autodocs-publish-preset-autodocs-publish .wp-block-autodocs-publish-troubleshooter,
+.autodocs-publish-blocks--preset-autodocs-publish.wp-block-autodocs-publish-troubleshooter {
+	--adpb-trouble-accent: #005cb3;
+}
+
+.autodocs-publish-preset-jetpack .wp-block-autodocs-publish-troubleshooter,
+.autodocs-publish-blocks--preset-jetpack.wp-block-autodocs-publish-troubleshooter {
+	--adpb-trouble-accent: #069e08;
+}
+
+.autodocs-publish-troubleshooter__header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 24px;
+	padding: clamp(18px, 3vw, 26px);
+	border-bottom: 1px solid var(--adpb-trouble-border);
+	background: var(--adpb-trouble-paper);
+}
+
+.autodocs-publish-troubleshooter__header > div {
+	display: grid;
+	max-width: 680px;
+	gap: 5px;
+}
+
+.autodocs-publish-troubleshooter__eyebrow,
+.autodocs-publish-troubleshooter__step {
+	color: var(--adpb-trouble-accent);
+	font: 760 0.64rem/1.3 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.autodocs-publish-troubleshooter__header h3 {
+	margin: 0;
+	color: var(--adpb-trouble-ink);
+	font: 760 clamp(1.1rem, 1rem + 0.4vw, 1.42rem)/1.2 var(--adp-font-heading, var(--adp-font-ui, sans-serif));
+}
+
+.autodocs-publish-troubleshooter__intro,
+.autodocs-publish-troubleshooter__intro p {
+	margin: 0;
+	color: var(--adpb-trouble-muted);
+	font: 500 0.82rem/1.5 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.autodocs-publish-troubleshooter__route {
+	display: grid;
+	position: relative;
+	flex: 0 0 72px;
+	grid-template-columns: repeat(3, 14px);
+	align-items: center;
+	justify-content: space-between;
+	height: 32px;
+}
+
+.autodocs-publish-troubleshooter__route::before {
+	position: absolute;
+	right: 7px;
+	left: 7px;
+	height: 1px;
+	background: color-mix(in srgb, var(--adpb-trouble-accent) 40%, var(--adpb-trouble-border));
+	content: "";
+}
+
+.autodocs-publish-troubleshooter__route span {
+	z-index: 1;
+	width: 12px;
+	height: 12px;
+	border: 2px solid var(--adpb-trouble-accent);
+	border-radius: var(--adp-radius, 10px);
+	background: var(--adpb-trouble-paper);
+}
+
+.autodocs-publish-troubleshooter__route span:nth-child(2) {
+	background: var(--adpb-trouble-accent);
+}
+
+.autodocs-publish-troubleshooter__progress {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 9px clamp(18px, 3vw, 26px);
+	border-bottom: 1px solid var(--adpb-trouble-border);
+	background: var(--adpb-trouble-canvas);
+}
+
+.autodocs-publish-troubleshooter__progress-bar {
+	flex: 1 1 auto;
+	height: 4px;
+	overflow: hidden;
+	border-radius: var(--adp-radius, 10px);
+	background: color-mix(in srgb, var(--adpb-trouble-border) 75%, transparent);
+}
+
+.autodocs-publish-troubleshooter__progress-bar i {
+	display: block;
+	width: 34%;
+	height: 100%;
+	border-radius: inherit;
+	background: var(--adpb-trouble-accent);
+	transition: width 180ms ease;
+}
+
+.autodocs-publish-troubleshooter__progress-label {
+	min-width: 112px;
+	color: var(--adpb-trouble-muted);
+	font: 620 0.68rem/1.2 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	text-align: right;
+}
+
+.autodocs-publish-troubleshooter__stage {
+	min-height: 238px;
+	padding: clamp(24px, 5vw, 46px);
+}
+
+.autodocs-publish-troubleshooter__question {
+	display: grid;
+	max-width: 680px;
+	margin-inline: auto;
+	gap: 12px;
+}
+
+.autodocs-publish-troubleshooter__question[hidden],
+.autodocs-publish-troubleshooter__outcome[hidden] {
+	display: none;
+}
+
+.autodocs-publish-troubleshooter__question h4,
+.autodocs-publish-troubleshooter__outcome h4 {
+	margin: 0;
+	color: var(--adpb-trouble-ink);
+	font: 740 clamp(1.08rem, 1rem + 0.3vw, 1.3rem)/1.3 var(--adp-font-heading, var(--adp-font-ui, sans-serif));
+}
+
+.autodocs-publish-troubleshooter__question h4:focus,
+.autodocs-publish-troubleshooter__outcome h4:focus {
+	outline: none;
+}
+
+.autodocs-publish-troubleshooter__choices {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+	margin-top: 8px;
+}
+
+.autodocs-publish-troubleshooter__choice,
+.autodocs-publish-troubleshooter__footer button {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	box-sizing: border-box;
+	min-height: 46px;
+	padding: 10px 13px;
+	border: 1px solid var(--adpb-trouble-border);
+	border-radius: var(--adp-radius, 10px);
+	background: var(--adpb-trouble-paper);
+	color: var(--adpb-trouble-ink);
+	font: 650 0.77rem/1.3 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	text-align: left;
+	cursor: pointer;
+}
+
+.autodocs-publish-troubleshooter__choice:hover,
+.autodocs-publish-troubleshooter__choice:focus-visible,
+.autodocs-publish-troubleshooter__footer button:hover,
+.autodocs-publish-troubleshooter__footer button:focus-visible {
+	border-color: var(--adpb-trouble-accent);
+	outline: 2px solid color-mix(in srgb, var(--adpb-trouble-accent) 24%, transparent);
+	outline-offset: 1px;
+}
+
+.autodocs-publish-troubleshooter__choice.is-primary {
+	border-color: color-mix(in srgb, var(--adpb-trouble-accent) 48%, var(--adpb-trouble-border));
+	background: color-mix(in srgb, var(--adpb-trouble-accent) 7%, var(--adpb-trouble-paper));
+}
+
+.autodocs-publish-troubleshooter__choice svg {
+	width: 16px;
+	height: 16px;
+	fill: none;
+	stroke: var(--adpb-trouble-accent);
+	stroke-width: 2;
+}
+
+.autodocs-publish-troubleshooter__outcome {
+	display: grid;
+	grid-template-columns: 38px minmax(0, 1fr);
+	max-width: 680px;
+	margin-inline: auto;
+	gap: 14px;
+}
+
+.autodocs-publish-troubleshooter__outcome-icon {
+	display: block;
+	position: relative;
+	width: 34px;
+	height: 34px;
+	border: 1px solid var(--adpb-trouble-border);
+	border-radius: var(--adp-radius, 10px);
+	background: color-mix(in srgb, var(--adpb-trouble-accent) 8%, var(--adpb-trouble-paper));
+}
+
+.autodocs-publish-troubleshooter__outcome-icon::before,
+.autodocs-publish-troubleshooter__outcome-icon::after {
+	position: absolute;
+	background: var(--adpb-trouble-accent);
+	content: "";
+}
+
+.autodocs-publish-troubleshooter__outcome-icon::before {
+	top: 16px;
+	left: 9px;
+	width: 16px;
+	height: 2px;
+}
+
+.autodocs-publish-troubleshooter__outcome-icon::after {
+	top: 9px;
+	left: 16px;
+	width: 2px;
+	height: 16px;
+}
+
+.autodocs-publish-troubleshooter__outcome.is-success .autodocs-publish-troubleshooter__outcome-icon {
+	--adpb-trouble-accent: #168038;
+}
+
+.autodocs-publish-troubleshooter__outcome.is-warning .autodocs-publish-troubleshooter__outcome-icon {
+	--adpb-trouble-accent: #996800;
+}
+
+.autodocs-publish-troubleshooter__outcome.is-error .autodocs-publish-troubleshooter__outcome-icon {
+	--adpb-trouble-accent: #c53030;
+}
+
+.autodocs-publish-troubleshooter__outcome-copy {
+	margin-top: 8px;
+	color: var(--adpb-trouble-copy);
+	font: 500 0.84rem/1.6 var(--adp-font-copy, Georgia, serif);
+}
+
+.autodocs-publish-troubleshooter__outcome-copy > :first-child {
+	margin-top: 0;
+}
+
+.autodocs-publish-troubleshooter__outcome-copy > :last-child {
+	margin-bottom: 0;
+}
+
+.autodocs-publish-troubleshooter__footer {
+	display: flex;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 10px clamp(18px, 3vw, 26px);
+	border-top: 1px solid var(--adpb-trouble-border);
+	background: var(--adpb-trouble-canvas);
+}
+
+.autodocs-publish-troubleshooter__footer button {
+	min-height: 34px;
+	padding: 6px 10px;
+	background: transparent;
+	color: var(--adpb-trouble-muted);
+	font-size: 0.68rem;
+}
+
+.autodocs-publish-troubleshooter__footer button:disabled {
+	opacity: 0.42;
+	cursor: not-allowed;
+}
+
+@media (max-width: 560px) {
+	.autodocs-publish-troubleshooter__route {
+		display: none;
+	}
+
+	.autodocs-publish-troubleshooter__choices {
+		grid-template-columns: 1fr;
+	}
+
+	.autodocs-publish-troubleshooter__stage {
+		min-height: 280px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.autodocs-publish-troubleshooter__progress-bar i {
+		transition: none;
+	}
+}

@@ -6,7 +6,7 @@ describe("markdownToBlocks", () => {
   it("uses the first h1 as title and removes it from body", () => {
     const result = markdownToBlocks(`# Hello Docs
 
-Welcome to **Docspress** with [links](https://example.com).
+Welcome to **Autodocs Publish** with [links](https://example.com).
 
 ## Next
 
@@ -17,7 +17,7 @@ Welcome to **Docspress** with [links](https://example.com).
     expect(result.title).toBe("Hello Docs");
     expect(result.blocks).not.toContain("<h1>Hello Docs</h1>");
     expect(result.blocks).toContain("<!-- wp:paragraph -->");
-    expect(result.blocks).toContain("<strong>Docspress</strong>");
+    expect(result.blocks).toContain("<strong>Autodocs Publish</strong>");
     expect(result.blocks).toContain("<!-- wp:list -->");
     expect(parse(result.blocks).map((block) => block.blockName).filter(Boolean)).toEqual([
       "core/paragraph",
@@ -126,27 +126,27 @@ console.log("hi");
   });
 
   it("serializes HTML attributes in custom blocks safely for WordPress", () => {
-    const result = markdownToBlocks(`<!-- wp:docspress/callout {"tone":"tip","content":"<p>Use <code>dry-run</code> first.</p>"} /-->`, {
+    const result = markdownToBlocks(`<!-- wp:autodocs-publish/callout {"tone":"tip","content":"<p>Use <code>dry-run</code> first.</p>"} /-->`, {
       fallbackTitle: "Fallback"
     });
 
     expect(result.blocks).toContain('"content":"\\u003cp\\u003eUse \\u003ccode\\u003edry-run\\u003c/code\\u003e first.\\u003c/p\\u003e"');
 
     const [block] = parse(result.blocks);
-    expect(block.blockName).toBe("docspress/callout");
+    expect(block.blockName).toBe("autodocs-publish/callout");
     expect(block.attrs.content).toBe("<p>Use <code>dry-run</code> first.</p>");
   });
 
   it("protects nested block comments inside serialized attributes before Markdown parsing", () => {
-    const source = String.raw`<!-- wp:docspress/api-request {"method":"POST","endpoint":"/wp-json/wp/v2/pages","responseStatus":"201 Created","responseBody":"{\n  \"content\": \"<!-- docspress:{...} -->\\n<!-- wp:paragraph -->...\"\n}","responseBodyFormat":"json"} /-->`;
+    const source = String.raw`<!-- wp:autodocs-publish/api-request {"method":"POST","endpoint":"/wp-json/wp/v2/pages","responseStatus":"201 Created","responseBody":"{\n  \"content\": \"<!-- autodocs-publish:{...} -->\\n<!-- wp:paragraph -->...\"\n}","responseBodyFormat":"json"} /-->`;
     const result = markdownToBlocks(source, { fallbackTitle: "Fallback" });
 
     expect(result.blocks).not.toContain("<!-- wp:html -->");
-    expect(result.blocks).toContain("\\u003c!\\u002d\\u002d docspress:");
+    expect(result.blocks).toContain("\\u003c!\\u002d\\u002d autodocs-publish:");
 
     const [block] = parse(result.blocks);
-    expect(block.blockName).toBe("docspress/api-request");
-    expect(block.attrs.responseBody).toContain("<!-- docspress:{...} -->");
+    expect(block.blockName).toBe("autodocs-publish/api-request");
+    expect(block.attrs.responseBody).toContain("<!-- autodocs-publish:{...} -->");
     expect(block.attrs.responseBody).toContain("<!-- wp:paragraph -->");
   });
 

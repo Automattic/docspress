@@ -6,10 +6,10 @@ Use a manifest when public routes or parents must remain independent of filename
 
 ## Define a manifest
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/colorful-code",
+  "name": "autodocs-publish/colorful-code",
   "attrs": {
     "language": "json",
     "filename": "docs/manifest.json",
@@ -37,18 +37,18 @@ Use a manifest when public routes or parents must remain independent of filename
   ]
 }
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 Set `manifest-file: docs/manifest.json`. Each entry needs a stable `id`; `parent` references another entry ID. Entries without `markdown_source` become managed placeholder Pages.
 
-DocsPress stops on duplicate IDs, missing parents, parent cycles, invalid entries, or two entries that normalize to the same route.
+Autodocs Publish stops on duplicate IDs, missing parents, parent cycles, invalid entries, or two entries that normalize to the same route.
 
 ## Preserve moved paths
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/colorful-code",
+  "name": "autodocs-publish/colorful-code",
   "attrs": {
     "language": "json",
     "filename": "docs/redirects.json",
@@ -69,14 +69,14 @@ DocsPress stops on duplicate IDs, missing parents, parent cycles, invalid entrie
   }
 }
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-Set `redirects-file: docs/redirects.json`. DocsPress creates a managed moved-page placeholder containing a link to the new destination.
+Set `redirects-file: docs/redirects.json`. Autodocs Publish creates a managed moved-page placeholder containing a link to the new destination.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "note",
     "title": "Not an HTTP redirect",
@@ -90,6 +90,6 @@ Set `redirects-file: docs/redirects.json`. DocsPress creates a managed moved-pag
 > **Not an HTTP redirect**
 >
 > The moved-page placeholder is a WordPress Page with a destination link. It is not a server-level 301 response.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 A redirect cannot replace the managed root and cannot occupy the same route as a real documentation Page.

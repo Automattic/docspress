@@ -33,7 +33,7 @@ const payload = {
   sidebars: sidebarsRegistry.entries.map(({ id, root, order }) => ({ id, root, order })),
   github: {
     serverUrl: "https://github.com",
-    repository: "Automattic/docspress",
+    repository: "Automattic/autodocs-publish",
     ref: "main"
   },
   pages: pages.map((page) => ({

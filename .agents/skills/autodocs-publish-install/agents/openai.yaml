@@ -1,0 +1,4 @@
+interface:
+  display_name: "Install Autodocs Publish"
+  short_description: "Publish and version GitHub docs safely"
+  default_prompt: "Use $autodocs-publish-install to inspect this repository, preserve its documentation layout, and configure safe publishing with Autodocs Publish, including API versioning when the source requires it."

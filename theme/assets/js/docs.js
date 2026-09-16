@@ -24,8 +24,8 @@
 	const shortcutHint = document.querySelector('[data-search-shortcut-hint]');
 	const themeToggle = document.querySelector('[data-theme-toggle]');
 	const versionSelect = document.querySelector('[data-version-select]');
-	const searchDataNode = document.querySelector('[data-docspress-search-data]');
-	const feedbackWidgets = document.querySelectorAll('[data-docspress-feedback]');
+	const searchDataNode = document.querySelector('[data-autodocs-publish-search-data]');
+	const feedbackWidgets = document.querySelectorAll('[data-autodocs-publish-feedback]');
 	body.classList.toggle('has-docs-sidebar', Boolean(sidebar));
 	let searchData = {};
 	if (searchDataNode) {
@@ -149,7 +149,7 @@
 			const button = document.createElement('button');
 			const chevron = document.createElement('span');
 			const title = (item.dataset.docTitle || link.textContent).trim();
-			const branchId = 'docspress-nav-branch-' + index;
+			const branchId = 'autodocs-publish-nav-branch-' + index;
 			const explicitlyCollapsed = link.dataset.sidebarCollapsed;
 			const activeBranch = item.classList.contains('current-menu-item')
 				|| item.classList.contains('current-menu-ancestor')
@@ -253,12 +253,22 @@
 	}
 
 	function feedbackStorageKey(pageId) {
+		return 'autodocs-publish-feedback:' + pageId;
+	}
+
+	function legacyFeedbackStorageKey(pageId) {
 		return 'docspress-feedback:' + pageId;
 	}
 
 	function savedFeedbackVote(pageId) {
 		try {
-			return window.localStorage.getItem(feedbackStorageKey(pageId));
+			const key = feedbackStorageKey(pageId);
+			let vote = window.localStorage.getItem(key);
+			if (vote === null) {
+				vote = window.localStorage.getItem(legacyFeedbackStorageKey(pageId));
+				if (vote !== null) window.localStorage.setItem(key, vote);
+			}
+			return vote;
 		} catch (error) {
 			return null;
 		}
@@ -480,7 +490,7 @@
 			const arrow = document.createElement('span');
 
 			option.className = 'command-search-result';
-			option.id = 'docspress-command-result-' + index;
+			option.id = 'autodocs-publish-command-result-' + index;
 			option.setAttribute('role', 'option');
 			option.setAttribute('aria-selected', 'false');
 			link.href = record.url;
@@ -673,7 +683,13 @@
 
 	if (themeToggle) {
 		let storedTheme = '';
-		try { storedTheme = localStorage.getItem('docspress-color-mode') || ''; } catch (error) {}
+		try {
+			storedTheme = localStorage.getItem('autodocs-publish-color-mode') || '';
+			if (!storedTheme) {
+				storedTheme = localStorage.getItem('docspress-color-mode') || '';
+				if (storedTheme) localStorage.setItem('autodocs-publish-color-mode', storedTheme);
+			}
+		} catch (error) {}
 		if (storedTheme !== 'light' && storedTheme !== 'dark') {
 			const defaultMode = themeToggle.dataset.defaultMode || 'light';
 			if (defaultMode === 'light' || defaultMode === 'dark') {
@@ -688,7 +704,7 @@
 		themeToggle.addEventListener('click', function () {
 			const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
 			root.dataset.theme = next;
-			try { localStorage.setItem('docspress-color-mode', next); } catch (error) {}
+			try { localStorage.setItem('autodocs-publish-color-mode', next); } catch (error) {}
 			updateThemeButton();
 		});
 	}
@@ -700,7 +716,7 @@
 	}
 
 	document.querySelectorAll('.entry-content pre').forEach(function (pre) {
-		if (pre.closest('[class*="wp-block-docspress-"]')) return;
+		if (pre.closest('[class*="wp-block-autodocs-publish-"]')) return;
 		const button = document.createElement('button');
 		button.className = 'copy-code';
 		button.type = 'button';

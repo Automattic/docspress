@@ -152,7 +152,7 @@ function waitForAuthorizationCode(redirect, expectedState) {
         }
 
         response.setHeader("Content-Type", "text/html; charset=utf-8");
-        response.end("<h1>Docspress token received</h1><p>You can close this tab and return to your terminal.</p>");
+        response.end("<h1>Autodocs Publish token received</h1><p>You can close this tab and return to your terminal.</p>");
         resolve(code);
         server.close();
       } catch (error) {
@@ -226,10 +226,10 @@ function setGitHubSecret(repo, token) {
 }
 
 function printHelp() {
-  console.log(`Create a WordPress.com OAuth token for Docspress.
+  console.log(`Create a WordPress.com OAuth token for Autodocs Publish.
 
 Usage:
-  npx docspress token --client-id CLIENT_ID --client-secret CLIENT_SECRET --site fkadev.blog --repo f/docspress-demo
+  npx autodocs-publish token --client-id CLIENT_ID --client-secret CLIENT_SECRET --site example.wordpress.com --repo OWNER/REPO
 
 Options:
   --client-id       WordPress.com app client ID.

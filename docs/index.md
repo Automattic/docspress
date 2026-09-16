@@ -1,19 +1,19 @@
 ---
-title: DocsPress documentation
+title: Autodocs Publish documentation
 sidebar_position: 0
 sidebar_collapsed: false
 ---
 
-DocsPress is an AI-first documentation system for teams that want people and coding agents reading the same source. Markdown stays beside the code it explains; WordPress turns it into a branded, editable documentation experience made of native Pages and Gutenberg blocks.
+Autodocs Publish is an AI-first documentation system for teams that want people and coding agents reading the same source. Markdown stays beside the code it explains; WordPress turns it into a branded, editable documentation experience made of native Pages and Gutenberg blocks.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "success",
     "title": "This entire documentation site fits in one Playground link",
-    "content": "\u003cp\u003e\u003ca href=\"https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-docs.json\u0026amp;page-title=DocsPress%20Documentation\"\u003eOpen the complete DocsPress documentation in WordPress Playground\u003c/a\u003e. The Blueprint creates a temporary editable WordPress site, imports this converter-generated Page tree, and lands on \u003ccode\u003e/docs/\u003c/code\u003e.\u003c/p\u003e",
+    "content": "\u003cp\u003e\u003ca href=\"https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fautodocs-publish%2Fmain%2Ftheme%2Fblueprint-docs.json\u0026amp;page-title=Autodocs%20Publish%20Documentation\"\u003eOpen the complete Autodocs Publish documentation in WordPress Playground\u003c/a\u003e. The Blueprint creates a temporary editable WordPress site, imports this converter-generated Page tree, and lands on \u003ccode\u003e/docs/\u003c/code\u003e.\u003c/p\u003e",
     "collapsible": false
   }
 }
@@ -22,17 +22,17 @@ DocsPress is an AI-first documentation system for teams that want people and cod
 >
 > **This entire documentation site fits in one Playground link**
 >
-> [Open the complete DocsPress documentation in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-docs.json&page-title=DocsPress%20Documentation). The Blueprint creates a temporary editable WordPress site, imports this converter-generated Page tree, and lands on `/docs/`.
-<!-- /docspress:block -->
+> [Open the complete Autodocs Publish documentation in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fautodocs-publish%2Fmain%2Ftheme%2Fblueprint-docs.json&page-title=Autodocs%20Publish%20Documentation). The Blueprint creates a temporary editable WordPress site, imports this converter-generated Page tree, and lands on `/docs/`.
+<!-- /autodocs-publish:block -->
 
 ## AI-first from discovery to maintenance
 
-DocsPress gives text-first clients a native path through the documentation. The root [`/llms.txt`](guides/ai-friendly-documentation.md) file indexes every published, source-backed Page. Replace a Page route’s trailing slash with `.md` to fetch its exact reviewed Markdown with the `text/markdown` content type—no HTML shell to parse and no reconstructed source.
+Autodocs Publish gives text-first clients a native path through the documentation. The root [`/llms.txt`](guides/ai-friendly-documentation.md) file indexes every published, source-backed Page. Replace a Page route’s trailing slash with `.md` to fetch its exact reviewed Markdown with the `text/markdown` content type—no HTML shell to parse and no reconstructed source.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/flow",
+  "name": "autodocs-publish/flow",
   "attrs": {
     "start": 1,
     "steps": [
@@ -46,7 +46,7 @@ DocsPress gives text-first clients a native path through the documentation. The 
       },
       {
         "title": "Improve the source",
-        "content": "\u003cp\u003eRepository-aware DocsPress skills help coding agents generate or update documentation from verified code evidence, ready for review.\u003c/p\u003e"
+        "content": "\u003cp\u003eRepository-aware Autodocs Publish skills help coding agents generate or update documentation from verified code evidence, ready for review.\u003c/p\u003e"
       }
     ]
   }
@@ -62,13 +62,13 @@ DocsPress gives text-first clients a native path through the documentation. The 
 
 3. **Improve the source**
 
-   Repository-aware DocsPress skills help coding agents generate or update documentation from verified code evidence, ready for review.
-<!-- /docspress:block -->
+   Repository-aware Autodocs Publish skills help coding agents generate or update documentation from verified code evidence, ready for review.
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/result",
+  "name": "autodocs-publish/result",
   "attrs": {
     "status": "success",
     "title": "One corpus for people and agents",
@@ -84,24 +84,24 @@ DocsPress gives text-first clients a native path through the documentation. The 
 > Readers get the complete WordPress experience. Agents and retrieval systems get discoverable, stable Markdown from the same reviewed source.
 >
 > _llms.txt · text/markdown · source-owned Pages_
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 Read [Make documentation AI-friendly](guides/ai-friendly-documentation.md) for the endpoint contract, permissions, and verification commands.
 
 ## Make the complete site yours
 
-DocsPress includes a native block theme rather than a fixed documentation frontend. Use the WordPress Site Editor to change the header, documentation navigation, article tools, table of contents, footer, homepage, posts, archives, search results, comments, and alternate Page layouts.
+Autodocs Publish includes a native block theme rather than a fixed documentation frontend. Use the WordPress Site Editor to change the header, documentation navigation, article tools, table of contents, footer, homepage, posts, archives, search results, comments, and alternate Page layouts.
 
-Global Styles can switch the whole system—not only its colors. The default DocsPress design and the WordPress.org, WordPress.com, and Jetpack families each define coordinated typography, color, spacing, corner, heading, and component treatments. Nine additional palettes provide light and dark brand directions, while native per-block controls let one surface differ without breaking the site-wide system.
+Global Styles can switch the whole system—not only its colors. The default Autodocs Publish design and the WordPress.org, WordPress.com, and Jetpack families each define coordinated typography, color, spacing, corner, heading, and component treatments. Nine additional palettes provide light and dark brand directions, while native per-block controls let one surface differ without breaking the site-wide system.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "success",
     "title": "Fully customizable in the WordPress Site Editor",
-    "content": "\u003cp\u003eApply your brand without maintaining a separate frontend or opening a legacy Customizer panel. The same Global Styles update the documentation shell, normal content, comments, core blocks, and DocsPress blocks.\u003c/p\u003e",
+    "content": "\u003cp\u003eApply your brand without maintaining a separate frontend or opening a legacy Customizer panel. The same Global Styles update the documentation shell, normal content, comments, core blocks, and Autodocs Publish blocks.\u003c/p\u003e",
     "collapsible": false
   }
 }
@@ -110,14 +110,14 @@ Global Styles can switch the whole system—not only its colors. The default Doc
 >
 > **Fully customizable in the WordPress Site Editor**
 >
-> Apply your brand without maintaining a separate frontend or opening a legacy Customizer panel. The same Global Styles update the documentation shell, normal content, comments, core blocks, and DocsPress blocks.
-<!-- /docspress:block -->
+> Apply your brand without maintaining a separate frontend or opening a legacy Customizer panel. The same Global Styles update the documentation shell, normal content, comments, core blocks, and Autodocs Publish blocks.
+<!-- /autodocs-publish:block -->
 
-Follow [Customize the theme in the Site Editor](guides/customize-theme.md) for the complete editing map, or read [Why DocsPress?](why-docspress.md) to compare this WordPress-native model with a separately built documentation site.
+Follow [Customize the theme in the Site Editor](guides/customize-theme.md) for the complete editing map, or read [Why Autodocs Publish?](why-autodocs-publish.md) to compare this WordPress-native model with a separately built documentation site.
 
 ## Use blocks made for technical documentation
 
-Markdown stays portable, but technical explanations do not have to look like plain prose. DocsPress adds editable Gutenberg blocks for connected flows, file trees, prompts, terminal sessions, code tabs, API requests, callouts, results, audience paths, and more.
+Markdown stays portable, but technical explanations do not have to look like plain prose. Autodocs Publish adds editable Gutenberg blocks for connected flows, file trees, prompts, terminal sessions, code tabs, API requests, callouts, results, audience paths, and more.
 
 Use Markdown syntax when it communicates clearly, then add a structured block when sequence, hierarchy, commands, or outcomes deserve a stronger visual treatment. The converter preserves the supported block comments in source, so the GitHub and WordPress representations stay aligned.
 
@@ -125,10 +125,10 @@ Read [Gutenberg blocks](reference/gutenberg-blocks/index.md) for the full schema
 
 ## Choose a starting point
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/audience-paths",
+  "name": "autodocs-publish/audience-paths",
   "attrs": {
     "eyebrow": "Start here",
     "title": "Where are your docs today?",
@@ -177,46 +177,46 @@ Connect an existing docs folder to WordPress and begin with a safe draft sync.
 Generate source-grounded documentation with AI, review it, then publish it.
 
 [Create docs with AI](/docs/create-docs-with-ai/)
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 Both paths use repository-aware skills and end with the same reviewed Markdown-to-WordPress workflow. The difference is whether a usable documentation tree already exists.
 
-## Install DocsPress with your coding agent
+## Install Autodocs Publish with your coding agent
 
 Install both skills into the repository that owns the documentation:
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/terminal-session",
+  "name": "autodocs-publish/terminal-session",
   "attrs": {
-    "title": "Install DocsPress skills",
+    "title": "Install Autodocs Publish skills",
     "shell": "bash",
     "prompt": "$",
-    "command": "npx skills add Automattic/docspress \u002d\u002dall \u002d\u002dfull-depth\nnpx skills list",
+    "command": "npx skills add Automattic/autodocs-publish \u002d\u002dall \u002d\u002dfull-depth\nnpx skills list",
     "output": ""
   }
 }
 -->
-#### Install DocsPress skills
+#### Install Autodocs Publish skills
 
 ```bash
-$ npx skills add Automattic/docspress --all --full-depth
+$ npx skills add Automattic/autodocs-publish --all --full-depth
 $ npx skills list
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 Then follow [Publish existing docs](publish-existing-docs/index.md) or [Create docs with AI](create-docs-with-ai/index.md). Each path provides a focused, copy-ready agent prompt.
 
-## How DocsPress works
+## How Autodocs Publish works
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/file-tree",
+  "name": "autodocs-publish/file-tree",
   "attrs": {
     "root": "your-repository/",
-    "tree": ".claude/\n  skills/\n    docspress-install/\n    generate-docs-from-source/\n.github/\n  workflows/\n    sync-docs.yml\ndocs/\n  index.md\n  publish-existing-docs/\n    index.md\n    first-sync.md\n  create-docs-with-ai/\n    index.md\n    review-and-publish.md",
+    "tree": ".claude/\n  skills/\n    autodocs-publish-install/\n    generate-docs-from-source/\n.github/\n  workflows/\n    sync-docs.yml\ndocs/\n  index.md\n  publish-existing-docs/\n    index.md\n    first-sync.md\n  create-docs-with-ai/\n    index.md\n    review-and-publish.md",
     "caption": "Choose a starting workflow, then publish the reviewed Markdown tree as WordPress Pages."
   }
 }
@@ -226,7 +226,7 @@ Then follow [Publish existing docs](publish-existing-docs/index.md) or [Create d
 ```text
 .claude/
   skills/
-    docspress-install/
+    autodocs-publish-install/
     generate-docs-from-source/
 .github/
   workflows/
@@ -242,25 +242,25 @@ docs/
 ```
 
 _Choose a starting workflow, then publish the reviewed Markdown tree as WordPress Pages._
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 1. Authors and agents can update Markdown under `docs/`, while editors can update existing managed Pages in Gutenberg.
 2. The GitHub Action converts Markdown into Gutenberg blocks and Gutenberg changes back into focused Markdown edits.
-3. DocsPress compares both versions with their shared management marker.
+3. Autodocs Publish compares both versions with their shared management marker.
 4. GitHub-only changes update WordPress; WordPress-only changes open a pull request; two-sided changes stop as conflicts.
 
 Read [Publish existing docs](publish-existing-docs/index.md) for the safe synchronization sequence, [Create docs with AI](create-docs-with-ai/index.md) when documentation must be generated first, or [Authoring documentation](authoring/index.md) for the Markdown contract.
 
-See [Why DocsPress?](why-docspress.md) for a practical comparison with Docusaurus and the cases where keeping WordPress as the publishing surface removes an entire parallel docs stack.
+See [Why Autodocs Publish?](why-autodocs-publish.md) for a practical comparison with Docusaurus and the cases where keeping WordPress as the publishing surface removes an entire parallel docs stack.
 
 ## Keep documentation synchronized
 
 Prove the connection with `workflow_dispatch`, `status: draft`, and `dry-run: true`. After the dry run and draft Page tree are approved, add this path-scoped trigger:
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/colorful-code",
+  "name": "autodocs-publish/colorful-code",
   "attrs": {
     "language": "yaml",
     "filename": ".github/workflows/sync-docs.yml",
@@ -284,12 +284,12 @@ on:
       - ".github/workflows/sync-docs.yml"
   workflow_dispatch:
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/result",
+  "name": "autodocs-publish/result",
   "attrs": {
     "status": "success",
     "title": "One source of truth",
@@ -305,7 +305,7 @@ on:
 > Every merged documentation change can flow from GitHub to the same WordPress Page hierarchy without maintaining a second copy.
 >
 > _Markdown → Gutenberg → WordPress_
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 Read [GitHub to WordPress](guides/github-to-wordpress.md) and [WordPress to GitHub](guides/wordpress-to-github.md) separately, or follow the complete [continuous synchronization guide](guides/continuous-sync.md) before enabling automatic writes.
 
@@ -313,8 +313,8 @@ Read [GitHub to WordPress](guides/github-to-wordpress.md) and [WordPress to GitH
 
 - [Publish existing docs](/docs/publish-existing-docs/): connect a Markdown tree, authenticate, and run the first safe sync.
 - [Create docs with AI](/docs/create-docs-with-ai/): generate a source-grounded documentation tree, review it, and hand it to the publishing workflow.
-- [Why DocsPress?](/docs/why-docspress/): compare the WordPress-native model with a Docusaurus static site.
-- [Authoring](/docs/authoring/): structure pages and use Markdown or DocsPress Gutenberg blocks.
+- [Why Autodocs Publish?](/docs/why-autodocs-publish/): compare the WordPress-native model with a Docusaurus static site.
+- [Authoring](/docs/authoring/): structure pages and use Markdown or Autodocs Publish Gutenberg blocks.
 - [Guides](/docs/guides/): customize the complete theme in the Site Editor, synchronize in either direction, prevent merge loops, and control routes with manifests or redirects.
 - [Reference](/docs/reference/): Action inputs, CLI behavior, REST reconciliation, theme, and block schemas.
 - [Troubleshooting](/docs/troubleshooting/): diagnose authentication, conflicts, links, and workflow failures.

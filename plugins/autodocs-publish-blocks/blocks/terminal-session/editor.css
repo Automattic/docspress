@@ -1,0 +1,31 @@
+.editor-styles-wrapper .autodocs-publish-terminal--editor {
+	margin-block: 1.5rem;
+}
+
+.autodocs-publish-terminal--editor .autodocs-publish-terminal__bar {
+	grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.autodocs-publish-terminal--editor .autodocs-publish-terminal__command textarea,
+.autodocs-publish-terminal--editor textarea.autodocs-publish-terminal__output {
+	display: block;
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 48px;
+	margin: 0;
+	padding: 0;
+	resize: vertical;
+	border: 0;
+	outline: 0;
+	background: transparent;
+	color: var(--adpb-terminal-text);
+	font: 500 0.87rem/1.65 var(--adp-font-mono, "SFMono-Regular", Consolas, monospace);
+}
+
+.autodocs-publish-terminal--editor textarea.autodocs-publish-terminal__output {
+	min-height: 74px;
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid var(--adpb-terminal-line);
+	color: var(--adpb-terminal-muted);
+}

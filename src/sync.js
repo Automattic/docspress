@@ -9,7 +9,7 @@ export async function syncPages(options) {
     deleteMode = "trash",
     rootSlug = "docs",
     versionsRegistry = null,
-    versionTaxonomy = "docspress_versions",
+    versionTaxonomy = "autodocs_publish_versions",
     githubRepository = "",
     githubRef = "main",
     githubServerUrl = "https://github.com",
@@ -140,8 +140,8 @@ export async function syncPages(options) {
       action: "delete",
       key: page.sentinel.key,
       id: page.id,
-      version: page.sentinel?.docsVersion || page.meta?._docspress_version_id || "",
-      sourcePath: page.sentinel?.source || page.meta?._docspress_source_path || ""
+      version: page.sentinel?.docsVersion || page.meta?._autodocs_publish_version_id || "",
+      sourcePath: page.sentinel?.source || page.meta?._autodocs_publish_source_path || ""
     });
     logger.info?.(`${dryRun ? "Would delete" : "Deleting"} ${page.sentinel.key}`);
     if (!dryRun) {
@@ -170,30 +170,30 @@ function pagePayload(page, parentId, managed, options = {}) {
   if (page.docsVersion?.id) {
     payload[options.versionTaxonomy] = options.versionTermId ? [options.versionTermId] : [];
     payload.meta = {
-      _docspress_version_id: page.docsVersion.id,
-      _docspress_logical_route: page.logicalRoute || "",
-      _docspress_page_identity: page.stableIdentity,
-      _docspress_source_type: page.sourceType,
-      _docspress_source_path: page.sourcePath,
+      _autodocs_publish_version_id: page.docsVersion.id,
+      _autodocs_publish_logical_route: page.logicalRoute || "",
+      _autodocs_publish_page_identity: page.stableIdentity,
+      _autodocs_publish_source_type: page.sourceType,
+      _autodocs_publish_source_path: page.sourcePath,
       ...githubSourceMeta(page, options),
-      _docspress_docs_root: page.key.split("/")[0],
-      _docspress_version_container: false
+      _autodocs_publish_docs_root: page.key.split("/")[0],
+      _autodocs_publish_version_container: false
     };
   } else if (page.versionContainer) {
     payload.meta = {
-      _docspress_version_container: true
+      _autodocs_publish_version_container: true
     };
-  } else if (managed?.meta?._docspress_version_id) {
+  } else if (managed?.meta?._autodocs_publish_version_id) {
     payload[options.versionTaxonomy] = [];
     payload.meta = {
-      _docspress_version_id: "",
-      _docspress_logical_route: "",
-      _docspress_page_identity: "",
-      _docspress_source_type: "",
-      _docspress_source_path: page.sourcePath || "",
+      _autodocs_publish_version_id: "",
+      _autodocs_publish_logical_route: "",
+      _autodocs_publish_page_identity: "",
+      _autodocs_publish_source_type: "",
+      _autodocs_publish_source_path: page.sourcePath || "",
       ...githubSourceMeta(page, options),
-      _docspress_docs_root: page.key.split("/")[0],
-      _docspress_version_container: false
+      _autodocs_publish_docs_root: page.key.split("/")[0],
+      _autodocs_publish_version_container: false
     };
   }
 
@@ -231,23 +231,23 @@ function managedMetadataMatches(desired, managed, options = {}) {
   const managedHasSidebar = Boolean(
     managed.sentinel?.sidebarId
       || managed.sentinel?.sidebarRoot
-      || managed.meta?._docspress_sidebar_id
-      || normalizeBooleanMeta(managed.meta?._docspress_sidebar_root)
+      || managed.meta?._autodocs_publish_sidebar_id
+      || normalizeBooleanMeta(managed.meta?._autodocs_publish_sidebar_root)
   );
   const sidebarMatches = desiredHasSidebar
     ? managed.sentinel?.sidebarId === desired.sidebarId
       && normalizeBooleanMeta(managed.sentinel?.sidebarRoot) === Boolean(desired.sidebarRoot)
-      && String(managed.meta?._docspress_sidebar_id || "") === desired.sidebarId
-      && normalizeBooleanMeta(managed.meta?._docspress_sidebar_root) === Boolean(desired.sidebarRoot)
+      && String(managed.meta?._autodocs_publish_sidebar_id || "") === desired.sidebarId
+      && normalizeBooleanMeta(managed.meta?._autodocs_publish_sidebar_root) === Boolean(desired.sidebarRoot)
     : !managedHasSidebar;
 
   const desiredVersion = desired.docsVersion?.id || "";
-  const versionMatches = String(managed.meta?._docspress_version_id || "") === desiredVersion;
-  const logicalRouteMatches = String(managed.meta?._docspress_logical_route || "") === String(desired.logicalRoute || "");
-  const identityMatches = String(managed.meta?._docspress_page_identity || "") === String(desired.stableIdentity || "");
-  const sourceTypeMatches = String(managed.meta?._docspress_source_type || "") === String(desired.sourceType || "");
+  const versionMatches = String(managed.meta?._autodocs_publish_version_id || "") === desiredVersion;
+  const logicalRouteMatches = String(managed.meta?._autodocs_publish_logical_route || "") === String(desired.logicalRoute || "");
+  const identityMatches = String(managed.meta?._autodocs_publish_page_identity || "") === String(desired.stableIdentity || "");
+  const sourceTypeMatches = String(managed.meta?._autodocs_publish_source_type || "") === String(desired.sourceType || "");
   const sourcePathMatches = !desiredVersion
-    || String(managed.meta?._docspress_source_path || "") === String(desired.sourcePath || "");
+    || String(managed.meta?._autodocs_publish_source_path || "") === String(desired.sourcePath || "");
   const githubMeta = githubSourceMeta(desired, options);
   const githubMatches = !desiredVersion || Object.entries(githubMeta).every(
     ([key, value]) => String(managed.meta?.[key] || "") === String(value)
@@ -255,7 +255,7 @@ function managedMetadataMatches(desired, managed, options = {}) {
   const taxonomyMatches = !desiredVersion
     ? (managed.terms?.[options.versionTaxonomy] || []).length === 0
     : termsMatch(managed.terms?.[options.versionTaxonomy], options.versionTermId ? [options.versionTermId] : []);
-  const containerMatches = normalizeBooleanMeta(managed.meta?._docspress_version_container) === Boolean(desired.versionContainer);
+  const containerMatches = normalizeBooleanMeta(managed.meta?._autodocs_publish_version_container) === Boolean(desired.versionContainer);
 
   return positionMatches
     && collapsedMatches
@@ -274,20 +274,20 @@ function managedMetadataMatches(desired, managed, options = {}) {
 function sidebarPageMeta(page, managed) {
   if (page.sidebarId) {
     return {
-      _docspress_sidebar_id: page.sidebarId,
-      _docspress_sidebar_root: Boolean(page.sidebarRoot)
+      _autodocs_publish_sidebar_id: page.sidebarId,
+      _autodocs_publish_sidebar_root: Boolean(page.sidebarRoot)
     };
   }
 
   if (
     managed?.sentinel?.sidebarId
       || managed?.sentinel?.sidebarRoot
-      || managed?.meta?._docspress_sidebar_id
-      || normalizeBooleanMeta(managed?.meta?._docspress_sidebar_root)
+      || managed?.meta?._autodocs_publish_sidebar_id
+      || normalizeBooleanMeta(managed?.meta?._autodocs_publish_sidebar_root)
   ) {
     return {
-      _docspress_sidebar_id: "",
-      _docspress_sidebar_root: false
+      _autodocs_publish_sidebar_id: "",
+      _autodocs_publish_sidebar_root: false
     };
   }
 
@@ -296,10 +296,10 @@ function sidebarPageMeta(page, managed) {
 
 function githubSourceMeta(page, options = {}) {
   return {
-    _docspress_github_path: page.sourcePath || "",
-    _docspress_github_repository: options.githubRepository || "",
-    _docspress_github_ref: options.githubRef || "main",
-    _docspress_github_server_url: options.githubServerUrl || "https://github.com"
+    _autodocs_publish_github_path: page.sourcePath || "",
+    _autodocs_publish_github_repository: options.githubRepository || "",
+    _autodocs_publish_github_ref: options.githubRef || "main",
+    _autodocs_publish_github_server_url: options.githubServerUrl || "https://github.com"
   };
 }
 
@@ -350,18 +350,18 @@ async function reconcileVersionState({
       client.getSettings()
     ]);
   } catch (error) {
-    throw new Error(`DocsPress versioning requires an active DocsPress Blocks plugin exposing ${versionTaxonomy} and version settings through REST. ${error.message}`);
+    throw new Error(`Autodocs Publish versioning requires an active Autodocs Publish Blocks plugin exposing ${versionTaxonomy} and version settings through REST. ${error.message}`);
   }
 
-  if (!Object.hasOwn(settings, "docspress_repository_latest_version")
-    || !Object.hasOwn(settings, "docspress_version_override")
-    || !Object.hasOwn(settings, "docspress_docs_root_slug")) {
-    throw new Error("DocsPress Blocks is active but its version settings are not exposed through the WordPress REST settings endpoint.");
+  if (!Object.hasOwn(settings, "autodocs_publish_repository_latest_version")
+    || !Object.hasOwn(settings, "autodocs_publish_version_override")
+    || !Object.hasOwn(settings, "autodocs_publish_docs_root_slug")) {
+    throw new Error("Autodocs Publish Blocks is active but its version settings are not exposed through the WordPress REST settings endpoint.");
   }
 
   const configuredIds = new Set(versionsRegistry.versions.map(({ id }) => id));
-  const override = configuredIds.has(String(settings.docspress_version_override || ""))
-    ? String(settings.docspress_version_override)
+  const override = configuredIds.has(String(settings.autodocs_publish_version_override || ""))
+    ? String(settings.autodocs_publish_version_override)
     : "";
   const effectiveLatest = override || versionsRegistry.latest;
   const existingBySlug = new Map(existingTerms.map((term) => [term.slug, term]));
@@ -370,10 +370,10 @@ async function reconcileVersionState({
 
   for (const version of versionsRegistry.versions) {
     const expectedMeta = {
-      docspress_version_order: version.order,
-      docspress_version_active: true,
-      docspress_version_repository_latest: version.id === versionsRegistry.latest,
-      docspress_version_effective_latest: version.id === effectiveLatest
+      autodocs_publish_version_order: version.order,
+      autodocs_publish_version_active: true,
+      autodocs_publish_version_repository_latest: version.id === versionsRegistry.latest,
+      autodocs_publish_version_effective_latest: version.id === effectiveLatest
     };
     const existing = existingBySlug.get(version.id);
     const needsUpdate = !existing
@@ -409,7 +409,7 @@ async function reconcileVersionState({
   }
 
   for (const term of existingTerms) {
-    if (configuredIds.has(term.slug) || !term.meta?.docspress_version_active) {
+    if (configuredIds.has(term.slug) || !term.meta?.autodocs_publish_version_active) {
       continue;
     }
     result.versionOperations.push({ action: "deactivate-term", version: term.slug });
@@ -417,21 +417,21 @@ async function reconcileVersionState({
       await client.updateTerm(versionTaxonomy, term.id, {
         meta: {
           ...term.meta,
-          docspress_version_active: false,
-          docspress_version_repository_latest: false,
-          docspress_version_effective_latest: false
+          autodocs_publish_version_active: false,
+          autodocs_publish_version_repository_latest: false,
+          autodocs_publish_version_effective_latest: false
         }
       });
     }
   }
 
   const settingPayload = {
-    docspress_repository_latest_version: versionsRegistry.latest,
-    docspress_docs_root_slug: rootSlug
+    autodocs_publish_repository_latest_version: versionsRegistry.latest,
+    autodocs_publish_docs_root_slug: rootSlug
   };
   if (
-    settings.docspress_repository_latest_version !== versionsRegistry.latest
-    || settings.docspress_docs_root_slug !== rootSlug
+    settings.autodocs_publish_repository_latest_version !== versionsRegistry.latest
+    || settings.autodocs_publish_docs_root_slug !== rootSlug
   ) {
     result.versionOperations.push({ action: "update-settings", latest: versionsRegistry.latest, rootSlug });
     if (!dryRun) {
