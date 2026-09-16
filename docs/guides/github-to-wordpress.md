@@ -24,7 +24,7 @@ This standalone workflow runs only when documentation or its workflow changes on
   "attrs": {
     "language": "yaml",
     "filename": ".github/workflows/sync-docs.yml",
-    "code": "name: Publish documentation with Autodocs Publish\n\non:\n  push:\n    branches: [main]\n    paths:\n      - \"docs/**/*.md\"\n      - \"docs/**/*.markdown\"\n      - \"docs/**/*.json\"\n      - \".github/workflows/sync-docs.yml\"\n  workflow_dispatch:\n\npermissions:\n  contents: read\n\njobs:\n  sync:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n      - uses: Automattic/autodocs-publish@14d318924a81fb95ce4d3aaa9c3b547bf76b7768\n        with:\n          mode: publish\n          wordpress-site: example.wordpress.com\n          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n          docs-dir: docs\n          root-slug: docs\n          root-title: Docs\n          status: publish\n          delete-mode: trash\n          dry-run: false",
+    "code": "name: Publish documentation with Autodocs Publish\n\non:\n  push:\n    branches: [main]\n    paths:\n      - \"docs/**/*.md\"\n      - \"docs/**/*.markdown\"\n      - \"docs/**/*.json\"\n      - \".github/workflows/sync-docs.yml\"\n  workflow_dispatch:\n\npermissions:\n  contents: read\n\njobs:\n  sync:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n      - uses: Automattic/autodocs-publish@d32d09b6450caf17deb092040c5775b744af94c2\n        with:\n          mode: publish\n          wordpress-site: example.wordpress.com\n          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n          docs-dir: docs\n          root-slug: docs\n          root-title: Docs\n          status: publish\n          delete-mode: trash\n          dry-run: false",
     "highlightedLines": "3-10,13-14,21-23,28-30",
     "showLineNumbers": true,
     "caption": "A path-scoped push publishes merged Markdown without granting GitHub pull request permissions."
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-      - uses: Automattic/autodocs-publish@14d318924a81fb95ce4d3aaa9c3b547bf76b7768
+      - uses: Automattic/autodocs-publish@d32d09b6450caf17deb092040c5775b744af94c2
         with:
           mode: publish
           wordpress-site: example.wordpress.com

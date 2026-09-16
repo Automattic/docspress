@@ -53,7 +53,7 @@ Create `.github/workflows/sync-docs.yml` with a manual trigger, `mode: reconcile
   "attrs": {
     "language": "yaml",
     "filename": ".github/workflows/sync-docs.yml",
-    "code": "name: Sync documentation with Autodocs Publish\n\non:\n  workflow_dispatch:\n\npermissions:\n  contents: write\n  pull-requests: write\n\nconcurrency:\n  group: autodocs-publish-sync\n  cancel-in-progress: false\n\njobs:\n  sync:\n    # Skip a push created by merging the managed WordPress proposal.\n    if: \u003e-\n      github.event_name != 'push' ||\n      !contains(\n        github.event.head_commit.message,\n        format('from {0}/autodocs-publish/wordpress-sync', github.repository_owner)\n      )\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n      - uses: Automattic/autodocs-publish@14d318924a81fb95ce4d3aaa9c3b547bf76b7768\n        with:\n          mode: reconcile\n          wordpress-site: example.wordpress.com\n          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n          docs-dir: docs\n          root-slug: docs\n          root-title: Docs\n          create-h1: false\n          rewrite-links: true\n          edit-link: false\n          pull-request-branch: autodocs-publish/wordpress-sync\n          status: draft\n          delete-mode: trash\n          dry-run: true",
+    "code": "name: Sync documentation with Autodocs Publish\n\non:\n  workflow_dispatch:\n\npermissions:\n  contents: write\n  pull-requests: write\n\nconcurrency:\n  group: autodocs-publish-sync\n  cancel-in-progress: false\n\njobs:\n  sync:\n    # Skip a push created by merging the managed WordPress proposal.\n    if: \u003e-\n      github.event_name != 'push' ||\n      !contains(\n        github.event.head_commit.message,\n        format('from {0}/autodocs-publish/wordpress-sync', github.repository_owner)\n      )\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n      - uses: Automattic/autodocs-publish@d32d09b6450caf17deb092040c5775b744af94c2\n        with:\n          mode: reconcile\n          wordpress-site: example.wordpress.com\n          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n          docs-dir: docs\n          root-slug: docs\n          root-title: Docs\n          create-h1: false\n          rewrite-links: true\n          edit-link: false\n          pull-request-branch: autodocs-publish/wordpress-sync\n          status: draft\n          delete-mode: trash\n          dry-run: true",
     "highlightedLines": "3-4,6-8,17-22,25-28,37-40",
     "showLineNumbers": true,
     "caption": "The workflow understands both directions, but starts manually and cannot change either system while dry-run is true."
@@ -88,7 +88,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-      - uses: Automattic/autodocs-publish@14d318924a81fb95ce4d3aaa9c3b547bf76b7768
+      - uses: Automattic/autodocs-publish@d32d09b6450caf17deb092040c5775b744af94c2
         with:
           mode: reconcile
           wordpress-site: example.wordpress.com
