@@ -5,7 +5,7 @@ import { parse } from "@wordpress/block-serialization-default-parser";
 import { describe, expect, it } from "vitest";
 import { markdownToBlocks } from "../src/markdown.js";
 import { blocksToMarkdown, createReverseChanges, mergeWordPressIntoSource } from "../src/reverse.js";
-import { prependSentinel } from "../src/sentinel.js";
+import { prependSentinel, readSentinel, stripSentinel } from "../src/sentinel.js";
 
 function desiredFromMarkdown(source, overrides = {}) {
   const converted = markdownToBlocks(source, { fallbackTitle: "Docs" });
@@ -50,7 +50,7 @@ function replaceCustomBlock(body, name, mutate) {
 
 const customBlockCases = [
   {
-    name: "docspress/audience-paths",
+    name: "autodocs-publish/audience-paths",
     omit: "showLinks",
     change: ["showIcons", false],
     attributes: {
@@ -88,7 +88,7 @@ const customBlockCases = [
     }
   },
   {
-    name: "docspress/api-request",
+    name: "autodocs-publish/api-request",
     omit: "endpoint",
     change: ["method", "PATCH"],
     attributes: {
@@ -109,7 +109,7 @@ const customBlockCases = [
     }
   },
   {
-    name: "docspress/callout",
+    name: "autodocs-publish/callout",
     omit: "collapsible",
     change: ["tone", "warning"],
     attributes: {
@@ -121,7 +121,7 @@ const customBlockCases = [
     }
   },
   {
-    name: "docspress/code-tabs",
+    name: "autodocs-publish/code-tabs",
     omit: "showLineNumbers",
     change: ["caption", "Updated tabs"],
     attributes: {
@@ -134,13 +134,13 @@ const customBlockCases = [
     }
   },
   {
-    name: "docspress/colorful-code",
+    name: "autodocs-publish/colorful-code",
     omit: "showLineNumbers",
     change: ["code", "const docs = \"updated\";"],
     attributes: {
       language: "javascript",
       filename: "index.js",
-      code: "const docs = \"DocsPress\";",
+      code: "const docs = \"Autodocs Publish\";",
       highlightedLines: "1",
       showLineNumbers: true,
       caption: "",
@@ -152,7 +152,7 @@ const customBlockCases = [
     }
   },
   {
-    name: "docspress/code-playground",
+    name: "autodocs-publish/code-playground",
     omit: "showConsole",
     change: ["height", 420],
     attributes: {
@@ -167,18 +167,18 @@ const customBlockCases = [
     }
   },
   {
-    name: "docspress/diagram",
+    name: "autodocs-publish/diagram",
     omit: "title",
     change: ["type", "sequence"],
     attributes: {
       title: "Publishing flow",
       type: "flow",
-      source: "Markdown -> DocsPress: collect\nDocsPress -> WordPress: publish",
+      source: "Markdown -> Autodocs Publish: collect\nAutodocs Publish -> WordPress: publish",
       caption: "Documentation pipeline."
     }
   },
   {
-    name: "docspress/fields",
+    name: "autodocs-publish/fields",
     omit: "compact",
     change: ["searchable", false],
     attributes: {
@@ -200,7 +200,7 @@ const customBlockCases = [
     }
   },
   {
-    name: "docspress/file-tree",
+    name: "autodocs-publish/file-tree",
     omit: "caption",
     change: ["tree", "docs/\n  index.md\n  api.md"],
     attributes: {
@@ -212,7 +212,7 @@ const customBlockCases = [
     }
   },
   {
-    name: "docspress/flow",
+    name: "autodocs-publish/flow",
     omit: "start",
     change: ["start", 4],
     attributes: {
@@ -225,7 +225,7 @@ const customBlockCases = [
     }
   },
   {
-    name: "docspress/hero",
+    name: "autodocs-publish/hero",
     omit: "showGrid",
     change: ["tone", "paper"],
     attributes: {
@@ -255,7 +255,7 @@ const customBlockCases = [
     }
   },
   {
-    name: "docspress/prompt",
+    name: "autodocs-publish/prompt",
     omit: "thinking",
     change: ["prompt", "Update the docs without changing unrelated Markdown."],
     attributes: {
@@ -263,12 +263,12 @@ const customBlockCases = [
       model: "GPT-5",
       mode: "code",
       thinking: true,
-      context: "$docspress-install, @repository, docs/",
+      context: "$autodocs-publish-install, @repository, docs/",
       caption: "Prompt example"
     }
   },
   {
-    name: "docspress/result",
+    name: "autodocs-publish/result",
     omit: "status",
     change: ["status", "warning"],
     attributes: {
@@ -279,7 +279,7 @@ const customBlockCases = [
     }
   },
   {
-    name: "docspress/terminal-session",
+    name: "autodocs-publish/terminal-session",
     omit: "shell",
     change: ["command", "npm test\nnpm run build"],
     attributes: {
@@ -291,7 +291,7 @@ const customBlockCases = [
     }
   },
   {
-    name: "docspress/troubleshooter",
+    name: "autodocs-publish/troubleshooter",
     omit: "showProgress",
     change: ["title", "Choose a workflow"],
     attributes: {
@@ -318,12 +318,25 @@ const customBlockCases = [
 ];
 
 describe("blocksToMarkdown", () => {
+  it("normalizes legacy DocsPress Gutenberg block names in Markdown output", () => {
+    const markdown = blocksToMarkdown(
+      '<!-- wp:docspress/callout {"tone":"tip","title":"Legacy"} /-->'
+    );
+    const roundTripped = parse(markdownToBlocks(markdown, { fallbackTitle: "Docs" }).blocks)
+      .find((block) => block.blockName);
+
+    expect(markdown).toContain("<!-- autodocs-publish:block");
+    expect(markdown).toContain('"name": "autodocs-publish/callout"');
+    expect(markdown).not.toContain("docspress");
+    expect(roundTripped?.blockName).toBe("autodocs-publish/callout");
+  });
+
   it("creates readable Markdown and preserves custom blocks", () => {
     const content = [
       '<!-- wp:paragraph -->\n<p>Hello <strong>world</strong> and <a href="/docs/guide/">guide</a>.</p>\n<!-- /wp:paragraph -->',
       '<!-- wp:heading -->\n<h2>Next</h2>\n<!-- /wp:heading -->',
       '<!-- wp:list -->\n<ul><li>One</li><li>Two</li></ul>\n<!-- /wp:list -->',
-      '<!-- wp:docspress/callout {"tone":"tip","content":"<p>Keep me</p>"} /-->'
+      '<!-- wp:autodocs-publish/callout {"tone":"tip","content":"<p>Keep me</p>"} /-->'
     ].join("\n\n");
 
     const markdown = blocksToMarkdown(content, {
@@ -333,16 +346,16 @@ describe("blocksToMarkdown", () => {
     expect(markdown).toContain("Hello **world** and [guide](guide.md).");
     expect(markdown).toContain("## Next");
     expect(markdown).toContain("One");
-    expect(markdown).toContain('"name": "docspress/callout"');
+    expect(markdown).toContain('"name": "autodocs-publish/callout"');
     expect(markdown).toContain("> [!TIP]");
-    expect(markdown).not.toContain("<!-- wp:docspress/callout");
+    expect(markdown).not.toContain("<!-- wp:autodocs-publish/callout");
   });
 
   it("removes generated title and source-link blocks", () => {
     const content = [
       '<!-- wp:heading {"level":1} -->\n<h1>Docs</h1>\n<!-- /wp:heading -->',
       '<!-- wp:paragraph -->\n<p>Body.</p>\n<!-- /wp:paragraph -->',
-      '<!-- wp:paragraph {"className":"docspress-source-link"} -->\n<p class="docspress-source-link"><a href="https://github.com/edit">Edit</a></p>\n<!-- /wp:paragraph -->'
+      '<!-- wp:paragraph {"className":"autodocs-publish-source-link"} -->\n<p class="autodocs-publish-source-link"><a href="https://github.com/edit">Edit</a></p>\n<!-- /wp:paragraph -->'
     ].join("\n\n");
 
     const markdown = blocksToMarkdown(content, { createH1: true, title: "Docs" });
@@ -401,13 +414,30 @@ console.log("hi");
   });
 });
 
+describe("sentinel compatibility", () => {
+  it("reads and strips legacy sentinels but writes only the canonical prefix", () => {
+    const legacy = '<!-- docspress:{"version":1,"key":"docs","source":"docs/index.md"} -->\n<p>Body.</p>';
+
+    expect(readSentinel(legacy)).toMatchObject({
+      version: 1,
+      key: "docs",
+      source: "docs/index.md"
+    });
+    expect(stripSentinel(legacy)).toBe("<p>Body.</p>");
+
+    const canonical = prependSentinel("<p>Body.</p>", { key: "docs", source: "docs/index.md" });
+    expect(canonical).toContain("<!-- autodocs-publish:");
+    expect(canonical).not.toContain("docspress:");
+  });
+});
+
 describe("mergeWordPressIntoSource", () => {
   it("preserves the live Synchronization and REST API shape except for the edited heading", () => {
     const source = `---
 title: Synchronization and REST API
 ---
 
-DocsPress reconciles managed Pages.
+Autodocs Publish reconciles managed Pages.
 
 ## WordPress endpoints
 
@@ -419,7 +449,7 @@ https://public-api.wordpress.com/wp/v2/sites/{site}/pages
 | --- | --- |
 | Managed | Update |
 
-<!-- wp:docspress/api-request {"method":"GET","endpoint":"/wp-json/wp/v2/pages","headers":"Accept: application/json\nAuthorization: Bearer $WP_ACCESS_TOKEN","requestBody":"","requestBodyFormat":"json","responseStatus":"200 OK","responseBody":"{\n  \"id\": 43\n}","responseBodyFormat":"json"} /-->
+<!-- wp:autodocs-publish/api-request {"method":"GET","endpoint":"/wp-json/wp/v2/pages","headers":"Accept: application/json\nAuthorization: Bearer $WP_ACCESS_TOKEN","requestBody":"","requestBodyFormat":"json","responseStatus":"200 OK","responseBody":"{\n  \"id\": 43\n}","responseBodyFormat":"json"} /-->
 
 The source stays readable.
 `;
@@ -432,7 +462,7 @@ The source stays readable.
       .replace("<!-- wp:code -->", '<!-- wp:code {"tokenizedLines":[[["https://public-api.wordpress.com/wp/v2/sites/{site}/pages",null]]]} -->')
       .replace(' class="language-text"', "")
       .replace("<!-- wp:table -->", '<!-- wp:table {"hasFixedLayout":false} -->');
-    live = replaceCustomBlock(live, "docspress/api-request", (attributes) => {
+    live = replaceCustomBlock(live, "autodocs-publish/api-request", (attributes) => {
       delete attributes.endpoint;
       delete attributes.requestBodyFormat;
       delete attributes.responseBodyFormat;
@@ -640,7 +670,7 @@ The source stays readable.
 
 describe("createReverseChanges", () => {
   it("updates an existing Markdown title and reverses managed links", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-reverse-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-reverse-"));
     await fs.mkdir(path.join(cwd, "docs"));
     await fs.writeFile(path.join(cwd, "docs", "index.md"), "# Old Docs\n\nOld body.\n");
     await fs.writeFile(path.join(cwd, "docs", "guide.md"), "# Guide\n");

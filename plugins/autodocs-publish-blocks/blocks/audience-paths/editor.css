@@ -1,0 +1,48 @@
+.editor-styles-wrapper .wp-block-autodocs-publish-audience-paths {
+	max-width: min(100%, 1120px);
+	margin-inline: auto;
+}
+
+.autodocs-publish-audience-paths--editor {
+	cursor: default;
+}
+
+.autodocs-publish-audience-paths--editor .autodocs-publish-audience-paths__eyebrow,
+.autodocs-publish-audience-paths--editor .autodocs-publish-audience-paths__title,
+.autodocs-publish-audience-paths--editor .autodocs-publish-audience-paths__description,
+.autodocs-publish-audience-paths--editor .autodocs-publish-audience-paths__card-title,
+.autodocs-publish-audience-paths--editor .autodocs-publish-audience-paths__card-description,
+.autodocs-publish-audience-paths--editor .autodocs-publish-audience-paths__cta-label {
+	cursor: text;
+}
+
+.autodocs-publish-audience-paths--editor .autodocs-publish-audience-paths__card {
+	padding-bottom: 58px;
+}
+
+.autodocs-publish-audience-paths--editor .autodocs-publish-audience-paths__card:focus-within {
+	border-color: var(--adpb-path-card-accent);
+	box-shadow:
+		inset 0 4px 0 var(--adpb-path-card-accent),
+		0 0 0 3px color-mix(in srgb, var(--adpb-path-card-accent) 18%, transparent);
+}
+
+.autodocs-publish-audience-paths__route {
+	position: absolute;
+	right: 18px;
+	bottom: 15px;
+	left: 18px;
+	display: block;
+	overflow: hidden;
+	padding-top: 10px;
+	border-top: 1px dashed color-mix(in srgb, var(--adpb-paths-line) 82%, var(--adpb-path-card-accent));
+	color: color-mix(in srgb, var(--adpb-paths-copy) 72%, transparent);
+	font-size: 10px;
+	line-height: 1.3;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.autodocs-publish-audience-paths--editor [data-rich-text-placeholder]::after {
+	opacity: 0.55;
+}

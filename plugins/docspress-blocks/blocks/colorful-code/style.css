@@ -1,4 +1,0 @@
-/* Colorful Code owns its figure-level layout; the code surface is shared. */
-.wp-block-docspress-colorful-code > .docspress-code__surface {
-	width: 100%;
-}

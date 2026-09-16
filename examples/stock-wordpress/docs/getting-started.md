@@ -6,11 +6,11 @@ sidebar_position: 2
 ## Publish flow
 
 1. Keep the documentation in the repository.
-2. Run DocsPress from GitHub Actions.
+2. Run Autodocs Publish from GitHub Actions.
 3. Review the generated WordPress Pages.
 
 ```yaml
-- uses: Automattic/docspress@main
+- uses: Automattic/autodocs-publish@main
   with:
     docs-dir: docs
     status: draft

@@ -1,0 +1,12 @@
+.editor-styles-wrapper .autodocs-publish-file-tree--editor {
+	margin-block: 1.5rem;
+}
+
+.autodocs-publish-file-tree--editor .autodocs-publish-file-tree__entry {
+	user-select: none;
+}
+
+.autodocs-publish-file-tree--editor .autodocs-publish-file-tree__caption:empty::before {
+	color: var(--adp-muted, #6f7685);
+	content: attr(data-rich-text-placeholder);
+}

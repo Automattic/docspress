@@ -3,7 +3,7 @@ title: Interactive Troubleshooter
 sidebar_position: 150
 ---
 
-Use `docspress/troubleshooter` for a short branching support, diagnosis, or onboarding flow. Readers answer yes-or-no questions, move back through their choices, and arrive at a semantic outcome.
+Use `autodocs-publish/troubleshooter` for a short branching support, diagnosis, or onboarding flow. Readers answer yes-or-no questions, move back through their choices, and arrive at a semantic outcome.
 
 ## When to use it
 
@@ -13,17 +13,17 @@ Choose Interactive Troubleshooter when the correct next step depends on a few ob
 
 Give every question and outcome a stable unique ID. Set `yesNext` and `noNext` to another question ID or an outcome ID. Start with the condition that divides readers most usefully, and make every answer label describe the choice when “Yes” and “No” would be ambiguous.
 
-DocsPress sanitizes IDs and adds suffixes to duplicates. An invalid `startId` falls back to the first question. An invalid destination shows an authoring warning instead of an empty panel, but it still leaves the reader without an outcome, so test every route.
+Autodocs Publish sanitizes IDs and adds suffixes to duplicates. An invalid `startId` falls back to the first question. An invalid destination shows an authoring warning instead of an empty panel, but it still leaves the reader without an outcome, so test every route.
 
 ## Attributes
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Interactive Troubleshooter attributes",
-    "description": "Frame, routes, and outcomes accepted by \u003ccode\u003edocspress/troubleshooter\u003c/code\u003e.",
+    "description": "Frame, routes, and outcomes accepted by \u003ccode\u003eautodocs-publish/troubleshooter\u003c/code\u003e.",
     "fields": [
       {
         "name": "title",
@@ -87,7 +87,7 @@ DocsPress sanitizes IDs and adds suffixes to duplicates. An invalid `startId` fa
 -->
 #### Interactive Troubleshooter attributes
 
-Frame, routes, and outcomes accepted by <code>docspress/troubleshooter</code>.
+Frame, routes, and outcomes accepted by <code>autodocs-publish/troubleshooter</code>.
 
 | Field | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -97,7 +97,7 @@ Frame, routes, and outcomes accepted by <code>docspress/troubleshooter</code>.
 | `questions` | array | Yes | Starter questions | <p>Up to 12 branching question objects.</p> |
 | `outcomes` | array | Yes | Starter outcomes | <p>Up to 12 terminal outcome objects.</p> |
 | `showProgress` | boolean | No | true | <p>Shows the reader’s progress through the current path.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 Each question contains `id`, `question`, `yesLabel`, `yesNext`, `noLabel`, and `noNext`. Each outcome contains `id`, `status`, `title`, and formatted `content`; `status` accepts `success`, `neutral`, `warning`, or `error`.
 
@@ -105,10 +105,10 @@ Each question contains `id`, `question`, `yesLabel`, `yesNext`, `noLabel`, and `
 
 ### Find the next documentation workflow
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/troubleshooter",
+  "name": "autodocs-publish/troubleshooter",
   "attrs": {
     "title": "Find the next step",
     "intro": "Answer two quick questions to get the right workflow.",
@@ -173,14 +173,14 @@ Run a draft sync and review the rendered Pages.
 ### Generate a starter
 
 Create source-grounded Markdown documentation first.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Diagnose a stale preview
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/troubleshooter",
+  "name": "autodocs-publish/troubleshooter",
   "attrs": {
     "title": "Why does the preview look stale?",
     "intro": "Use observable states to choose the next safe check.",
@@ -264,14 +264,14 @@ The origin is current. Allow the edge cache to refresh and avoid duplicate write
 ### Inspect the managed Page
 
 Confirm the expected Page ID, source key, and rendered block content.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Choose a code-example block
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/troubleshooter",
+  "name": "autodocs-publish/troubleshooter",
   "attrs": {
     "title": "Which code block should I use?",
     "intro": "Answer two questions to choose the smallest useful component.",
@@ -355,7 +355,7 @@ Give every tab the same task and expected result.
 ### Use Colorful Code
 
 Highlight or annotate only the lines the explanation depends on.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Published behavior and accessibility
 
@@ -363,10 +363,10 @@ The active question or outcome is the only visible panel. Back and Start over pr
 
 Walk every possible route before publishing, including Back and Start over. Phrase questions around facts the reader can know, and make every outcome name the next action.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "warning",
     "title": "Test the complete decision tree",
@@ -381,4 +381,4 @@ Walk every possible route before publishing, including Back and Start over. Phra
 > **Test the complete decision tree**
 >
 > Every yes and no destination must resolve to a question or outcome ID. Check all routes after renaming an ID or reordering the flow.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->

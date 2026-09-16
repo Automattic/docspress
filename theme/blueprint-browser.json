@@ -1,9 +1,9 @@
 {
 	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
 	"meta": {
-		"title": "DocsPress Theme Playground",
+		"title": "Autodocs Publish Theme Playground",
 		"author": "Automattic",
-		"description": "A browser-ready DocsPress block-theme site with editable templates, style variations, documentation, posts, threaded comments, and Site Editor components."
+		"description": "A browser-ready Autodocs Publish block-theme site with editable templates, style variations, documentation, posts, threaded comments, and Site Editor components."
 	},
 	"preferredVersions": {
 		"php": "8.3",
@@ -20,28 +20,28 @@
 			"step": "installPlugin",
 			"pluginData": {
 				"resource": "git:directory",
-				"url": "https://github.com/Automattic/docspress",
+				"url": "https://github.com/Automattic/autodocs-publish",
 				"ref": "main",
 				"refType": "branch",
-				"path": "plugins/docspress-blocks"
+				"path": "plugins/autodocs-publish-blocks"
 			},
 			"options": {
 				"activate": true,
-				"targetFolderName": "docspress-blocks"
+				"targetFolderName": "autodocs-publish-blocks"
 			}
 		},
 		{
 			"step": "installTheme",
 			"themeData": {
 				"resource": "git:directory",
-				"url": "https://github.com/Automattic/docspress",
+				"url": "https://github.com/Automattic/autodocs-publish",
 				"ref": "main",
 				"refType": "branch",
 				"path": "theme"
 			},
 			"options": {
 				"activate": true,
-				"targetFolderName": "docspress"
+				"targetFolderName": "autodocs-publish"
 			}
 		},
 		{
@@ -56,7 +56,7 @@
 		},
 		{
 			"step": "runPHP",
-			"code": "<?php require_once '/wordpress/wp-load.php'; require get_theme_root( 'docspress' ) . '/docspress/playground/setup.php';"
+			"code": "<?php require_once '/wordpress/wp-load.php'; require get_theme_root( 'autodocs-publish' ) . '/autodocs-publish/playground/setup.php';"
 		}
 	]
 }

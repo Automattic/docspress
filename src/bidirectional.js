@@ -61,7 +61,7 @@ export async function syncBidirectional(options) {
   if (versionsRegistry) {
     const settings = await client.getSettings();
     const configured = new Set(versionsRegistry.versions.map(({ id }) => id));
-    const override = String(settings.docspress_version_override || "");
+    const override = String(settings.autodocs_publish_version_override || "");
     if (configured.has(override)) {
       effectiveLatest = override;
     }

@@ -3,7 +3,7 @@ title: Live Code Playground
 sidebar_position: 110
 ---
 
-Use `docspress/code-playground` for a small HTML, CSS, and JavaScript example readers should edit and run in the page. It combines source editors, a sandboxed result, and bounded console output.
+Use `autodocs-publish/code-playground` for a small HTML, CSS, and JavaScript example readers should edit and run in the page. It combines source editors, a sandboxed result, and bounded console output.
 
 ## When to use it
 
@@ -15,13 +15,13 @@ Provide self-contained HTML, CSS, and JavaScript. Set a preview height from 180â
 
 ## Attributes
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Live Code Playground attributes",
-    "description": "Source, preview, and sandbox behavior accepted by \u003ccode\u003edocspress/code-playground\u003c/code\u003e.",
+    "description": "Source, preview, and sandbox behavior accepted by \u003ccode\u003eautodocs-publish/code-playground\u003c/code\u003e.",
     "fields": [
       {
         "name": "title",
@@ -103,7 +103,7 @@ Provide self-contained HTML, CSS, and JavaScript. Set a preview height from 180â
 -->
 #### Live Code Playground attributes
 
-Source, preview, and sandbox behavior accepted by <code>docspress/code-playground</code>.
+Source, preview, and sandbox behavior accepted by <code>autodocs-publish/code-playground</code>.
 
 | Field | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -115,7 +115,7 @@ Source, preview, and sandbox behavior accepted by <code>docspress/code-playgroun
 | `autoRun` | boolean | No | true | <p>Runs the authored source when the page loads.</p> |
 | `showConsole` | boolean | No | true | <p>Shows relayed console messages and errors.</p> |
 | `allowNetwork` | boolean | No | false | <p>Relaxes the sandbox document policy to allow network requests.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 The block supports `wide` alignment in addition to the [shared design controls](index.md#add-and-edit-a-block).
 
@@ -123,10 +123,10 @@ The block supports `wide` alignment in addition to the [shared design controls](
 
 ### Interactive publish button
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/code-playground",
+  "name": "autodocs-publish/code-playground",
   "attrs": {
     "title": "Interactive button",
     "html": "\u003cbutton class=\"demo\"\u003ePublish\u003c/button\u003e",
@@ -158,14 +158,14 @@ The block supports `wide` alignment in addition to the [shared design controls](
 ```javascript
 document.querySelector( '.demo' ).addEventListener( 'click', () => console.log( 'Published' ) );
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Theme-token mixer
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/code-playground",
+  "name": "autodocs-publish/code-playground",
   "attrs": {
     "title": "Mix a documentation accent",
     "html": "\u003clabel\u003eAccent \u003cinput class=\"accent\" type=\"color\" value=\"#3858e9\"\u003e\u003c/label\u003e\n\u003carticle class=\"card\"\u003e\u003cstrong\u003ePreview card\u003c/strong\u003e\u003cp\u003eChange the control to test a theme token.\u003c/p\u003e\u003c/article\u003e",
@@ -205,14 +205,14 @@ picker.addEventListener( 'input', () => {
   document.documentElement.style.setProperty( '--accent', picker.value );
 } );
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Accessible disclosure lab
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/code-playground",
+  "name": "autodocs-publish/code-playground",
   "attrs": {
     "title": "Build a keyboard-friendly disclosure",
     "html": "\u003cbutton class=\"toggle\" aria-expanded=\"false\" aria-controls=\"answer\"\u003eShow answer\u003c/button\u003e\n\u003cdiv id=\"answer\" hidden\u003eThe publishing dry run reports proposed changes without writing Pages.\u003c/div\u003e",
@@ -255,16 +255,16 @@ button.addEventListener( 'click', () => {
   console.log( expanded ? 'Collapsed' : 'Expanded' );
 } );
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Sandbox and output
 
 The result iframe uses `sandbox="allow-scripts"` without same-origin access and sends no referrer. A Content Security Policy blocks network access unless the author enables `allowNetwork`. Run rebuilds the sandbox, Reset restores the authored source, and console calls and errors are relayed only from the active result. Console history is bounded to 100 lines.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "warning",
     "title": "Treat examples as public code",
@@ -279,6 +279,6 @@ The result iframe uses `sandbox="allow-scripts"` without same-origin access and 
 > **Treat examples as public code**
 >
 > The iframe isolates the result from the parent page, but readers can inspect every source field. Never embed credentials, private endpoints, or sensitive data.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 Keep examples focused on one behavior, supply visible labels and keyboard interaction in the demo itself, and verify both the initial result and the Reset state.

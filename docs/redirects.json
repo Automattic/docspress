@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "from": "why-docspress",
+      "to": "why-autodocs-publish",
+      "title": "Moved: Why Autodocs Publish?"
+    }
+  ]
+}

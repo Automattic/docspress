@@ -1,7 +1,7 @@
 {
   "$schema": "https://playground.wordpress.net/blueprint-schema.json",
   "meta": {
-    "title": "DocsPress Contextual Sidebars",
+    "title": "Autodocs Publish Contextual Sidebars",
     "author": "Automattic",
     "description": "A focused API, extensions, and default documentation navigation demonstration."
   },
@@ -19,33 +19,33 @@
       "step": "installPlugin",
       "pluginData": {
         "resource": "git:directory",
-        "url": "https://github.com/Automattic/docspress",
+        "url": "https://github.com/Automattic/autodocs-publish",
         "ref": "main",
         "refType": "branch",
-        "path": "plugins/docspress-blocks"
+        "path": "plugins/autodocs-publish-blocks"
       },
       "options": {
         "activate": true,
-        "targetFolderName": "docspress-blocks"
+        "targetFolderName": "autodocs-publish-blocks"
       }
     },
     {
       "step": "installTheme",
       "themeData": {
         "resource": "git:directory",
-        "url": "https://github.com/Automattic/docspress",
+        "url": "https://github.com/Automattic/autodocs-publish",
         "ref": "main",
         "refType": "branch",
         "path": "theme"
       },
       "options": {
         "activate": true,
-        "targetFolderName": "docspress"
+        "targetFolderName": "autodocs-publish"
       }
     },
     {
       "step": "runPHP",
-      "code": "<?php require_once '/wordpress/wp-load.php'; require get_theme_root( 'docspress' ) . '/docspress/playground/setup-sidebars.php';"
+      "code": "<?php require_once '/wordpress/wp-load.php'; require get_theme_root( 'autodocs-publish' ) . '/autodocs-publish/playground/setup-sidebars.php';"
     }
   ]
 }

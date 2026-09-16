@@ -1,6 +1,6 @@
-export const SENTINEL_PREFIX = "docspress:";
+export const SENTINEL_PREFIX = "autodocs-publish:";
 
-const SENTINEL_PATTERN = /<!--\s*docspress:(.*?)\s*-->/s;
+const SENTINEL_PATTERN = /<!--\s*(?:autodocs-publish|docspress):(.*?)\s*-->/s;
 
 export function createSentinel(metadata) {
   return `<!-- ${SENTINEL_PREFIX}${JSON.stringify({

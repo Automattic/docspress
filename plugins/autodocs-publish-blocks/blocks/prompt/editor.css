@@ -1,0 +1,27 @@
+.editor-styles-wrapper .autodocs-publish-prompt--editor {
+	margin-block: 1.5rem;
+}
+
+.autodocs-publish-prompt--editor textarea.autodocs-publish-prompt__text {
+	display: block;
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 115px;
+	margin: 0;
+	padding: 0;
+	resize: vertical;
+	border: 0;
+	outline: 0;
+	background: transparent;
+	color: var(--adp-ink, #171a22);
+	font: 520 0.96rem/1.65 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.autodocs-publish-prompt--editor .autodocs-publish-prompt__copy--preview {
+	cursor: default;
+}
+
+.autodocs-publish-prompt--editor .autodocs-publish-prompt__caption {
+	min-width: 7rem;
+	padding: 3px 0;
+}

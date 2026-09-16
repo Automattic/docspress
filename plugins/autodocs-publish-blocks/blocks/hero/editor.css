@@ -1,0 +1,53 @@
+.editor-styles-wrapper .wp-block-autodocs-publish-hero {
+	max-width: min(100%, 1120px);
+	margin-inline: auto;
+}
+
+.autodocs-publish-hero--editor {
+	cursor: default;
+}
+
+.autodocs-publish-hero--editor .autodocs-publish-hero__title,
+.autodocs-publish-hero--editor .autodocs-publish-hero__description,
+.autodocs-publish-hero--editor .autodocs-publish-hero__eyebrow,
+.autodocs-publish-hero--editor .autodocs-publish-hero__button {
+	cursor: text;
+}
+
+.autodocs-publish-hero--editor .autodocs-publish-hero__button {
+	outline: 2px solid transparent;
+	outline-offset: 3px;
+	transition: outline-color 120ms ease, box-shadow 120ms ease;
+}
+
+.autodocs-publish-hero--editor .autodocs-publish-hero__button:hover,
+.autodocs-publish-hero--editor .autodocs-publish-hero__button:focus {
+	outline-color: color-mix(in srgb, var(--adpb-hero-accent) 78%, #fff);
+}
+
+.autodocs-publish-hero--editor .autodocs-publish-hero__button:focus {
+	box-shadow: 0 0 0 5px color-mix(in srgb, var(--adpb-hero-accent) 22%, transparent);
+}
+
+.autodocs-publish-hero--editor .autodocs-publish-hero__media-placeholder {
+	position: relative;
+	z-index: 2;
+	height: auto;
+	min-height: 86px;
+	padding: 18px 24px;
+	border: 1px dashed rgba(255, 255, 255, 0.62);
+	background: rgba(255, 255, 255, 0.12);
+	color: #fff;
+}
+
+.autodocs-publish-hero--editor .autodocs-publish-hero__media-placeholder:hover {
+	background: rgba(255, 255, 255, 0.2);
+	color: #fff;
+}
+
+.autodocs-publish-hero--editor .autodocs-publish-hero__eyebrow:empty::after,
+.autodocs-publish-hero--editor .autodocs-publish-hero__title:empty::after,
+.autodocs-publish-hero--editor .autodocs-publish-hero__description:empty::after,
+.autodocs-publish-hero--editor .autodocs-publish-hero__button:empty::after {
+	color: color-mix(in srgb, currentColor 48%, transparent);
+}

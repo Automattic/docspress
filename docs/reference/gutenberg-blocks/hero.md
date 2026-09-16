@@ -3,7 +3,7 @@ title: Hero
 sidebar_position: 10
 ---
 
-Use `docspress/hero` for the primary introduction on a documentation landing Page. It combines an eyebrow, heading, summary, up to two actions, and optional media without requiring a custom template.
+Use `autodocs-publish/hero` for the primary introduction on a documentation landing Page. It combines an eyebrow, heading, summary, up to two actions, and optional media without requiring a custom template.
 
 ## When to use it
 
@@ -23,13 +23,13 @@ An action appears only when both its label and URL are present. Remove the image
 
 ## Attributes
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Hero attributes",
-    "description": "Content, actions, media, and presentation accepted by \u003ccode\u003edocspress/hero\u003c/code\u003e.",
+    "description": "Content, actions, media, and presentation accepted by \u003ccode\u003eautodocs-publish/hero\u003c/code\u003e.",
     "fields": [
       {
         "name": "eyebrow",
@@ -210,7 +210,7 @@ An action appears only when both its label and URL are present. Remove the image
 -->
 #### Hero attributes
 
-Content, actions, media, and presentation accepted by <code>docspress/hero</code>.
+Content, actions, media, and presentation accepted by <code>autodocs-publish/hero</code>.
 
 | Field | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -233,7 +233,7 @@ Content, actions, media, and presentation accepted by <code>docspress/hero</code
 | `textAlign` | enum | No | left | <p>Content alignment.</p> |
 | `showGrid / showOrbit` | boolean | No | false | <p>Opt-in decorative effects.</p> |
 | `panelColor / visualColor / accentColor` | string | No |  | <p>Optional hexadecimal color overrides. Use the native Text control in Styles for typography color.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 The block supports `wide` and `full` alignment in addition to the [shared design controls](index.md#add-and-edit-a-block).
 
@@ -241,10 +241,10 @@ The block supports `wide` and `full` alignment in addition to the [shared design
 
 ### Repository launch
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/hero",
+  "name": "autodocs-publish/hero",
   "attrs": {
     "eyebrow": "Documentation, publishing, and community",
     "title": "Docs that stay connected to your GitHub repo",
@@ -253,7 +253,7 @@ The block supports `wide` and `full` alignment in addition to the [shared design
     "primaryUrl": "#choose-your-path",
     "secondaryLabel": "Latest updates",
     "secondaryUrl": "/#latest-updates",
-    "mediaUrl": "http://fkadocs.atomicsites.blog/wp-content/themes/docspress/assets/images/homepage-octocat-wapuu.webp",
+    "mediaUrl": "http://fkadocs.atomicsites.blog/wp-content/themes/autodocs-publish/assets/images/homepage-octocat-wapuu.webp",
     "mediaAlt": "The GitHub Octocat and WordPress Wapuu celebrating their documentation workflow together.",
     "mediaPosition": "right",
     "mediaWidth": 44,
@@ -273,15 +273,15 @@ Write beside your code. Publish a WordPress experience that guides every reader 
 
 [Choose your path](#choose-your-path) · [Latest updates](/#latest-updates)
 
-![The GitHub Octocat and WordPress Wapuu celebrating their documentation workflow together.](http://fkadocs.atomicsites.blog/wp-content/themes/docspress/assets/images/homepage-octocat-wapuu.webp)
-<!-- /docspress:block -->
+![The GitHub Octocat and WordPress Wapuu celebrating their documentation workflow together.](http://fkadocs.atomicsites.blog/wp-content/themes/autodocs-publish/assets/images/homepage-octocat-wapuu.webp)
+<!-- /autodocs-publish:block -->
 
 ### Midnight release portal
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/hero",
+  "name": "autodocs-publish/hero",
   "attrs": {
     "eyebrow": "Version 4.0 · Upgrade guide",
     "title": "Ship the upgrade without surprises",
@@ -290,7 +290,7 @@ Write beside your code. Publish a WordPress experience that guides every reader 
     "primaryUrl": "#upgrade",
     "secondaryLabel": "Open the migration checklist",
     "secondaryUrl": "#migration-checklist",
-    "mediaUrl": "http://fkadocs.atomicsites.blog/wp-content/themes/docspress/assets/images/homepage-octocat-wapuu.webp",
+    "mediaUrl": "http://fkadocs.atomicsites.blog/wp-content/themes/autodocs-publish/assets/images/homepage-octocat-wapuu.webp",
     "mediaAlt": "The GitHub Octocat and WordPress Wapuu working together.",
     "mediaPosition": "right",
     "mediaWidth": 38,
@@ -312,15 +312,15 @@ Review the breaking changes, rehearse the migration, and keep a verified rollbac
 
 [Review the upgrade](#upgrade) · [Open the migration checklist](#migration-checklist)
 
-![The GitHub Octocat and WordPress Wapuu working together.](http://fkadocs.atomicsites.blog/wp-content/themes/docspress/assets/images/homepage-octocat-wapuu.webp)
-<!-- /docspress:block -->
+![The GitHub Octocat and WordPress Wapuu working together.](http://fkadocs.atomicsites.blog/wp-content/themes/autodocs-publish/assets/images/homepage-octocat-wapuu.webp)
+<!-- /autodocs-publish:block -->
 
 ### Text-only incident handbook
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/hero",
+  "name": "autodocs-publish/hero",
   "attrs": {
     "eyebrow": "Incident response",
     "title": "Calm steps for noisy moments",
@@ -348,7 +348,7 @@ _Incident response_
 Start with impact, protect evidence, and follow the recovery path your team has already rehearsed.
 
 [Open the first-response checklist](#first-response) · [Contact the incident lead](#escalation)
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Published behavior and accessibility
 
@@ -356,10 +356,10 @@ The hero is a semantic section. Linked actions remain native links and work with
 
 Keep the title specific, limit the description to one short paragraph, and make action labels describe their destination. Use meaningful alternative text for informative media and an empty alternative for purely decorative art.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "tip",
     "title": "Let the theme lead",
@@ -374,4 +374,4 @@ Keep the title specific, limit the description to one short paragraph, and make 
 > **Let the theme lead**
 >
 > Start with the theme tone and Global Styles. Add per-block colors only when the hero needs a deliberate campaign or brand treatment.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->

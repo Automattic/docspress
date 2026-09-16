@@ -1,0 +1,95 @@
+.wp-block-autodocs-publish-result {
+	--adpb-result-accent: #087a3e;
+	--adpb-result-surface: color-mix(in srgb, var(--adpb-result-accent) 5%, var(--adp-paper, #fff));
+	--adpb-result-border: color-mix(in srgb, var(--adpb-result-accent) 23%, var(--adp-line, #dcdcde));
+	display: grid;
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 0;
+	grid-template-columns: auto minmax(0, 1fr);
+	align-items: start;
+	gap: 12px;
+	margin-block: clamp(1.25rem, 2.5vw, 2rem);
+	padding: 14px 15px;
+	border: 1px solid var(--adpb-result-border);
+	border-radius: var(--adp-radius, 10px);
+	background: var(--adpb-result-surface);
+	box-shadow: none;
+}
+
+.autodocs-publish-result--neutral {
+	--adpb-result-accent: var(--adp-blue, #3858e9);
+}
+
+.autodocs-publish-result--warning {
+	--adpb-result-accent: #b85c00;
+}
+
+.autodocs-publish-result--error {
+	--adpb-result-accent: #d63638;
+}
+
+html[data-theme="dark"] .autodocs-publish-result--success {
+	--adpb-result-accent: #63d68b;
+}
+
+html[data-theme="dark"] .autodocs-publish-result--warning {
+	--adpb-result-accent: #f1b354;
+}
+
+html[data-theme="dark"] .autodocs-publish-result--error {
+	--adpb-result-accent: #ff8587;
+}
+
+.autodocs-publish-result__icon {
+	display: grid;
+	width: 28px;
+	height: 28px;
+	place-items: center;
+	border-radius: 50%;
+	background: color-mix(in srgb, var(--adpb-result-accent) 12%, transparent);
+	box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--adpb-result-accent) 24%, transparent);
+	color: var(--adpb-result-accent);
+	font: 760 0.8rem/1 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.autodocs-publish-result__icon svg {
+	width: 16px;
+	height: 16px;
+}
+
+.autodocs-publish-result__kicker {
+	margin: 0 0 3px;
+	color: var(--adpb-result-accent);
+	font: 730 0.66rem/1.2 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	letter-spacing: 0.07em;
+	text-transform: uppercase;
+}
+
+.autodocs-publish-result__title {
+	color: var(--adp-ink, #171a22);
+	font: 720 0.91rem/1.35 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	letter-spacing: -0.01em;
+}
+
+.autodocs-publish-result__content {
+	margin-top: 3px;
+	font-size: 0.9em;
+}
+
+.autodocs-publish-result__content > :first-child {
+	margin-top: 0;
+}
+
+.autodocs-publish-result__content > :last-child {
+	margin-bottom: 0;
+}
+
+.autodocs-publish-result__meta {
+	grid-column: 2;
+	grid-row: 2;
+	min-width: 0;
+	color: var(--adp-muted, #6f7685);
+	font: 600 0.69rem/1.35 var(--adp-font-mono, "SFMono-Regular", Consolas, monospace);
+	overflow-wrap: anywhere;
+}

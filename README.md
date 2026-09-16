@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="assets/logo.png" alt="Docspress logo and wordmark" width="680">
+  <img src="assets/autodocs-publish-wordmark.svg" alt="Autodocs Publish logo and wordmark" width="680">
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/docspress"><img alt="npm version" src="https://img.shields.io/npm/v/docspress.svg"></a>
+  <a href="https://www.npmjs.com/package/autodocs-publish"><img alt="npm version" src="https://img.shields.io/npm/v/autodocs-publish.svg"></a>
   <a href="LICENSE"><img alt="License: GPL-3.0-or-later" src="https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg"></a>
-  <a href="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-docs.json&amp;page-title=DocsPress%20Documentation"><img alt="Launch DocsPress documentation in WordPress Playground" src="https://img.shields.io/badge/WordPress%20Playground-Launch-3858E9?logo=wordpress&amp;logoColor=white"></a>
+  <a href="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fautodocs-publish%2Fmain%2Ftheme%2Fblueprint-docs.json&amp;page-title=Autodocs%20Publish%20Documentation"><img alt="Launch Autodocs Publish documentation in WordPress Playground" src="https://img.shields.io/badge/WordPress%20Playground-Launch-3858E9?logo=wordpress&amp;logoColor=white"></a>
 </p>
 
 <p align="center">
@@ -22,14 +22,20 @@
 
 The complete product and setup documentation lives at [docs.press/docs](https://docs.press/docs/).
 
+## Rename compatibility
+
+Existing content created before the rename stays readable. Autodocs Publish accepts legacy `docspress:`, `docspress:block`, and `docspress/*` inputs, but all new output uses `autodocs-publish:`, `autodocs-publish:block`, and `autodocs-publish/*` identifiers.
+
+For an existing versioned site, activate Autodocs Publish Blocks 0.11.0 before changing the Action reference. This release keeps the old REST contract available during the rolling update and deactivates the old `docspress-blocks` package when the renamed plugin is activated. Activating the renamed theme copies the existing theme settings and Site Editor customizations without replacing newer Autodocs Publish values.
+
 ## Optional WordPress packages
 
-You do not have to install the DocsPress theme. An unversioned DocsPress sync works with the site's existing theme and native WordPress blocks.
+You do not have to install the Autodocs Publish theme. An unversioned Autodocs Publish sync works with the site's existing theme and native WordPress blocks.
 
-- [Download the latest DocsPress theme](https://github.com/Automattic/docspress/releases/latest/download/docspress-theme.zip)
-- [Download the latest DocsPress Blocks plugin](https://github.com/Automattic/docspress/releases/latest/download/docspress-blocks.zip)
+- [Download the latest Autodocs Publish theme](https://github.com/Automattic/autodocs-publish/releases/latest/download/autodocs-publish-theme.zip)
+- [Download the latest Autodocs Publish Blocks plugin](https://github.com/Automattic/autodocs-publish/releases/latest/download/autodocs-publish-blocks.zip)
 
-Install the theme for the complete documentation layout. Install the Blocks plugin for rich DocsPress blocks; it is required when API versioning is enabled.
+Install the theme for the complete documentation layout. Install the Blocks plugin for rich Autodocs Publish blocks; it is required when API versioning is enabled.
 
 ## Preview local docs from the CLI
 
@@ -37,8 +43,8 @@ Run this from the repository that contains your `docs/` directory:
 
 ```bash
 npx @wp-playground/cli@3.1.46 start \
-  --blueprint=https://raw.githubusercontent.com/Automattic/docspress/main/theme/blueprint-local-docs.json \
-  --mount="$PWD/docs:/wordpress/docspress-source-docs" \
+  --blueprint=https://raw.githubusercontent.com/Automattic/autodocs-publish/main/theme/blueprint-local-docs.json \
+  --mount="$PWD/docs:/wordpress/autodocs-publish-source-docs" \
   --no-auto-mount \
   --reset
 ```
@@ -47,12 +53,12 @@ WordPress Playground imports the Markdown as editable Pages and opens `/docs/`.
 
 ## Playground examples
 
-- [Default documentation site](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-docs.json&page-title=DocsPress%20Documentation)
-- [Contextual sidebars](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-sidebars.json&page-title=DocsPress%20Contextual%20Sidebars)
-- [Versioned API documentation](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-versioning.json&page-title=DocsPress%20Versioning%20Example)
-- [Stock WordPress, no DocsPress theme or plugin](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Fexamples%2Fstock-wordpress%2Fblueprint.json&page-title=DocsPress%20on%20Stock%20WordPress)
+- [Default documentation site](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fautodocs-publish%2Fmain%2Ftheme%2Fblueprint-docs.json&page-title=Autodocs%20Publish%20Documentation)
+- [Contextual sidebars](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fautodocs-publish%2Fmain%2Ftheme%2Fblueprint-sidebars.json&page-title=Autodocs%20Publish%20Contextual%20Sidebars)
+- [Versioned API documentation](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fautodocs-publish%2Fmain%2Ftheme%2Fblueprint-versioning.json&page-title=Autodocs%20Publish%20Versioning%20Example)
+- [Stock WordPress, no Autodocs Publish theme or plugin](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fautodocs-publish%2Fmain%2Fexamples%2Fstock-wordpress%2Fblueprint.json&page-title=Autodocs%20Publish%20on%20Stock%20WordPress)
 
-The first two examples include the complete DocsPress presentation layer. The stock WordPress example installs neither optional package and shows repository Markdown as editable native Gutenberg blocks.
+The first two examples include the complete Autodocs Publish presentation layer. The stock WordPress example installs neither optional package and shows repository Markdown as editable native Gutenberg blocks.
 
 ## GitHub Actions
 
@@ -79,7 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: Automattic/docspress@main
+      - uses: Automattic/autodocs-publish@main
         with:
           mode: publish
           wordpress-site: example.wordpress.com
@@ -115,7 +121,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: docspress-sync
+  group: autodocs-publish-sync
   cancel-in-progress: false
 
 jobs:
@@ -124,12 +130,12 @@ jobs:
       github.event_name != 'push' ||
       !contains(
         github.event.head_commit.message,
-        format('from {0}/docspress/wordpress-sync', github.repository_owner)
+        format('from {0}/autodocs-publish/wordpress-sync', github.repository_owner)
       )
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: Automattic/docspress@main
+      - uses: Automattic/autodocs-publish@main
         with:
           mode: reconcile
           wordpress-site: example.wordpress.com
@@ -146,7 +152,7 @@ WordPress-only edits become a rolling Markdown pull request. A true two-sided ed
 
 ### WordPress.com
 
-DocsPress uses a WordPress.com OAuth token stored as the repository secret `WP_ACCESS_TOKEN`.
+Autodocs Publish uses a WordPress.com OAuth token stored as the repository secret `WP_ACCESS_TOKEN`.
 
 1. Create an app at [WordPress.com Apps](https://developer.wordpress.com/apps/).
 2. Set the redirect URL to `http://localhost:8787/callback`.
@@ -155,15 +161,15 @@ DocsPress uses a WordPress.com OAuth token stored as the repository secret `WP_A
 
 ```bash
 printf "WordPress.com client secret: "
-IFS= read -r -s DOCSPRESS_CLIENT_SECRET
+IFS= read -r -s AUTODOCS_PUBLISH_CLIENT_SECRET
 printf "\n"
-npx docspress@0.4.1 token \
+npx autodocs-publish@0.5.0 token \
   --client-id YOUR_CLIENT_ID \
-  --client-secret "$DOCSPRESS_CLIENT_SECRET" \
+  --client-secret "$AUTODOCS_PUBLISH_CLIENT_SECRET" \
   --site example.wordpress.com \
   --repo OWNER/REPO \
   --set-secret
-unset DOCSPRESS_CLIENT_SECRET
+unset AUTODOCS_PUBLISH_CLIENT_SECRET
 ```
 
 The helper opens WordPress.com for authorization and stores the resulting token without printing it. Confirm only the secret name:
@@ -174,7 +180,7 @@ gh secret list --repo OWNER/REPO
 
 ### Self-hosted WordPress (.org)
 
-DocsPress can use a REST API key from your host or authentication plugin when it accepts `Authorization: Bearer …`. Core WordPress does not create this key itself.
+Autodocs Publish can use a REST API key from your host or authentication plugin when it accepts `Authorization: Bearer …`. Core WordPress does not create this key itself.
 
 Store the key without printing it:
 
@@ -195,7 +201,7 @@ wordpress-site: docs.example.com
 wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}
 ```
 
-DocsPress calls `https://docs.example.com/wp-json/wp/v2/pages`. Confirm that the key can read, create, update, and delete Pages before publishing.
+Autodocs Publish calls `https://docs.example.com/wp-json/wp/v2/pages`. Confirm that the key can read, create, update, and delete Pages before publishing.
 
 For the complete setup, use [Authenticate WordPress](https://docs.press/docs/publish-existing-docs/authentication/).
 

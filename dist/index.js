@@ -90381,10 +90381,10 @@ function lib_isUint8Array(value) {
 ;// CONCATENATED MODULE: ./src/block-markdown.js
 
 
-const DOCSPRESS_BLOCK_VERSION = 1;
+const AUTODOCS_PUBLISH_BLOCK_VERSION = 1;
 
 const CUSTOM_BLOCK_DEFAULTS = {
-  "docspress/api-request": {
+  "autodocs-publish/api-request": {
     method: "GET",
     endpoint: "/wp-json/wp/v2/pages",
     headers: "Accept: application/json\nAuthorization: Bearer $WP_ACCESS_TOKEN",
@@ -90400,7 +90400,7 @@ const CUSTOM_BLOCK_DEFAULTS = {
     allowedOrigins: "",
     timeout: 10000
   },
-  "docspress/audience-paths": {
+  "autodocs-publish/audience-paths": {
     eyebrow: "Choose a starting point",
     title: "Where are your docs today?",
     description: "Follow the path that matches your repository.",
@@ -90434,22 +90434,22 @@ const CUSTOM_BLOCK_DEFAULTS = {
     panelColor: "",
     accentColor: ""
   },
-  "docspress/callout": {
+  "autodocs-publish/callout": {
     tone: "note",
     title: "Good to know",
     content: "<p>Add the detail readers need at exactly the right moment.</p>",
     collapsible: false,
     open: true
   },
-  "docspress/code-tabs": {
+  "autodocs-publish/code-tabs": {
     tabs: [
       { label: "JavaScript", language: "javascript", filename: "example.js", code: "const docs = await publish();" },
-      { label: "PHP", language: "php", filename: "example.php", code: "$docs = docspress_publish();" }
+      { label: "PHP", language: "php", filename: "example.php", code: "$docs = autodocs_publish_publish();" }
     ],
     showLineNumbers: true,
     caption: ""
   },
-  "docspress/code-playground": {
+  "autodocs-publish/code-playground": {
     title: "Live example",
     html: "<button class=\"demo-button\">Publish docs</button>",
     css: ".demo-button {\n  padding: 0.75rem 1rem;\n  border: 0;\n  border-radius: 0.4rem;\n  background: #3858e9;\n  color: white;\n  font: inherit;\n}",
@@ -90459,10 +90459,10 @@ const CUSTOM_BLOCK_DEFAULTS = {
     showConsole: true,
     allowNetwork: false
   },
-  "docspress/colorful-code": {
+  "autodocs-publish/colorful-code": {
     language: "javascript",
     filename: "",
-    code: "const hello = \"DocsPress\";\nconsole.log( hello );",
+    code: "const hello = \"Autodocs Publish\";\nconsole.log( hello );",
     highlightedLines: "",
     showLineNumbers: true,
     caption: "",
@@ -90470,13 +90470,13 @@ const CUSTOM_BLOCK_DEFAULTS = {
     copyMode: "all",
     annotations: []
   },
-  "docspress/diagram": {
+  "autodocs-publish/diagram": {
     title: "Publishing flow",
     type: "flow",
-    source: "Markdown -> DocsPress: collect\nDocsPress -> WordPress: publish\nWordPress -> Reader: serve",
+    source: "Markdown -> Autodocs Publish: collect\nAutodocs Publish -> WordPress: publish\nWordPress -> Reader: serve",
     caption: ""
   },
-  "docspress/fields": {
+  "autodocs-publish/fields": {
     title: "Configuration fields",
     description: "Typed options, defaults, and constraints in one scannable reference.",
     fields: [
@@ -90511,14 +90511,14 @@ const CUSTOM_BLOCK_DEFAULTS = {
     searchable: true,
     compact: false
   },
-  "docspress/file-tree": {
+  "autodocs-publish/file-tree": {
     root: "project/",
     tree: "docs/\n  getting-started.md\n  api/\n    endpoints.md\npackage.json",
     caption: "",
     collapsible: true,
     open: true
   },
-  "docspress/flow": {
+  "autodocs-publish/flow": {
     start: 1,
     steps: [
       { title: "Choose", content: "<p>Select the option that matches your project.</p>" },
@@ -90526,7 +90526,7 @@ const CUSTOM_BLOCK_DEFAULTS = {
       { title: "Verify", content: "<p>Run the check and confirm the expected result.</p>" }
     ]
   },
-  "docspress/hero": {
+  "autodocs-publish/hero": {
     eyebrow: "Documentation, publishing, and community",
     title: "Docs that stay connected to your GitHub repo",
     description: "Write beside your code. Publish a WordPress experience that guides every reader to the docs written for them.",
@@ -90554,30 +90554,30 @@ const CUSTOM_BLOCK_DEFAULTS = {
     visualColor: "",
     accentColor: ""
   },
-  "docspress/prompt": {
-    prompt: "Use $docspress-install to review this repository's documentation setup. Return a short plan before writing code.",
+  "autodocs-publish/prompt": {
+    prompt: "Use $autodocs-publish-install to review this repository's documentation setup. Return a short plan before writing code.",
     model: "GPT-5",
     mode: "code",
     thinking: true,
-    context: "$docspress-install, @repository, src/sync.js, docs/",
+    context: "$autodocs-publish-install, @repository, src/sync.js, docs/",
     caption: "Prompt example"
   },
-  "docspress/result": {
+  "autodocs-publish/result": {
     status: "success",
     title: "Deployment completed",
     content: "<p>All documentation pages are up to date.</p>",
     meta: "12 pages · 1.8s"
   },
-  "docspress/terminal-session": {
+  "autodocs-publish/terminal-session": {
     title: "Terminal",
     shell: "bash",
     prompt: "$",
-    command: "npx docspress publish ./docs",
+    command: "npx autodocs-publish publish ./docs",
     output: "✓ Read 12 documents\n✓ Published 12 WordPress pages"
   },
-  "docspress/troubleshooter": {
+  "autodocs-publish/troubleshooter": {
     title: "Find the next step",
-    intro: "Answer two quick questions to get the right DocsPress workflow.",
+    intro: "Answer two quick questions to get the right Autodocs Publish workflow.",
     startId: "source",
     questions: [
       {
@@ -90602,7 +90602,7 @@ const CUSTOM_BLOCK_DEFAULTS = {
         id: "install",
         status: "warning",
         title: "Connect the publishing target",
-        content: "<p>Run the DocsPress installer, add the WordPress access token, and verify the repository connection before publishing.</p>"
+        content: "<p>Run the Autodocs Publish installer, add the WordPress access token, and verify the repository connection before publishing.</p>"
       },
       {
         id: "sync",
@@ -90619,13 +90619,13 @@ const CUSTOM_BLOCK_DEFAULTS = {
     ],
     showProgress: true
   },
-  "docspress/version-notice": {
+  "autodocs-publish/version-notice": {
     message: "You are viewing {current}. The latest version is {latest}.",
     latestLinkLabel: "Switch to latest",
     showIcon: true,
     dismissible: false
   },
-  "docspress/version-switcher": {
+  "autodocs-publish/version-switcher": {
     label: "Version",
     showLabel: true,
     presentation: "select",
@@ -90635,20 +90635,32 @@ const CUSTOM_BLOCK_DEFAULTS = {
   }
 };
 
-const DOCSPRESS_BLOCK_PATTERN = /<!--\s*docspress:block\s*([\s\S]*?)-->\s*\n?([\s\S]*?)<!--\s*\/docspress:block\s*-->/g;
-const DOCSPRESS_MARKER_PATTERN = /<!--\s*\/?docspress:block(?:\s|--)/;
+const AUTODOCS_PUBLISH_BLOCK_PATTERN = /<!--\s*(autodocs-publish|docspress):block\s*([\s\S]*?)-->\s*\n?([\s\S]*?)<!--\s*\/\1:block\s*-->/g;
+const AUTODOCS_PUBLISH_MARKER_PATTERN = /<!--\s*\/?(?:autodocs-publish|docspress):block(?:\s|--)/;
 const BLOCK_NAME_PATTERN = /^[a-z][a-z0-9_-]*\/[a-z][a-z0-9_-]*$/;
+
+function normalizeAutodocsPublishBlockName(name) {
+  const value = String(name || "");
+  return value.startsWith("docspress/")
+    ? `autodocs-publish/${value.slice("docspress/".length)}`
+    : value;
+}
+
+function isAutodocsPublishBlockName(name) {
+  const value = String(name || "");
+  return value.startsWith("autodocs-publish/") || value.startsWith("docspress/");
+}
 
 function markdownBlockSyntaxToGutenberg(source, protectedRanges = []) {
   const replacements = [];
-  const pattern = new RegExp(DOCSPRESS_BLOCK_PATTERN.source, "g");
+  const pattern = new RegExp(AUTODOCS_PUBLISH_BLOCK_PATTERN.source, "g");
   let match;
 
   while ((match = pattern.exec(source))) {
     if (rangeContains(protectedRanges, match.index)) {
       continue;
     }
-    const config = parseBlockConfig(match[1]);
+    const config = parseBlockConfig(match[2]);
     replacements.push({
       start: match.index,
       end: pattern.lastIndex,
@@ -90658,8 +90670,8 @@ function markdownBlockSyntaxToGutenberg(source, protectedRanges = []) {
 
   const masked = maskRanges(source, protectedRanges);
   const residual = masked.replace(pattern, "");
-  if (DOCSPRESS_MARKER_PATTERN.test(residual)) {
-    throw new Error("DocsPress Markdown block syntax has an unmatched or malformed boundary.");
+  if (AUTODOCS_PUBLISH_MARKER_PATTERN.test(residual)) {
+    throw new Error("Autodocs Publish Markdown block syntax has an unmatched or malformed boundary.");
   }
 
   let result = source;
@@ -90671,21 +90683,22 @@ function markdownBlockSyntaxToGutenberg(source, protectedRanges = []) {
 
 function findMarkdownBlockRanges(source, protectedRanges = []) {
   const ranges = [];
-  const pattern = new RegExp(DOCSPRESS_BLOCK_PATTERN.source, "g");
+  const pattern = new RegExp(AUTODOCS_PUBLISH_BLOCK_PATTERN.source, "g");
   let match;
 
   while ((match = pattern.exec(source))) {
     if (!rangeContains(protectedRanges, match.index)) {
-      ranges.push({ start: match.index, end: pattern.lastIndex, type: "docspress-block" });
+      ranges.push({ start: match.index, end: pattern.lastIndex, type: "autodocs-publish-block" });
     }
   }
   return ranges;
 }
 
 function customBlockToMarkdown(name, attributes, service) {
+  const normalizedName = normalizeAutodocsPublishBlockName(name);
   const attrs = { ...(attributes || {}) };
-  const preview = renderCustomBlockPreview(name, attrs, service);
-  return serializeMarkdownBlock({ name, attrs }, preview);
+  const preview = renderCustomBlockPreview(normalizedName, attrs, service);
+  return serializeMarkdownBlock({ name: normalizedName, attrs }, preview);
 }
 
 function coreBlockToMarkdownEnvelope(block, raw, service) {
@@ -90701,36 +90714,46 @@ function parseBlockConfig(raw) {
   try {
     config = JSON.parse(String(raw || "").trim());
   } catch (error) {
-    throw new Error(`DocsPress Markdown block config is invalid JSON: ${error.message}`);
+    throw new Error(`Autodocs Publish Markdown block config is invalid JSON: ${error.message}`);
   }
-  if (config?.version !== DOCSPRESS_BLOCK_VERSION) {
-    throw new Error(`DocsPress Markdown block version must be ${DOCSPRESS_BLOCK_VERSION}.`);
+  if (config?.version !== AUTODOCS_PUBLISH_BLOCK_VERSION) {
+    throw new Error(`Autodocs Publish Markdown block version must be ${AUTODOCS_PUBLISH_BLOCK_VERSION}.`);
   }
   if (!BLOCK_NAME_PATTERN.test(config?.name || "")) {
-    throw new Error("DocsPress Markdown block config must contain a valid namespaced block name.");
+    throw new Error("Autodocs Publish Markdown block config must contain a valid namespaced block name.");
   }
-  if (config.serialized !== undefined) {
-    validateSerializedBlock(config.serialized, config.name);
-  } else if (!config.name.startsWith("docspress/")) {
+  const name = normalizeAutodocsPublishBlockName(config.name);
+  const serialized = config.serialized === undefined
+    ? undefined
+    : normalizeSerializedBlock(config.serialized);
+  if (serialized !== undefined) {
+    validateSerializedBlock(serialized, name);
+  } else if (!name.startsWith("autodocs-publish/")) {
     throw new Error("Core and third-party Markdown block configs must include their lossless serialized form.");
   }
   if (config.attrs !== undefined && (!config.attrs || Array.isArray(config.attrs) || typeof config.attrs !== "object")) {
-    throw new Error("DocsPress Markdown block attrs must be an object.");
+    throw new Error("Autodocs Publish Markdown block attrs must be an object.");
   }
   return {
-    name: config.name,
+    name,
     attrs: config.attrs || {},
-    serialized: config.serialized
+    serialized
   };
+}
+
+function normalizeSerializedBlock(value) {
+  return typeof value === "string"
+    ? value.replace(/(<!--\s*\/?wp:)docspress\//g, "$1autodocs-publish/")
+    : value;
 }
 
 function validateSerializedBlock(value, expectedName) {
   if (typeof value !== "string") {
-    throw new Error("DocsPress serialized block config must be a string.");
+    throw new Error("Autodocs Publish serialized block config must be a string.");
   }
   const named = parse(value).filter((block) => block.blockName);
   if (named.length !== 1 || named[0].blockName !== expectedName) {
-    throw new Error(`DocsPress serialized block config must contain exactly one ${expectedName} block.`);
+    throw new Error(`Autodocs Publish serialized block config must contain exactly one ${expectedName} block.`);
   }
 }
 
@@ -90742,14 +90765,21 @@ function serializeSelfClosingBlock(name, attrs) {
 }
 
 function serializeMarkdownBlock(config, preview) {
+  const canonicalConfig = {
+    ...config,
+    name: normalizeAutodocsPublishBlockName(config.name)
+  };
+  if (canonicalConfig.serialized !== undefined) {
+    canonicalConfig.serialized = normalizeSerializedBlock(canonicalConfig.serialized);
+  }
   const payload = safeJson({
-    version: DOCSPRESS_BLOCK_VERSION,
-    ...config
+    version: AUTODOCS_PUBLISH_BLOCK_VERSION,
+    ...canonicalConfig
   }, 2);
   const safePreview = String(preview || "")
-    .replace(/<!--\s*\/?docspress:block/g, "&lt;!-- docspress:block")
-    .trim() || `**WordPress block: \`${config.name}\`**`;
-  return `<!-- docspress:block\n${payload}\n-->\n${safePreview}\n<!-- /docspress:block -->`;
+    .replace(/<!--\s*\/?(?:autodocs-publish|docspress):block/g, "&lt;!-- autodocs-publish:block")
+    .trim() || `**WordPress block: \`${canonicalConfig.name}\`**`;
+  return `<!-- autodocs-publish:block\n${payload}\n-->\n${safePreview}\n<!-- /autodocs-publish:block -->`;
 }
 
 function safeJson(value, spacing) {
@@ -90762,28 +90792,28 @@ function safeJson(value, spacing) {
 
 function renderCustomBlockPreview(name, attrs, service) {
   const renderers = {
-    "docspress/api-request": renderApiRequest,
-    "docspress/audience-paths": renderAudiencePaths,
-    "docspress/callout": renderCallout,
-    "docspress/code-tabs": renderCodeTabs,
-    "docspress/code-playground": renderCodePlayground,
-    "docspress/colorful-code": renderColorfulCode,
-    "docspress/diagram": renderDiagram,
-    "docspress/fields": renderFields,
-    "docspress/file-tree": renderFileTree,
-    "docspress/flow": renderFlow,
-    "docspress/hero": renderHero,
-    "docspress/prompt": renderPrompt,
-    "docspress/result": renderResult,
-    "docspress/terminal-session": renderTerminal,
-    "docspress/troubleshooter": renderTroubleshooter,
-    "docspress/version-notice": renderVersionNotice,
-    "docspress/version-switcher": renderVersionSwitcher
+    "autodocs-publish/api-request": renderApiRequest,
+    "autodocs-publish/audience-paths": renderAudiencePaths,
+    "autodocs-publish/callout": renderCallout,
+    "autodocs-publish/code-tabs": renderCodeTabs,
+    "autodocs-publish/code-playground": renderCodePlayground,
+    "autodocs-publish/colorful-code": renderColorfulCode,
+    "autodocs-publish/diagram": renderDiagram,
+    "autodocs-publish/fields": renderFields,
+    "autodocs-publish/file-tree": renderFileTree,
+    "autodocs-publish/flow": renderFlow,
+    "autodocs-publish/hero": renderHero,
+    "autodocs-publish/prompt": renderPrompt,
+    "autodocs-publish/result": renderResult,
+    "autodocs-publish/terminal-session": renderTerminal,
+    "autodocs-publish/troubleshooter": renderTroubleshooter,
+    "autodocs-publish/version-notice": renderVersionNotice,
+    "autodocs-publish/version-switcher": renderVersionSwitcher
   };
   const renderer = renderers[name];
   return renderer
     ? renderer(attrs, service)
-    : `**DocsPress block: \`${name}\`**`;
+    : `**Autodocs Publish block: \`${name}\`**`;
 }
 
 function renderCallout(attrs, service) {
@@ -90987,7 +91017,7 @@ function renderFlow(attrs, service) {
 }
 
 function renderApiRequest(attrs) {
-  const defaults = CUSTOM_BLOCK_DEFAULTS["docspress/api-request"];
+  const defaults = CUSTOM_BLOCK_DEFAULTS["autodocs-publish/api-request"];
   const method = apiAttribute(attrs, defaults, "method");
   const endpoint = apiAttribute(attrs, defaults, "endpoint");
   const headers = apiAttribute(attrs, defaults, "headers");
@@ -91364,8 +91394,8 @@ function tableBlock(html) {
 function sourceLinkBlock(url, label = "Edit this page on GitHub") {
   return serializeBlock(
     "core/paragraph",
-    { className: "docspress-source-link" },
-    `<p class="docspress-source-link"><a href="${escapeAttribute(url)}">${escapeHtml(label)}</a></p>`
+    { className: "autodocs-publish-source-link" },
+    `<p class="autodocs-publish-source-link"><a href="${escapeAttribute(url)}">${escapeHtml(label)}</a></p>`
   );
 }
 
@@ -91746,9 +91776,9 @@ function renderTableRow(row, cellTag, align, context = {}) {
 }
 
 ;// CONCATENATED MODULE: ./src/sentinel.js
-const SENTINEL_PREFIX = "docspress:";
+const SENTINEL_PREFIX = "autodocs-publish:";
 
-const SENTINEL_PATTERN = /<!--\s*docspress:(.*?)\s*-->/s;
+const SENTINEL_PATTERN = /<!--\s*(?:autodocs-publish|docspress):(.*?)\s*-->/s;
 
 function createSentinel(metadata) {
   return `<!-- ${SENTINEL_PREFIX}${JSON.stringify({
@@ -91807,7 +91837,7 @@ const REVERSE_BLOCKS = new Set([
 const markdownParser = unified().use(remarkParse).use(remarkGfm);
 const BLOCK_TOKEN_PATTERN = /<!--\s+(\/)?wp:([a-z][a-z0-9_-]*\/)?([a-z][a-z0-9_-]*)\s+({(?:(?=([^}]+|}+(?=})|(?!}\s+\/?-->)[^])*)\5|[^]*?)}\s+)?(\/)?-->/g;
 const reverse_CUSTOM_BLOCK_DEFAULTS = {
-  "docspress/api-request": {
+  "autodocs-publish/api-request": {
     method: "GET",
     endpoint: "/wp-json/wp/v2/pages",
     headers: "Accept: application/json\nAuthorization: Bearer $WP_ACCESS_TOKEN",
@@ -91823,7 +91853,7 @@ const reverse_CUSTOM_BLOCK_DEFAULTS = {
     allowedOrigins: "",
     timeout: 10000
   },
-  "docspress/audience-paths": {
+  "autodocs-publish/audience-paths": {
     eyebrow: "Choose a starting point",
     title: "Where are your docs today?",
     description: "Follow the path that matches your repository.",
@@ -91857,22 +91887,22 @@ const reverse_CUSTOM_BLOCK_DEFAULTS = {
     panelColor: "",
     accentColor: ""
   },
-  "docspress/callout": {
+  "autodocs-publish/callout": {
     tone: "note",
     title: "Good to know",
     content: "<p>Add the detail readers need at exactly the right moment.</p>",
     collapsible: false,
     open: true
   },
-  "docspress/code-tabs": {
+  "autodocs-publish/code-tabs": {
     tabs: [
       { label: "JavaScript", language: "javascript", filename: "example.js", code: "const docs = await publish();" },
-      { label: "PHP", language: "php", filename: "example.php", code: "$docs = docspress_publish();" }
+      { label: "PHP", language: "php", filename: "example.php", code: "$docs = autodocs_publish_publish();" }
     ],
     showLineNumbers: true,
     caption: ""
   },
-  "docspress/code-playground": {
+  "autodocs-publish/code-playground": {
     title: "Live example",
     html: "<button class=\"demo-button\">Publish docs</button>",
     css: ".demo-button {\n  padding: 0.75rem 1rem;\n  border: 0;\n  border-radius: 0.4rem;\n  background: #3858e9;\n  color: white;\n  font: inherit;\n}",
@@ -91882,10 +91912,10 @@ const reverse_CUSTOM_BLOCK_DEFAULTS = {
     showConsole: true,
     allowNetwork: false
   },
-  "docspress/colorful-code": {
+  "autodocs-publish/colorful-code": {
     language: "javascript",
     filename: "",
-    code: "const hello = \"DocsPress\";\nconsole.log( hello );",
+    code: "const hello = \"Autodocs Publish\";\nconsole.log( hello );",
     highlightedLines: "",
     showLineNumbers: true,
     caption: "",
@@ -91893,13 +91923,13 @@ const reverse_CUSTOM_BLOCK_DEFAULTS = {
     copyMode: "all",
     annotations: []
   },
-  "docspress/diagram": {
+  "autodocs-publish/diagram": {
     title: "Publishing flow",
     type: "flow",
-    source: "Markdown -> DocsPress: collect\nDocsPress -> WordPress: publish\nWordPress -> Reader: serve",
+    source: "Markdown -> Autodocs Publish: collect\nAutodocs Publish -> WordPress: publish\nWordPress -> Reader: serve",
     caption: ""
   },
-  "docspress/fields": {
+  "autodocs-publish/fields": {
     title: "Configuration fields",
     description: "Typed options, defaults, and constraints in one scannable reference.",
     fields: [
@@ -91934,14 +91964,14 @@ const reverse_CUSTOM_BLOCK_DEFAULTS = {
     searchable: true,
     compact: false
   },
-  "docspress/file-tree": {
+  "autodocs-publish/file-tree": {
     root: "project/",
     tree: "docs/\n  getting-started.md\n  api/\n    endpoints.md\npackage.json",
     caption: "",
     collapsible: true,
     open: true
   },
-  "docspress/flow": {
+  "autodocs-publish/flow": {
     start: 1,
     steps: [
       { title: "Choose", content: "<p>Select the option that matches your project.</p>" },
@@ -91949,7 +91979,7 @@ const reverse_CUSTOM_BLOCK_DEFAULTS = {
       { title: "Verify", content: "<p>Run the check and confirm the expected result.</p>" }
     ]
   },
-  "docspress/hero": {
+  "autodocs-publish/hero": {
     eyebrow: "Documentation, publishing, and community",
     title: "Docs that stay connected to your GitHub repo",
     description: "Write beside your code. Publish a WordPress experience that guides every reader to the docs written for them.",
@@ -91977,30 +92007,30 @@ const reverse_CUSTOM_BLOCK_DEFAULTS = {
     visualColor: "",
     accentColor: ""
   },
-  "docspress/prompt": {
-    prompt: "Use $docspress-install to review this repository's documentation setup. Return a short plan before writing code.",
+  "autodocs-publish/prompt": {
+    prompt: "Use $autodocs-publish-install to review this repository's documentation setup. Return a short plan before writing code.",
     model: "GPT-5",
     mode: "code",
     thinking: true,
-    context: "$docspress-install, @repository, src/sync.js, docs/",
+    context: "$autodocs-publish-install, @repository, src/sync.js, docs/",
     caption: "Prompt example"
   },
-  "docspress/result": {
+  "autodocs-publish/result": {
     status: "success",
     title: "Deployment completed",
     content: "<p>All documentation pages are up to date.</p>",
     meta: "12 pages · 1.8s"
   },
-  "docspress/terminal-session": {
+  "autodocs-publish/terminal-session": {
     title: "Terminal",
     shell: "bash",
     prompt: "$",
-    command: "npx docspress publish ./docs",
+    command: "npx autodocs-publish publish ./docs",
     output: "✓ Read 12 documents\n✓ Published 12 WordPress pages"
   },
-  "docspress/troubleshooter": {
+  "autodocs-publish/troubleshooter": {
     title: "Find the next step",
-    intro: "Answer two quick questions to get the right DocsPress workflow.",
+    intro: "Answer two quick questions to get the right Autodocs Publish workflow.",
     startId: "source",
     questions: [
       {
@@ -92025,7 +92055,7 @@ const reverse_CUSTOM_BLOCK_DEFAULTS = {
         id: "install",
         status: "warning",
         title: "Connect the publishing target",
-        content: "<p>Run the DocsPress installer, add the WordPress access token, and verify the repository connection before publishing.</p>"
+        content: "<p>Run the Autodocs Publish installer, add the WordPress access token, and verify the repository connection before publishing.</p>"
       },
       {
         id: "sync",
@@ -92042,13 +92072,13 @@ const reverse_CUSTOM_BLOCK_DEFAULTS = {
     ],
     showProgress: true
   },
-  "docspress/version-notice": {
+  "autodocs-publish/version-notice": {
     message: "You are viewing {current}. The latest version is {latest}.",
     latestLinkLabel: "Switch to latest",
     showIcon: true,
     dismissible: false
   },
-  "docspress/version-switcher": {
+  "autodocs-publish/version-switcher": {
     label: "Version",
     showLabel: true,
     presentation: "select",
@@ -92078,7 +92108,7 @@ function upgradeLegacyBlockSyntax(markdown, options = {}) {
   const protectedRanges = [];
   reverse_collectNodeRanges(tree, (node) => node.type === "code" || node.type === "inlineCode", protectedRanges);
   const ranges = findSpecialMarkdownRanges(source)
-    .filter((range) => range.type === "gutenberg" || range.type === "docspress-block");
+    .filter((range) => range.type === "gutenberg" || range.type === "autodocs-publish-block");
   const selfClosingLine = /^<!--\s*wp:[a-z][a-z0-9_-]*(?:\/[a-z][a-z0-9_-]*)?[^\r\n]*\/-->[ \t]*$/gm;
   let match;
   while ((match = selfClosingLine.exec(source))) {
@@ -92281,7 +92311,7 @@ function blockFingerprint(chunk) {
 
   const block = normalizeBlockForComparison(chunk.block);
   const name = block.blockName;
-  if (name.startsWith("docspress/")) {
+  if (isAutodocsPublishBlockName(name)) {
     return stableJson({ name, attrs: effectiveCustomAttributes(name, block.attrs) });
   }
 
@@ -92314,19 +92344,24 @@ function normalizeBlockForComparison(block) {
   if (block.blockName === "core/list" && attrs.ordered === false) {
     delete attrs.ordered;
   }
-  return { ...block, attrs };
+  return {
+    ...block,
+    blockName: normalizeAutodocsPublishBlockName(block.blockName),
+    attrs
+  };
 }
 
 function effectiveCustomAttributes(name, attributes) {
+  const normalizedName = normalizeAutodocsPublishBlockName(name);
   return {
-    ...(reverse_CUSTOM_BLOCK_DEFAULTS[name] || {}),
+    ...(reverse_CUSTOM_BLOCK_DEFAULTS[normalizedName] || {}),
     ...(attributes || {})
   };
 }
 
 function blockChunkToSourceMarkdown(chunk, service, originalChunk) {
   const name = chunk.block?.blockName || "";
-  if (name.startsWith("docspress/")) {
+  if (isAutodocsPublishBlockName(name)) {
     return serializeCustomBlockForMarkdown(chunk.block, originalChunk?.block, service);
   }
 
@@ -92343,16 +92378,17 @@ function blockChunkToSourceMarkdown(chunk, service, originalChunk) {
 }
 
 function serializeCustomBlockForMarkdown(block, originalBlock, service) {
+  const name = normalizeAutodocsPublishBlockName(block.blockName);
   const attrs = mergeCustomAttributes(
-    block.blockName,
+    name,
     originalBlock?.attrs || {},
     block.attrs || {}
   );
-  return customBlockToMarkdown(block.blockName, attrs, service);
+  return customBlockToMarkdown(name, attrs, service);
 }
 
 function mergeCustomAttributes(name, original, live) {
-  const defaults = reverse_CUSTOM_BLOCK_DEFAULTS[name] || {};
+  const defaults = reverse_CUSTOM_BLOCK_DEFAULTS[normalizeAutodocsPublishBlockName(name)] || {};
   const result = {};
   const keys = new Set([...Object.keys(defaults), ...Object.keys(original), ...Object.keys(live)]);
 
@@ -92419,14 +92455,14 @@ function sourceBlockLayout(existing, desired, desiredBlockCount) {
       continue;
     }
     if (count !== 1) {
-      throw new Error(`Docspress cannot safely map a Markdown source region that produces ${count} Gutenberg blocks.`);
+      throw new Error(`Autodocs Publish cannot safely map a Markdown source region that produces ${count} Gutenberg blocks.`);
     }
     blockRanges.push({ start: entry.start, end: entry.end });
   }
 
   if (blockRanges.length !== desiredBlockCount) {
     throw new Error(
-      `Docspress cannot safely map ${desiredBlockCount} Gutenberg blocks onto ${blockRanges.length} Markdown source regions for ${desired.sourcePath}.`
+      `Autodocs Publish cannot safely map ${desiredBlockCount} Gutenberg blocks onto ${blockRanges.length} Markdown source regions for ${desired.sourcePath}.`
     );
   }
 
@@ -92568,12 +92604,12 @@ async function createReverseChanges(options) {
     const manifest = JSON.parse(existingManifest);
     const entries = Array.isArray(manifest) ? manifest : manifest.pages || manifest.items;
     if (!Array.isArray(entries)) {
-      throw new Error(`Docspress manifest must contain a pages array: ${manifestPath}`);
+      throw new Error(`Autodocs Publish manifest must contain a pages array: ${manifestPath}`);
     }
     for (const [id, title] of titles.entries()) {
       const entry = entries.find((candidate) => String(candidate?.id || candidate?.slug || "") === id);
       if (!entry) {
-        throw new Error(`Docspress could not find manifest entry ${id} while applying a WordPress title change.`);
+        throw new Error(`Autodocs Publish could not find manifest entry ${id} while applying a WordPress title change.`);
       }
       entry.title = title;
     }
@@ -92611,7 +92647,7 @@ function createTurndownService(resolveLink) {
     strongDelimiter: "**"
   });
   service.use(turndown_plugin_gfm_cjs/* gfm */.Te);
-  service.addRule("docspress-links", {
+  service.addRule("autodocs-publish-links", {
     filter: "a",
     replacement(content, node) {
       const href = resolveLink ? resolveLink(node.getAttribute("href") || "") : node.getAttribute("href") || "";
@@ -92629,7 +92665,7 @@ function blockChunkToMarkdown(chunk, service, options = {}) {
   }
 
   const name = chunk.block.blockName;
-  if (name.startsWith("docspress/")) {
+  if (isAutodocsPublishBlockName(name)) {
     return customBlockToMarkdown(name, chunk.block.attrs || {}, service);
   }
   if (!canConvertBlock(chunk.block)) {
@@ -92748,8 +92784,8 @@ function removeGeneratedSourceLink(chunks) {
       continue;
     }
     const isSourceLink = chunk.block?.blockName === "core/paragraph" && (
-      chunk.block.attrs?.className === "docspress-source-link" ||
-      /class=["'][^"']*docspress-source-link/.test(chunk.block.innerHTML)
+      chunk.block.attrs?.className === "autodocs-publish-source-link" ||
+      /class=["'][^"']*autodocs-publish-source-link/.test(chunk.block.innerHTML)
     );
     if (isSourceLink) {
       chunks.splice(index, 1);
@@ -92914,7 +92950,7 @@ function replaceFirstTitleHeading(body, title) {
   const tree = markdownParser.parse(body);
   const heading = tree.children.find((node) => node.type === "heading" && node.depth === 1);
   if (!heading?.position?.start || !heading?.position?.end) {
-    throw new Error("Docspress could not find the Markdown H1 that supplies the Page title.");
+    throw new Error("Autodocs Publish could not find the Markdown H1 that supplies the Page title.");
   }
   const start = heading.position.start.offset;
   const end = heading.position.end.offset;
@@ -93033,7 +93069,7 @@ async function syncPages(options) {
     deleteMode = "trash",
     rootSlug = "docs",
     versionsRegistry = null,
-    versionTaxonomy = "docspress_versions",
+    versionTaxonomy = "autodocs_publish_versions",
     githubRepository = "",
     githubRef = "main",
     githubServerUrl = "https://github.com",
@@ -93164,8 +93200,8 @@ async function syncPages(options) {
       action: "delete",
       key: page.sentinel.key,
       id: page.id,
-      version: page.sentinel?.docsVersion || page.meta?._docspress_version_id || "",
-      sourcePath: page.sentinel?.source || page.meta?._docspress_source_path || ""
+      version: page.sentinel?.docsVersion || page.meta?._autodocs_publish_version_id || "",
+      sourcePath: page.sentinel?.source || page.meta?._autodocs_publish_source_path || ""
     });
     logger.info?.(`${dryRun ? "Would delete" : "Deleting"} ${page.sentinel.key}`);
     if (!dryRun) {
@@ -93194,30 +93230,30 @@ function pagePayload(page, parentId, managed, options = {}) {
   if (page.docsVersion?.id) {
     payload[options.versionTaxonomy] = options.versionTermId ? [options.versionTermId] : [];
     payload.meta = {
-      _docspress_version_id: page.docsVersion.id,
-      _docspress_logical_route: page.logicalRoute || "",
-      _docspress_page_identity: page.stableIdentity,
-      _docspress_source_type: page.sourceType,
-      _docspress_source_path: page.sourcePath,
+      _autodocs_publish_version_id: page.docsVersion.id,
+      _autodocs_publish_logical_route: page.logicalRoute || "",
+      _autodocs_publish_page_identity: page.stableIdentity,
+      _autodocs_publish_source_type: page.sourceType,
+      _autodocs_publish_source_path: page.sourcePath,
       ...githubSourceMeta(page, options),
-      _docspress_docs_root: page.key.split("/")[0],
-      _docspress_version_container: false
+      _autodocs_publish_docs_root: page.key.split("/")[0],
+      _autodocs_publish_version_container: false
     };
   } else if (page.versionContainer) {
     payload.meta = {
-      _docspress_version_container: true
+      _autodocs_publish_version_container: true
     };
-  } else if (managed?.meta?._docspress_version_id) {
+  } else if (managed?.meta?._autodocs_publish_version_id) {
     payload[options.versionTaxonomy] = [];
     payload.meta = {
-      _docspress_version_id: "",
-      _docspress_logical_route: "",
-      _docspress_page_identity: "",
-      _docspress_source_type: "",
-      _docspress_source_path: page.sourcePath || "",
+      _autodocs_publish_version_id: "",
+      _autodocs_publish_logical_route: "",
+      _autodocs_publish_page_identity: "",
+      _autodocs_publish_source_type: "",
+      _autodocs_publish_source_path: page.sourcePath || "",
       ...githubSourceMeta(page, options),
-      _docspress_docs_root: page.key.split("/")[0],
-      _docspress_version_container: false
+      _autodocs_publish_docs_root: page.key.split("/")[0],
+      _autodocs_publish_version_container: false
     };
   }
 
@@ -93255,23 +93291,23 @@ function managedMetadataMatches(desired, managed, options = {}) {
   const managedHasSidebar = Boolean(
     managed.sentinel?.sidebarId
       || managed.sentinel?.sidebarRoot
-      || managed.meta?._docspress_sidebar_id
-      || normalizeBooleanMeta(managed.meta?._docspress_sidebar_root)
+      || managed.meta?._autodocs_publish_sidebar_id
+      || normalizeBooleanMeta(managed.meta?._autodocs_publish_sidebar_root)
   );
   const sidebarMatches = desiredHasSidebar
     ? managed.sentinel?.sidebarId === desired.sidebarId
       && normalizeBooleanMeta(managed.sentinel?.sidebarRoot) === Boolean(desired.sidebarRoot)
-      && String(managed.meta?._docspress_sidebar_id || "") === desired.sidebarId
-      && normalizeBooleanMeta(managed.meta?._docspress_sidebar_root) === Boolean(desired.sidebarRoot)
+      && String(managed.meta?._autodocs_publish_sidebar_id || "") === desired.sidebarId
+      && normalizeBooleanMeta(managed.meta?._autodocs_publish_sidebar_root) === Boolean(desired.sidebarRoot)
     : !managedHasSidebar;
 
   const desiredVersion = desired.docsVersion?.id || "";
-  const versionMatches = String(managed.meta?._docspress_version_id || "") === desiredVersion;
-  const logicalRouteMatches = String(managed.meta?._docspress_logical_route || "") === String(desired.logicalRoute || "");
-  const identityMatches = String(managed.meta?._docspress_page_identity || "") === String(desired.stableIdentity || "");
-  const sourceTypeMatches = String(managed.meta?._docspress_source_type || "") === String(desired.sourceType || "");
+  const versionMatches = String(managed.meta?._autodocs_publish_version_id || "") === desiredVersion;
+  const logicalRouteMatches = String(managed.meta?._autodocs_publish_logical_route || "") === String(desired.logicalRoute || "");
+  const identityMatches = String(managed.meta?._autodocs_publish_page_identity || "") === String(desired.stableIdentity || "");
+  const sourceTypeMatches = String(managed.meta?._autodocs_publish_source_type || "") === String(desired.sourceType || "");
   const sourcePathMatches = !desiredVersion
-    || String(managed.meta?._docspress_source_path || "") === String(desired.sourcePath || "");
+    || String(managed.meta?._autodocs_publish_source_path || "") === String(desired.sourcePath || "");
   const githubMeta = githubSourceMeta(desired, options);
   const githubMatches = !desiredVersion || Object.entries(githubMeta).every(
     ([key, value]) => String(managed.meta?.[key] || "") === String(value)
@@ -93279,7 +93315,7 @@ function managedMetadataMatches(desired, managed, options = {}) {
   const taxonomyMatches = !desiredVersion
     ? (managed.terms?.[options.versionTaxonomy] || []).length === 0
     : termsMatch(managed.terms?.[options.versionTaxonomy], options.versionTermId ? [options.versionTermId] : []);
-  const containerMatches = normalizeBooleanMeta(managed.meta?._docspress_version_container) === Boolean(desired.versionContainer);
+  const containerMatches = normalizeBooleanMeta(managed.meta?._autodocs_publish_version_container) === Boolean(desired.versionContainer);
 
   return positionMatches
     && collapsedMatches
@@ -93298,20 +93334,20 @@ function managedMetadataMatches(desired, managed, options = {}) {
 function sidebarPageMeta(page, managed) {
   if (page.sidebarId) {
     return {
-      _docspress_sidebar_id: page.sidebarId,
-      _docspress_sidebar_root: Boolean(page.sidebarRoot)
+      _autodocs_publish_sidebar_id: page.sidebarId,
+      _autodocs_publish_sidebar_root: Boolean(page.sidebarRoot)
     };
   }
 
   if (
     managed?.sentinel?.sidebarId
       || managed?.sentinel?.sidebarRoot
-      || managed?.meta?._docspress_sidebar_id
-      || normalizeBooleanMeta(managed?.meta?._docspress_sidebar_root)
+      || managed?.meta?._autodocs_publish_sidebar_id
+      || normalizeBooleanMeta(managed?.meta?._autodocs_publish_sidebar_root)
   ) {
     return {
-      _docspress_sidebar_id: "",
-      _docspress_sidebar_root: false
+      _autodocs_publish_sidebar_id: "",
+      _autodocs_publish_sidebar_root: false
     };
   }
 
@@ -93320,10 +93356,10 @@ function sidebarPageMeta(page, managed) {
 
 function githubSourceMeta(page, options = {}) {
   return {
-    _docspress_github_path: page.sourcePath || "",
-    _docspress_github_repository: options.githubRepository || "",
-    _docspress_github_ref: options.githubRef || "main",
-    _docspress_github_server_url: options.githubServerUrl || "https://github.com"
+    _autodocs_publish_github_path: page.sourcePath || "",
+    _autodocs_publish_github_repository: options.githubRepository || "",
+    _autodocs_publish_github_ref: options.githubRef || "main",
+    _autodocs_publish_github_server_url: options.githubServerUrl || "https://github.com"
   };
 }
 
@@ -93374,18 +93410,18 @@ async function reconcileVersionState({
       client.getSettings()
     ]);
   } catch (error) {
-    throw new Error(`DocsPress versioning requires an active DocsPress Blocks plugin exposing ${versionTaxonomy} and version settings through REST. ${error.message}`);
+    throw new Error(`Autodocs Publish versioning requires an active Autodocs Publish Blocks plugin exposing ${versionTaxonomy} and version settings through REST. ${error.message}`);
   }
 
-  if (!Object.hasOwn(settings, "docspress_repository_latest_version")
-    || !Object.hasOwn(settings, "docspress_version_override")
-    || !Object.hasOwn(settings, "docspress_docs_root_slug")) {
-    throw new Error("DocsPress Blocks is active but its version settings are not exposed through the WordPress REST settings endpoint.");
+  if (!Object.hasOwn(settings, "autodocs_publish_repository_latest_version")
+    || !Object.hasOwn(settings, "autodocs_publish_version_override")
+    || !Object.hasOwn(settings, "autodocs_publish_docs_root_slug")) {
+    throw new Error("Autodocs Publish Blocks is active but its version settings are not exposed through the WordPress REST settings endpoint.");
   }
 
   const configuredIds = new Set(versionsRegistry.versions.map(({ id }) => id));
-  const override = configuredIds.has(String(settings.docspress_version_override || ""))
-    ? String(settings.docspress_version_override)
+  const override = configuredIds.has(String(settings.autodocs_publish_version_override || ""))
+    ? String(settings.autodocs_publish_version_override)
     : "";
   const effectiveLatest = override || versionsRegistry.latest;
   const existingBySlug = new Map(existingTerms.map((term) => [term.slug, term]));
@@ -93394,10 +93430,10 @@ async function reconcileVersionState({
 
   for (const version of versionsRegistry.versions) {
     const expectedMeta = {
-      docspress_version_order: version.order,
-      docspress_version_active: true,
-      docspress_version_repository_latest: version.id === versionsRegistry.latest,
-      docspress_version_effective_latest: version.id === effectiveLatest
+      autodocs_publish_version_order: version.order,
+      autodocs_publish_version_active: true,
+      autodocs_publish_version_repository_latest: version.id === versionsRegistry.latest,
+      autodocs_publish_version_effective_latest: version.id === effectiveLatest
     };
     const existing = existingBySlug.get(version.id);
     const needsUpdate = !existing
@@ -93433,7 +93469,7 @@ async function reconcileVersionState({
   }
 
   for (const term of existingTerms) {
-    if (configuredIds.has(term.slug) || !term.meta?.docspress_version_active) {
+    if (configuredIds.has(term.slug) || !term.meta?.autodocs_publish_version_active) {
       continue;
     }
     result.versionOperations.push({ action: "deactivate-term", version: term.slug });
@@ -93441,21 +93477,21 @@ async function reconcileVersionState({
       await client.updateTerm(versionTaxonomy, term.id, {
         meta: {
           ...term.meta,
-          docspress_version_active: false,
-          docspress_version_repository_latest: false,
-          docspress_version_effective_latest: false
+          autodocs_publish_version_active: false,
+          autodocs_publish_version_repository_latest: false,
+          autodocs_publish_version_effective_latest: false
         }
       });
     }
   }
 
   const settingPayload = {
-    docspress_repository_latest_version: versionsRegistry.latest,
-    docspress_docs_root_slug: rootSlug
+    autodocs_publish_repository_latest_version: versionsRegistry.latest,
+    autodocs_publish_docs_root_slug: rootSlug
   };
   if (
-    settings.docspress_repository_latest_version !== versionsRegistry.latest
-    || settings.docspress_docs_root_slug !== rootSlug
+    settings.autodocs_publish_repository_latest_version !== versionsRegistry.latest
+    || settings.autodocs_publish_docs_root_slug !== rootSlug
   ) {
     result.versionOperations.push({ action: "update-settings", latest: versionsRegistry.latest, rootSlug });
     if (!dryRun) {
@@ -93696,7 +93732,7 @@ async function syncBidirectional(options) {
   if (versionsRegistry) {
     const settings = await client.getSettings();
     const configured = new Set(versionsRegistry.versions.map(({ id }) => id));
-    const override = String(settings.docspress_version_override || "");
+    const override = String(settings.autodocs_publish_version_override || "");
     if (configured.has(override)) {
       effectiveLatest = override;
     }
@@ -93829,13 +93865,13 @@ async function readSidebarsRegistry(options = {}) {
 
   const extension = external_node_path_namespaceObject.extname(sidebarsFile).toLowerCase();
   if (!SIDEBARS_FILE_EXTENSIONS.has(extension)) {
-    throw new Error(`Docspress sidebars file must use .json, .yaml, or .yml: ${sidebarsFile}`);
+    throw new Error(`Autodocs Publish sidebars file must use .json, .yaml, or .yml: ${sidebarsFile}`);
   }
 
   const absolutePath = external_node_path_namespaceObject.resolve(cwd, sidebarsFile);
   const relativePath = external_node_path_namespaceObject.relative(cwd, absolutePath);
   if (!relativePath || relativePath.startsWith("..") || external_node_path_namespaceObject.isAbsolute(relativePath)) {
-    throw new Error(`The Docspress sidebars file must stay inside the checked-out repository: ${sidebarsFile}`);
+    throw new Error(`The Autodocs Publish sidebars file must stay inside the checked-out repository: ${sidebarsFile}`);
   }
 
   const [realCwd, realFile] = await Promise.all([
@@ -93844,7 +93880,7 @@ async function readSidebarsRegistry(options = {}) {
   ]);
   const realRelativePath = external_node_path_namespaceObject.relative(realCwd, realFile);
   if (!realRelativePath || realRelativePath.startsWith("..") || external_node_path_namespaceObject.isAbsolute(realRelativePath)) {
-    throw new Error(`The Docspress sidebars file must stay inside the checked-out repository: ${sidebarsFile}`);
+    throw new Error(`The Autodocs Publish sidebars file must stay inside the checked-out repository: ${sidebarsFile}`);
   }
 
   const source = await promises_namespaceObject.readFile(realFile, "utf8");
@@ -93854,17 +93890,17 @@ async function readSidebarsRegistry(options = {}) {
       ? JSON.parse(source)
       : gray_matter.engines.yaml.parse(source);
   } catch (error) {
-    throw new Error(`Could not parse Docspress sidebars file ${sidebarsFile}: ${error.message}`);
+    throw new Error(`Could not parse Autodocs Publish sidebars file ${sidebarsFile}: ${error.message}`);
   }
 
   if (!data || typeof data !== "object" || Array.isArray(data)) {
-    throw new Error(`Docspress sidebars file must contain an object: ${sidebarsFile}`);
+    throw new Error(`Autodocs Publish sidebars file must contain an object: ${sidebarsFile}`);
   }
   if (data.version !== undefined && data.version !== 1) {
-    throw new Error(`Docspress sidebars file has an unsupported version: ${data.version}`);
+    throw new Error(`Autodocs Publish sidebars file has an unsupported version: ${data.version}`);
   }
   if (!data.sidebars || typeof data.sidebars !== "object" || Array.isArray(data.sidebars)) {
-    throw new Error(`Docspress sidebars file must contain a sidebars object: ${sidebarsFile}`);
+    throw new Error(`Autodocs Publish sidebars file must contain a sidebars object: ${sidebarsFile}`);
   }
 
   const entries = Object.entries(data.sidebars).map(([rawId, configuredRoot], order) => {
@@ -93873,26 +93909,26 @@ async function readSidebarsRegistry(options = {}) {
     return { id, root, order };
   });
   if (entries.length === 0) {
-    throw new Error(`Docspress sidebars file must configure at least one sidebar: ${sidebarsFile}`);
+    throw new Error(`Autodocs Publish sidebars file must configure at least one sidebar: ${sidebarsFile}`);
   }
 
   if (!data.default) {
-    throw new Error("Docspress sidebars default must reference a configured sidebar: (missing)");
+    throw new Error("Autodocs Publish sidebars default must reference a configured sidebar: (missing)");
   }
   const defaultId = normalizeSidebarId(data.default);
   const defaultSidebar = entries.find(({ id }) => id === defaultId);
   if (!defaultSidebar) {
-    throw new Error(`Docspress sidebars default must reference a configured sidebar: ${data.default || "(missing)"}`);
+    throw new Error(`Autodocs Publish sidebars default must reference a configured sidebar: ${data.default || "(missing)"}`);
   }
   if (defaultSidebar.root !== "") {
-    throw new Error(`The default Docspress sidebar (${defaultId}) must use the root '.'.`);
+    throw new Error(`The default Autodocs Publish sidebar (${defaultId}) must use the root '.'.`);
   }
 
   const roots = new Map();
   for (const entry of entries) {
     const existing = roots.get(entry.root);
     if (existing) {
-      throw new Error(`Docspress sidebars ${existing} and ${entry.id} use the same root: ${entry.root || "."}`);
+      throw new Error(`Autodocs Publish sidebars ${existing} and ${entry.id} use the same root: ${entry.root || "."}`);
     }
     roots.set(entry.root, entry.id);
   }
@@ -93911,7 +93947,7 @@ function applySidebarsRegistry(byRoute, registry) {
 
   for (const sidebar of registry.entries) {
     if (sidebar.root && !byRoute.has(sidebar.root)) {
-      throw new Error(`Docspress sidebar ${sidebar.id} references a missing route: ${sidebar.root}`);
+      throw new Error(`Autodocs Publish sidebar ${sidebar.id} references a missing route: ${sidebar.root}`);
     }
   }
 
@@ -93922,7 +93958,7 @@ function applySidebarsRegistry(byRoute, registry) {
   for (const page of byRoute.values()) {
     const sidebar = ordered.find(({ root }) => routeContains(root, page.routeKey));
     if (!sidebar) {
-      throw new Error(`Docspress could not assign route ${page.routeKey || "."} to a sidebar.`);
+      throw new Error(`Autodocs Publish could not assign route ${page.routeKey || "."} to a sidebar.`);
     }
     page.sidebarId = sidebar.id;
     page.sidebarRoot = page.routeKey === sidebar.root;
@@ -93934,14 +93970,14 @@ function applySidebarsRegistry(byRoute, registry) {
 function normalizeSidebarId(value) {
   const id = String(value || "").trim();
   if (!SIDEBAR_ID_PATTERN.test(id)) {
-    throw new Error(`Invalid Docspress sidebar id: ${id || "(missing)"}`);
+    throw new Error(`Invalid Autodocs Publish sidebar id: ${id || "(missing)"}`);
   }
   return id;
 }
 
 function normalizeSidebarRoot(value, id) {
   if (typeof value !== "string") {
-    throw new Error(`Docspress sidebar ${id} must map to a route string.`);
+    throw new Error(`Autodocs Publish sidebar ${id} must map to a route string.`);
   }
 
   const raw = value.trim().replace(/\\/g, "/");
@@ -93949,12 +93985,12 @@ function normalizeSidebarRoot(value, id) {
     return "";
   }
   if (!raw || raw.startsWith("/") || raw.includes(":") || raw.includes("?") || raw.includes("#")) {
-    throw new Error(`Docspress sidebar ${id} has an invalid root: ${value || "(empty)"}`);
+    throw new Error(`Autodocs Publish sidebar ${id} has an invalid root: ${value || "(empty)"}`);
   }
 
   const segments = raw.replace(/\/+$/, "").split("/");
   if (segments.some((segment) => !ROUTE_SEGMENT_PATTERN.test(segment))) {
-    throw new Error(`Docspress sidebar ${id} has an invalid root: ${value}`);
+    throw new Error(`Autodocs Publish sidebar ${id} has an invalid root: ${value}`);
   }
   return segments.join("/");
 }
@@ -93984,15 +94020,15 @@ async function readVersionsRegistry(options = {}) {
   const absolutePath = external_node_path_namespaceObject.resolve(cwd, versionsFile);
   const relativePath = external_node_path_namespaceObject.relative(cwd, absolutePath);
   if (!relativePath || relativePath.startsWith("..") || external_node_path_namespaceObject.isAbsolute(relativePath)) {
-    throw new Error(`The Docspress versions file must stay inside the checked-out repository: ${versionsFile}`);
+    throw new Error(`The Autodocs Publish versions file must stay inside the checked-out repository: ${versionsFile}`);
   }
 
   const data = JSON.parse(await promises_namespaceObject.readFile(absolutePath, "utf8"));
   if (!data || typeof data !== "object" || Array.isArray(data)) {
-    throw new Error(`Docspress versions file must contain an object: ${versionsFile}`);
+    throw new Error(`Autodocs Publish versions file must contain an object: ${versionsFile}`);
   }
   if (!Array.isArray(data.versions) || data.versions.length === 0) {
-    throw new Error(`Docspress versions file must contain a non-empty versions array: ${versionsFile}`);
+    throw new Error(`Autodocs Publish versions file must contain a non-empty versions array: ${versionsFile}`);
   }
 
   const versions = data.versions.map((entry, index) => normalizeVersionEntry(entry, index));
@@ -94001,13 +94037,13 @@ async function readVersionsRegistry(options = {}) {
 
   for (const version of versions) {
     if (byId.has(version.id)) {
-      throw new Error(`Docspress versions file contains duplicate version id: ${version.id}`);
+      throw new Error(`Autodocs Publish versions file contains duplicate version id: ${version.id}`);
     }
     byId.set(version.id, version);
 
     if (version.source.type === "root") {
       if (rootVersion) {
-        throw new Error(`Docspress versions file may define only one root source: ${rootVersion.id} and ${version.id}`);
+        throw new Error(`Autodocs Publish versions file may define only one root source: ${rootVersion.id} and ${version.id}`);
       }
       rootVersion = version;
     }
@@ -94015,7 +94051,7 @@ async function readVersionsRegistry(options = {}) {
 
   const latest = normalizeVersionId(data.latest);
   if (!latest || !byId.has(latest)) {
-    throw new Error(`Docspress versions file latest must reference a configured version: ${data.latest || "(missing)"}`);
+    throw new Error(`Autodocs Publish versions file latest must reference a configured version: ${data.latest || "(missing)"}`);
   }
   if (rootVersion && rootVersion.id !== latest) {
     throw new Error(`The root documentation source must be the configured latest version (${latest}), not ${rootVersion.id}.`);
@@ -94035,18 +94071,18 @@ async function readVersionsRegistry(options = {}) {
 
 function normalizeVersionEntry(entry, index) {
   if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
-    throw new Error(`Docspress version entry ${index + 1} must be an object.`);
+    throw new Error(`Autodocs Publish version entry ${index + 1} must be an object.`);
   }
 
   const rawId = String(entry.id || "").trim();
   const id = normalizeVersionId(rawId);
   if (!id || id !== rawId.toLowerCase()) {
-    throw new Error(`Docspress version entry ${index + 1} has an invalid id: ${rawId || "(missing)"}`);
+    throw new Error(`Autodocs Publish version entry ${index + 1} has an invalid id: ${rawId || "(missing)"}`);
   }
 
   const label = String(entry.label || rawId).trim();
   if (!label) {
-    throw new Error(`Docspress version ${id} must have a non-empty label.`);
+    throw new Error(`Autodocs Publish version ${id} must have a non-empty label.`);
   }
 
   const source = normalizeSource(entry.source, id);
@@ -94064,12 +94100,12 @@ function normalizeVersionEntry(entry, index) {
 
 function normalizeSource(source, versionId) {
   if (!source || typeof source !== "object" || Array.isArray(source)) {
-    throw new Error(`Docspress version ${versionId} must define a source object.`);
+    throw new Error(`Autodocs Publish version ${versionId} must define a source object.`);
   }
 
   const type = String(source.type || "").trim().toLowerCase();
   if (!SOURCE_TYPES.has(type)) {
-    throw new Error(`Docspress version ${versionId} has an unsupported source type: ${type || "(missing)"}`);
+    throw new Error(`Autodocs Publish version ${versionId} has an unsupported source type: ${type || "(missing)"}`);
   }
 
   if (type === "root") {
@@ -94079,7 +94115,7 @@ function normalizeSource(source, versionId) {
   if (type === "directory") {
     const directory = normalizeRelativePath(source.path, `directory source for ${versionId}`);
     if (!directory || directory === ".") {
-      throw new Error(`Docspress version ${versionId} directory source must name a directory below docs-dir.`);
+      throw new Error(`Autodocs Publish version ${versionId} directory source must name a directory below docs-dir.`);
     }
     return { type, path: directory };
   }
@@ -94087,14 +94123,14 @@ function normalizeSource(source, versionId) {
   if (type === "suffix") {
     const suffix = String(source.suffix || "").trim();
     if (!/^\.[a-z0-9][a-z0-9._-]*$/i.test(suffix)) {
-      throw new Error(`Docspress version ${versionId} suffix must look like .v1.`);
+      throw new Error(`Autodocs Publish version ${versionId} suffix must look like .v1.`);
     }
     return { type, suffix };
   }
 
   const manifestPath = normalizeRepositoryFile(source.path, `manifest source for ${versionId}`);
   if (!manifestPath) {
-    throw new Error(`Docspress version ${versionId} manifest source must provide a repository-relative path.`);
+    throw new Error(`Autodocs Publish version ${versionId} manifest source must provide a repository-relative path.`);
   }
   return { type, path: manifestPath };
 }
@@ -94229,7 +94265,7 @@ async function collectVersionedPages(options) {
   const neutralRoot = placeholderPage([], options.rootTitle || "Docs");
   neutralRoot.sourcePath = "virtual:version-root";
   neutralRoot.versionContainer = true;
-  neutralRoot.body = "<!-- wp:paragraph -->\n<p>This Page contains the versioned documentation trees managed by DocsPress.</p>\n<!-- /wp:paragraph -->";
+  neutralRoot.body = "<!-- wp:paragraph -->\n<p>This Page contains the versioned documentation trees managed by Autodocs Publish.</p>\n<!-- /wp:paragraph -->";
   desired.push(finalizePage(neutralRoot, {
     ...options,
     routePrefixSegments: [rootSlug]
@@ -94379,7 +94415,7 @@ async function collectManifestPages(context, options) {
   const entries = Array.isArray(data) ? data : data.pages || data.items || [];
 
   if (!Array.isArray(entries)) {
-    throw new Error(`Docspress manifest must be a JSON array or an object with a pages array: ${manifestFile}`);
+    throw new Error(`Autodocs Publish manifest must be a JSON array or an object with a pages array: ${manifestFile}`);
   }
 
   const normalized = entries.map((entry, index) => normalizeManifestEntry(entry, index));
@@ -94388,7 +94424,7 @@ async function collectManifestPages(context, options) {
 
   for (const entry of normalized) {
     if (byId.has(entry.id)) {
-      throw new Error(`Docspress manifest contains duplicate page id: ${entry.id}`);
+      throw new Error(`Autodocs Publish manifest contains duplicate page id: ${entry.id}`);
     }
     byId.set(entry.id, entry);
   }
@@ -94429,7 +94465,7 @@ async function collectManifestPages(context, options) {
 
 function normalizeManifestEntry(entry, index) {
   if (!entry || typeof entry !== "object") {
-    throw new Error(`Docspress manifest entry ${index + 1} must be an object.`);
+    throw new Error(`Autodocs Publish manifest entry ${index + 1} must be an object.`);
   }
 
   const slug = entry.slug === "/" ? "" : slugify(entry.slug ?? entry.id ?? entry.key ?? "", "");
@@ -94438,7 +94474,7 @@ function normalizeManifestEntry(entry, index) {
   const source = entry.markdown_source || entry.markdownSource || entry.source || null;
 
   if (!id) {
-    throw new Error(`Docspress manifest entry ${index + 1} is missing id or slug.`);
+    throw new Error(`Autodocs Publish manifest entry ${index + 1} is missing id or slug.`);
   }
 
   return {
@@ -94452,13 +94488,13 @@ function normalizeManifestEntry(entry, index) {
 
 function manifestRouteSegments(entry, byId, seen = new Set()) {
   if (seen.has(entry.id)) {
-    throw new Error(`Docspress manifest contains a parent cycle at ${entry.id}`);
+    throw new Error(`Autodocs Publish manifest contains a parent cycle at ${entry.id}`);
   }
 
   seen.add(entry.id);
   const parent = entry.parent ? byId.get(entry.parent) : null;
   if (entry.parent && !parent) {
-    throw new Error(`Docspress manifest page ${entry.id} references missing parent ${entry.parent}`);
+    throw new Error(`Autodocs Publish manifest page ${entry.id} references missing parent ${entry.parent}`);
   }
 
   const parentSegments = parent ? manifestRouteSegments(parent, byId, seen) : [];
@@ -94468,13 +94504,13 @@ function manifestRouteSegments(entry, byId, seen = new Set()) {
 async function resolveManifestSource(source, manifestDir, cwd) {
   const raw = String(source || "");
   if (!raw || raw.includes(":") || raw.includes("..") || external_node_path_namespaceObject.isAbsolute(raw)) {
-    throw new Error(`Invalid Docspress manifest source: ${raw || "(empty)"}`);
+    throw new Error(`Invalid Autodocs Publish manifest source: ${raw || "(empty)"}`);
   }
 
   const absolutePath = external_node_path_namespaceObject.resolve(manifestDir, raw);
   const relativePath = external_node_path_namespaceObject.relative(cwd, absolutePath);
   if (!relativePath || relativePath.startsWith("..") || external_node_path_namespaceObject.isAbsolute(relativePath)) {
-    throw new Error(`The Docspress manifest source must stay inside the checked-out repository: ${raw}`);
+    throw new Error(`The Autodocs Publish manifest source must stay inside the checked-out repository: ${raw}`);
   }
 
   const [realCwd, realSourcePath] = await Promise.all([
@@ -94483,7 +94519,7 @@ async function resolveManifestSource(source, manifestDir, cwd) {
   ]);
   const realRelativePath = external_node_path_namespaceObject.relative(realCwd, realSourcePath);
   if (!realRelativePath || realRelativePath.startsWith("..") || external_node_path_namespaceObject.isAbsolute(realRelativePath)) {
-    throw new Error(`The Docspress manifest source must stay inside the checked-out repository: ${raw}`);
+    throw new Error(`The Autodocs Publish manifest source must stay inside the checked-out repository: ${raw}`);
   }
 
   return utils_toPosixPath(relativePath);
@@ -94591,10 +94627,10 @@ async function applyRedirects(byRoute, options, context) {
     const routeSegments = routeSegmentsForRedirect(redirect.from, rootSlug);
     const routeKey = routeSegments.join("/");
     if (!routeKey) {
-      throw new Error("Docspress redirect entries cannot target the managed root page.");
+      throw new Error("Autodocs Publish redirect entries cannot target the managed root page.");
     }
     if (byRoute.has(routeKey) && byRoute.get(routeKey).kind !== "redirect") {
-      throw new Error(`Docspress redirect '${redirect.from}' conflicts with an existing docs page.`);
+      throw new Error(`Autodocs Publish redirect '${redirect.from}' conflicts with an existing docs page.`);
     }
 
     const targetUrl = redirectTargetUrl(redirect.to, rootSlug, options.routePrefixSegments);
@@ -94617,7 +94653,7 @@ async function readRedirectsFile(redirectsFile, cwd) {
   if (Array.isArray(entries)) {
     return entries.map((entry, index) => {
       if (!entry || typeof entry !== "object") {
-        throw new Error(`Docspress redirect entry ${index + 1} must be an object.`);
+        throw new Error(`Autodocs Publish redirect entry ${index + 1} must be an object.`);
       }
       return {
         from: String(entry.from || ""),
@@ -94631,7 +94667,7 @@ async function readRedirectsFile(redirectsFile, cwd) {
     return Object.entries(entries).map(([from, to]) => ({ from, to: String(to), title: "" }));
   }
 
-  throw new Error(`Docspress redirects file must be an object, array, or object with redirects: ${redirectsFile}`);
+  throw new Error(`Autodocs Publish redirects file must be an object, array, or object with redirects: ${redirectsFile}`);
 }
 
 function routeSegmentsForRedirect(value, rootSlug) {
@@ -94891,7 +94927,10 @@ var github = __nccwpck_require__(3228);
 ;// CONCATENATED MODULE: ./src/github.js
 
 
-const DOCSPRESS_PR_MARKER = "<!-- docspress:wordpress-sync -->";
+const AUTODOCS_PUBLISH_PR_MARKER = "<!-- autodocs-publish:wordpress-sync -->";
+const AUTODOCS_PUBLISH_BRANCH = "autodocs-publish/wordpress-sync";
+const LEGACY_DOCSPRESS_BRANCH = "docspress/wordpress-sync";
+const LEGACY_DOCSPRESS_PR_MARKER = "<!-- docspress:wordpress-sync -->";
 const githubContext = github.context;
 
 class GitHubPullRequestClient {
@@ -94908,23 +94947,31 @@ class GitHubPullRequestClient {
     this.owner = owner;
     this.repo = repo;
     this.base = options.base || "";
-    this.branch = options.branch || "docspress/wordpress-sync";
+    this.branch = options.branch || AUTODOCS_PUBLISH_BRANCH;
     this.title = String(options.title || "").trim();
     this.octokit = options.octokit || github.getOctokit(options.token);
   }
 
   async syncChanges(changes) {
     const base = await this.resolveBase();
-    const pulls = await this.listBranchPulls(base);
-    const managedPulls = pulls.filter((pull) => String(pull.body || "").includes(DOCSPRESS_PR_MARKER));
+    let branch = this.branch;
+    let pulls = await this.listBranchPulls(base, branch);
+    if (branch === AUTODOCS_PUBLISH_BRANCH && pulls.length === 0) {
+      const legacyPulls = await this.listBranchPulls(base, LEGACY_DOCSPRESS_BRANCH);
+      if (legacyPulls.some((pull) => pull.state === "open" && hasManagedPullRequestMarker(pull.body))) {
+        branch = LEGACY_DOCSPRESS_BRANCH;
+        pulls = legacyPulls;
+      }
+    }
+    const managedPulls = pulls.filter((pull) => hasManagedPullRequestMarker(pull.body));
     const unmarkedOpen = pulls.find((pull) => pull.state === "open" && !managedPulls.includes(pull));
     if (unmarkedOpen) {
-      throw new Error(`Refusing to overwrite unmarked pull request #${unmarkedOpen.number} on ${this.branch}.`);
+      throw new Error(`Refusing to overwrite unmarked pull request #${unmarkedOpen.number} on ${branch}.`);
     }
 
-    const branchRef = await this.getBranchRef();
+    const branchRef = await this.getBranchRef(branch);
     if (branchRef && managedPulls.length === 0) {
-      throw new Error(`Refusing to overwrite existing branch ${this.branch}; it is not marked as managed by Docspress.`);
+      throw new Error(`Refusing to overwrite existing branch ${branch}; it is not marked as managed by Autodocs Publish.`);
     }
 
     const openPull = managedPulls.find((pull) => pull.state === "open") || null;
@@ -94941,7 +94988,7 @@ class GitHubPullRequestClient {
         await this.octokit.rest.git.deleteRef({
           owner: this.owner,
           repo: this.repo,
-          ref: `heads/${this.branch}`
+          ref: `heads/${branch}`
         });
       }
       return {
@@ -95000,7 +95047,7 @@ class GitHubPullRequestClient {
       await this.octokit.rest.git.updateRef({
         owner: this.owner,
         repo: this.repo,
-        ref: `heads/${this.branch}`,
+        ref: `heads/${branch}`,
         sha: commit.data.sha,
         force: true
       });
@@ -95008,7 +95055,7 @@ class GitHubPullRequestClient {
       await this.octokit.rest.git.createRef({
         owner: this.owner,
         repo: this.repo,
-        ref: `refs/heads/${this.branch}`,
+        ref: `refs/heads/${branch}`,
         sha: commit.data.sha
       });
     }
@@ -95032,7 +95079,7 @@ class GitHubPullRequestClient {
     const created = await this.octokit.rest.pulls.create({
       owner: this.owner,
       repo: this.repo,
-      head: this.branch,
+      head: branch,
       base,
       title,
       body
@@ -95055,7 +95102,7 @@ class GitHubPullRequestClient {
     return repository.data.default_branch;
   }
 
-  async listBranchPulls(base) {
+  async listBranchPulls(base, branch = this.branch) {
     const response = await this.octokit.rest.pulls.list({
       owner: this.owner,
       repo: this.repo,
@@ -95065,17 +95112,17 @@ class GitHubPullRequestClient {
     });
     const repository = `${this.owner}/${this.repo}`.toLowerCase();
     return response.data.filter((pull) =>
-      pull.head?.ref === this.branch &&
+      pull.head?.ref === branch &&
       String(pull.head?.repo?.full_name || "").toLowerCase() === repository
     );
   }
 
-  async getBranchRef() {
+  async getBranchRef(branch = this.branch) {
     try {
       const response = await this.octokit.rest.git.getRef({
         owner: this.owner,
         repo: this.repo,
-        ref: `heads/${this.branch}`
+        ref: `heads/${branch}`
       });
       return response.data;
     } catch (error) {
@@ -95087,6 +95134,11 @@ class GitHubPullRequestClient {
   }
 }
 
+function hasManagedPullRequestMarker(body) {
+  const value = String(body || "");
+  return value.includes(AUTODOCS_PUBLISH_PR_MARKER) || value.includes(LEGACY_DOCSPRESS_PR_MARKER);
+}
+
 function pullRequestBody(changes) {
   const versioned = changes.some((change) => change.versionId);
   const files = versioned
@@ -95095,7 +95147,7 @@ function pullRequestBody(changes) {
   const fileLabel = `${changes.length} Markdown ${changes.length === 1 ? "file" : "files"}`;
   const effectiveLatest = changes.find((change) => change.effectiveLatest)?.effectiveLatest || "";
   const latestLine = effectiveLatest ? `\n\nEffective latest version: \`${effectiveLatest}\`.` : "";
-  return `${DOCSPRESS_PR_MARKER}\n\n## Summary\n\nSynchronizes documentation edits made in WordPress back to their Markdown sources. This rolling pull request is maintained automatically by DocsPress.${latestLine}\n\n| Direction | Changes |\n| --- | ---: |\n| WordPress → GitHub | ${fileLabel} |\n\n## Changed files\n\n${files}\n\n## Review and merge\n\nReview these as normal documentation changes. After this pull request merges, the next DocsPress reconcile run refreshes the WordPress synchronization baseline.\n\n> This branch is owned by DocsPress and may be force-refreshed on every synchronization run.\n`;
+  return `${AUTODOCS_PUBLISH_PR_MARKER}\n\n## Summary\n\nSynchronizes documentation edits made in WordPress back to their Markdown sources. This rolling pull request is maintained automatically by Autodocs Publish.${latestLine}\n\n| Direction | Changes |\n| --- | ---: |\n| WordPress → GitHub | ${fileLabel} |\n\n## Changed files\n\n${files}\n\n## Review and merge\n\nReview these as normal documentation changes. After this pull request merges, the next Autodocs Publish reconcile run refreshes the WordPress synchronization baseline.\n\n> This branch is owned by Autodocs Publish and may be force-refreshed on every synchronization run.\n`;
 }
 
 function pullRequestTitle(changes) {
@@ -95331,7 +95383,7 @@ function formatApiError(data, method, requestUrl, status) {
   const message = data?.message || data?.error || `${method} ${requestUrl} failed with HTTP ${status}`;
 
   if (String(message).includes("Required scope: `global`")) {
-    return `${message} Regenerate WP_ACCESS_TOKEN with the Docspress token helper so it requests the WordPress.com "global" OAuth scope.`;
+    return `${message} Regenerate WP_ACCESS_TOKEN with the Autodocs Publish token helper so it requests the WordPress.com "global" OAuth scope.`;
   }
 
   return message;
@@ -95406,7 +95458,7 @@ async function main() {
     githubServerUrl: getInput("github-server-url") || process.env.GITHUB_SERVER_URL || "https://github.com",
     githubToken: getInput("github-token"),
     pullRequestBase: getInput("pull-request-base") || "",
-    pullRequestBranch: getInput("pull-request-branch") || "docspress/wordpress-sync",
+    pullRequestBranch: getInput("pull-request-branch") || "autodocs-publish/wordpress-sync",
     pullRequestTitle: getInput("pull-request-title"),
     status: getInput("status") || "publish",
     deleteMode: getInput("delete-mode") || "trash",
@@ -95449,13 +95501,13 @@ async function main() {
     status: config.status
   });
 
-  info(`Docspress found ${desiredPages.length} desired page(s) in ${config.docsDir}.`);
+  info(`Autodocs Publish found ${desiredPages.length} desired page(s) in ${config.docsDir}.`);
 
   const client = new WordPressClient({
     baseUrl: config.baseUrl,
     site: config.site,
     token: config.token,
-    taxonomies: versionsRegistry ? ["docspress_versions"] : []
+    taxonomies: versionsRegistry ? ["autodocs_publish_versions"] : []
   });
 
   const result = config.mode === "publish"
@@ -95502,7 +95554,7 @@ async function main() {
     for (const conflict of result.conflictDetails) {
       error(`Conflict ${conflict.key}: ${conflict.reason}`);
     }
-    setFailed(`Docspress found ${result.conflicts} synchronization conflict(s).`);
+    setFailed(`Autodocs Publish found ${result.conflicts} synchronization conflict(s).`);
   }
 }
 
@@ -95525,7 +95577,7 @@ async function writeSummary(result) {
   }
 
   summary
-    .addHeading(`Docspress ${result.dryRun ? "Dry Run" : "Sync"} Summary`)
+    .addHeading(`Autodocs Publish ${result.dryRun ? "Dry Run" : "Sync"} Summary`)
     .addTable([
       [{ data: "Created", header: true }, String(result.created)],
       [{ data: "Updated", header: true }, String(result.updated)],

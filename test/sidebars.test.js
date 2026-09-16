@@ -8,7 +8,7 @@ const repositoryRoot = process.cwd();
 
 describe("sidebars registry", () => {
   it("reads the simple YAML route map", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-sidebars-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-sidebars-"));
     await fs.writeFile(path.join(cwd, "sidebars.yml"), [
       "version: 1",
       "default: docs",
@@ -30,7 +30,7 @@ describe("sidebars registry", () => {
   });
 
   it("supports the same contract in JSON", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-sidebars-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-sidebars-"));
     await fs.writeFile(path.join(cwd, "sidebars.json"), JSON.stringify({
       version: 1,
       default: "docs",
@@ -77,17 +77,17 @@ describe("sidebars registry", () => {
     ["a configured default", "version: 1\nsidebars:\n  docs: .", /default must reference/],
     ["a root default", "version: 1\ndefault: docs\nsidebars:\n  docs: guides", /must use the root/],
     ["unique roots", "version: 1\ndefault: docs\nsidebars:\n  docs: .\n  other: .", /same root/],
-    ["valid IDs", "version: 1\ndefault: Docs\nsidebars:\n  Docs: .", /Invalid Docspress sidebar id/],
+    ["valid IDs", "version: 1\ndefault: Docs\nsidebars:\n  Docs: .", /Invalid Autodocs Publish sidebar id/],
     ["safe roots", "version: 1\ndefault: docs\nsidebars:\n  docs: .\n  secret: ../secret", /invalid root/]
   ])("requires %s", async (_label, source, pattern) => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-sidebars-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-sidebars-"));
     await fs.writeFile(path.join(cwd, "sidebars.yml"), source);
 
     await expect(readSidebarsRegistry({ cwd, sidebarsFile: "sidebars.yml" })).rejects.toThrow(pattern);
   });
 
   it("requires an explicit YAML or JSON extension", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-sidebars-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-sidebars-"));
     await fs.writeFile(path.join(cwd, "sidebars.txt"), "default: docs\nsidebars:\n  docs: .\n");
 
     await expect(readSidebarsRegistry({ cwd, sidebarsFile: "sidebars.txt" })).rejects.toThrow(
@@ -109,7 +109,7 @@ describe("sidebars registry", () => {
   });
 
   it("rejects a sidebars file symlink that leaves the repository", async () => {
-    const parent = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-sidebars-parent-"));
+    const parent = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-sidebars-parent-"));
     const cwd = path.join(parent, "checkout");
     await fs.mkdir(cwd);
     await fs.writeFile(path.join(parent, "outside.yml"), "default: docs\nsidebars:\n  docs: .\n");
@@ -150,7 +150,7 @@ describe("sidebars registry", () => {
       expect.objectContaining({ step: "installTheme" }),
       expect.objectContaining({
         step: "runPHP",
-        code: expect.stringContaining("/docspress/playground/setup-sidebars.php")
+        code: expect.stringContaining("/autodocs-publish/playground/setup-sidebars.php")
       })
     ]));
     expect(registry.entries.map(({ id, root }) => ({ id, root }))).toEqual([
@@ -164,8 +164,8 @@ describe("sidebars registry", () => {
       .toMatchObject({ sidebarId: "api", sidebarRoot: false });
     expect(fixture.pages.find(({ key }) => key === "docs/extensions"))
       .toMatchObject({ sidebarId: "extensions", sidebarRoot: true });
-    expect(setup).toContain("_docspress_sidebar_id");
-    expect(setup).toContain("_docspress_sidebar_root");
+    expect(setup).toContain("_autodocs_publish_sidebar_id");
+    expect(setup).toContain("_autodocs_publish_sidebar_root");
     for (const content of [guide, readme]) {
       expect(content).toContain("blueprint-sidebars.json");
     }

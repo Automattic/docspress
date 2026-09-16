@@ -11,27 +11,27 @@ Use these pages when configuring the Action, diagnosing reconciliation, installi
 - [GitHub Action inputs and outputs](action-inputs.md)
 - [Token helper CLI](cli.md)
 - [Synchronization and REST API](sync-and-rest-api.md)
-- [DocsPress WordPress theme](theme.md)
-- [DocsPress Gutenberg blocks](gutenberg-blocks/index.md)
+- [Autodocs Publish WordPress theme](theme.md)
+- [Autodocs Publish Gutenberg blocks](gutenberg-blocks/index.md)
 - [Kitchen Sink](kitchen-sink.md)
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/file-tree",
+  "name": "autodocs-publish/file-tree",
   "attrs": {
-    "root": "Automattic/docspress/",
-    "tree": "action.yml\nbin/\n  docspress.mjs\nscripts/\n  create-wordpress-token.mjs\nsrc/\n  docs.js\n  markdown.js\n  sync.js\n  wordpress.js\nplugins/\n  docspress-blocks/\ntheme/",
+    "root": "Automattic/autodocs-publish/",
+    "tree": "action.yml\nbin/\n  autodocs-publish.mjs\nscripts/\n  create-wordpress-token.mjs\nsrc/\n  docs.js\n  markdown.js\n  sync.js\n  wordpress.js\nplugins/\n  autodocs-publish-blocks/\ntheme/",
     "caption": "The public contract is split between Action metadata, the token CLI, synchronization source, blocks plugin, and theme."
   }
 }
 -->
-#### Automattic/docspress/
+#### Automattic/autodocs-publish/
 
 ```text
 action.yml
 bin/
-  docspress.mjs
+  autodocs-publish.mjs
 scripts/
   create-wordpress-token.mjs
 src/
@@ -40,9 +40,9 @@ src/
   sync.js
   wordpress.js
 plugins/
-  docspress-blocks/
+  autodocs-publish-blocks/
 theme/
 ```
 
 _The public contract is split between Action metadata, the token CLI, synchronization source, blocks plugin, and theme._
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->

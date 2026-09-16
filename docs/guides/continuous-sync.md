@@ -32,10 +32,10 @@ After explicit approval, change only `dry-run` to `false`. The workflow can now 
 
 After the draft lifecycle succeeds, add the default-branch trigger:
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/colorful-code",
+  "name": "autodocs-publish/colorful-code",
   "attrs": {
     "language": "yaml",
     "filename": ".github/workflows/sync-docs.yml",
@@ -62,14 +62,14 @@ on:
 permissions:
   contents: read
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 Keep `status: draft` if WordPress remains an editorial review gate. Set `status: publish` only when merged Markdown should update public Pages automatically.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "danger",
     "title": "Automatic sync includes removals",
@@ -84,24 +84,24 @@ Keep `status: draft` if WordPress remains an editorial review gate. Set `status:
 > **Automatic sync includes removals**
 >
 > Deleting a managed Markdown file schedules its managed WordPress Page for Trash, or permanent deletion when `delete-mode: force`. Review that policy before enabling the push trigger.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Stage 4: reconcile WordPress edits
 
 After normal publishing is stable, use one workflow for push-based publishing and scheduled WordPress polling:
 
-Before the first reverse-sync run, open [Settings → Actions → General for the repository](https://github.com/Automattic/docspress/settings/actions). Under **Workflow permissions**, enable **Allow GitHub Actions to create and approve pull requests**, then select **Save**. For another repository, open the same settings page under its owner and repository name.
+Before the first reverse-sync run, open [Settings → Actions → General for the repository](https://github.com/Automattic/autodocs-publish/settings/actions). Under **Workflow permissions**, enable **Allow GitHub Actions to create and approve pull requests**, then select **Save**. For another repository, open the same settings page under its owner and repository name.
 
-![GitHub Actions workflow permissions with Allow GitHub Actions to create and approve pull requests enabled](http://fkadocs.atomicsites.blog/wp-content/themes/docspress/assets/images/github-actions/allow-actions-create-pull-requests.png "Enable the pull request setting and save it before running WordPress-to-GitHub synchronization.")
+![GitHub Actions workflow permissions with Allow GitHub Actions to create and approve pull requests enabled](http://fkadocs.atomicsites.blog/wp-content/themes/autodocs-publish/assets/images/github-actions/allow-actions-create-pull-requests.png "Enable the pull request setting and save it before running WordPress-to-GitHub synchronization.")
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/colorful-code",
+  "name": "autodocs-publish/colorful-code",
   "attrs": {
     "language": "yaml",
     "filename": ".github/workflows/sync-docs.yml",
-    "code": "on:\n  push:\n    branches: [main]\n    paths: [\"docs/**\", \".github/workflows/sync-docs.yml\"]\n  schedule:\n    - cron: \"3/5 * * * *\"\n  workflow_dispatch:\n\npermissions:\n  contents: write\n  pull-requests: write\n\nconcurrency:\n  group: docspress-sync\n  cancel-in-progress: false\n\njobs:\n  sync:\n    # Do not publish a merged WordPress proposal back to WordPress.\n    if: \u003e-\n      github.event_name != 'push' ||\n      !contains(\n        github.event.head_commit.message,\n        format('from {0}/docspress/wordpress-sync', github.repository_owner)\n      )\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@FULL_COMMIT_SHA\n      - uses: Automattic/docspress@FULL_COMMIT_SHA\n        with:\n          mode: reconcile\n          wordpress-site: example.wordpress.com\n          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n          docs-dir: docs\n          root-slug: docs\n          status: publish",
+    "code": "on:\n  push:\n    branches: [main]\n    paths: [\"docs/**\", \".github/workflows/sync-docs.yml\"]\n  schedule:\n    - cron: \"3/5 * * * *\"\n  workflow_dispatch:\n\npermissions:\n  contents: write\n  pull-requests: write\n\nconcurrency:\n  group: autodocs-publish-sync\n  cancel-in-progress: false\n\njobs:\n  sync:\n    # Do not publish a merged WordPress proposal back to WordPress.\n    if: \u003e-\n      github.event_name != 'push' ||\n      !contains(\n        github.event.head_commit.message,\n        format('from {0}/autodocs-publish/wordpress-sync', github.repository_owner)\n      )\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@FULL_COMMIT_SHA\n      - uses: Automattic/autodocs-publish@FULL_COMMIT_SHA\n        with:\n          mode: reconcile\n          wordpress-site: example.wordpress.com\n          wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n          docs-dir: docs\n          root-slug: docs\n          status: publish",
     "highlightedLines": "5-6,10-12,20-26,33",
     "showLineNumbers": true,
     "caption": "Pushes publish Markdown; schedules propose WordPress edits; merges from the managed proposal branch are skipped."
@@ -124,7 +124,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: docspress-sync
+  group: autodocs-publish-sync
   cancel-in-progress: false
 
 jobs:
@@ -134,12 +134,12 @@ jobs:
       github.event_name != 'push' ||
       !contains(
         github.event.head_commit.message,
-        format('from {0}/docspress/wordpress-sync', github.repository_owner)
+        format('from {0}/autodocs-publish/wordpress-sync', github.repository_owner)
       )
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@FULL_COMMIT_SHA
-      - uses: Automattic/docspress@FULL_COMMIT_SHA
+      - uses: Automattic/autodocs-publish@FULL_COMMIT_SHA
         with:
           mode: reconcile
           wordpress-site: example.wordpress.com
@@ -148,20 +148,20 @@ jobs:
           root-slug: docs
           status: publish
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-DocsPress compares the live Gutenberg tree with the tree generated from the current Markdown, then rewrites only source regions whose blocks changed. Unchanged frontmatter, spacing, code-fence languages, tables, and readable block envelopes stay byte-for-byte intact. Plain core blocks become ordinary Markdown. DocsPress and non-portable core blocks use semantic, lossless envelopes instead of exposing raw `wp:*` comments. If DocsPress cannot map the blocks safely, the run fails instead of regenerating the whole file.
+Autodocs Publish compares the live Gutenberg tree with the tree generated from the current Markdown, then rewrites only source regions whose blocks changed. Unchanged frontmatter, spacing, code-fence languages, tables, and readable block envelopes stay byte-for-byte intact. Plain core blocks become ordinary Markdown. Autodocs Publish and non-portable core blocks use semantic, lossless envelopes instead of exposing raw `wp:*` comments. If Autodocs Publish cannot map the blocks safely, the run fails instead of regenerating the whole file.
 
 The Action updates one action-owned branch and pull request instead of opening duplicates on every poll.
 
-The job condition skips the `push` event created when GitHub merges the action-owned `docspress/wordpress-sync` branch. Scheduled and manual runs still reconcile normally. If you set a custom `pull-request-branch`, use the same branch name in the condition. As a fallback for workflows without the condition, the Action recognizes its configured branch in GitHub's merge commit and exits successfully without reading or writing WordPress.
+The job condition skips the `push` event created when GitHub merges the action-owned `autodocs-publish/wordpress-sync` branch. Scheduled and manual runs still reconcile normally. If you set a custom `pull-request-branch`, use the same branch name in the condition. As a fallback for workflows without the condition, the Action recognizes its configured branch in GitHub's merge commit and exits successfully without reading or writing WordPress.
 
 While that pull request is open, `reconcile` leaves the WordPress-only Page untouched. After the pull request merges, the next run recognizes that both sides converge and refreshes the Page sentinel; GitHub-only changes to other Pages can continue publishing in the same run.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "warning",
     "title": "Two-sided edits stop before writes",
@@ -175,7 +175,7 @@ While that pull request is open, `reconcile` leaves the WordPress-only Page unto
 > **Two-sided edits stop before writes**
 >
 > If GitHub and WordPress both changed the same managed Page since the sentinel baseline, reconcile mode reports a conflict and changes neither system. Resolve one side deliberately, then run the workflow again.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Observe each run
 
@@ -185,7 +185,7 @@ The [first synchronization walkthrough](../publish-existing-docs/first-sync.md) 
 
 ## Pin and update intentionally
 
-Use full verified commit SHAs for both `actions/checkout` and `Automattic/docspress`. When adopting a newer DocsPress revision:
+Use full verified commit SHAs for both `actions/checkout` and `Automattic/autodocs-publish`. When adopting a newer Autodocs Publish revision:
 
 1. inspect its `action.yml` inputs;
 2. review source and bundled `dist/` changes;

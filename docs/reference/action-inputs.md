@@ -2,7 +2,7 @@
 title: GitHub Action inputs and outputs
 ---
 
-DocsPress is a Node 20 GitHub Action configured entirely through `with` inputs.
+Autodocs Publish is a Node 20 GitHub Action configured entirely through `with` inputs.
 
 ## Synchronization mode
 
@@ -24,9 +24,9 @@ DocsPress is a Node 20 GitHub Action configured entirely through `with` inputs.
 | --- | --- | --- |
 | `docs-dir` | `docs` | Directory containing `.md` and `.markdown` files. |
 | `manifest-file` | empty | Optional JSON manifest for explicit titles, slugs, parents, and source files. |
-| `sidebars-file` | empty | Optional YAML or JSON route map for advanced contextual sidebars in the DocsPress theme. Without it, DocsPress keeps one automatic Page tree. |
+| `sidebars-file` | empty | Optional YAML or JSON route map for advanced contextual sidebars in the Autodocs Publish theme. Without it, Autodocs Publish keeps one automatic Page tree. |
 | `redirects-file` | empty | Optional JSON redirects map that creates managed moved-page placeholders. |
-| `versions-file` | empty | Optional ordered API-version registry. Enables root, directory, suffix, and per-version manifest sources through DocsPress Blocks. |
+| `versions-file` | empty | Optional ordered API-version registry. Enables root, directory, suffix, and per-version manifest sources through Autodocs Publish Blocks. |
 | `root-slug` | `docs` | Slug of the managed root Page. |
 | `root-title` | `Docs` | Fallback root title when no root document supplies one. |
 
@@ -34,7 +34,7 @@ DocsPress is a Node 20 GitHub Action configured entirely through `with` inputs.
 
 | Input | Default | Description |
 | --- | --- | --- |
-| `create-h1` | `false` | Adds the Page title as an H1 Gutenberg block. Keep false with the DocsPress theme. |
+| `create-h1` | `false` | Adds the Page title as an H1 Gutenberg block. Keep false with the Autodocs Publish theme. |
 | `rewrite-links` | `true` | Rewrites known local Markdown targets to their WordPress routes. |
 | `edit-link` | `false` | Appends a source link to Markdown-backed Pages. |
 | `edit-link-text` | `Edit this page on GitHub` | Text for the appended source link. |
@@ -48,7 +48,7 @@ DocsPress is a Node 20 GitHub Action configured entirely through `with` inputs.
 | --- | --- | --- |
 | `github-token` | `github.token` | Token used to create commits, the managed branch, and pull requests. |
 | `pull-request-base` | repository default branch | Base branch for the rolling pull request. |
-| `pull-request-branch` | `docspress/wordpress-sync` | Action-owned branch that is refreshed from the latest base on every run. |
+| `pull-request-branch` | `autodocs-publish/wordpress-sync` | Action-owned branch that is refreshed from the latest base on every run. |
 | `pull-request-title` | generated | Optional pull request and commit title override. The generated title follows Conventional Commits, for example `docs(sync-and-rest-api): sync changes from WordPress`. |
 
 Reverse sync requires `contents: write` and `pull-requests: write`. The repository must also allow GitHub Actions to create pull requests, or `github-token` must use a suitable GitHub App or personal access token. Follow the [continuous synchronization guide](../guides/continuous-sync.md#stage-4-reconcile-wordpress-edits) to enable the repository setting.
@@ -61,10 +61,10 @@ Reverse sync requires `contents: write` and `pull-requests: write`. The reposito
 | `delete-mode` | `trash` | `trash` moves removed managed Pages to Trash; `force` permanently deletes them. |
 | `dry-run` | `false` | Plans operations without WordPress or GitHub writes. Start with `true`. |
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "warning",
     "title": "Override the write-capable defaults",
@@ -78,7 +78,7 @@ Reverse sync requires `contents: write` and `pull-requests: write`. The reposito
 > **Override the write-capable defaults**
 >
 > The Action metadata defaults to `status: publish` and `dry-run: false`. New installations should explicitly set `status: draft`, `delete-mode: trash`, and `dry-run: true`.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Outputs
 

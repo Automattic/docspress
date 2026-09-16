@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title description">
+	<title id="title">Autodocs Publish mark</title>
+	<desc id="description">A document with an upward publish arrow.</desc>
+	<path
+		fill="#004a91"
+		d="M66 39h96l48 48v132c0 13-10 23-23 23H66c-13 0-23-10-23-23V62c0-13 10-23 23-23Z"
+	/>
+	<path
+		fill="#fff"
+		stroke="#232323"
+		stroke-linejoin="round"
+		stroke-width="11"
+		d="M52 20h100l48 48v137c0 13-10 23-23 23H52c-13 0-23-10-23-23V43c0-13 10-23 23-23Z"
+	/>
+	<path
+		fill="#005cb3"
+		stroke="#232323"
+		stroke-linejoin="round"
+		stroke-width="11"
+		d="M152 20v34c0 8 6 14 14 14h34Z"
+	/>
+	<path fill="none" stroke="#005cb3" stroke-linecap="round" stroke-width="11" d="M61 96h93M61 127h77M61 158h53"/>
+	<circle cx="181" cy="181" r="53" fill="#fec408" stroke="#232323" stroke-width="11"/>
+	<path
+		fill="none"
+		stroke="#005cb3"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		stroke-width="15"
+		d="M181 210v-55m-23 22 23-23 23 23"
+	/>
+</svg>

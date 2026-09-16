@@ -1,7 +1,7 @@
 ( function ( blocks, blockEditor, components, data, editorPackage, element, i18n, plugins, serverSideRender ) {
 	'use strict';
 
-	const { registerBlockType } = blocks;
+	const { getBlockType, registerBlockType: registerNativeBlockType } = blocks;
 	const { BlockControls, InspectorControls, useBlockProps } = blockEditor;
 	const { Disabled, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl, ToolbarButton } = components;
 	const { useDispatch, useSelect } = data;
@@ -10,6 +10,19 @@
 	const { __ } = i18n;
 	const { registerPlugin } = plugins;
 	const ServerSideRender = serverSideRender.default || serverSideRender;
+	const registerBlockType = ( name, settings ) => {
+		const registered = registerNativeBlockType( name, settings );
+		if ( name.startsWith( 'autodocs-publish/' ) ) {
+			const legacyName = name.replace( 'autodocs-publish/', 'docspress/' );
+			if ( ! getBlockType( legacyName ) ) {
+				registerNativeBlockType( legacyName, {
+					...settings,
+					supports: { ...( settings.supports || {} ), inserter: false }
+				} );
+			}
+		}
+		return registered;
+	};
 	const designSupports = {
 		anchor: true,
 		className: true,
@@ -109,35 +122,35 @@
 	function CommandSearchEditorPreview( { attributes, isSelected } ) {
 		const [ isOpen, setIsOpen ] = useState( false );
 		const previewClasses = [
-			'docspress-command-search',
-			'docspress-command-search-editor-preview'
+			'autodocs-publish-command-search',
+			'autodocs-publish-command-search-editor-preview'
 		];
 		const sampleResults = [
 			{
-				path: __( 'Documentation', 'docspress' ),
-				title: __( 'DocsPress documentation', 'docspress' ),
-				excerpt: __( 'Keep documentation beside the code that explains it, then publish that Markdown as native WordPress Pages and blocks.', 'docspress' )
+				path: __( 'Documentation', 'autodocs-publish' ),
+				title: __( 'Autodocs Publish documentation', 'autodocs-publish' ),
+				excerpt: __( 'Keep documentation beside the code that explains it, then publish that Markdown as native WordPress Pages and blocks.', 'autodocs-publish' )
 			},
 			{
-				path: __( 'DocsPress documentation / Publish existing docs', 'docspress' ),
-				title: __( 'Publish existing docs', 'docspress' ),
-				excerpt: __( 'Connect an existing Markdown documentation tree to WordPress through the reviewed DocsPress workflow.', 'docspress' )
+				path: __( 'Autodocs Publish documentation / Publish existing docs', 'autodocs-publish' ),
+				title: __( 'Publish existing docs', 'autodocs-publish' ),
+				excerpt: __( 'Connect an existing Markdown documentation tree to WordPress through the reviewed Autodocs Publish workflow.', 'autodocs-publish' )
 			},
 			{
-				path: __( 'DocsPress documentation / Create docs with AI', 'docspress' ),
-				title: __( 'Create docs with AI', 'docspress' ),
-				excerpt: __( 'Generate verified documentation from repository evidence, review it, and publish it with DocsPress.', 'docspress' )
+				path: __( 'Autodocs Publish documentation / Create docs with AI', 'autodocs-publish' ),
+				title: __( 'Create docs with AI', 'autodocs-publish' ),
+				excerpt: __( 'Generate verified documentation from repository evidence, review it, and publish it with Autodocs Publish.', 'autodocs-publish' )
 			}
 		].slice( 0, Math.min( 3, attributes.resultsLimit ) );
 
 		if ( ! attributes.showPaths ) {
-			previewClasses.push( 'docspress-search-hide-paths' );
+			previewClasses.push( 'autodocs-publish-search-hide-paths' );
 		}
 		if ( ! attributes.showExcerpts ) {
-			previewClasses.push( 'docspress-search-hide-excerpts' );
+			previewClasses.push( 'autodocs-publish-search-hide-excerpts' );
 		}
 		if ( ! attributes.showHints ) {
-			previewClasses.push( 'docspress-search-hide-hints' );
+			previewClasses.push( 'autodocs-publish-search-hide-hints' );
 		}
 
 		useEffect( () => {
@@ -177,11 +190,11 @@
 			el( 'path', { d: 'm16.8 15.4 4.4 4.4-1.4 1.4-4.4-4.4a7.5 7.5 0 1 1 1.4-1.4ZM10.5 16a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11Z' } )
 		);
 		const previewStyle = {
-			'--dp-search-width': `${ attributes.width }px`,
-			'--dp-search-height': `${ attributes.height }px`,
-			'--dp-search-radius': `${ attributes.radius }px`,
-			'--dp-search-overlay-opacity': `${ attributes.overlayOpacity }%`,
-			'--dp-search-overlay-blur': `${ attributes.overlayBlur }px`
+			'--adp-search-width': `${ attributes.width }px`,
+			'--adp-search-height': `${ attributes.height }px`,
+			'--adp-search-radius': `${ attributes.radius }px`,
+			'--adp-search-overlay-opacity': `${ attributes.overlayOpacity }%`,
+			'--adp-search-overlay-blur': `${ attributes.overlayBlur }px`
 		};
 
 		return el(
@@ -193,8 +206,8 @@
 				el( ToolbarButton, {
 					icon: icons.search,
 					label: isOpen
-						? __( 'Close search dialog preview', 'docspress' )
-						: __( 'Preview search dialog', 'docspress' ),
+						? __( 'Close search dialog preview', 'autodocs-publish' )
+						: __( 'Preview search dialog', 'autodocs-publish' ),
 					isPressed: isOpen,
 					onClick: () => setIsOpen( ! isOpen )
 				} )
@@ -217,7 +230,7 @@
 				isOpen && el(
 					'div',
 					{
-						className: 'docspress-command-search-editor-overlay',
+						className: 'autodocs-publish-command-search-editor-overlay',
 						onClick: closePreview
 					},
 					el(
@@ -225,7 +238,7 @@
 						{
 							className: 'search-dialog is-editor-preview',
 							role: 'dialog',
-							'aria-label': __( 'Search dialog preview', 'docspress' ),
+							'aria-label': __( 'Search dialog preview', 'autodocs-publish' ),
 							'aria-modal': 'true',
 							onClick: ( event ) => event.stopPropagation()
 						},
@@ -243,14 +256,14 @@
 										type: 'search',
 										placeholder: attributes.placeholder,
 										readOnly: true,
-										'aria-label': __( 'Search documentation preview', 'docspress' )
+										'aria-label': __( 'Search documentation preview', 'autodocs-publish' )
 									} ),
 									el(
 										'button',
 										{
 											className: 'command-search-close',
 											type: 'button',
-											'aria-label': __( 'Close search dialog preview', 'docspress' ),
+											'aria-label': __( 'Close search dialog preview', 'autodocs-publish' ),
 											onClick: closePreview
 										},
 										el( 'span', { 'aria-hidden': 'true' }, '×' )
@@ -287,9 +300,9 @@
 								attributes.showHints && el(
 									'footer',
 									{ className: 'command-search-footer', 'aria-hidden': 'true' },
-									el( 'span', null, el( 'kbd', null, '↑' ), el( 'kbd', null, '↓' ), __( 'to navigate', 'docspress' ) ),
-									el( 'span', null, el( 'kbd', null, '↵' ), __( 'to open', 'docspress' ) ),
-									el( 'span', null, el( 'kbd', null, 'Esc' ), __( 'to close', 'docspress' ) )
+									el( 'span', null, el( 'kbd', null, '↑' ), el( 'kbd', null, '↓' ), __( 'to navigate', 'autodocs-publish' ) ),
+									el( 'span', null, el( 'kbd', null, '↵' ), __( 'to open', 'autodocs-publish' ) ),
+									el( 'span', null, el( 'kbd', null, 'Esc' ), __( 'to close', 'autodocs-publish' ) )
 								)
 							)
 						)
@@ -300,38 +313,38 @@
 	}
 
 	function FeedbackEditorPreview( { attributes } ) {
-		const className = `docspress-feedback${ attributes.enabled ? '' : ' is-disabled' }`;
+		const className = `autodocs-publish-feedback${ attributes.enabled ? '' : ' is-disabled' }`;
 		const button = ( vote, label ) => el(
 			'button',
 			{
-				className: 'docspress-feedback-button',
+				className: 'autodocs-publish-feedback-button',
 				type: 'button',
 				disabled: true,
 				'data-feedback-vote': vote,
 				'aria-pressed': 'false'
 			},
 			vote === 'helpful'
-				? el( 'span', { className: 'docspress-feedback-editor-icon', 'aria-hidden': 'true' }, '↑' )
-				: el( 'span', { className: 'docspress-feedback-editor-icon', 'aria-hidden': 'true' }, '↓' ),
+				? el( 'span', { className: 'autodocs-publish-feedback-editor-icon', 'aria-hidden': 'true' }, '↑' )
+				: el( 'span', { className: 'autodocs-publish-feedback-editor-icon', 'aria-hidden': 'true' }, '↓' ),
 			el( 'span', null, label )
 		);
 
 		return el(
 			'section',
 			{ className },
-			el( 'p', { className: 'docspress-feedback-question' }, attributes.question ),
+			el( 'p', { className: 'autodocs-publish-feedback-question' }, attributes.question ),
 			el(
 				'div',
-				{ className: 'docspress-feedback-actions' },
+				{ className: 'autodocs-publish-feedback-actions' },
 				button( 'helpful', attributes.helpfulLabel ),
 				button( 'unhelpful', attributes.unhelpfulLabel )
 			),
 			el(
 				'p',
-				{ className: 'docspress-feedback-editor-note' },
+				{ className: 'autodocs-publish-feedback-editor-note' },
 				attributes.enabled
-					? __( 'Responses are stored with each Page and summarized in Page feedback.', 'docspress' )
-					: __( 'Disabled on published Pages.', 'docspress' )
+					? __( 'Responses are stored with each Page and summarized in Page feedback.', 'autodocs-publish' )
+					: __( 'Disabled on published Pages.', 'autodocs-publish' )
 			)
 		);
 	}
@@ -350,14 +363,14 @@
 			return null;
 		}
 
-		const feedbackEnabled = details.meta.docspress_feedback_enabled !== false;
-		const helpful = Number( details.meta.docspress_helpful_votes ) || 0;
-		const unhelpful = Number( details.meta.docspress_unhelpful_votes ) || 0;
+		const feedbackEnabled = details.meta.autodocs_publish_feedback_enabled !== false;
+		const helpful = Number( details.meta.autodocs_publish_helpful_votes ) || 0;
+		const unhelpful = Number( details.meta.autodocs_publish_unhelpful_votes ) || 0;
 		const total = helpful + unhelpful;
 		const helpfulRate = total ? Math.round( ( helpful / total ) * 100 ) : 0;
 		const count = ( label, value ) => el(
 			'div',
-			{ className: 'docspress-feedback-count', key: label },
+			{ className: 'autodocs-publish-feedback-count', key: label },
 			el( 'span', null, label ),
 			el( 'strong', null, String( value ) )
 		);
@@ -366,48 +379,48 @@
 			PluginDocumentSettingPanel,
 			{
 				name: 'page-feedback',
-				title: __( 'Page feedback', 'docspress' ),
-				className: 'docspress-feedback-details'
+				title: __( 'Page feedback', 'autodocs-publish' ),
+				className: 'autodocs-publish-feedback-details'
 			},
 			el(
 				'div',
-				{ className: 'docspress-feedback-summary' },
+				{ className: 'autodocs-publish-feedback-summary' },
 				el(
 					'div',
-					{ className: 'docspress-feedback-setting' },
+					{ className: 'autodocs-publish-feedback-setting' },
 					el( ToggleControl, {
-						label: __( 'Show feedback on this Page', 'docspress' ),
+						label: __( 'Show feedback on this Page', 'autodocs-publish' ),
 						checked: feedbackEnabled,
 						onChange: ( value ) => editPost( {
 							meta: {
 								...details.meta,
-								docspress_feedback_enabled: value
+								autodocs_publish_feedback_enabled: value
 							}
 						} ),
-						help: __( 'Turning this off hides the prompt without deleting its response totals.', 'docspress' ),
+						help: __( 'Turning this off hides the prompt without deleting its response totals.', 'autodocs-publish' ),
 						__nextHasNoMarginBottom: true
 					} )
 				),
 				el(
 					'div',
-					{ className: 'docspress-feedback-score' },
+					{ className: 'autodocs-publish-feedback-score' },
 					el(
 						'strong',
-						{ className: 'docspress-feedback-score-value' },
+						{ className: 'autodocs-publish-feedback-score-value' },
 						total ? `${ helpfulRate }%` : '—'
 					),
 					el(
 						'span',
-						{ className: 'docspress-feedback-score-label' },
-						total ? __( 'helpful', 'docspress' ) : __( 'No responses yet', 'docspress' )
+						{ className: 'autodocs-publish-feedback-score-label' },
+						total ? __( 'helpful', 'autodocs-publish' ) : __( 'No responses yet', 'autodocs-publish' )
 					)
 				),
 				el(
 					'div',
 					{
-						className: 'docspress-feedback-meter',
+						className: 'autodocs-publish-feedback-meter',
 						role: 'progressbar',
-						'aria-label': __( 'Helpful response rate', 'docspress' ),
+						'aria-label': __( 'Helpful response rate', 'autodocs-publish' ),
 						'aria-valuemin': '0',
 						'aria-valuemax': '100',
 						'aria-valuenow': String( helpfulRate )
@@ -416,32 +429,32 @@
 				),
 				el(
 					'div',
-					{ className: 'docspress-feedback-counts' },
-					count( __( 'Helpful', 'docspress' ), helpful ),
-					count( __( 'Not helpful', 'docspress' ), unhelpful )
+					{ className: 'autodocs-publish-feedback-counts' },
+					count( __( 'Helpful', 'autodocs-publish' ), helpful ),
+					count( __( 'Not helpful', 'autodocs-publish' ), unhelpful )
 				),
 				el(
 					'div',
-					{ className: 'docspress-feedback-total' },
-					el( 'span', null, __( 'Total responses', 'docspress' ) ),
+					{ className: 'autodocs-publish-feedback-total' },
+					el( 'span', null, __( 'Total responses', 'autodocs-publish' ) ),
 					el( 'strong', null, String( total ) )
 				),
 				el(
 					'p',
-					{ className: 'docspress-feedback-detail-note' },
-					__( 'Stored with this Page. Feedback totals are read-only here.', 'docspress' )
+					{ className: 'autodocs-publish-feedback-detail-note' },
+					__( 'Stored with this Page. Feedback totals are read-only here.', 'autodocs-publish' )
 				)
 			)
 		);
 	}
 
-	registerPlugin( 'docspress-page-feedback', {
+	registerPlugin( 'autodocs-publish-page-feedback', {
 		render: PageFeedbackDetailsPanel,
 		icon: icons.feedback
 	} );
 
 	function registerComponent( slug, config ) {
-		registerBlockType( `docspress/${ slug }`, {
+		registerBlockType( `autodocs-publish/${ slug }`, {
 			apiVersion: 3,
 			title: config.title,
 			description: config.description,
@@ -450,7 +463,7 @@
 			attributes: config.attributes,
 			supports: designSupports,
 			edit: function ComponentEdit( { attributes, setAttributes, isSelected } ) {
-				const blockProps = useBlockProps( { className: `docspress-component-editor docspress-component-editor--${ slug }` } );
+				const blockProps = useBlockProps( { className: `autodocs-publish-component-editor autodocs-publish-component-editor--${ slug }` } );
 				const preview = config.EditorPreview
 					? el( config.EditorPreview, { attributes, isSelected } )
 					: config.preview
@@ -459,9 +472,9 @@
 						Disabled,
 						null,
 						el( ServerSideRender, {
-							block: `docspress/${ slug }`,
+							block: `autodocs-publish/${ slug }`,
 							attributes,
-							EmptyResponsePlaceholder: () => el( 'div', { className: 'docspress-component-placeholder' }, config.empty )
+							EmptyResponsePlaceholder: () => el( 'div', { className: 'autodocs-publish-component-placeholder' }, config.empty )
 						} )
 					);
 				return el(
@@ -482,10 +495,10 @@
 	}
 
 	registerComponent( 'docs-navigation', {
-		title: __( 'DocsPress: Documentation Navigation', 'docspress' ),
-		description: __( 'A hierarchy-aware Page tree or selected classic menu with filtering.', 'docspress' ),
+		title: __( 'Autodocs Publish: Documentation Navigation', 'autodocs-publish' ),
+		description: __( 'A hierarchy-aware Page tree or selected classic menu with filtering.', 'autodocs-publish' ),
 		icon: icons.navigation,
-		empty: __( 'Documentation navigation preview', 'docspress' ),
+		empty: __( 'Documentation navigation preview', 'autodocs-publish' ),
 		attributes: {
 			title: { type: 'string', default: 'Documentation', role: 'content' },
 			width: { type: 'number', default: 266 },
@@ -505,49 +518,49 @@
 			expandLabel: { type: 'string', default: 'Expand sidebar', role: 'content' }
 		},
 		controls: ( attributes, setAttributes ) => [
-			panel( __( 'Navigation source', 'docspress' ), [
-				range( __( 'Sidebar width', 'docspress' ), 'width', attributes, setAttributes, 220, 360, 1 ),
-				select( __( 'Source', 'docspress' ), 'source', attributes, setAttributes, [
-					{ label: __( 'Automatic Page tree', 'docspress' ), value: 'pages' },
-					{ label: __( 'Classic menu', 'docspress' ), value: 'menu' }
+			panel( __( 'Navigation source', 'autodocs-publish' ), [
+				range( __( 'Sidebar width', 'autodocs-publish' ), 'width', attributes, setAttributes, 220, 360, 1 ),
+				select( __( 'Source', 'autodocs-publish' ), 'source', attributes, setAttributes, [
+					{ label: __( 'Automatic Page tree', 'autodocs-publish' ), value: 'pages' },
+					{ label: __( 'Classic menu', 'autodocs-publish' ), value: 'menu' }
 				] ),
-				text( __( 'Documentation root path', 'docspress' ), 'rootSlug', attributes, setAttributes, __( 'Use a Page path such as docs or developer/docs.', 'docspress' ) ),
-				attributes.source === 'menu' && text( __( 'Menu slug, name, or ID', 'docspress' ), 'menuSlug', attributes, setAttributes ),
-				select( __( 'Automatic Page order', 'docspress' ), 'sort', attributes, setAttributes, [
-					{ label: __( 'Page order, then title', 'docspress' ), value: 'menu_order' },
-					{ label: __( 'Title', 'docspress' ), value: 'title' },
-					{ label: __( 'Newest first', 'docspress' ), value: 'newest' },
-					{ label: __( 'Oldest first', 'docspress' ), value: 'oldest' }
+				text( __( 'Documentation root path', 'autodocs-publish' ), 'rootSlug', attributes, setAttributes, __( 'Use a Page path such as docs or developer/docs.', 'autodocs-publish' ) ),
+				attributes.source === 'menu' && text( __( 'Menu slug, name, or ID', 'autodocs-publish' ), 'menuSlug', attributes, setAttributes ),
+				select( __( 'Automatic Page order', 'autodocs-publish' ), 'sort', attributes, setAttributes, [
+					{ label: __( 'Page order, then title', 'autodocs-publish' ), value: 'menu_order' },
+					{ label: __( 'Title', 'autodocs-publish' ), value: 'title' },
+					{ label: __( 'Newest first', 'autodocs-publish' ), value: 'newest' },
+					{ label: __( 'Oldest first', 'autodocs-publish' ), value: 'oldest' }
 				] ),
-				toggle( __( 'Show root Page', 'docspress' ), 'showRoot', attributes, setAttributes ),
-				range( __( 'Maximum depth', 'docspress' ), 'maxDepth', attributes, setAttributes, 0, 8, 1, __( 'Zero shows every level.', 'docspress' ) )
+				toggle( __( 'Show root Page', 'autodocs-publish' ), 'showRoot', attributes, setAttributes ),
+				range( __( 'Maximum depth', 'autodocs-publish' ), 'maxDepth', attributes, setAttributes, 0, 8, 1, __( 'Zero shows every level.', 'autodocs-publish' ) )
 			] ),
-			panel( __( 'Labels and tools', 'docspress' ), [
-				text( __( 'Heading', 'docspress' ), 'title', attributes, setAttributes ),
-				toggle( __( 'Show Page filter', 'docspress' ), 'showFilter', attributes, setAttributes ),
-				attributes.showFilter && text( __( 'Filter placeholder', 'docspress' ), 'filterPlaceholder', attributes, setAttributes ),
-				text( __( 'Empty state', 'docspress' ), 'emptyMessage', attributes, setAttributes )
+			panel( __( 'Labels and tools', 'autodocs-publish' ), [
+				text( __( 'Heading', 'autodocs-publish' ), 'title', attributes, setAttributes ),
+				toggle( __( 'Show Page filter', 'autodocs-publish' ), 'showFilter', attributes, setAttributes ),
+				attributes.showFilter && text( __( 'Filter placeholder', 'autodocs-publish' ), 'filterPlaceholder', attributes, setAttributes ),
+				text( __( 'Empty state', 'autodocs-publish' ), 'emptyMessage', attributes, setAttributes )
 			], false ),
-			panel( __( 'Sidebar collapse button', 'docspress' ), [
+			panel( __( 'Sidebar collapse button', 'autodocs-publish' ), [
 				toggle(
-					__( 'Show collapse circle', 'docspress' ),
+					__( 'Show collapse circle', 'autodocs-publish' ),
 					'showCollapse',
 					attributes,
 					setAttributes,
-					__( 'Display the circular desktop control on the sidebar divider.', 'docspress' )
+					__( 'Display the circular desktop control on the sidebar divider.', 'autodocs-publish' )
 				),
-				attributes.showCollapse && toggle( __( 'Start collapsed on desktop', 'docspress' ), 'startCollapsed', attributes, setAttributes ),
-				attributes.showCollapse && text( __( 'Collapse label', 'docspress' ), 'collapseLabel', attributes, setAttributes ),
-				attributes.showCollapse && text( __( 'Expand label', 'docspress' ), 'expandLabel', attributes, setAttributes )
+				attributes.showCollapse && toggle( __( 'Start collapsed on desktop', 'autodocs-publish' ), 'startCollapsed', attributes, setAttributes ),
+				attributes.showCollapse && text( __( 'Collapse label', 'autodocs-publish' ), 'collapseLabel', attributes, setAttributes ),
+				attributes.showCollapse && text( __( 'Expand label', 'autodocs-publish' ), 'expandLabel', attributes, setAttributes )
 			] )
 		]
 	} );
 
 	registerComponent( 'command-search', {
-		title: __( 'DocsPress: Command Search', 'docspress' ),
-		description: __( 'A keyboard-accessible documentation search trigger and command dialog.', 'docspress' ),
+		title: __( 'Autodocs Publish: Command Search', 'autodocs-publish' ),
+		description: __( 'A keyboard-accessible documentation search trigger and command dialog.', 'autodocs-publish' ),
 		icon: icons.search,
-		empty: __( 'Search is available on the published site.', 'docspress' ),
+		empty: __( 'Search is available on the published site.', 'autodocs-publish' ),
 		EditorPreview: CommandSearchEditorPreview,
 		controlGroup: 'content',
 		attributes: {
@@ -567,39 +580,39 @@
 			showHints: { type: 'boolean', default: true }
 		},
 		controls: ( attributes, setAttributes ) => [
-			panel( __( 'Search content', 'docspress' ), [
-				text( __( 'Trigger label', 'docspress' ), 'label', attributes, setAttributes ),
-				text( __( 'Field placeholder', 'docspress' ), 'placeholder', attributes, setAttributes ),
-				text( __( 'Suggested results label', 'docspress' ), 'suggestedLabel', attributes, setAttributes ),
-				text( __( 'No-results message', 'docspress' ), 'noResultsLabel', attributes, setAttributes ),
-				text( __( 'Documentation root path', 'docspress' ), 'rootSlug', attributes, setAttributes ),
-				range( __( 'Maximum results', 'docspress' ), 'resultsLimit', attributes, setAttributes, 3, 20 )
+			panel( __( 'Search content', 'autodocs-publish' ), [
+				text( __( 'Trigger label', 'autodocs-publish' ), 'label', attributes, setAttributes ),
+				text( __( 'Field placeholder', 'autodocs-publish' ), 'placeholder', attributes, setAttributes ),
+				text( __( 'Suggested results label', 'autodocs-publish' ), 'suggestedLabel', attributes, setAttributes ),
+				text( __( 'No-results message', 'autodocs-publish' ), 'noResultsLabel', attributes, setAttributes ),
+				text( __( 'Documentation root path', 'autodocs-publish' ), 'rootSlug', attributes, setAttributes ),
+				range( __( 'Maximum results', 'autodocs-publish' ), 'resultsLimit', attributes, setAttributes, 3, 20 )
 			] ),
-			panel( __( 'Dialog', 'docspress' ), [
+			panel( __( 'Dialog', 'autodocs-publish' ), [
 				range(
-					__( 'Width', 'docspress' ),
+					__( 'Width', 'autodocs-publish' ),
 					'width',
 					attributes,
 					setAttributes,
 					420,
 					960,
 					1,
-					__( 'Click the search trigger or use the block toolbar to preview these settings.', 'docspress' )
+					__( 'Click the search trigger or use the block toolbar to preview these settings.', 'autodocs-publish' )
 				),
-				range( __( 'Height', 'docspress' ), 'height', attributes, setAttributes, 320, 820 ),
-				range( __( 'Corner radius', 'docspress' ), 'radius', attributes, setAttributes, 0, 40 ),
-				range( __( 'Backdrop opacity', 'docspress' ), 'overlayOpacity', attributes, setAttributes, 0, 90 ),
-				range( __( 'Backdrop blur', 'docspress' ), 'overlayBlur', attributes, setAttributes, 0, 20 ),
-				toggle( __( 'Show Page paths', 'docspress' ), 'showPaths', attributes, setAttributes ),
-				toggle( __( 'Show excerpts', 'docspress' ), 'showExcerpts', attributes, setAttributes ),
-				toggle( __( 'Show keyboard hints', 'docspress' ), 'showHints', attributes, setAttributes )
+				range( __( 'Height', 'autodocs-publish' ), 'height', attributes, setAttributes, 320, 820 ),
+				range( __( 'Corner radius', 'autodocs-publish' ), 'radius', attributes, setAttributes, 0, 40 ),
+				range( __( 'Backdrop opacity', 'autodocs-publish' ), 'overlayOpacity', attributes, setAttributes, 0, 90 ),
+				range( __( 'Backdrop blur', 'autodocs-publish' ), 'overlayBlur', attributes, setAttributes, 0, 20 ),
+				toggle( __( 'Show Page paths', 'autodocs-publish' ), 'showPaths', attributes, setAttributes ),
+				toggle( __( 'Show excerpts', 'autodocs-publish' ), 'showExcerpts', attributes, setAttributes ),
+				toggle( __( 'Show keyboard hints', 'autodocs-publish' ), 'showHints', attributes, setAttributes )
 			], false )
 		]
 	} );
 
 	registerComponent( 'breadcrumbs', {
-		title: __( 'DocsPress: Breadcrumbs', 'docspress' ),
-		description: __( 'The current Page trail with optional home link and custom separator.', 'docspress' ),
+		title: __( 'Autodocs Publish: Breadcrumbs', 'autodocs-publish' ),
+		description: __( 'The current Page trail with optional home link and custom separator.', 'autodocs-publish' ),
 		icon: icons.trail,
 		attributes: {
 			showHome: { type: 'boolean', default: false },
@@ -615,35 +628,35 @@
 			);
 			return el(
 				'nav',
-				{ className: 'breadcrumbs', 'aria-label': __( 'Breadcrumbs preview', 'docspress' ) },
+				{ className: 'breadcrumbs', 'aria-label': __( 'Breadcrumbs preview', 'autodocs-publish' ) },
 				el(
 					'ol',
 					null,
 					attributes.showHome && item( attributes.homeLabel ),
-					item( __( 'DocsPress documentation', 'docspress' ) ),
-					item( __( 'Parent page', 'docspress' ) ),
-					item( __( 'Current page', 'docspress' ), true )
+					item( __( 'Autodocs Publish documentation', 'autodocs-publish' ) ),
+					item( __( 'Parent page', 'autodocs-publish' ) ),
+					item( __( 'Current page', 'autodocs-publish' ), true )
 				)
 			);
 		},
 		controls: ( attributes, setAttributes ) => [
-			panel( __( 'Breadcrumbs', 'docspress' ), [
-				toggle( __( 'Show home link', 'docspress' ), 'showHome', attributes, setAttributes ),
-				attributes.showHome && text( __( 'Home label', 'docspress' ), 'homeLabel', attributes, setAttributes ),
+			panel( __( 'Breadcrumbs', 'autodocs-publish' ), [
+				toggle( __( 'Show home link', 'autodocs-publish' ), 'showHome', attributes, setAttributes ),
+				attributes.showHome && text( __( 'Home label', 'autodocs-publish' ), 'homeLabel', attributes, setAttributes ),
 				text(
-					__( 'Separator', 'docspress' ),
+					__( 'Separator', 'autodocs-publish' ),
 					'separator',
 					attributes,
 					setAttributes,
-					__( 'Parent and current labels come from Page titles.', 'docspress' )
+					__( 'Parent and current labels come from Page titles.', 'autodocs-publish' )
 				)
 			] )
 		]
 	} );
 
 	registerComponent( 'table-of-contents', {
-		title: __( 'DocsPress: Table of Contents', 'docspress' ),
-		description: __( 'A live list of the current document headings.', 'docspress' ),
+		title: __( 'Autodocs Publish: Table of Contents', 'autodocs-publish' ),
+		description: __( 'A live list of the current document headings.', 'autodocs-publish' ),
 		icon: icons.toc,
 		attributes: {
 			title: { type: 'string', default: 'On this page', role: 'content' },
@@ -657,18 +670,18 @@
 			const nestedLevel = Math.min( maxLevel, minLevel + 1 );
 			const deepLevel = Math.min( maxLevel, minLevel + 2 );
 			const examples = [
-				{ label: __( 'Overview', 'docspress' ), level: minLevel },
-				{ label: __( 'Install DocsPress', 'docspress' ), level: minLevel },
-				{ label: __( 'Configure publishing', 'docspress' ), level: nestedLevel },
-				{ label: __( 'Customize the theme', 'docspress' ), level: deepLevel },
-				{ label: __( 'Next steps', 'docspress' ), level: minLevel }
+				{ label: __( 'Overview', 'autodocs-publish' ), level: minLevel },
+				{ label: __( 'Install Autodocs Publish', 'autodocs-publish' ), level: minLevel },
+				{ label: __( 'Configure publishing', 'autodocs-publish' ), level: nestedLevel },
+				{ label: __( 'Customize the theme', 'autodocs-publish' ), level: deepLevel },
+				{ label: __( 'Next steps', 'autodocs-publish' ), level: minLevel }
 			];
 
 			return el(
 				'aside',
 				{
 					className: 'docs-toc docs-toc-preview',
-					'aria-label': attributes.title || __( 'Table of contents preview', 'docspress' )
+					'aria-label': attributes.title || __( 'Table of contents preview', 'autodocs-publish' )
 				},
 				attributes.title && el( 'p', { className: 'toc-title' }, attributes.title ),
 				el(
@@ -690,18 +703,18 @@
 			);
 		},
 		controls: ( attributes, setAttributes ) => [
-			panel( __( 'Table of contents', 'docspress' ), [
-				text( __( 'Heading', 'docspress' ), 'title', attributes, setAttributes ),
-				range( __( 'Column width', 'docspress' ), 'width', attributes, setAttributes, 180, 320, 1 ),
-				range( __( 'First heading level', 'docspress' ), 'minLevel', attributes, setAttributes, 1, 6 ),
-				range( __( 'Last heading level', 'docspress' ), 'maxLevel', attributes, setAttributes, attributes.minLevel, 6 )
+			panel( __( 'Table of contents', 'autodocs-publish' ), [
+				text( __( 'Heading', 'autodocs-publish' ), 'title', attributes, setAttributes ),
+				range( __( 'Column width', 'autodocs-publish' ), 'width', attributes, setAttributes, 180, 320, 1 ),
+				range( __( 'First heading level', 'autodocs-publish' ), 'minLevel', attributes, setAttributes, 1, 6 ),
+				range( __( 'Last heading level', 'autodocs-publish' ), 'maxLevel', attributes, setAttributes, attributes.minLevel, 6 )
 			] )
 		]
 	} );
 
 	registerComponent( 'page-summary', {
-		title: __( 'DocsPress: Page Summary', 'docspress' ),
-		description: __( 'Show a manually written Page excerpt without generating duplicate content.', 'docspress' ),
+		title: __( 'Autodocs Publish: Page Summary', 'autodocs-publish' ),
+		description: __( 'Show a manually written Page excerpt without generating duplicate content.', 'autodocs-publish' ),
 		icon: icons.summary,
 		attributes: {
 			fallbackText: { type: 'string', default: '', role: 'content' }
@@ -709,31 +722,31 @@
 		preview: ( attributes ) => el(
 			'p',
 			{ className: 'entry-summary' },
-			attributes.fallbackText || __( 'A manually written Page excerpt appears here.', 'docspress' )
+			attributes.fallbackText || __( 'A manually written Page excerpt appears here.', 'autodocs-publish' )
 		),
 		controls: ( attributes, setAttributes ) => [
-			panel( __( 'Page summary', 'docspress' ), [
+			panel( __( 'Page summary', 'autodocs-publish' ), [
 				text(
-					__( 'Fallback summary', 'docspress' ),
+					__( 'Fallback summary', 'autodocs-publish' ),
 					'fallbackText',
 					attributes,
 					setAttributes,
-					__( 'Used only when the current Page has no manual excerpt.', 'docspress' )
+					__( 'Used only when the current Page has no manual excerpt.', 'autodocs-publish' )
 				)
 			] )
 		]
 	} );
 
 	registerComponent( 'edit-links', {
-		title: __( 'DocsPress: Edit Links', 'docspress' ),
-		description: __( 'WordPress and source-aware GitHub editing actions.', 'docspress' ),
+		title: __( 'Autodocs Publish: Edit Links', 'autodocs-publish' ),
+		description: __( 'WordPress and source-aware GitHub editing actions.', 'autodocs-publish' ),
 		icon: icons.edit,
 		attributes: {
 			showWordPress: { type: 'boolean', default: true },
 			wordpressLabel: { type: 'string', default: 'Edit this page in WordPress', role: 'content' },
 			showGitHub: { type: 'boolean', default: true },
 			githubLabel: { type: 'string', default: 'Propose changes on GitHub', role: 'content' },
-			repositoryUrl: { type: 'string', default: 'https://github.com/Automattic/docspress' },
+			repositoryUrl: { type: 'string', default: 'https://github.com/Automattic/autodocs-publish' },
 			ref: { type: 'string', default: 'main' }
 		},
 		preview: ( attributes ) => {
@@ -759,32 +772,32 @@
 				'nav',
 				{
 					className: 'page-actions page-actions-preview',
-					'aria-label': __( 'Page actions preview', 'docspress' )
+					'aria-label': __( 'Page actions preview', 'autodocs-publish' )
 				},
 				...( actions.length
 					? actions
-					: [ el( 'p', { className: 'docspress-component-placeholder' }, __( 'Enable a WordPress or GitHub action to preview it.', 'docspress' ) ) ] )
+					: [ el( 'p', { className: 'autodocs-publish-component-placeholder' }, __( 'Enable a WordPress or GitHub action to preview it.', 'autodocs-publish' ) ) ] )
 			);
 		},
 		controls: ( attributes, setAttributes ) => [
-			panel( __( 'WordPress action', 'docspress' ), [
-				toggle( __( 'Show WordPress edit link', 'docspress' ), 'showWordPress', attributes, setAttributes ),
-				attributes.showWordPress && text( __( 'WordPress label', 'docspress' ), 'wordpressLabel', attributes, setAttributes )
+			panel( __( 'WordPress action', 'autodocs-publish' ), [
+				toggle( __( 'Show WordPress edit link', 'autodocs-publish' ), 'showWordPress', attributes, setAttributes ),
+				attributes.showWordPress && text( __( 'WordPress label', 'autodocs-publish' ), 'wordpressLabel', attributes, setAttributes )
 			] ),
-			panel( __( 'GitHub action', 'docspress' ), [
-				toggle( __( 'Show GitHub proposal link', 'docspress' ), 'showGitHub', attributes, setAttributes ),
-				attributes.showGitHub && text( __( 'GitHub label', 'docspress' ), 'githubLabel', attributes, setAttributes ),
-				attributes.showGitHub && text( __( 'Repository URL', 'docspress' ), 'repositoryUrl', attributes, setAttributes ),
-				attributes.showGitHub && text( __( 'Branch or tag', 'docspress' ), 'ref', attributes, setAttributes )
+			panel( __( 'GitHub action', 'autodocs-publish' ), [
+				toggle( __( 'Show GitHub proposal link', 'autodocs-publish' ), 'showGitHub', attributes, setAttributes ),
+				attributes.showGitHub && text( __( 'GitHub label', 'autodocs-publish' ), 'githubLabel', attributes, setAttributes ),
+				attributes.showGitHub && text( __( 'Repository URL', 'autodocs-publish' ), 'repositoryUrl', attributes, setAttributes ),
+				attributes.showGitHub && text( __( 'Branch or tag', 'autodocs-publish' ), 'ref', attributes, setAttributes )
 			], false )
 		]
 	} );
 
 	registerComponent( 'adjacent-navigation', {
-		title: __( 'DocsPress: Previous / Next', 'docspress' ),
-		description: __( 'Previous and next documentation Pages in navigation order.', 'docspress' ),
+		title: __( 'Autodocs Publish: Previous / Next', 'autodocs-publish' ),
+		description: __( 'Previous and next documentation Pages in navigation order.', 'autodocs-publish' ),
 		icon: icons.adjacent,
-		empty: __( 'Adjacent links appear inside a documentation Page tree.', 'docspress' ),
+		empty: __( 'Adjacent links appear inside a documentation Page tree.', 'autodocs-publish' ),
 		attributes: {
 			rootSlug: { type: 'string', default: 'docs' },
 			sort: { type: 'string', default: 'menu_order' },
@@ -803,34 +816,34 @@
 			);
 			return el(
 				'nav',
-				{ className: 'docs-pagination docs-pagination-preview', 'aria-label': __( 'Previous and next Page preview', 'docspress' ) },
-				link( 'pagination-previous', attributes.previousLabel, __( 'Configure publishing', 'docspress' ) ),
-				link( 'pagination-next', attributes.nextLabel, __( 'Customize the theme', 'docspress' ) )
+				{ className: 'docs-pagination docs-pagination-preview', 'aria-label': __( 'Previous and next Page preview', 'autodocs-publish' ) },
+				link( 'pagination-previous', attributes.previousLabel, __( 'Configure publishing', 'autodocs-publish' ) ),
+				link( 'pagination-next', attributes.nextLabel, __( 'Customize the theme', 'autodocs-publish' ) )
 			);
 		},
 		controls: ( attributes, setAttributes ) => [
-			panel( __( 'Page order', 'docspress' ), [
-				text( __( 'Documentation root path', 'docspress' ), 'rootSlug', attributes, setAttributes ),
-				select( __( 'Order', 'docspress' ), 'sort', attributes, setAttributes, [
-					{ label: __( 'Page order, then title', 'docspress' ), value: 'menu_order' },
-					{ label: __( 'Title', 'docspress' ), value: 'title' },
-					{ label: __( 'Newest first', 'docspress' ), value: 'newest' },
-					{ label: __( 'Oldest first', 'docspress' ), value: 'oldest' }
+			panel( __( 'Page order', 'autodocs-publish' ), [
+				text( __( 'Documentation root path', 'autodocs-publish' ), 'rootSlug', attributes, setAttributes ),
+				select( __( 'Order', 'autodocs-publish' ), 'sort', attributes, setAttributes, [
+					{ label: __( 'Page order, then title', 'autodocs-publish' ), value: 'menu_order' },
+					{ label: __( 'Title', 'autodocs-publish' ), value: 'title' },
+					{ label: __( 'Newest first', 'autodocs-publish' ), value: 'newest' },
+					{ label: __( 'Oldest first', 'autodocs-publish' ), value: 'oldest' }
 				] ),
-				toggle( __( 'Include root Page', 'docspress' ), 'showRoot', attributes, setAttributes ),
-				range( __( 'Maximum depth', 'docspress' ), 'maxDepth', attributes, setAttributes, 0, 8 )
+				toggle( __( 'Include root Page', 'autodocs-publish' ), 'showRoot', attributes, setAttributes ),
+				range( __( 'Maximum depth', 'autodocs-publish' ), 'maxDepth', attributes, setAttributes, 0, 8 )
 			] ),
-			panel( __( 'Labels', 'docspress' ), [
-				text( __( 'Previous label', 'docspress' ), 'previousLabel', attributes, setAttributes ),
-				text( __( 'Next label', 'docspress' ), 'nextLabel', attributes, setAttributes ),
-				toggle( __( 'Show Page titles', 'docspress' ), 'showTitles', attributes, setAttributes )
+			panel( __( 'Labels', 'autodocs-publish' ), [
+				text( __( 'Previous label', 'autodocs-publish' ), 'previousLabel', attributes, setAttributes ),
+				text( __( 'Next label', 'autodocs-publish' ), 'nextLabel', attributes, setAttributes ),
+				toggle( __( 'Show Page titles', 'autodocs-publish' ), 'showTitles', attributes, setAttributes )
 			], false )
 		]
 	} );
 
 	registerComponent( 'was-this-helpful', {
-		title: __( 'DocsPress: Was This Helpful?', 'docspress' ),
-		description: __( 'Collect helpful or not-helpful responses and store the totals with each Page.', 'docspress' ),
+		title: __( 'Autodocs Publish: Was This Helpful?', 'autodocs-publish' ),
+		description: __( 'Collect helpful or not-helpful responses and store the totals with each Page.', 'autodocs-publish' ),
 		icon: icons.feedback,
 		EditorPreview: FeedbackEditorPreview,
 		attributes: {
@@ -841,56 +854,56 @@
 			thanksMessage: { type: 'string', default: 'Thanks for your feedback.', role: 'content' }
 		},
 		controls: ( attributes, setAttributes ) => [
-			panel( __( 'Page feedback', 'docspress' ), [
+			panel( __( 'Page feedback', 'autodocs-publish' ), [
 				toggle(
-					__( 'Enabled', 'docspress' ),
+					__( 'Enabled', 'autodocs-publish' ),
 					'enabled',
 					attributes,
 					setAttributes,
-					__( 'Show the prompt and collect responses on published Pages using this template.', 'docspress' )
+					__( 'Show the prompt and collect responses on published Pages using this template.', 'autodocs-publish' )
 				),
-				text( __( 'Question', 'docspress' ), 'question', attributes, setAttributes ),
-				text( __( 'Helpful label', 'docspress' ), 'helpfulLabel', attributes, setAttributes ),
-				text( __( 'Not helpful label', 'docspress' ), 'unhelpfulLabel', attributes, setAttributes ),
-				text( __( 'Thank-you message', 'docspress' ), 'thanksMessage', attributes, setAttributes )
+				text( __( 'Question', 'autodocs-publish' ), 'question', attributes, setAttributes ),
+				text( __( 'Helpful label', 'autodocs-publish' ), 'helpfulLabel', attributes, setAttributes ),
+				text( __( 'Not helpful label', 'autodocs-publish' ), 'unhelpfulLabel', attributes, setAttributes ),
+				text( __( 'Thank-you message', 'autodocs-publish' ), 'thanksMessage', attributes, setAttributes )
 			] )
 		]
 	} );
 
 	registerComponent( 'color-mode-toggle', {
-		title: __( 'DocsPress: Color Mode Toggle', 'docspress' ),
-		description: __( 'Let visitors switch between the active style and its dark palette.', 'docspress' ),
+		title: __( 'Autodocs Publish: Color Mode Toggle', 'autodocs-publish' ),
+		description: __( 'Let visitors switch between the active style and its dark palette.', 'autodocs-publish' ),
 		icon: icons.mode,
-		empty: __( 'Color mode toggle', 'docspress' ),
+		empty: __( 'Color mode toggle', 'autodocs-publish' ),
 		attributes: {
 			label: { type: 'string', default: 'Switch color theme', role: 'content' },
 			showLabel: { type: 'boolean', default: false },
 			defaultMode: { type: 'string', default: 'light' }
 		},
 		controls: ( attributes, setAttributes ) => [
-			panel( __( 'Color mode toggle', 'docspress' ), [
-				text( __( 'Accessible label', 'docspress' ), 'label', attributes, setAttributes ),
-				toggle( __( 'Show visible label', 'docspress' ), 'showLabel', attributes, setAttributes ),
-				select( __( 'Default mode', 'docspress' ), 'defaultMode', attributes, setAttributes, [
-					{ label: __( 'Light', 'docspress' ), value: 'light' },
-					{ label: __( 'Dark', 'docspress' ), value: 'dark' },
-					{ label: __( 'Follow device', 'docspress' ), value: 'system' }
+			panel( __( 'Color mode toggle', 'autodocs-publish' ), [
+				text( __( 'Accessible label', 'autodocs-publish' ), 'label', attributes, setAttributes ),
+				toggle( __( 'Show visible label', 'autodocs-publish' ), 'showLabel', attributes, setAttributes ),
+				select( __( 'Default mode', 'autodocs-publish' ), 'defaultMode', attributes, setAttributes, [
+					{ label: __( 'Light', 'autodocs-publish' ), value: 'light' },
+					{ label: __( 'Dark', 'autodocs-publish' ), value: 'dark' },
+					{ label: __( 'Follow device', 'autodocs-publish' ), value: 'system' }
 				] )
 			] )
 		]
 	} );
 
 	registerComponent( 'docs-menu-toggle', {
-		title: __( 'DocsPress: Mobile Docs Menu', 'docspress' ),
-		description: __( 'Open the documentation sidebar as a mobile drawer.', 'docspress' ),
+		title: __( 'Autodocs Publish: Mobile Docs Menu', 'autodocs-publish' ),
+		description: __( 'Open the documentation sidebar as a mobile drawer.', 'autodocs-publish' ),
 		icon: icons.menu,
-		empty: __( 'Mobile documentation menu toggle', 'docspress' ),
+		empty: __( 'Mobile documentation menu toggle', 'autodocs-publish' ),
 		attributes: {
 			label: { type: 'string', default: 'Open documentation menu', role: 'content' }
 		},
 		controls: ( attributes, setAttributes ) => [
-			panel( __( 'Mobile menu', 'docspress' ), [
-				text( __( 'Accessible label', 'docspress' ), 'label', attributes, setAttributes )
+			panel( __( 'Mobile menu', 'autodocs-publish' ), [
+				text( __( 'Accessible label', 'autodocs-publish' ), 'label', attributes, setAttributes )
 			] )
 		]
 	} );
@@ -912,14 +925,14 @@
 
 	function templatePartLabel( slug ) {
 		const labels = {
-			header: __( 'Header', 'docspress' ),
-			comments: __( 'Comments', 'docspress' ),
-			footer: __( 'Footer', 'docspress' )
+			header: __( 'Header', 'autodocs-publish' ),
+			comments: __( 'Comments', 'autodocs-publish' ),
+			footer: __( 'Footer', 'autodocs-publish' )
 		};
 		if ( labels[ slug ] ) {
 			return labels[ slug ];
 		}
-		return String( slug || __( 'Template part', 'docspress' ) )
+		return String( slug || __( 'Template part', 'autodocs-publish' ) )
 			.replace( /[-_]+/g, ' ' )
 			.replace( /\b\w/g, ( character ) => character.toUpperCase() );
 	}
@@ -955,7 +968,7 @@
 		const icon = document.createElementNS( namespace, 'svg' );
 		const path = document.createElementNS( namespace, 'path' );
 
-		wrapper.className = 'components-flex__item docspress-quick-navigation-chevron';
+		wrapper.className = 'components-flex__item autodocs-publish-quick-navigation-chevron';
 		wrapper.setAttribute( 'aria-hidden', 'true' );
 		icon.setAttribute( 'viewBox', '0 0 24 24' );
 		icon.setAttribute( 'focusable', 'false' );
@@ -978,14 +991,14 @@
 	 * that destination with the same affordance used by nested core blocks.
 	 */
 	function updateComponentNavigatorOptions() {
-		const title = __( 'DocsPress: Command Search', 'docspress' );
+		const title = __( 'Autodocs Publish: Command Search', 'autodocs-publish' );
 		const buttons = Array.from(
 			document.querySelectorAll( '.block-editor-block-quick-navigation__item' )
 		).filter( ( button ) => button.querySelector( '.components-truncate' )?.textContent.trim() === title );
 
 		buttons.forEach( ( button ) => {
-			button.classList.add( 'docspress-quick-navigation-has-options' );
-			if ( ! button.querySelector( '.docspress-quick-navigation-chevron' ) ) {
+			button.classList.add( 'autodocs-publish-quick-navigation-has-options' );
+			if ( ! button.querySelector( '.autodocs-publish-quick-navigation-chevron' ) ) {
 				button.querySelector( '.components-flex' )?.appendChild( createQuickNavigationChevron() );
 			}
 		} );

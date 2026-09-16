@@ -3,7 +3,7 @@ title: Audience Paths
 sidebar_position: 20
 ---
 
-Use `docspress/audience-paths` to route readers into distinct documentation branches. Each path is a complete, keyboard-accessible card with its own title, summary, accent, and destination. Icons and visible bottom actions are optional for the whole block.
+Use `autodocs-publish/audience-paths` to route readers into distinct documentation branches. Each path is a complete, keyboard-accessible card with its own title, summary, accent, and destination. Icons and visible bottom actions are optional for the whole block.
 
 ## When to use it
 
@@ -17,13 +17,13 @@ Use the spacious layout for a landing-page decision. Use Compact layout for a ro
 
 ## Attributes
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Audience Paths attributes",
-    "description": "Section content and layout accepted by \u003ccode\u003edocspress/audience-paths\u003c/code\u003e.",
+    "description": "Section content and layout accepted by \u003ccode\u003eautodocs-publish/audience-paths\u003c/code\u003e.",
     "fields": [
       {
         "name": "eyebrow",
@@ -141,7 +141,7 @@ Use the spacious layout for a landing-page decision. Use Compact layout for a ro
 -->
 #### Audience Paths attributes
 
-Section content and layout accepted by <code>docspress/audience-paths</code>.
+Section content and layout accepted by <code>autodocs-publish/audience-paths</code>.
 
 | Field | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -157,14 +157,14 @@ Section content and layout accepted by <code>docspress/audience-paths</code>.
 | `showIcons` | boolean | No | true | <p>Shows the decorative icon badge on every path.</p> |
 | `showLinks` | boolean | No | true | <p>Shows the bottom action row. Hiding it does not disable the card destination.</p> |
 | `panelColor / accentColor` | string | No |  | <p>Optional hexadecimal color overrides.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 Each `paths` item accepts:
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Path object",
     "description": "Fields for one audience destination.",
@@ -251,7 +251,7 @@ Fields for one audience destination.
 | `icon` | string | No |  | <p>Semantic icon ID selected in the editor.</p> |
 | `accent` | enum | No | blue | <p>Card accent.</p> |
 | `newTab` | boolean | No | false | <p>Opens the destination in a new tab.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 The icon selector includes documentation, code, site, AI, API, terminal, testing, troubleshooting, repository, security, operations, and other common documentation concepts. Legacy icon abbreviations remain compatible.
 
@@ -259,10 +259,10 @@ The icon selector includes documentation, code, site, AI, API, terminal, testing
 
 ### Choose by documentation state
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/audience-paths",
+  "name": "autodocs-publish/audience-paths",
   "attrs": {
     "anchor": "choose-your-path",
     "align": "wide",
@@ -314,14 +314,14 @@ Connect an existing docs folder to WordPress and begin with a safe draft sync.
 Generate source-grounded documentation with AI, review it, then publish it.
 
 [Create docs with AI](/docs/create-docs-with-ai/)
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Choose by role
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/audience-paths",
+  "name": "autodocs-publish/audience-paths",
   "attrs": {
     "eyebrow": "Pick your workspace",
     "title": "What are you responsible for?",
@@ -386,14 +386,14 @@ Configure publishing, navigation, search, and editorial access.
 Set up the repository, run checks, and prepare a reviewable change.
 
 [Open contributor docs](#contributors)
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Compact task router
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/audience-paths",
+  "name": "autodocs-publish/audience-paths",
   "attrs": {
     "eyebrow": "Jump to a task",
     "title": "What do you need right now?",
@@ -473,16 +473,16 @@ Follow symptoms to the next check.
 Measure first, then change one variable.
 
 [Performance guide](#performance)
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Text-only paths without icons
 
 Use a single compact column when the wording should carry the decision and decorative icon badges would add noise.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/audience-paths",
+  "name": "autodocs-publish/audience-paths",
   "attrs": {
     "eyebrow": "Choose a reading path",
     "title": "How do you want to learn?",
@@ -534,16 +534,16 @@ Learn the concepts, boundaries, and vocabulary before changing a project.
 Follow a small end-to-end example and verify the result as you go.
 
 [Start the tutorial](#tutorial)
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Linked cards without bottom actions
 
 Hide the repeated action row when concise three-column cards already make their destinations clear. The full card remains clickable.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/audience-paths",
+  "name": "autodocs-publish/audience-paths",
   "attrs": {
     "eyebrow": "Browse the reference",
     "title": "Choose an area",
@@ -610,7 +610,7 @@ Choose credentials and protect secrets.
 Match symptoms to the next diagnostic check.
 
 [Open troubleshooting](#troubleshooting)
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Published behavior and accessibility
 
@@ -618,10 +618,10 @@ A destination card is one native link rather than nested links, so it works with
 
 Keep the paths mutually exclusive enough that a reader can choose quickly. Start each title with the reader’s state or goal, keep descriptions parallel, and use consistent action labels.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "tip",
     "title": "Make the decision obvious",
@@ -636,4 +636,4 @@ Keep the paths mutually exclusive enough that a reader can choose quickly. Start
 > **Make the decision obvious**
 >
 > Readers should understand the difference between paths from the titles alone. If two cards lead to nearly the same workflow, use ordinary links inside one path instead.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->

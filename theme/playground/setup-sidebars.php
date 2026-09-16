@@ -1,8 +1,8 @@
 <?php
 /**
- * Seed the dedicated DocsPress contextual-sidebar demonstration.
+ * Seed the dedicated Autodocs Publish contextual-sidebar demonstration.
  *
- * @package DocsPress
+ * @package Autodocs Publish
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +16,7 @@ if ( ! file_exists( $fixture_path ) ) {
 
 $fixture = json_decode( file_get_contents( $fixture_path ), true );
 if ( ! is_array( $fixture ) || empty( $fixture['pages'] ) || ! is_array( $fixture['pages'] ) ) {
-	wp_die( 'The generated DocsPress sidebar fixture is invalid.' );
+	wp_die( 'The generated Autodocs Publish sidebar fixture is invalid.' );
 }
 
 foreach ( array( array( 'post', 'hello-world' ), array( 'page', 'sample-page' ) ) as $starter ) {
@@ -27,7 +27,7 @@ foreach ( array( array( 'post', 'hello-world' ), array( 'page', 'sample-page' ) 
 }
 
 update_option( 'permalink_structure', '/%postname%/' );
-update_option( 'blogname', 'DocsPress Contextual Sidebars' );
+update_option( 'blogname', 'Autodocs Publish Contextual Sidebars' );
 update_option( 'blogdescription', 'Focused route-based navigation with a simple default sidebar.' );
 
 usort(
@@ -77,14 +77,14 @@ foreach ( $fixture['pages'] as $page ) {
 
 	$page_id = (int) $page_id;
 	$ids_by_key[ $page['key'] ] = $page_id;
-	update_post_meta( $page_id, '_docspress_sidebar_id', sanitize_key( $page['sidebarId'] ) );
-	update_post_meta( $page_id, '_docspress_sidebar_root', ! empty( $page['sidebarRoot'] ) );
-	update_post_meta( $page_id, '_docspress_source_path', sanitize_text_field( $page['sourcePath'] ) );
+	update_post_meta( $page_id, '_autodocs_publish_sidebar_id', sanitize_key( $page['sidebarId'] ) );
+	update_post_meta( $page_id, '_autodocs_publish_sidebar_root', ! empty( $page['sidebarRoot'] ) );
+	update_post_meta( $page_id, '_autodocs_publish_source_path', sanitize_text_field( $page['sourcePath'] ) );
 	if ( ! empty( $fixture['github'] ) ) {
-		update_post_meta( $page_id, '_docspress_github_path', sanitize_text_field( $page['sourcePath'] ) );
-		update_post_meta( $page_id, '_docspress_github_repository', sanitize_text_field( $fixture['github']['repository'] ?? '' ) );
-		update_post_meta( $page_id, '_docspress_github_ref', sanitize_text_field( $fixture['github']['ref'] ?? 'main' ) );
-		update_post_meta( $page_id, '_docspress_github_server_url', esc_url_raw( $fixture['github']['serverUrl'] ?? 'https://github.com' ) );
+		update_post_meta( $page_id, '_autodocs_publish_github_path', sanitize_text_field( $page['sourcePath'] ) );
+		update_post_meta( $page_id, '_autodocs_publish_github_repository', sanitize_text_field( $fixture['github']['repository'] ?? '' ) );
+		update_post_meta( $page_id, '_autodocs_publish_github_ref', sanitize_text_field( $fixture['github']['ref'] ?? 'main' ) );
+		update_post_meta( $page_id, '_autodocs_publish_github_server_url', esc_url_raw( $fixture['github']['serverUrl'] ?? 'https://github.com' ) );
 	}
 }
 

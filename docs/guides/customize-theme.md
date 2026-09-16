@@ -2,16 +2,16 @@
 title: Customize the theme in the Site Editor
 ---
 
-DocsPress is a highly customizable native block theme. Open **Appearance → Editor** to change the complete documentation site with WordPress blocks and Global Styles. There is no separate Customizer panel or hidden theme-settings layer.
+Autodocs Publish is a highly customizable native block theme. Open **Appearance → Editor** to change the complete documentation site with WordPress blocks and Global Styles. There is no separate Customizer panel or hidden theme-settings layer.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "success",
     "title": "Highly customizable without a theme build",
-    "content": "\u003cp\u003eGlobal colors, typography, spacing, borders, shadows, and layout flow through the documentation shell, homepage, posts, archives, comments, and DocsPress content blocks. Templates, template parts, and individual block settings remain available when a particular surface needs a different treatment.\u003c/p\u003e",
+    "content": "\u003cp\u003eGlobal colors, typography, spacing, borders, shadows, and layout flow through the documentation shell, homepage, posts, archives, comments, and Autodocs Publish content blocks. Templates, template parts, and individual block settings remain available when a particular surface needs a different treatment.\u003c/p\u003e",
     "collapsible": false
   }
 }
@@ -20,8 +20,8 @@ DocsPress is a highly customizable native block theme. Open **Appearance → Edi
 >
 > **Highly customizable without a theme build**
 >
-> Global colors, typography, spacing, borders, shadows, and layout flow through the documentation shell, homepage, posts, archives, comments, and DocsPress content blocks. Templates, template parts, and individual block settings remain available when a particular surface needs a different treatment.
-<!-- /docspress:block -->
+> Global colors, typography, spacing, borders, shadows, and layout flow through the documentation shell, homepage, posts, archives, comments, and Autodocs Publish content blocks. Templates, template parts, and individual block settings remain available when a particular surface needs a different treatment.
+<!-- /autodocs-publish:block -->
 
 ## Understand the editing layers
 
@@ -29,7 +29,7 @@ DocsPress is a highly customizable native block theme. Open **Appearance → Edi
 | --- | --- | --- |
 | Complete visual system | **Styles → Browse styles** | Typography, component recipes, corners, and the default palette |
 | Color variation | **Styles → Colors → Palette** | The complete light and dark semantic color system |
-| Site-wide design | **Styles → Colors, Typography, Layout, or Blocks** | Every compatible shell, core, and DocsPress block |
+| Site-wide design | **Styles → Colors, Typography, Layout, or Blocks** | Every compatible shell, core, and Autodocs Publish block |
 | Page structure | **Design → Templates** | Page, Front Page, Single, Blog Home, Archive, Search, 404, and alternate layouts |
 | Shared header, footer, or comments | **Design → Patterns → Template parts** | Every template that includes that part |
 | One component | Select the block and open **Settings** or **Styles** | Only that block instance |
@@ -44,7 +44,7 @@ The homepage remains normal Page content inside the independently editable Front
 
 ## Choose a visual system
 
-Open **Design → Styles → Browse styles**. The default DocsPress style includes three parent visual systems modeled on WordPress.org, WordPress.com, and Jetpack.
+Open **Design → Styles → Browse styles**. The default Autodocs Publish style includes three parent visual systems modeled on WordPress.org, WordPress.com, and Jetpack.
 
 After selecting a family, open **Styles → Colors → Palette** to choose its color variation:
 
@@ -54,7 +54,7 @@ After selecting a family, open **Styles → Colors → Palette** to choose its c
 | WordPress.com | Blue, Ink, Warm |
 | Jetpack | Green, Electric, Forest |
 
-The parent style controls the family’s typography, corners, and component recipes. The Page heading is one example: DocsPress uses the outlined label with an offset shadow, WordPress.org uses an editorial rule, WordPress.com uses an underlined publishing label, and Jetpack uses a green signal bar with bold sans-serif type. Each palette variation replaces the full light and dark semantic color system without replacing that family recipe, updating the documentation shell and DocsPress content blocks together. Because these are native WordPress color-only style variations, editors can also mix a palette with another family when desired.
+The parent style controls the family’s typography, corners, and component recipes. The Page heading is one example: Autodocs Publish uses the outlined label with an offset shadow, WordPress.org uses an editorial rule, WordPress.com uses an underlined publishing label, and Jetpack uses a green signal bar with bold sans-serif type. Each palette variation replaces the full light and dark semantic color system without replacing that family recipe, updating the documentation shell and Autodocs Publish content blocks together. Because these are native WordPress color-only style variations, editors can also mix a palette with another family when desired.
 
 To tune the result, open **Styles → Colors**, **Typography**, **Layout**, or **Blocks**. WordPress exposes the configured palettes, gradients, duotones, font families, fluid sizes, spacing scale, shadows, borders, minimum height, and layout widths without a theme build.
 
@@ -62,13 +62,13 @@ Each parent style is a complete preset for Text, Links, Headings H1–H6, Captio
 
 ## Choose between global and local changes
 
-Changes under **Styles** are site-wide. They apply to the article body, documentation sidebar, homepage, blog and archive templates, comments, core blocks, and DocsPress blocks wherever that feature supports the selected setting.
+Changes under **Styles** are site-wide. They apply to the article body, documentation sidebar, homepage, blog and archive templates, comments, core blocks, and Autodocs Publish blocks wherever that feature supports the selected setting.
 
-Use **Styles → Blocks** to set the default for one block type, such as all Buttons or all DocsPress Callouts. Select an individual block when only one instance should differ. If a component does not appear to follow a global change, inspect that block for a local color, typography, or spacing override and use **Reset** to return it to the active style.
+Use **Styles → Blocks** to set the default for one block type, such as all Buttons or all Autodocs Publish Callouts. Select an individual block when only one instance should differ. If a component does not appear to follow a global change, inspect that block for a local color, typography, or spacing override and use **Reset** to return it to the active style.
 
 ## Replace the site logo
 
-Open the Header template part and select the **Site Logo** block. A new site starts with the bundled DocsPress icon as the single logo. Use **Replace** to upload or choose another image from the Media Library; WordPress updates that Site Logo everywhere. The block’s **Use as Site Icon** setting is enabled in the default header, so replacing it can also update the browser and app icon.
+Open the Header template part and select the **Site Logo** block. A new site starts with the bundled Autodocs Publish icon as the single logo. Use **Replace** to upload or choose another image from the Media Library; WordPress updates that Site Logo everywhere. The block’s **Use as Site Icon** setting is enabled in the default header, so replacing it can also update the browser and app icon.
 
 ## Edit templates and template parts
 
@@ -91,10 +91,10 @@ The normal Page template is a composition of independently editable blocks:
 
 Select a component to move, duplicate, replace, style, or delete it. Edit **Patterns → Manage all my patterns → Template parts** to change the Header, Footer, or Comments everywhere.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "tip",
     "title": "Keep layout changes portable",
@@ -108,7 +108,7 @@ Select a component to move, duplicate, replace, style, or delete it. Edit **Patt
 > **Keep layout changes portable**
 >
 > Make site-wide shell changes in Templates and Template Parts. Use a Page’s editor only for that Page’s content, and assign the Wide content or Page without documentation sidebar template when it needs a different shell.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Configure documentation navigation
 
@@ -127,7 +127,7 @@ Select **Docs navigation** in the Page template and open Block Settings. You can
 - desktop collapse/expand control, initial state, and labels;
 - empty-state text.
 
-The default root slug is `docs`, matching the DocsPress Action’s default `root-slug`. `sidebar_position` maps to native Page order, while `sidebar_collapsed` controls a managed section’s initial disclosure state.
+The default root slug is `docs`, matching the Autodocs Publish Action’s default `root-slug`. `sidebar_position` maps to native Page order, while `sidebar_collapsed` controls a managed section’s initial disclosure state.
 
 ## Configure command search
 
@@ -135,7 +135,7 @@ Select **Command search** in the Header. Its settings control the trigger label,
 
 Search remains keyboard accessible and uses the Page tree beneath that block’s root slug. The setting belongs to the block instance, so a second template can search another documentation root.
 
-In the Header’s content-only view, the **DocsPress: Command Search** row includes a disclosure chevron. Select the row to reveal its **Search content** and **Dialog** controls. Use the visible search trigger or the block toolbar’s preview control to inspect the sample command-search results without leaving the Site Editor.
+In the Header’s content-only view, the **Autodocs Publish: Command Search** row includes a disclosure chevron. Select the row to reveal its **Search content** and **Dialog** controls. Use the visible search trigger or the block toolbar’s preview control to inspect the sample command-search results without leaving the Site Editor.
 
 ## Configure reading tools
 
@@ -156,7 +156,7 @@ The feedback block is enabled by default immediately before Adjacent Navigation.
 
 ## Customize documentation blocks
 
-The DocsPress Blocks plugin inherits Global Styles in the editor and on the published site. Its ten blocks expose native design tools in addition to their semantic settings:
+The Autodocs Publish Blocks plugin inherits Global Styles in the editor and on the published site. Its ten blocks expose native design tools in addition to their semantic settings:
 
 - Hero and Audience Paths provide content, actions, artwork, layout, and presentation controls.
 - Code, Code Tabs, API Request / Response, Flow, Terminal Session, Result, File Tree, Callout, and Prompt provide the settings appropriate to their content.
@@ -172,12 +172,12 @@ Open the **Comments** template part to change discussion headings, avatars, date
 
 ## Build the homepage
 
-Choose a static front Page under **Settings → Reading**, then edit that Page with normal blocks. The Playground example uses DocsPress Hero and Audience Paths in the Page content, followed by the Front Page template’s independently editable latest-posts Query.
+Choose a static front Page under **Settings → Reading**, then edit that Page with normal blocks. The Playground example uses Autodocs Publish Hero and Audience Paths in the Page content, followed by the Front Page template’s independently editable latest-posts Query.
 
 To change or remove the updates grid, open **Design → Templates → Front Page** and select the Query block. The template and homepage Page content remain independent, so editors can change its query, card design, columns, labels, or visibility without touching the Page.
 
 ## Try it without installing
 
-[Open the complete documentation in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-docs.json&page-title=DocsPress%20Documentation). The one-link Blueprint creates an editable WordPress site, imports the converter-generated documentation hierarchy, signs in, and lands on `/docs/`.
+[Open the complete documentation in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fautodocs-publish%2Fmain%2Ftheme%2Fblueprint-docs.json&page-title=Autodocs%20Publish%20Documentation). The one-link Blueprint creates an editable WordPress site, imports the converter-generated documentation hierarchy, signs in, and lands on `/docs/`.
 
-[Open the Site Editor demo](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground) when you want the same documentation plus representative posts, comments, blocks, templates, and style variations with the Site Editor open.
+[Open the Site Editor demo](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fautodocs-publish%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=Autodocs%20Publish%20Theme%20Playground) when you want the same documentation plus representative posts, comments, blocks, templates, and style variations with the Site Editor open.

@@ -30,7 +30,7 @@ async function collectExample() {
   return { versionsRegistry, pages };
 }
 
-describe("DocsPress version registry and collector", () => {
+describe("Autodocs Publish version registry and collector", () => {
   it("collects root, directory, and suffix sources into isolated stable trees", async () => {
     const { versionsRegistry, pages } = await collectExample();
 
@@ -78,7 +78,7 @@ describe("DocsPress version registry and collector", () => {
   });
 
   it("supports a manifest and redirects owned by one historical version", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-versions-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-versions-"));
     await fs.mkdir(path.join(cwd, "docs"), { recursive: true });
     await fs.writeFile(path.join(cwd, "docs", "hello.md"), "# Current");
     await fs.writeFile(path.join(cwd, "legacy.md"), "# Legacy source");
@@ -126,7 +126,7 @@ describe("DocsPress version registry and collector", () => {
     ["invalid id", { latest: "Version 1", versions: [{ id: "Version 1", source: { type: "root" } }] }, /invalid id/],
     ["unsafe directory", { latest: "v1", versions: [{ id: "v1", source: { type: "directory", path: "../v1" } }] }, /Invalid repository-relative/]
   ])("rejects %s", async (_label, input, pattern) => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-registry-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-registry-"));
     if (typeof input === "string") {
       await expect(readVersionsRegistry({ cwd, versionsFile: input })).rejects.toThrow(pattern);
       return;
@@ -136,7 +136,7 @@ describe("DocsPress version registry and collector", () => {
   });
 
   it("rejects overlapping physical ownership and logical-route collisions", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-collision-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-collision-"));
     await fs.mkdir(path.join(cwd, "docs", "v1"), { recursive: true });
     await fs.writeFile(path.join(cwd, "docs", "v1", "hello.v1.md"), "# Hello");
     await fs.writeFile(path.join(cwd, "versions.json"), JSON.stringify({
@@ -153,7 +153,7 @@ describe("DocsPress version registry and collector", () => {
   });
 
   it("reserves configured version IDs from the clean latest route", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-prefix-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-prefix-"));
     await fs.mkdir(path.join(cwd, "docs", "v1"), { recursive: true });
     await fs.writeFile(path.join(cwd, "docs", "v1", "index.md"), "# Conflicting latest route");
     await fs.writeFile(path.join(cwd, "versions.json"), JSON.stringify({
@@ -178,9 +178,9 @@ describe("version synchronization and reverse proposals", () => {
       listPages: async () => [],
       listTerms: async () => [],
       getSettings: async () => ({
-        docspress_repository_latest_version: "",
-        docspress_version_override: "v2",
-        docspress_docs_root_slug: "docs"
+        autodocs_publish_repository_latest_version: "",
+        autodocs_publish_version_override: "v2",
+        autodocs_publish_docs_root_slug: "docs"
       }),
       createTerm: async (_taxonomy, payload) => {
         calls.push(["term", payload]);
@@ -202,7 +202,7 @@ describe("version synchronization and reverse proposals", () => {
       client,
       versionsRegistry,
       rootSlug: "docs",
-      githubRepository: "Automattic/docspress",
+      githubRepository: "Automattic/autodocs-publish",
       githubRef: "feature/versioning",
       githubServerUrl: "https://github.com",
       logger: { info() {} }
@@ -212,20 +212,20 @@ describe("version synchronization and reverse proposals", () => {
     expect(calls.findIndex(([type]) => type === "term"))
       .toBeLessThan(calls.findIndex(([type]) => type === "page"));
     const v1Page = calls.find(([type, payload]) =>
-      type === "page" && payload.meta?._docspress_page_identity === "v1:hello"
+      type === "page" && payload.meta?._autodocs_publish_page_identity === "v1:hello"
     )[1];
     expect(v1Page).toMatchObject({
-      docspress_versions: [33],
+      autodocs_publish_versions: [33],
       meta: {
-        _docspress_version_id: "v1",
-        _docspress_logical_route: "hello",
-        _docspress_source_type: "suffix",
-        _docspress_source_path: "docs/hello.v1.md",
-        _docspress_github_path: "docs/hello.v1.md",
-        _docspress_github_repository: "Automattic/docspress",
-        _docspress_github_ref: "feature/versioning",
-        _docspress_github_server_url: "https://github.com",
-        _docspress_docs_root: "docs"
+        _autodocs_publish_version_id: "v1",
+        _autodocs_publish_logical_route: "hello",
+        _autodocs_publish_source_type: "suffix",
+        _autodocs_publish_source_path: "docs/hello.v1.md",
+        _autodocs_publish_github_path: "docs/hello.v1.md",
+        _autodocs_publish_github_repository: "Automattic/autodocs-publish",
+        _autodocs_publish_github_ref: "feature/versioning",
+        _autodocs_publish_github_server_url: "https://github.com",
+        _autodocs_publish_docs_root: "docs"
       }
     });
     expect(result.operations.find(({ key }) => key === "docs/v1/hello"))
@@ -251,10 +251,10 @@ describe("version synchronization and reverse proposals", () => {
           slug: "v3",
           name: "v3",
           meta: {
-            docspress_version_order: 0,
-            docspress_version_active: "1",
-            docspress_version_repository_latest: "1",
-            docspress_version_effective_latest: "0"
+            autodocs_publish_version_order: 0,
+            autodocs_publish_version_active: "1",
+            autodocs_publish_version_repository_latest: "1",
+            autodocs_publish_version_effective_latest: "0"
           }
         },
         {
@@ -262,16 +262,16 @@ describe("version synchronization and reverse proposals", () => {
           slug: "v2",
           name: "v2",
           meta: {
-            docspress_version_active: "1",
-            docspress_version_repository_latest: "0",
-            docspress_version_effective_latest: "1"
+            autodocs_publish_version_active: "1",
+            autodocs_publish_version_repository_latest: "0",
+            autodocs_publish_version_effective_latest: "1"
           }
         }
       ],
       getSettings: async () => ({
-        docspress_repository_latest_version: "v2",
-        docspress_version_override: "removed",
-        docspress_docs_root_slug: "docs"
+        autodocs_publish_repository_latest_version: "v2",
+        autodocs_publish_version_override: "removed",
+        autodocs_publish_docs_root_slug: "docs"
       })
     };
     const result = await syncPages({
@@ -301,8 +301,8 @@ describe("version synchronization and reverse proposals", () => {
     const latest = desiredPages[2];
     const legacySentinel = { ...readSentinel(latest.content), key: "docs/hello" };
     const legacyContent = latest.content.replace(
-      /<!--\s*docspress:.*?\s*-->/s,
-      `<!-- docspress:${JSON.stringify(legacySentinel)} -->`
+      /<!--\s*autodocs-publish:.*?\s*-->/s,
+      `<!-- autodocs-publish:${JSON.stringify(legacySentinel)} -->`
     );
     const calls = [];
     let nextId = 100;
@@ -316,23 +316,23 @@ describe("version synchronization and reverse proposals", () => {
         title: latest.title,
         status: "publish",
         meta: {},
-        terms: { docspress_versions: [] }
+        terms: { autodocs_publish_versions: [] }
       }],
       listTerms: async () => versionsRegistry.versions.map((version, index) => ({
         id: 31 + index,
         slug: version.id,
         name: version.label,
         meta: {
-          docspress_version_order: index,
-          docspress_version_active: true,
-          docspress_version_repository_latest: version.latest,
-          docspress_version_effective_latest: version.latest
+          autodocs_publish_version_order: index,
+          autodocs_publish_version_active: true,
+          autodocs_publish_version_repository_latest: version.latest,
+          autodocs_publish_version_effective_latest: version.latest
         }
       })),
       getSettings: async () => ({
-        docspress_repository_latest_version: "v3",
-        docspress_version_override: "",
-        docspress_docs_root_slug: "docs"
+        autodocs_publish_repository_latest_version: "v3",
+        autodocs_publish_version_override: "",
+        autodocs_publish_docs_root_slug: "docs"
       }),
       createPage: async (payload) => {
         nextId += 1;
@@ -363,10 +363,10 @@ describe("version synchronization and reverse proposals", () => {
       ["update", 9, expect.objectContaining({
         slug: "hello",
         parent: 102,
-        docspress_versions: [31],
+        autodocs_publish_versions: [31],
         meta: expect.objectContaining({
-          _docspress_page_identity: "v3:hello",
-          _docspress_source_path: "docs/hello.md"
+          _autodocs_publish_page_identity: "v3:hello",
+          _autodocs_publish_source_path: "docs/hello.md"
         })
       })]
     ]);
@@ -410,7 +410,7 @@ describe("version synchronization and reverse proposals", () => {
         repos: { get: vi.fn(async () => ({ data: { default_branch: "main" } })) },
         git: {
           getRef: vi.fn(async ({ ref }) => {
-            if (ref === "heads/docspress/wordpress-sync") {
+            if (ref === "heads/autodocs-publish/wordpress-sync") {
               throw Object.assign(new Error("missing"), { status: 404 });
             }
             return { data: { object: { sha: "base" } } };
@@ -453,27 +453,31 @@ describe("version synchronization and reverse proposals", () => {
 describe("WordPress version administration and routing contracts", () => {
   it("ships filtered Page management, stable routing, sitemaps, and customizable blocks", async () => {
     const php = await fs.readFile(
-      path.join(repositoryRoot, "plugins", "docspress-blocks", "includes", "versioning.php"),
+      path.join(repositoryRoot, "plugins", "autodocs-publish-blocks", "includes", "versioning.php"),
       "utf8"
     );
     const switcher = await fs.readFile(
-      path.join(repositoryRoot, "plugins", "docspress-blocks", "blocks", "version-switcher", "block.php"),
+      path.join(repositoryRoot, "plugins", "autodocs-publish-blocks", "blocks", "version-switcher", "block.php"),
       "utf8"
     );
     const switcherEditor = await fs.readFile(
-      path.join(repositoryRoot, "plugins", "docspress-blocks", "blocks", "version-switcher", "editor.js"),
+      path.join(repositoryRoot, "plugins", "autodocs-publish-blocks", "blocks", "version-switcher", "editor.js"),
       "utf8"
     );
     const switcherStyles = await fs.readFile(
-      path.join(repositoryRoot, "plugins", "docspress-blocks", "blocks", "version-switcher", "style.css"),
+      path.join(repositoryRoot, "plugins", "autodocs-publish-blocks", "blocks", "version-switcher", "style.css"),
       "utf8"
     );
     const notice = await fs.readFile(
-      path.join(repositoryRoot, "plugins", "docspress-blocks", "blocks", "version-notice", "block.php"),
+      path.join(repositoryRoot, "plugins", "autodocs-publish-blocks", "blocks", "version-notice", "block.php"),
       "utf8"
     );
     const noticeEditor = await fs.readFile(
-      path.join(repositoryRoot, "plugins", "docspress-blocks", "blocks", "version-notice", "editor.js"),
+      path.join(repositoryRoot, "plugins", "autodocs-publish-blocks", "blocks", "version-notice", "editor.js"),
+      "utf8"
+    );
+    const blocksView = await fs.readFile(
+      path.join(repositoryRoot, "plugins", "autodocs-publish-blocks", "assets", "view.js"),
       "utf8"
     );
     const template = await fs.readFile(
@@ -497,31 +501,44 @@ describe("WordPress version administration and routing contracts", () => {
       "Latest (",
       "Inactive",
       "All versions",
+      "autodocs_publish_versions_repository",
+      "AUTODOCS_PUBLISH_LEGACY_VERSION_REST_BASE",
       "docspress_versions_repository",
+      "autodocs_publish_blocks_versions_mirror_object_terms",
+      "autodocs_publish_blocks_versions_mirror_post_meta",
       "page_link",
-      "docspress_blocks_versions_content_links",
-      "add_option_docspress_repository_latest_version",
+      "autodocs_publish_blocks_versions_content_links",
+      "add_option_autodocs_publish_repository_latest_version",
       "rest_after_insert_",
       "redirect_canonical",
       "wp_sitemaps_posts_query_args",
-      "docspress_version_markdown",
-      "docspress_blocks_versions_source_markdown",
+      "autodocs_publish_version_markdown",
+      "autodocs_publish_blocks_versions_source_markdown",
       "GitHub path",
-      "_docspress_github_path",
+      "_autodocs_publish_github_path",
+      "autodocs_publish_github_source_url",
+      "docspress_effective_latest_version",
+      "docspress_version_target_url",
       "docspress_github_source_url",
+      "'2' === get_option( 'autodocs_publish_blocks_legacy_version_migration' )",
+      "if ( $migration_complete )",
       "target=\"_blank\""
     ]) {
       expect(php).toContain(contract);
     }
     expect(switcher).toContain("'api_version'     => 3");
+    expect(switcher).toContain("autodocs_publish_version_switcher_choices");
     expect(switcher).toContain("docspress_version_switcher_choices");
     expect(switcher).toContain("unavailableLabel");
-    expect(switcher).toContain("docspress-version-switcher__chevron");
-    expect(switcherEditor).toContain("docspress-version-switcher__chevron");
-    expect(switcherStyles).toContain(".docspress-version-switcher__chevron");
+    expect(switcher).toContain("autodocs-publish-version-switcher__chevron");
+    expect(switcherEditor).toContain("autodocs-publish-version-switcher__chevron");
+    expect(switcherStyles).toContain(".autodocs-publish-version-switcher__chevron");
     expect(switcher).not.toContain("⌄");
     expect(switcherEditor).not.toContain("⌄");
+    expect(notice).toContain("autodocs_publish_version_notice_message");
     expect(notice).toContain("docspress_version_notice_message");
+    expect(blocksView).toContain("docspress-version-notice:");
+    expect(blocksView).toContain("window.localStorage.setItem( storageKey, legacyStored )");
     expect(notice).toContain("'{current}'");
     expect(notice).toContain("dismissible");
     for (const control of [
@@ -532,15 +549,15 @@ describe("WordPress version administration and routing contracts", () => {
     ]) {
       expect(noticeEditor).toContain(control);
     }
-    expect(header.indexOf("wp:docspress/version-switcher"))
-      .toBeLessThan(header.indexOf("wp:docspress/command-search"));
+    expect(header.indexOf("wp:autodocs-publish/version-switcher"))
+      .toBeLessThan(header.indexOf("wp:autodocs-publish/command-search"));
     expect(header).toContain('"presentation":"select"');
     expect(header).toContain('"showLabel":false');
     expect(header).toContain('"className":"header-version-switcher"');
-    expect(template).not.toContain("wp:docspress/version-switcher");
-    expect(template.indexOf("wp:docspress/version-notice"))
+    expect(template).not.toContain("wp:autodocs-publish/version-switcher");
+    expect(template.indexOf("wp:autodocs-publish/version-notice"))
       .toBeLessThan(template.indexOf('"className":"docs-shell"'));
-    expect(template.indexOf("wp:docspress/version-notice"))
+    expect(template.indexOf("wp:autodocs-publish/version-notice"))
       .toBeGreaterThan(template.indexOf('"slug":"header"'));
     expect(template).toContain('"align":"full","className":"header-version-notice"');
     expect(notice).toContain("array( 'wide', 'full' )");
@@ -572,7 +589,7 @@ describe("WordPress version administration and routing contracts", () => {
     expect(fixture.override).toBe("");
     expect(fixture.github).toEqual({
       serverUrl: "https://github.com",
-      repository: "Automattic/docspress",
+      repository: "Automattic/autodocs-publish",
       ref: "main"
     });
     expect(fixture.terms.map(({ id }) => id)).toEqual(["v3", "v2", "v1"]);
@@ -581,7 +598,7 @@ describe("WordPress version administration and routing contracts", () => {
         sourcePath: "examples/versioning/docs/hello.v1.md",
         logicalRoute: "hello"
       });
-    expect(setup).toContain("_docspress_github_repository");
-    expect(setup).toContain("docspress_blocks_versions_rewrite_rules()");
+    expect(setup).toContain("_autodocs_publish_github_repository");
+    expect(setup).toContain("autodocs_publish_blocks_versions_rewrite_rules()");
   });
 });

@@ -101,7 +101,7 @@ async function collectVersionedPages(options) {
   const neutralRoot = placeholderPage([], options.rootTitle || "Docs");
   neutralRoot.sourcePath = "virtual:version-root";
   neutralRoot.versionContainer = true;
-  neutralRoot.body = "<!-- wp:paragraph -->\n<p>This Page contains the versioned documentation trees managed by DocsPress.</p>\n<!-- /wp:paragraph -->";
+  neutralRoot.body = "<!-- wp:paragraph -->\n<p>This Page contains the versioned documentation trees managed by Autodocs Publish.</p>\n<!-- /wp:paragraph -->";
   desired.push(finalizePage(neutralRoot, {
     ...options,
     routePrefixSegments: [rootSlug]
@@ -251,7 +251,7 @@ async function collectManifestPages(context, options) {
   const entries = Array.isArray(data) ? data : data.pages || data.items || [];
 
   if (!Array.isArray(entries)) {
-    throw new Error(`Docspress manifest must be a JSON array or an object with a pages array: ${manifestFile}`);
+    throw new Error(`Autodocs Publish manifest must be a JSON array or an object with a pages array: ${manifestFile}`);
   }
 
   const normalized = entries.map((entry, index) => normalizeManifestEntry(entry, index));
@@ -260,7 +260,7 @@ async function collectManifestPages(context, options) {
 
   for (const entry of normalized) {
     if (byId.has(entry.id)) {
-      throw new Error(`Docspress manifest contains duplicate page id: ${entry.id}`);
+      throw new Error(`Autodocs Publish manifest contains duplicate page id: ${entry.id}`);
     }
     byId.set(entry.id, entry);
   }
@@ -301,7 +301,7 @@ async function collectManifestPages(context, options) {
 
 function normalizeManifestEntry(entry, index) {
   if (!entry || typeof entry !== "object") {
-    throw new Error(`Docspress manifest entry ${index + 1} must be an object.`);
+    throw new Error(`Autodocs Publish manifest entry ${index + 1} must be an object.`);
   }
 
   const slug = entry.slug === "/" ? "" : slugify(entry.slug ?? entry.id ?? entry.key ?? "", "");
@@ -310,7 +310,7 @@ function normalizeManifestEntry(entry, index) {
   const source = entry.markdown_source || entry.markdownSource || entry.source || null;
 
   if (!id) {
-    throw new Error(`Docspress manifest entry ${index + 1} is missing id or slug.`);
+    throw new Error(`Autodocs Publish manifest entry ${index + 1} is missing id or slug.`);
   }
 
   return {
@@ -324,13 +324,13 @@ function normalizeManifestEntry(entry, index) {
 
 function manifestRouteSegments(entry, byId, seen = new Set()) {
   if (seen.has(entry.id)) {
-    throw new Error(`Docspress manifest contains a parent cycle at ${entry.id}`);
+    throw new Error(`Autodocs Publish manifest contains a parent cycle at ${entry.id}`);
   }
 
   seen.add(entry.id);
   const parent = entry.parent ? byId.get(entry.parent) : null;
   if (entry.parent && !parent) {
-    throw new Error(`Docspress manifest page ${entry.id} references missing parent ${entry.parent}`);
+    throw new Error(`Autodocs Publish manifest page ${entry.id} references missing parent ${entry.parent}`);
   }
 
   const parentSegments = parent ? manifestRouteSegments(parent, byId, seen) : [];
@@ -340,13 +340,13 @@ function manifestRouteSegments(entry, byId, seen = new Set()) {
 async function resolveManifestSource(source, manifestDir, cwd) {
   const raw = String(source || "");
   if (!raw || raw.includes(":") || raw.includes("..") || path.isAbsolute(raw)) {
-    throw new Error(`Invalid Docspress manifest source: ${raw || "(empty)"}`);
+    throw new Error(`Invalid Autodocs Publish manifest source: ${raw || "(empty)"}`);
   }
 
   const absolutePath = path.resolve(manifestDir, raw);
   const relativePath = path.relative(cwd, absolutePath);
   if (!relativePath || relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
-    throw new Error(`The Docspress manifest source must stay inside the checked-out repository: ${raw}`);
+    throw new Error(`The Autodocs Publish manifest source must stay inside the checked-out repository: ${raw}`);
   }
 
   const [realCwd, realSourcePath] = await Promise.all([
@@ -355,7 +355,7 @@ async function resolveManifestSource(source, manifestDir, cwd) {
   ]);
   const realRelativePath = path.relative(realCwd, realSourcePath);
   if (!realRelativePath || realRelativePath.startsWith("..") || path.isAbsolute(realRelativePath)) {
-    throw new Error(`The Docspress manifest source must stay inside the checked-out repository: ${raw}`);
+    throw new Error(`The Autodocs Publish manifest source must stay inside the checked-out repository: ${raw}`);
   }
 
   return toPosixPath(relativePath);
@@ -463,10 +463,10 @@ async function applyRedirects(byRoute, options, context) {
     const routeSegments = routeSegmentsForRedirect(redirect.from, rootSlug);
     const routeKey = routeSegments.join("/");
     if (!routeKey) {
-      throw new Error("Docspress redirect entries cannot target the managed root page.");
+      throw new Error("Autodocs Publish redirect entries cannot target the managed root page.");
     }
     if (byRoute.has(routeKey) && byRoute.get(routeKey).kind !== "redirect") {
-      throw new Error(`Docspress redirect '${redirect.from}' conflicts with an existing docs page.`);
+      throw new Error(`Autodocs Publish redirect '${redirect.from}' conflicts with an existing docs page.`);
     }
 
     const targetUrl = redirectTargetUrl(redirect.to, rootSlug, options.routePrefixSegments);
@@ -489,7 +489,7 @@ async function readRedirectsFile(redirectsFile, cwd) {
   if (Array.isArray(entries)) {
     return entries.map((entry, index) => {
       if (!entry || typeof entry !== "object") {
-        throw new Error(`Docspress redirect entry ${index + 1} must be an object.`);
+        throw new Error(`Autodocs Publish redirect entry ${index + 1} must be an object.`);
       }
       return {
         from: String(entry.from || ""),
@@ -503,7 +503,7 @@ async function readRedirectsFile(redirectsFile, cwd) {
     return Object.entries(entries).map(([from, to]) => ({ from, to: String(to), title: "" }));
   }
 
-  throw new Error(`Docspress redirects file must be an object, array, or object with redirects: ${redirectsFile}`);
+  throw new Error(`Autodocs Publish redirects file must be an object, array, or object with redirects: ${redirectsFile}`);
 }
 
 function routeSegmentsForRedirect(value, rootSlug) {

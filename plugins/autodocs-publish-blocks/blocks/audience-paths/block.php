@@ -1,0 +1,207 @@
+<?php
+/**
+ * Audience Paths block registration and rendering.
+ *
+ * @package AutodocsPublishBlocks
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+require_once __DIR__ . '/icons.php';
+
+/**
+ * Return the default audience paths.
+ *
+ * @return array
+ */
+function autodocs_publish_blocks_audience_paths_defaults() {
+	return array(
+		array(
+			'title'       => 'I already have Markdown docs',
+			'description' => 'Connect an existing docs folder to WordPress and begin with a safe draft sync.',
+			'url'         => '/docs/publish-existing-docs/',
+			'cta'         => 'Publish existing docs',
+			'icon'        => 'document',
+			'accent'      => 'blue',
+			'newTab'      => false,
+		),
+		array(
+			'title'       => 'I need to create docs',
+			'description' => 'Generate source-grounded documentation with AI, review it, then publish it.',
+			'url'         => '/docs/create-docs-with-ai/',
+			'cta'         => 'Create docs with AI',
+			'icon'        => 'sparkles',
+			'accent'      => 'gold',
+			'newTab'      => false,
+		),
+	);
+}
+
+/**
+ * Normalize one audience path for safe rendering.
+ *
+ * @param array $path Raw path attributes.
+ * @return array
+ */
+function autodocs_publish_blocks_normalize_audience_path( $path ) {
+	$path = is_array( $path ) ? $path : array();
+
+	return array(
+		'title'       => isset( $path['title'] ) ? sanitize_text_field( $path['title'] ) : '',
+		'description' => isset( $path['description'] ) ? sanitize_text_field( $path['description'] ) : '',
+		'url'         => isset( $path['url'] ) ? esc_url( $path['url'] ) : '',
+		'cta'         => isset( $path['cta'] ) ? sanitize_text_field( $path['cta'] ) : '',
+		'icon'        => autodocs_publish_blocks_resolve_audience_path_icon( isset( $path['icon'] ) ? $path['icon'] : '' ),
+		'accent'      => autodocs_publish_blocks_allowed_value( isset( $path['accent'] ) ? $path['accent'] : '', array( 'blue', 'gold', 'coral', 'green' ), 'blue' ),
+		'new_tab'     => ! empty( $path['newTab'] ),
+	);
+}
+
+/**
+ * Render the Audience Paths block.
+ *
+ * @param array $attributes Block attributes.
+ * @return string
+ */
+function autodocs_publish_blocks_render_audience_paths( $attributes ) {
+	$eyebrow      = isset( $attributes['eyebrow'] ) ? sanitize_text_field( $attributes['eyebrow'] ) : '';
+	$title        = isset( $attributes['title'] ) ? sanitize_text_field( $attributes['title'] ) : '';
+	$description  = isset( $attributes['description'] ) ? sanitize_text_field( $attributes['description'] ) : '';
+	$paths        = isset( $attributes['paths'] ) && is_array( $attributes['paths'] ) ? array_slice( $attributes['paths'], 0, 6 ) : autodocs_publish_blocks_audience_paths_defaults();
+	$columns      = isset( $attributes['columns'] ) ? min( 3, max( 1, absint( $attributes['columns'] ) ) ) : 2;
+	$tone         = autodocs_publish_blocks_allowed_value( isset( $attributes['tone'] ) ? $attributes['tone'] : '', array( 'theme', 'paper', 'ink', 'blueprint' ), 'theme' );
+	$text_align   = autodocs_publish_blocks_allowed_value( isset( $attributes['textAlign'] ) ? $attributes['textAlign'] : '', array( 'left', 'center' ), 'left' );
+	$compact      = ! empty( $attributes['compact'] );
+	$show_numbers = ! empty( $attributes['showNumbers'] );
+	$show_icons   = ! array_key_exists( 'showIcons', $attributes ) || ! empty( $attributes['showIcons'] );
+	$show_links   = ! array_key_exists( 'showLinks', $attributes ) || ! empty( $attributes['showLinks'] );
+	$classes      = array(
+		'autodocs-publish-audience-paths',
+		'autodocs-publish-audience-paths--' . $tone,
+		'autodocs-publish-audience-paths--columns-' . $columns,
+		'autodocs-publish-audience-paths--align-' . $text_align,
+	);
+	$styles       = array();
+
+	if ( ! $show_numbers ) {
+		$classes[] = 'autodocs-publish-audience-paths--no-numbers';
+	}
+	if ( ! $show_icons ) {
+		$classes[] = 'autodocs-publish-audience-paths--no-icons';
+	}
+	if ( ! $show_links ) {
+		$classes[] = 'autodocs-publish-audience-paths--no-links';
+	}
+	if ( $compact ) {
+		$classes[] = 'autodocs-publish-audience-paths--compact';
+	}
+
+	$custom_colors = array(
+		'panelColor'  => array( '--adpb-paths-panel', 'autodocs-publish-audience-paths--has-panel-color' ),
+		'accentColor' => array( '--adpb-paths-accent', 'autodocs-publish-audience-paths--has-accent-color' ),
+	);
+	foreach ( $custom_colors as $attribute_name => $color_config ) {
+		$color = isset( $attributes[ $attribute_name ] ) ? sanitize_hex_color( $attributes[ $attribute_name ] ) : '';
+		if ( $color ) {
+			$styles[]  = $color_config[0] . ':' . $color;
+			$classes[] = $color_config[1];
+		}
+	}
+
+	ob_start();
+	?>
+	<section <?php echo get_block_wrapper_attributes( array( 'class' => implode( ' ', $classes ), 'style' => implode( ';', $styles ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+		<header class="autodocs-publish-audience-paths__header">
+			<?php if ( $eyebrow ) : ?><p class="autodocs-publish-audience-paths__eyebrow"><?php echo esc_html( $eyebrow ); ?></p><?php endif; ?>
+			<div class="autodocs-publish-audience-paths__heading-group">
+				<?php if ( $title ) : ?><h2 class="autodocs-publish-audience-paths__title"><?php echo esc_html( $title ); ?></h2><?php endif; ?>
+				<?php if ( $description ) : ?><p class="autodocs-publish-audience-paths__description"><?php echo esc_html( $description ); ?></p><?php endif; ?>
+			</div>
+		</header>
+		<div class="autodocs-publish-audience-paths__grid" role="list">
+			<?php foreach ( $paths as $index => $raw_path ) : ?>
+				<?php
+				$path = autodocs_publish_blocks_normalize_audience_path( $raw_path );
+				$tag  = $path['url'] ? 'a' : 'div';
+				?>
+				<div class="autodocs-publish-audience-paths__item" role="listitem">
+					<<?php echo esc_attr( $tag ); ?>
+						class="autodocs-publish-audience-paths__card autodocs-publish-audience-paths__card--<?php echo esc_attr( $path['accent'] ); ?>"
+						<?php if ( $path['url'] ) : ?>
+							href="<?php echo esc_url( $path['url'] ); ?>"
+							<?php if ( $path['new_tab'] ) : ?>target="_blank" rel="noopener noreferrer"<?php endif; ?>
+						<?php endif; ?>
+					>
+						<span class="autodocs-publish-audience-paths__number" aria-hidden="true"><?php echo esc_html( str_pad( (string) ( $index + 1 ), 2, '0', STR_PAD_LEFT ) ); ?></span>
+						<?php if ( $show_icons ) : ?>
+							<span class="autodocs-publish-audience-paths__icon" aria-hidden="true">
+								<?php echo autodocs_publish_blocks_render_audience_path_icon( $path['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+							</span>
+						<?php endif; ?>
+						<div class="autodocs-publish-audience-paths__card-copy">
+							<?php if ( $path['title'] ) : ?><h3 class="autodocs-publish-audience-paths__card-title"><?php echo esc_html( $path['title'] ); ?></h3><?php endif; ?>
+							<?php if ( $path['description'] ) : ?><p class="autodocs-publish-audience-paths__card-description"><?php echo esc_html( $path['description'] ); ?></p><?php endif; ?>
+						</div>
+						<?php if ( $show_links && $path['cta'] ) : ?>
+							<span class="autodocs-publish-audience-paths__cta">
+								<span class="autodocs-publish-audience-paths__cta-label"><?php echo esc_html( $path['cta'] ); ?></span>
+								<span class="autodocs-publish-audience-paths__cta-icon" aria-hidden="true">
+									<?php echo autodocs_publish_blocks_render_audience_path_icon( 'arrow-up-right', 'autodocs-publish-audience-paths__cta-svg' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+								</span>
+							</span>
+						<?php endif; ?>
+					</<?php echo esc_attr( $tag ); ?>>
+				</div>
+			<?php endforeach; ?>
+		</div>
+	</section>
+	<?php
+	return trim( ob_get_clean() );
+}
+
+/**
+ * Register the Audience Paths block and its folder-owned assets.
+ */
+function autodocs_publish_blocks_register_audience_paths() {
+	$block_url = AUTODOCS_PUBLISH_BLOCKS_URL . 'blocks/audience-paths/';
+	$defaults  = autodocs_publish_blocks_audience_paths_defaults();
+
+	wp_register_script( 'autodocs-publish-audience-paths-editor', $block_url . 'editor.js', array( 'wp-blocks', 'autodocs-publish-blocks-editor-shared' ), AUTODOCS_PUBLISH_BLOCKS_VERSION, true );
+	wp_add_inline_script(
+		'autodocs-publish-audience-paths-editor',
+		'window.autodocsPublishAudiencePathIcons = ' . wp_json_encode( autodocs_publish_blocks_audience_path_icon_editor_data() ) . ';',
+		'before'
+	);
+	wp_register_style( 'autodocs-publish-audience-paths', $block_url . 'style.css', array(), AUTODOCS_PUBLISH_BLOCKS_VERSION );
+	wp_register_style( 'autodocs-publish-audience-paths-editor-style', $block_url . 'editor.css', array( 'wp-edit-blocks', 'autodocs-publish-audience-paths' ), AUTODOCS_PUBLISH_BLOCKS_VERSION );
+
+	autodocs_publish_blocks_register_block_type(
+		'autodocs-publish/audience-paths',
+		array(
+			'api_version'     => 3,
+			'editor_script'   => 'autodocs-publish-audience-paths-editor',
+			'style'           => 'autodocs-publish-audience-paths',
+			'editor_style'    => 'autodocs-publish-audience-paths-editor-style',
+			'render_callback' => 'autodocs_publish_blocks_render_audience_paths',
+			'attributes'      => array(
+				'eyebrow'      => array( 'type' => 'string', 'default' => 'Choose a starting point' ),
+				'title'        => array( 'type' => 'string', 'default' => 'Where are your docs today?' ),
+				'description'  => array( 'type' => 'string', 'default' => 'Follow the path that matches your repository.' ),
+				'paths'        => array( 'type' => 'array', 'default' => $defaults ),
+				'columns'      => array( 'type' => 'number', 'default' => 2 ),
+				'tone'         => array( 'type' => 'string', 'default' => 'theme' ),
+				'textAlign'    => array( 'type' => 'string', 'default' => 'left' ),
+				'compact'      => array( 'type' => 'boolean', 'default' => false ),
+				'showNumbers'  => array( 'type' => 'boolean', 'default' => false ),
+				'showIcons'    => array( 'type' => 'boolean', 'default' => true ),
+				'showLinks'    => array( 'type' => 'boolean', 'default' => true ),
+				'panelColor'   => array( 'type' => 'string', 'default' => '' ),
+				'accentColor'  => array( 'type' => 'string', 'default' => '' ),
+			),
+			'supports'        => autodocs_publish_blocks_design_supports( array( 'wide', 'full' ) ),
+		)
+	);
+}
+add_action( 'init', 'autodocs_publish_blocks_register_audience_paths', 10 );

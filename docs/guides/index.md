@@ -18,10 +18,10 @@ Move from a reviewed manual draft to maintainable synchronization in either dire
 - [Use contextual sidebars](contextual-sidebars.md) keeps the simple automatic tree as the default and adds route-scoped navigation for larger documentation sites.
 - [Version API documentation](versioning.md) publishes root, directory, suffix, or manifest-backed API releases with native WordPress management, clean latest routes, customizable switching, and exact reverse-sync destinations.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "tip",
     "title": "Prefer the directory tree",
@@ -35,4 +35,4 @@ Move from a reviewed manual draft to maintainable synchronization in either dire
 > **Prefer the directory tree**
 >
 > Use normal files and folders until you need a stable route independent of a source filename. Manifests add control, but also add another mapping to maintain.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->

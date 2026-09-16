@@ -4,16 +4,16 @@ sidebar_position: 35
 sidebar_collapsed: false
 ---
 
-DocsPress normally renders one automatic sidebar from the synchronized WordPress Page tree. Keep that zero-configuration behavior for small and medium documentation sites. Add contextual sidebars only when distinct areas such as API reference, extensions, or CLI documentation need focused local navigation.
+Autodocs Publish normally renders one automatic sidebar from the synchronized WordPress Page tree. Keep that zero-configuration behavior for small and medium documentation sites. Add contextual sidebars only when distinct areas such as API reference, extensions, or CLI documentation need focused local navigation.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "success",
     "title": "See three sidebar contexts switch live",
-    "content": "\u003cp\u003e\u003ca href=\"https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-sidebars.json\u0026amp;page-title=DocsPress%20Contextual%20Sidebars\"\u003eRun the contextual-sidebars example\u003c/a\u003e. It starts in the API reference, whose sidebar contains only API Pages. Follow the breadcrumbs and cross-links to the default guide tree or Extensions section to see the automatic sidebar and previous/next links switch context.\u003c/p\u003e",
+    "content": "\u003cp\u003e\u003ca href=\"https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fautodocs-publish%2Fmain%2Ftheme%2Fblueprint-sidebars.json\u0026amp;page-title=Autodocs%20Publish%20Contextual%20Sidebars\"\u003eRun the contextual-sidebars example\u003c/a\u003e. It starts in the API reference, whose sidebar contains only API Pages. Follow the breadcrumbs and cross-links to the default guide tree or Extensions section to see the automatic sidebar and previous/next links switch context.\u003c/p\u003e",
     "collapsible": false
   }
 }
@@ -22,17 +22,17 @@ DocsPress normally renders one automatic sidebar from the synchronized WordPress
 >
 > **See three sidebar contexts switch live**
 >
-> [Run the contextual-sidebars example](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-sidebars.json&page-title=DocsPress%20Contextual%20Sidebars). It starts in the API reference, whose sidebar contains only API Pages. Follow the breadcrumbs and cross-links to the default guide tree or Extensions section to see the automatic sidebar and previous/next links switch context.
-<!-- /docspress:block -->
+> [Run the contextual-sidebars example](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fautodocs-publish%2Fmain%2Ftheme%2Fblueprint-sidebars.json&page-title=Autodocs%20Publish%20Contextual%20Sidebars). It starts in the API reference, whose sidebar contains only API Pages. Follow the breadcrumbs and cross-links to the default guide tree or Extensions section to see the automatic sidebar and previous/next links switch context.
+<!-- /autodocs-publish:block -->
 
 ## Start with the simple sidebar
 
 Do not add `sidebars-file` when the complete documentation hierarchy belongs in one sidebar:
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/file-tree",
+  "name": "autodocs-publish/file-tree",
   "attrs": {
     "root": "docs/",
     "tree": "index.md\nguides/\n  index.md\n  quickstart.md\nreference/\n  index.md\n  configuration.md",
@@ -55,18 +55,18 @@ reference/
 ```
 
 _One Page tree needs no sidebar registry._
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-DocsPress continues to derive one nested Page tree from those files. Existing repositories receive no new metadata or navigation behavior unless they explicitly enable the advanced configuration.
+Autodocs Publish continues to derive one nested Page tree from those files. Existing repositories receive no new metadata or navigation behavior unless they explicitly enable the advanced configuration.
 
 ## Add a route registry
 
 Create `docs/sidebars.yml` when the documentation has sections that should become independent navigation contexts:
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/colorful-code",
+  "name": "autodocs-publish/colorful-code",
   "attrs": {
     "language": "yaml",
     "filename": "docs/sidebars.yml",
@@ -96,18 +96,18 @@ sidebars:
   api: apis
   extensions: extensions
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 Then pass the repository-relative file to the Action:
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/colorful-code",
+  "name": "autodocs-publish/colorful-code",
   "attrs": {
     "language": "yaml",
     "filename": ".github/workflows/sync-docs.yml",
-    "code": "- uses: Automattic/docspress@main\n  with:\n    wordpress-site: example.wordpress.com\n    wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n    docs-dir: docs\n    sidebars-file: docs/sidebars.yml\n    status: draft\n    dry-run: true",
+    "code": "- uses: Automattic/autodocs-publish@main\n  with:\n    wordpress-site: example.wordpress.com\n    wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}\n    docs-dir: docs\n    sidebars-file: docs/sidebars.yml\n    status: draft\n    dry-run: true",
     "highlightedLines": "6",
     "showLineNumbers": true,
     "caption": "Opt into contextual sidebars with one repository-relative Action input.",
@@ -116,7 +116,7 @@ Then pass the repository-relative file to the Action:
     "annotations": [
       {
         "line": 6,
-        "content": "\u003cp\u003eWithout this input, DocsPress keeps the original automatic sidebar.\u003c/p\u003e"
+        "content": "\u003cp\u003eWithout this input, Autodocs Publish keeps the original automatic sidebar.\u003c/p\u003e"
       }
     ]
   }
@@ -125,7 +125,7 @@ Then pass the repository-relative file to the Action:
 **.github/workflows/sync-docs.yml — Opt into contextual sidebars with one repository-relative Action input.**
 
 ```yaml
-- uses: Automattic/docspress@main
+- uses: Automattic/autodocs-publish@main
   with:
     wordpress-site: example.wordpress.com
     wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}
@@ -134,9 +134,9 @@ Then pass the repository-relative file to the Action:
     status: draft
     dry-run: true
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-The DocsPress theme is required to render these contexts. Another theme can support the same feature by reading the synchronized `_docspress_sidebar_id` and `_docspress_sidebar_root` Page metadata.
+The Autodocs Publish theme is required to render these contexts. Another theme can support the same feature by reading the synchronized `_autodocs_publish_sidebar_id` and `_autodocs_publish_sidebar_root` Page metadata.
 
 ## Understand route matching
 
@@ -152,10 +152,10 @@ Sidebar roots are logical routes relative to `docs-dir`, not filesystem paths wi
 
 The registry follows four rules:
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/flow",
+  "name": "autodocs-publish/flow",
   "attrs": {
     "start": 1,
     "steps": [
@@ -194,13 +194,13 @@ The registry follows four rules:
 4. **Let the most-specific route win**
 
    A future `apis/rest` context can override `apis` for that subtree.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 The same logical-route contract works with folder-derived Pages, `manifest-file`, and every tree produced by `versions-file`.
 
 ## What changes on the site
 
-On a Page assigned to a contextual sidebar, the DocsPress theme:
+On a Page assigned to a contextual sidebar, the Autodocs Publish theme:
 
 - starts automatic Docs Navigation at that sidebar's root Page;
 - excludes Pages assigned to other sidebar IDs;
@@ -211,12 +211,12 @@ Contextual sidebars do not change Command Search, the header Navigation block, o
 
 ## Copy the boilerplate
 
-The repository includes a complete example under [`examples/contextual-sidebars`](https://github.com/Automattic/docspress/tree/main/examples/contextual-sidebars):
+The repository includes a complete example under [`examples/contextual-sidebars`](https://github.com/Automattic/autodocs-publish/tree/main/examples/contextual-sidebars):
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/file-tree",
+  "name": "autodocs-publish/file-tree",
   "attrs": {
     "root": "examples/contextual-sidebars/",
     "tree": "README.md\ndocs/\n  sidebars.yml\n  index.md\n  guides/\n    index.md\n    quickstart.md\n  apis/\n    index.md\n    rest-api.md\n    webhooks.md\n  extensions/\n    index.md\n    build-an-extension.md",
@@ -246,9 +246,9 @@ docs/
 ```
 
 _A complete three-context documentation tree ready to copy._
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-The one-link demonstration is defined by [`theme/blueprint-sidebars.json`](https://github.com/Automattic/docspress/blob/main/theme/blueprint-sidebars.json). Maintainers can regenerate its deterministic Page fixture with:
+The one-link demonstration is defined by [`theme/blueprint-sidebars.json`](https://github.com/Automattic/autodocs-publish/blob/main/theme/blueprint-sidebars.json). Maintainers can regenerate its deterministic Page fixture with:
 
 ```bash
 npm run playground:sidebars
@@ -258,10 +258,10 @@ npm run playground:sidebars
 
 Remove `sidebars-file` from the workflow to return to the original automatic Page tree.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/result",
+  "name": "autodocs-publish/result",
   "attrs": {
     "status": "success",
     "title": "The original sidebar is restored",
@@ -277,4 +277,4 @@ Remove `sidebars-file` from the workflow to return to the original automatic Pag
 > The next synchronization removes the source-owned contextual metadata while preserving the Pages, hierarchy, `sidebar_position`, and `sidebar_collapsed` values.
 >
 > _No Page deletion · no hierarchy change_
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->

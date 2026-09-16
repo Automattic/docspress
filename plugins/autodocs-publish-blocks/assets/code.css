@@ -1,0 +1,391 @@
+/* Shared code-surface tokens and primitives used by Colorful Code and Code Tabs. */
+.wp-block-autodocs-publish-colorful-code,
+.wp-block-autodocs-publish-code-tabs {
+	--adpb-code-bg: color-mix(in srgb, var(--adp-canvas, #f8f9fb) 82%, var(--adp-paper, #fff));
+	--adpb-code-panel: var(--adp-paper, #fff);
+	--adpb-code-panel-strong: var(--adp-blue-soft, #eef1ff);
+	--adpb-code-border: var(--adp-line-strong, #cfd4dc);
+	--adpb-code-text: var(--adp-ink, #171a22);
+	--adpb-code-muted: var(--adp-muted, #6f7685);
+	--adpb-code-accent: var(--adpb-preset-code-accent, var(--adp-blue, #3858e9));
+	--adpb-code-accent-2: var(--adpb-preset-code-accent-2, var(--adp-blue-dark, #2145d8));
+	--adpb-code-keyword: var(--adpb-preset-code-keyword, var(--adp-blue-dark, #2145d8));
+	--adpb-code-string: var(--adpb-preset-code-string, #137c44);
+	--adpb-code-number: var(--adpb-preset-code-number, #a84f00);
+	--adpb-code-comment: var(--adp-muted, #6f7685);
+	--adpb-code-shadow: none;
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 0;
+	max-width: 100%;
+	margin-block: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+html[data-theme="dark"] .wp-block-autodocs-publish-colorful-code,
+html[data-theme="dark"] .wp-block-autodocs-publish-code-tabs {
+	--adpb-code-bg: color-mix(in srgb, var(--adp-canvas, #11141b) 78%, #000);
+	--adpb-code-panel: var(--adp-paper, #171b23);
+	--adpb-code-panel-strong: var(--adp-blue-soft, #20294c);
+	--adpb-code-border: var(--adp-line-strong, #434c5b);
+	--adpb-code-text: var(--adp-ink, #f3f5f8);
+	--adpb-code-muted: var(--adp-muted, #929aab);
+	--adpb-code-shadow: none;
+}
+
+.autodocs-publish-preset-autodocs-publish,
+.autodocs-publish-blocks--preset-autodocs-publish {
+	--adpb-preset-code-accent: #005cb3;
+	--adpb-preset-code-accent-2: #fec408;
+	--adpb-preset-code-keyword: #005cb3;
+	--adpb-preset-code-string: #19733f;
+	--adpb-preset-code-number: #bd5400;
+}
+
+.autodocs-publish-preset-wordpress,
+.autodocs-publish-blocks--preset-wordpress,
+.autodocs-publish-preset-wordpress-com,
+.autodocs-publish-blocks--preset-wordpress-com {
+	--adpb-preset-code-accent: #3858e9;
+	--adpb-preset-code-accent-2: #2145e6;
+	--adpb-preset-code-keyword: #2a46ce;
+	--adpb-preset-code-string: #087a3e;
+	--adpb-preset-code-number: #a54800;
+}
+
+.autodocs-publish-preset-jetpack,
+.autodocs-publish-blocks--preset-jetpack {
+	--adpb-preset-code-accent: #069e08;
+	--adpb-preset-code-accent-2: #007117;
+	--adpb-preset-code-keyword: #007117;
+	--adpb-preset-code-string: #3858e9;
+	--adpb-preset-code-number: #9b4f00;
+}
+
+html[data-theme="dark"] .autodocs-publish-preset-autodocs-publish {
+	--adpb-preset-code-accent: #fec408;
+	--adpb-preset-code-accent-2: #fe8301;
+	--adpb-preset-code-keyword: #62b5ff;
+	--adpb-preset-code-string: #a7e48d;
+	--adpb-preset-code-number: #ffd078;
+}
+
+html[data-theme="dark"] .autodocs-publish-preset-wordpress,
+html[data-theme="dark"] .autodocs-publish-preset-wordpress-com {
+	--adpb-preset-code-accent: #7b90ff;
+	--adpb-preset-code-accent-2: #adbaf3;
+	--adpb-preset-code-keyword: #a8b5ff;
+	--adpb-preset-code-string: #82dc97;
+	--adpb-preset-code-number: #ffbc73;
+}
+
+html[data-theme="dark"] .autodocs-publish-preset-jetpack {
+	--adpb-preset-code-accent: #61ce4f;
+	--adpb-preset-code-accent-2: #91e982;
+	--adpb-preset-code-keyword: #91e982;
+	--adpb-preset-code-string: #86c8ff;
+	--adpb-preset-code-number: #ffd36b;
+}
+
+.autodocs-publish-code__surface,
+.autodocs-publish-code-tabs__surface {
+	position: relative;
+	overflow: hidden;
+	border: 1px solid var(--adpb-code-border);
+	border-radius: var(--adp-radius, 10px);
+	background: var(--adpb-code-bg);
+	box-shadow: var(--adpb-code-shadow);
+	color: var(--adpb-code-text);
+}
+
+.autodocs-publish-code__surface,
+.autodocs-publish-code-tabs__surface {
+	background: color-mix(in srgb, var(--adpb-code-accent) 3%, var(--adpb-code-bg));
+}
+
+.autodocs-publish-code__bar {
+	display: grid;
+	min-height: 42px;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 7px;
+	box-sizing: border-box;
+	padding: 5px 7px;
+	border-bottom: 1px solid var(--adpb-code-border);
+	background: color-mix(in srgb, var(--adpb-code-accent) 4%, var(--adpb-code-panel));
+}
+
+.autodocs-publish-code__filename,
+.autodocs-publish-code-tabs__filename {
+	min-width: 0;
+	max-width: 14rem;
+	overflow: hidden;
+	color: var(--adpb-code-muted);
+	font: 600 0.68rem/1.2 var(--adp-font-mono, "SFMono-Regular", Consolas, "Liberation Mono", monospace);
+	letter-spacing: -0.01em;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.autodocs-publish-code__filename {
+	justify-self: end;
+}
+
+.autodocs-publish-code__language {
+	display: inline-flex;
+	min-height: 30px;
+	align-items: center;
+	padding: 0 10px;
+	border-radius: var(--adp-radius, 10px);
+	background: color-mix(in srgb, var(--adpb-code-accent) 11%, var(--adpb-code-panel));
+	box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--adpb-code-accent) 24%, transparent);
+	color: var(--adpb-code-text);
+	font: 680 0.72rem/1 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+}
+
+.autodocs-publish-code__copy {
+	display: inline-flex;
+	min-height: 28px;
+	align-items: center;
+	gap: 5px;
+	margin: 0;
+	padding: 3px 7px;
+	border: 1px solid var(--adpb-code-border);
+	border-radius: var(--adp-radius, 10px);
+	background: color-mix(in srgb, var(--adpb-code-panel) 76%, transparent);
+	box-shadow: none;
+	color: var(--adpb-code-text);
+	cursor: pointer;
+	font: 650 0.68rem/1 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	transition: border-color 140ms ease, color 140ms ease, transform 140ms ease;
+}
+
+.autodocs-publish-code__copy:hover,
+.autodocs-publish-code__copy:focus-visible {
+	border-color: var(--adpb-code-accent);
+	color: var(--adpb-code-accent);
+}
+
+.autodocs-publish-code__copy:active {
+	transform: translateY(1px);
+}
+
+.autodocs-publish-code__copy.is-copied {
+	border-color: var(--adpb-code-accent);
+	color: var(--adpb-code-accent);
+}
+
+.autodocs-publish-code__pre {
+	max-width: 100%;
+	margin: 0;
+	overflow: auto;
+	background: transparent;
+	color: var(--adpb-code-text);
+	font: 500 0.875rem/1.72 var(--adp-font-mono, "SFMono-Regular", Consolas, "Liberation Mono", monospace);
+	tab-size: 2;
+	-webkit-overflow-scrolling: touch;
+}
+
+.entry-content .autodocs-publish-code__pre {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--adpb-code-text);
+	font: 500 0.875rem/1.72 var(--adp-font-mono, "SFMono-Regular", Consolas, "Liberation Mono", monospace);
+}
+
+.entry-content .wp-block-autodocs-publish-colorful-code,
+.entry-content .wp-block-autodocs-publish-code-tabs {
+	margin-block: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.autodocs-publish-code__pre code {
+	display: block;
+	min-width: max-content;
+	padding: 18px 0;
+	background: transparent;
+	color: inherit;
+	font: inherit;
+}
+
+.autodocs-publish-code__line {
+	display: block;
+	position: relative;
+	min-height: 1.72em;
+	padding: 0 22px;
+	white-space: pre;
+}
+
+.autodocs-publish-code__surface.has-line-numbers .autodocs-publish-code__line {
+	padding-left: 58px;
+}
+
+.autodocs-publish-code__surface.has-line-numbers .autodocs-publish-code__line::before {
+	position: absolute;
+	left: 0;
+	width: 42px;
+	color: var(--adpb-code-muted);
+	content: attr(data-line);
+	font-size: 0.74rem;
+	font-variant-numeric: tabular-nums;
+	opacity: 0.68;
+	text-align: right;
+	user-select: none;
+}
+
+.autodocs-publish-code__line.is-highlighted {
+	background: color-mix(in srgb, var(--adpb-code-accent) 10%, transparent);
+	box-shadow: inset 2px 0 0 var(--adpb-code-accent);
+}
+
+.autodocs-publish-code__line.is-diff-added {
+	background: color-mix(in srgb, #16883d 11%, transparent);
+	box-shadow: inset 3px 0 0 #16883d;
+}
+
+.autodocs-publish-code__line.is-diff-removed {
+	background: color-mix(in srgb, #c9352b 10%, transparent);
+	box-shadow: inset 3px 0 0 #c9352b;
+}
+
+.autodocs-publish-code__line.is-diff-meta {
+	background: color-mix(in srgb, var(--adpb-code-accent) 8%, transparent);
+	color: var(--adpb-code-muted);
+	font-style: italic;
+}
+
+.autodocs-publish-code__annotation-marker {
+	display: inline-flex;
+	width: 20px;
+	height: 20px;
+	align-items: center;
+	justify-content: center;
+	margin: 0 0 0 9px;
+	padding: 0;
+	vertical-align: middle;
+	border: 1px solid var(--adpb-code-accent);
+	border-radius: 50%;
+	background: var(--adpb-code-panel);
+	box-shadow: none;
+	color: var(--adpb-code-accent);
+	cursor: pointer;
+	font: 760 0.62rem/1 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.autodocs-publish-code__annotation-marker:hover,
+.autodocs-publish-code__annotation-marker:focus-visible,
+.autodocs-publish-code__annotation-marker[aria-expanded="true"] {
+	background: var(--adpb-code-accent);
+	color: var(--adpb-code-panel);
+}
+
+.autodocs-publish-code__annotations {
+	display: grid;
+	gap: 0;
+	margin: 0;
+	padding: 0;
+	border-top: 1px solid var(--adpb-code-border);
+	background: var(--adpb-code-panel);
+	list-style: none;
+}
+
+.autodocs-publish-code__annotation {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	gap: 10px;
+	margin: 0;
+	padding: 13px 16px;
+	color: var(--adpb-code-text);
+}
+
+.autodocs-publish-code__annotation + .autodocs-publish-code__annotation {
+	border-top: 1px solid var(--adpb-code-border);
+}
+
+.autodocs-publish-code__annotation-number {
+	display: inline-flex;
+	width: 22px;
+	height: 22px;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background: var(--adpb-code-accent);
+	color: var(--adpb-code-panel);
+	font: 760 0.65rem/1 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.autodocs-publish-code__annotation strong {
+	display: block;
+	margin-bottom: 3px;
+	color: var(--adpb-code-muted);
+	font: 680 0.64rem/1.2 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.autodocs-publish-code__annotation-content,
+.autodocs-publish-code__annotation-content p,
+.autodocs-publish-code__annotation p {
+	margin: 0;
+	color: var(--adpb-code-text);
+	font: 500 0.8rem/1.55 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	white-space: normal;
+}
+
+.autodocs-publish-code__line .token-comment {
+	color: var(--adpb-code-comment);
+	font-style: italic;
+}
+
+.autodocs-publish-code__line .token-keyword {
+	color: var(--adpb-code-keyword);
+	font-weight: 680;
+}
+
+.autodocs-publish-code__line .token-string {
+	color: var(--adpb-code-string);
+}
+
+.autodocs-publish-code__line .token-number,
+.autodocs-publish-code__line .token-boolean {
+	color: var(--adpb-code-number);
+}
+
+.autodocs-publish-code__line .token-property,
+.autodocs-publish-code__line .token-selector {
+	color: var(--adpb-code-accent);
+}
+
+.autodocs-publish-code__caption {
+	margin: 9px 3px 0;
+	color: var(--adp-muted, #646970);
+	font: 500 0.78rem/1.45 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	text-align: center;
+}
+
+@media (max-width: 560px) {
+	.autodocs-publish-code__copy b {
+		display: none;
+	}
+
+	.autodocs-publish-code__line,
+	.autodocs-publish-code__surface.has-line-numbers .autodocs-publish-code__line {
+		padding-right: 14px;
+	}
+}
+
+@media (max-width: 420px) {
+	.autodocs-publish-code__filename {
+		display: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.autodocs-publish-code__copy {
+		transition: none;
+	}
+}

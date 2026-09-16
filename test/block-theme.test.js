@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { collectDesiredPages } from "../src/docs.js";
 
 const root = process.cwd();
-const blocksRoot = path.join(root, "plugins", "docspress-blocks", "blocks");
+const blocksRoot = path.join(root, "plugins", "autodocs-publish-blocks", "blocks");
 const completeTypographyKeys = [
   "fontFamily",
   "fontSize",
@@ -97,11 +97,11 @@ const expectCompleteThemePreset = (preset) => {
   }
 
   expect(Object.keys(preset.styles.blocks).sort()).toEqual([
+    "autodocs-publish/version-notice",
+    "autodocs-publish/version-switcher",
     "core/button",
     "core/code",
     "core/quote",
-    "docspress/version-notice",
-    "docspress/version-switcher",
   ]);
   expect(preset.styles.blocks["core/code"].typography).toBeTruthy();
 };
@@ -153,8 +153,13 @@ const blockNames = [
   "terminal-session",
   "troubleshooter"
 ];
+const compatibilityBlockNames = [
+  ...blockNames,
+  "version-notice",
+  "version-switcher",
+];
 
-describe("DocsPress block theme constraints", () => {
+describe("Autodocs Publish block theme constraints", () => {
   it("provides a standard one-link Playground documentation experience", async () => {
     const docsBlueprintPath = path.join(root, "theme", "blueprint-docs.json");
     const docsBlueprint = JSON.parse(await fs.readFile(docsBlueprintPath, "utf8"));
@@ -184,20 +189,20 @@ describe("DocsPress block theme constraints", () => {
         expect.objectContaining({
           step: "installPlugin",
           pluginData: expect.objectContaining({
-            url: "https://github.com/Automattic/docspress",
-            path: "plugins/docspress-blocks",
+            url: "https://github.com/Automattic/autodocs-publish",
+            path: "plugins/autodocs-publish-blocks",
           }),
         }),
         expect.objectContaining({
           step: "installTheme",
           themeData: expect.objectContaining({
-            url: "https://github.com/Automattic/docspress",
+            url: "https://github.com/Automattic/autodocs-publish",
             path: "theme",
           }),
         }),
         expect.objectContaining({
           step: "runPHP",
-          code: expect.stringContaining("/docspress/playground/setup.php"),
+          code: expect.stringContaining("/autodocs-publish/playground/setup.php"),
         }),
       ])
     );
@@ -209,7 +214,7 @@ describe("DocsPress block theme constraints", () => {
     );
     const kitchenSinkAudiencePathExamples = [
       ...(kitchenSink?.content.matchAll(
-        /<!-- wp:docspress\/audience-paths ([^\n]+) \/-->/g
+        /<!-- wp:autodocs-publish\/audience-paths ([^\n]+) \/-->/g
       ) ?? []),
     ].map((match) => JSON.parse(match[1]));
     const audiencePathsGuide = generated.pages.find(
@@ -217,7 +222,7 @@ describe("DocsPress block theme constraints", () => {
     );
     const documentedAudiencePathExamples = [
       ...(audiencePathsGuide?.content.matchAll(
-        /<!-- wp:docspress\/audience-paths ([^\n]+) \/-->/g
+        /<!-- wp:autodocs-publish\/audience-paths ([^\n]+) \/-->/g
       ) ?? []),
     ].map((match) => JSON.parse(match[1]));
     expect(kitchenSink?.content.match(/<h2>Playground runtime<\/h2>/g)).toHaveLength(1);
@@ -229,19 +234,19 @@ describe("DocsPress block theme constraints", () => {
         expect.objectContaining({ columns: 3, showIcons: true, showLinks: false }),
       ])
     );
-    expect(setup).toContain("docspress_playground_with_component_inventory");
-    expect(setup).toContain("function docspress_playground_should_use_live_inventory()");
+    expect(setup).toContain("autodocs_publish_playground_with_component_inventory");
+    expect(setup).toContain("function autodocs_publish_playground_should_use_live_inventory()");
     expect(setup).toContain("return 'production' !== wp_get_environment_type();");
-    expect(setup).toContain("&& docspress_playground_should_use_live_inventory()");
+    expect(setup).toContain("&& autodocs_publish_playground_should_use_live_inventory()");
     expect(setup).toContain(
-      "$page['content'] = docspress_playground_with_component_inventory"
+      "$page['content'] = autodocs_publish_playground_with_component_inventory"
     );
     expect(setup).not.toContain(
-      "$page['content'] .= \"\\n\\n\" . docspress_playground_component_inventory()"
+      "$page['content'] .= \"\\n\\n\" . autodocs_publish_playground_component_inventory()"
     );
     expect(setup).toContain("'permalink_structure', '/%postname%/'");
     expect(readme).toContain(
-      "https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-docs.json"
+      "https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fautodocs-publish%2Fmain%2Ftheme%2Fblueprint-docs.json"
     );
     expect(localDocsBlueprint.landingPage).toBe("/docs/");
     expect(localDocsBlueprint.login).toBe(true);
@@ -253,13 +258,13 @@ describe("DocsPress block theme constraints", () => {
         }),
       ])
     );
-    expect(localDocsImporter).toContain("DOCSPRESS_LOCAL_DOCS_SOURCE");
-    expect(localDocsImporter).toContain("docspress_local_docs_markdown_to_blocks");
-    expect(localDocsImporter).toContain("_docspress_source_path");
+    expect(localDocsImporter).toContain("AUTODOCS_PUBLISH_LOCAL_DOCS_SOURCE");
+    expect(localDocsImporter).toContain("autodocs_publish_local_docs_markdown_to_blocks");
+    expect(localDocsImporter).toContain("_autodocs_publish_source_path");
     expect(readme).toContain("npx @wp-playground/cli@3.1.46 start");
-    expect(readme).toContain("--mount=\"$PWD/docs:/wordpress/docspress-source-docs\"");
+    expect(readme).toContain("--mount=\"$PWD/docs:/wordpress/autodocs-publish-source-docs\"");
     expect(readme).toContain("--reset");
-    expect(readme).not.toContain("npx docspress@latest playground");
+    expect(readme).not.toContain("npx autodocs-publish@latest playground");
     expect(readme).toContain("## Quick start");
     expect(readme).toContain("## Preview local docs from the CLI");
     expect(readme).toContain("blueprint-versioning.json");
@@ -286,7 +291,7 @@ describe("DocsPress block theme constraints", () => {
       cwd: exampleRoot,
       docsDir: "docs",
       rootSlug: "docs",
-      rootTitle: "DocsPress on stock WordPress",
+      rootTitle: "Autodocs Publish on stock WordPress",
       createH1: false,
       rewriteLinks: true,
       editLink: false,
@@ -325,22 +330,22 @@ describe("DocsPress block theme constraints", () => {
     expect(blockNames.every((name) => !name.includes("/") || name.startsWith("core/")))
       .toBe(true);
     expect(generated.pages.map(({ content }) => content).join("\n"))
-      .not.toContain("wp:docspress/");
+      .not.toContain("wp:autodocs-publish/");
     expect(generated.pages[0].content).toContain("/docs/getting-started/");
-    expect(setup).toContain("DocsPress theme</td>");
-    expect(setup).toContain("DocsPress Blocks plugin</td>");
+    expect(setup).toContain("Autodocs Publish theme</td>");
+    expect(setup).toContain("Autodocs Publish Blocks plugin</td>");
     expect(setup).toContain("Native core Gutenberg blocks");
     expect(readme).toContain(
       "examples%2Fstock-wordpress%2Fblueprint.json"
     );
     expect(readme).toContain(
-      "https://github.com/Automattic/docspress/releases/latest/download/docspress-theme.zip"
+      "https://github.com/Automattic/autodocs-publish/releases/latest/download/autodocs-publish-theme.zip"
     );
     expect(readme).toContain(
-      "https://github.com/Automattic/docspress/releases/latest/download/docspress-blocks.zip"
+      "https://github.com/Automattic/autodocs-publish/releases/latest/download/autodocs-publish-blocks.zip"
     );
     expect(readme).toContain("npx @wp-playground/cli@3.1.46 start");
-    expect(readme).toContain("You do not have to install the DocsPress theme.");
+    expect(readme).toContain("You do not have to install the Autodocs Publish theme.");
   });
 
   it("prefers the current mounted theme when reseeding the local Playground", async () => {
@@ -356,13 +361,13 @@ describe("DocsPress block theme constraints", () => {
 
   it("uses the exact theme radius instead of independent minimums or pills", async () => {
     const stylePaths = [
-      path.join(root, "plugins", "docspress-blocks", "assets", "code.css"),
+      path.join(root, "plugins", "autodocs-publish-blocks", "assets", "code.css"),
       ...blockNames.map((name) => path.join(blocksRoot, name, "style.css"))
     ];
     const styles = (await Promise.all(stylePaths.map((file) => fs.readFile(file, "utf8")))).join("\n");
 
     expect(styles).not.toMatch(/border-radius:\s*(?:max\(|calc\(|999px)/);
-    expect(styles).toContain("border-radius: var(--dp-radius, 10px);");
+    expect(styles).toContain("border-radius: var(--adp-radius, 10px);");
   });
 
   it("uses compact schema rows and no default gradient backgrounds in companion blocks", async () => {
@@ -381,13 +386,13 @@ describe("DocsPress block theme constraints", () => {
     expect(fieldsStyles).toContain("padding: 10px 16px;");
     expect(fieldsStyles).toContain("min-height: 36px;");
     expect(fieldsStyles).toContain(
-      ".wp-block-docspress-fields.is-compact .docspress-fields__item"
+      ".wp-block-autodocs-publish-fields.is-compact .autodocs-publish-fields__item"
     );
     expect(fieldsStyles).toContain("padding-block: 8px;");
     expect(fieldsStyles).toContain("@container (max-width: 560px)");
-    expect(fieldsStyles).toContain(".docspress-fields__metadata span + span::before");
-    expect(fieldsStyles).toContain(".wp-block-docspress-fields .docspress-fields__term > code");
-    expect(fieldsStyles).toContain(".wp-block-docspress-fields .docspress-fields__metadata code");
+    expect(fieldsStyles).toContain(".autodocs-publish-fields__metadata span + span::before");
+    expect(fieldsStyles).toContain(".wp-block-autodocs-publish-fields .autodocs-publish-fields__term > code");
+    expect(fieldsStyles).toContain(".wp-block-autodocs-publish-fields .autodocs-publish-fields__metadata code");
   });
 
   it("places Result metadata in a footer below the content", async () => {
@@ -396,10 +401,10 @@ describe("DocsPress block theme constraints", () => {
       "utf8"
     );
     const blockRule = styles.match(
-      /^\.wp-block-docspress-result\s*\{([^}]*)\}/m
+      /^\.wp-block-autodocs-publish-result\s*\{([^}]*)\}/m
     )?.[1] ?? "";
     const metaRule = styles.match(
-      /^\.docspress-result__meta\s*\{([^}]*)\}/m
+      /^\.autodocs-publish-result__meta\s*\{([^}]*)\}/m
     )?.[1] ?? "";
 
     expect(blockRule).toContain("grid-template-columns: auto minmax(0, 1fr);");
@@ -421,6 +426,46 @@ describe("DocsPress block theme constraints", () => {
     }
   });
 
+  it("keeps legacy DocsPress blocks loadable but hidden behind canonical registrations", async () => {
+    const plugin = await fs.readFile(
+      path.join(root, "plugins", "autodocs-publish-blocks", "autodocs-publish-blocks.php"),
+      "utf8"
+    );
+    const sharedEditor = await fs.readFile(
+      path.join(root, "plugins", "autodocs-publish-blocks", "assets", "editor-shared.js"),
+      "utf8"
+    );
+    const registrations = await Promise.all(
+      compatibilityBlockNames.map(async (name) => ({
+        name,
+        editor: await fs.readFile(path.join(blocksRoot, name, "editor.js"), "utf8"),
+        server: await fs.readFile(path.join(blocksRoot, name, "block.php"), "utf8"),
+      }))
+    );
+
+    expect(plugin).toContain("function autodocs_publish_blocks_register_block_type");
+    expect(plugin).toContain("Version:           0.11.0");
+    expect(plugin).toContain("'docspress-blocks/docspress-blocks.php'");
+    expect(plugin).toContain("deactivate_plugins( $legacy_plugin");
+    expect(plugin).toContain("'docspress/' . substr");
+    expect(plugin).toContain("$legacy_args['supports']['inserter'] = false;");
+    expect(plugin).toContain("WP_HTML_Tag_Processor");
+    expect(plugin).toContain("'wp-block-' . str_replace");
+    expect(sharedEditor).toContain("function registerBlockTypeWithLegacyAlias");
+    expect(sharedEditor).toContain("...settings");
+    expect(sharedEditor).toContain("inserter: false");
+    expect(sharedEditor).toContain("blocks.getBlockDefaultClassName");
+    expect(sharedEditor).toContain("wp-block-autodocs-publish-");
+
+    for (const { name, editor, server } of registrations) {
+      expect(server).toContain("autodocs_publish_blocks_register_block_type(");
+      expect(server).toContain(`'autodocs-publish/${name}'`);
+      expect(editor).toContain(
+        `shared.registerBlockTypeWithLegacyAlias( blocks, 'autodocs-publish/${name}'`
+      );
+    }
+  });
+
   it("teaches every companion block with a focused guide and three rendered examples", async () => {
     const guideRoot = path.join(root, "docs", "reference", "gutenberg-blocks");
     const index = await fs.readFile(path.join(guideRoot, "index.md"), "utf8");
@@ -429,14 +474,14 @@ describe("DocsPress block theme constraints", () => {
       const guide = await fs.readFile(path.join(guideRoot, `${name}.md`), "utf8");
 
       expect(index).toContain(`(${name}.md)`);
-      expect(guide).toContain('"name": "docspress/fields"');
-      expect(guide.split(`"name": "docspress/${name}"`).length - 1).toBeGreaterThanOrEqual(3);
+      expect(guide).toContain('"name": "autodocs-publish/fields"');
+      expect(guide.split(`"name": "autodocs-publish/${name}"`).length - 1).toBeGreaterThanOrEqual(3);
     }
   });
 
   it("ships an editable Flow and native collapsible File Tree folders", async () => {
     const plugin = await fs.readFile(
-      path.join(root, "plugins", "docspress-blocks", "docspress-blocks.php"),
+      path.join(root, "plugins", "autodocs-publish-blocks", "autodocs-publish-blocks.php"),
       "utf8"
     );
     const flowEditor = await fs.readFile(path.join(blocksRoot, "flow", "editor.js"), "utf8");
@@ -450,27 +495,27 @@ describe("DocsPress block theme constraints", () => {
     expect(flowEditor).toContain("Starting number");
     expect(flowEditor).toContain("Add step");
     expect(flowEditor).toContain("Move up");
-    expect(flowRender).toContain("'docspress/flow'");
-    expect(flowRender).toContain("docspress-flow__marker");
-    expect(flowStyles).toContain(".wp-block-docspress-flow .docspress-flow__title {");
-    expect(flowStyles).not.toContain(".docspress-flow :where(.docspress-flow__title)");
+    expect(flowRender).toContain("'autodocs-publish/flow'");
+    expect(flowRender).toContain("autodocs-publish-flow__marker");
+    expect(flowStyles).toContain(".wp-block-autodocs-publish-flow .autodocs-publish-flow__title {");
+    expect(flowStyles).not.toContain(".autodocs-publish-flow :where(.autodocs-publish-flow__title)");
     expect(fileTreeEditor).toContain("Allow readers to collapse folders");
     expect(fileTreeEditor).toContain("Expand folders by default");
     expect(fileTreeRender).toContain("<details");
     expect(fileTreeRender).toContain("<summary");
     expect(fileTreeRender).not.toContain('role="tree"');
     expect(fileTreeStyles).toContain(
-      ".wp-block-docspress-file-tree .docspress-file-tree__entries"
+      ".wp-block-autodocs-publish-file-tree .autodocs-publish-file-tree__entries"
     );
     expect(fileTreeStyles).toContain(
-      ".wp-block-docspress-file-tree .docspress-file-tree__item"
+      ".wp-block-autodocs-publish-file-tree .autodocs-publish-file-tree__item"
     );
     expect(fileTreeStyles).toContain("min-height: 27px;");
   });
 
   it("ships theme-native interactive reference blocks with safe browser defaults", async () => {
     const plugin = await fs.readFile(
-      path.join(root, "plugins", "docspress-blocks", "docspress-blocks.php"),
+      path.join(root, "plugins", "autodocs-publish-blocks", "autodocs-publish-blocks.php"),
       "utf8"
     );
     const apiRender = await fs.readFile(path.join(blocksRoot, "api-request", "block.php"), "utf8");
@@ -487,7 +532,7 @@ describe("DocsPress block theme constraints", () => {
     const diagramRender = await fs.readFile(path.join(blocksRoot, "diagram", "block.php"), "utf8");
     const fieldsRender = await fs.readFile(path.join(blocksRoot, "fields", "block.php"), "utf8");
     const codeSurface = await fs.readFile(
-      path.join(root, "plugins", "docspress-blocks", "includes", "code-surface.php"),
+      path.join(root, "plugins", "autodocs-publish-blocks", "includes", "code-surface.php"),
       "utf8"
     );
     const troubleshooterView = await fs.readFile(
@@ -517,8 +562,8 @@ describe("DocsPress block theme constraints", () => {
     expect(playgroundView).toContain("event.source !== playground.frame.contentWindow");
     expect(diagramRender).toContain("role=\"img\"");
     expect(diagramRender).not.toContain("mermaid");
-    expect(diagramRender).toContain("docspress_blocks_decode_source");
-    expect(playgroundRender).toContain("docspress_blocks_decode_source");
+    expect(diagramRender).toContain("autodocs_publish_blocks_decode_source");
+    expect(playgroundRender).toContain("autodocs_publish_blocks_decode_source");
     expect(codeSurface).toContain("html_entity_decode");
     expect(codeSurface).toContain("'\\\\u003e'");
     expect(fieldsRender).toContain("<dl");
@@ -588,10 +633,10 @@ describe("DocsPress block theme constraints", () => {
       expect(template).toContain('"tagName":"header","className":"entry-header"');
       expect(template).toContain('<p class="entry-kicker">Page</p>');
       expect(template).toContain('"className":"entry-title"');
-      expect(template).toContain("wp:docspress/page-summary");
+      expect(template).toContain("wp:autodocs-publish/page-summary");
       expect(template).toContain("wp:post-featured-image");
       expect(template).toContain("wp:post-content");
-      expect(template).toContain("wp:docspress/edit-links");
+      expect(template).toContain("wp:autodocs-publish/edit-links");
       expect(template).toContain('"slug":"comments"');
     }
 
@@ -754,7 +799,7 @@ describe("DocsPress block theme constraints", () => {
         kicker: {
           border: "0",
           markerWidth: "0",
-          shadow: "inset 0 -2px 0 var(--dp-blue)"
+          shadow: "inset 0 -2px 0 var(--adp-blue)"
         },
         radius: "4px",
         ruleWidth: "48px",
@@ -833,7 +878,7 @@ describe("DocsPress block theme constraints", () => {
     }
   });
 
-  it("preserves the original DocsPress design as the block theme default", async () => {
+  it("preserves the original Autodocs Publish design as the block theme default", async () => {
     const theme = JSON.parse(await fs.readFile(path.join(root, "theme", "theme.json"), "utf8"));
     const styles = await fs.readFile(path.join(root, "theme", "style.css"), "utf8");
     const functions = await fs.readFile(path.join(root, "theme", "functions.php"), "utf8");
@@ -843,7 +888,7 @@ describe("DocsPress block theme constraints", () => {
     );
     const header = await fs.readFile(path.join(root, "theme", "parts", "header.html"), "utf8");
     const defaultLogo = await fs.readFile(
-      path.join(root, "theme", "assets", "images", "docspress-hybrid-logo.png")
+      path.join(root, "theme", "assets", "images", "autodocs-publish-mark.png")
     );
     const frontPage = await fs.readFile(
       path.join(root, "theme", "templates", "front-page.html"),
@@ -869,9 +914,9 @@ describe("DocsPress block theme constraints", () => {
     expect(header).toContain('"shouldSyncIcon":true');
     expect(header).not.toContain("wp:site-title");
     expect(header).toContain('"className":"brand-title"');
-    expect(header).toContain('<a href="/">DocsPress</a>');
+    expect(header).toContain('<a href="/">Autodocs Publish</a>');
     expect(defaultLogo.byteLength).toBeGreaterThan(1000);
-    expect(functions).toContain("function docspress_maybe_seed_default_site_logo()");
+    expect(functions).toContain("function autodocs_publish_maybe_seed_default_site_logo()");
     expect(functions).toContain("update_option( 'site_logo', $logo_id );");
     expect(functions).toContain("update_option( 'site_icon', $logo_id );");
     expect(styles).not.toContain(".brand::before");
@@ -879,23 +924,23 @@ describe("DocsPress block theme constraints", () => {
     expect(styles).toMatch(
       /\.brand-title\s*\{[^}]*font-weight:\s*var\(--wp--custom--heading-weight,\s*700\);[^}]*\}/s
     );
-    expect(styles).toContain("background: var(--dp-highlight);");
+    expect(styles).toContain("background: var(--adp-highlight);");
     expect(theme.settings.custom.entryKickerRadius).toBe("999px");
     expect(theme.settings.custom.entryKickerShadow).toBe(
-      "3px 3px 0 var(--dp-highlight-strong)"
+      "3px 3px 0 var(--adp-highlight-strong)"
     );
     expect(theme.settings.custom.entryKickerDarkBorder).toBe(
-      "2px solid color-mix(in srgb, var(--dp-highlight) 72%, var(--dp-line))"
+      "2px solid color-mix(in srgb, var(--adp-highlight) 72%, var(--adp-line))"
     );
     expect(theme.settings.custom.entryKickerDarkBackground).toBe(
-      "color-mix(in srgb, var(--dp-highlight) 12%, var(--dp-paper))"
+      "color-mix(in srgb, var(--adp-highlight) 12%, var(--adp-paper))"
     );
     expect(theme.settings.custom.entryKickerDarkShadow).toBe(
-      "3px 3px 0 color-mix(in srgb, var(--dp-highlight-strong) 48%, var(--dp-paper))"
+      "3px 3px 0 color-mix(in srgb, var(--adp-highlight-strong) 48%, var(--adp-paper))"
     );
-    expect(theme.settings.custom.entryKickerDarkColor).toBe("var(--dp-highlight)");
+    expect(theme.settings.custom.entryKickerDarkColor).toBe("var(--adp-highlight)");
     expect(theme.settings.custom.entryKickerDarkMarkerBackground).toBe(
-      "var(--dp-highlight-strong)"
+      "var(--adp-highlight-strong)"
     );
     expect(theme.settings.custom.entryTitleSize).toBe("clamp(42px, 5.6vw, 68px)");
     expect(theme.settings.custom.sidebarWidth).toBe("266px");
@@ -910,7 +955,7 @@ describe("DocsPress block theme constraints", () => {
     expect(styles).toContain("var(--wp--custom--entry-rule-background");
     expect(styles).toContain("var(--wp--preset--color--dark-accent, #62b5ff)");
     expect(header).toContain('"label":"Docs"');
-    expect(header).toContain('"label":"Why DocsPress?"');
+    expect(header).toContain('"label":"Why Autodocs Publish?"');
     expect(header).toContain('"label":"Kitchen Sink"');
     expect(header).toContain('"label":"GitHub"');
     expect(header).toContain('"width":34');
@@ -933,28 +978,25 @@ describe("DocsPress block theme constraints", () => {
     expect(theme.settings.color.palette).toContainEqual(
       expect.objectContaining({
         slug: "header-surface",
-        color: "color-mix(in srgb, var(--dp-paper) 92%, transparent)",
+        color: "color-mix(in srgb, var(--adp-paper) 92%, transparent)",
       })
     );
     expect(styles).toContain(
-      "--dp-active-ink: var(--wp--preset--color--ink, #232323);"
+      "--adp-active-ink: var(--wp--preset--color--ink, #232323);"
     );
-    expect(styles).toMatch(/\.brand\s*\{[^}]*color:\s*var\(--dp-ink\);/s);
+    expect(styles).toMatch(/\.brand\s*\{[^}]*color:\s*var\(--adp-ink\);/s);
     expect(styles).toMatch(
-      /\.brand-wordpress\s*\{[^}]*color:\s*var\(--dp-blue-dark\);/s
-    );
-    expect(styles).toMatch(
-      /\.primary-navigation\s*\{[^}]*color:\s*var\(--dp-copy\);/s
+      /\.primary-navigation\s*\{[^}]*color:\s*var\(--adp-copy\);/s
     );
     expect(styles).toContain(".wp-site-blocks > header.wp-block-template-part {");
     expect(styles).toContain("margin: 0 0 0 auto;");
     expect(styles).toContain(".primary-navigation a.is-current-page");
     expect(styles).toMatch(
-      /\.primary-navigation a\.is-current-page,[\s\S]*?background:\s*var\(--dp-highlight\);[\s\S]*?color:\s*var\(--dp-active-ink\);/
+      /\.primary-navigation a\.is-current-page,[\s\S]*?background:\s*var\(--adp-highlight\);[\s\S]*?color:\s*var\(--adp-active-ink\);/
     );
     expect(styles).toMatch(/\.primary-navigation a\s*\{[^}]*line-height:\s*1\.65;/s);
     expect(styles).toMatch(
-      /\.search-shortcut kbd\s*\{[^}]*background:\s*color-mix\(in srgb, var\(--dp-highlight\) 22%, var\(--dp-paper\)\);[^}]*color:\s*var\(--dp-ink\);/s
+      /\.search-shortcut kbd\s*\{[^}]*background:\s*color-mix\(in srgb, var\(--adp-highlight\) 22%, var\(--adp-paper\)\);[^}]*color:\s*var\(--adp-ink\);/s
     );
     expect(styles).toMatch(
       /\.primary-navigation \.wp-block-navigation__container\s*\{[^}]*flex-wrap:\s*nowrap;[^}]*gap:\s*4px !important;/s
@@ -963,7 +1005,7 @@ describe("DocsPress block theme constraints", () => {
       /@media \(max-width: 1024px\)\s*\{[\s\S]*?\.header-inner > \.primary-navigation,[\s\S]*?\.search-shortcut span,[\s\S]*?\.search-shortcut kbd[\s\S]*?display:\s*none;[\s\S]*?\.menu-toggle[\s\S]*?display:\s*inline-flex;[\s\S]*?\}/
     );
     expect(styles).toMatch(
-      /\.docspress-menu-toggle\s*\{[^}]*display:\s*none;[^}]*\}[\s\S]*?@media \(max-width: 1024px\)\s*\{[\s\S]*?body\.has-docs-sidebar \.docspress-menu-toggle\s*\{[^}]*display:\s*block;/s
+      /\.autodocs-publish-menu-toggle\s*\{[^}]*display:\s*none;[^}]*\}[\s\S]*?@media \(max-width: 1024px\)\s*\{[\s\S]*?body\.has-docs-sidebar \.autodocs-publish-menu-toggle\s*\{[^}]*display:\s*block;/s
     );
     expect(runtime).toContain(
       "body.classList.toggle('has-docs-sidebar', Boolean(sidebar));"
@@ -981,7 +1023,7 @@ describe("DocsPress block theme constraints", () => {
     expect(pageTemplate).toContain(
       '"tagName":"header","className":"entry-header","layout":{"type":"default"}'
     );
-    expect(pageTemplate).toContain("wp:docspress/page-summary");
+    expect(pageTemplate).toContain("wp:autodocs-publish/page-summary");
     expect(pageTemplate).not.toContain("wp:post-excerpt");
     expect(frontPage).toContain('className":"homepage-main"');
     expect(frontPage).toContain("Latest updates");
@@ -1042,7 +1084,7 @@ describe("DocsPress block theme constraints", () => {
     expect(heroSeed).toContain("reviewable pull requests");
     expect(heroSeed).toContain("Demonstrate Site Editor");
     expect(heroSeed).toContain(
-      "https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fdocspress%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=DocsPress%20Theme%20Playground"
+      "https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FAutomattic%2Fautodocs-publish%2Fmain%2Ftheme%2Fblueprint-browser.json&page-title=Autodocs%20Publish%20Theme%20Playground"
     );
     expect(siteEditorBlueprint.landingPage).toBe("/wp-admin/site-editor.php");
     expect(siteEditorBlueprint.login).toBe(true);
@@ -1057,24 +1099,24 @@ describe("DocsPress block theme constraints", () => {
     expect(setup).toContain("API versioning");
     expect(setup).toContain("<code>Threaded replies</code>");
     expect(setup).toContain("Built-in discussions");
-    expect(setup).toContain("wp:docspress/colorful-code");
-    expect(setup).toContain("wp:docspress/flow");
-    expect(setup).toContain("wp:docspress/result");
+    expect(setup).toContain("wp:autodocs-publish/colorful-code");
+    expect(setup).toContain("wp:autodocs-publish/flow");
+    expect(setup).toContain("wp:autodocs-publish/result");
     expect(setup).toContain("Bring Markdown, or generate it from source.");
     expect(setup).toContain("home-download-section");
     expect(setup).toContain("Download Theme");
     expect(setup).toContain("Download Blocks");
     expect(setup).toContain("Preview Kitchen Sink");
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/latest/download/docspress-theme.zip"
+      "https://github.com/Automattic/autodocs-publish/releases/latest/download/autodocs-publish-theme.zip"
     );
     expect(setup).toContain(
-      "https://github.com/Automattic/docspress/releases/latest/download/docspress-blocks.zip"
+      "https://github.com/Automattic/autodocs-publish/releases/latest/download/autodocs-publish-blocks.zip"
     );
     expect(styles).toContain(".home-proof-strip {");
     expect(styles).toContain(".home-sync-section {");
     expect(styles).toContain(".home-download-section {");
-    expect(styles).toContain('url("assets/images/docspress-hybrid-logo.png")');
+    expect(styles).toContain('url("assets/images/autodocs-publish-mark.png")');
     expect(styles).toContain("--home-download-wapuu-shift");
     expect(styles).toContain(".home-download-card__actions .wp-block-button__link::before");
     expect(styles).toContain('mask: url("data:image/svg+xml');
@@ -1084,13 +1126,13 @@ describe("DocsPress block theme constraints", () => {
       /\.home-download-card > \.home-download-card__features\s*\{[^}]*gap:\s*10px;[^}]*margin:\s*24px 0 0;[^}]*padding-inline-start:\s*0;/s
     );
     expect(styles).toMatch(
-      /\.home-download-card__features li\s*\{[^}]*border-radius:\s*999px;[^}]*font:\s*800 11px\/1\.2 var\(--dp-font-ui\);/s
+      /\.home-download-card__features li\s*\{[^}]*border-radius:\s*999px;[^}]*font:\s*800 11px\/1\.2 var\(--adp-font-ui\);/s
     );
     expect(styles).not.toMatch(
       /\.home-download-card__features li:not\(:last-child\)::after\s*\{/
     );
     expect(styles).toContain(
-      "background: color-mix(in srgb, var(--dp-paper) 97%, var(--home-download-accent));"
+      "background: color-mix(in srgb, var(--adp-paper) 97%, var(--home-download-accent));"
     );
     expect(styles).toMatch(
       /\.home-download-intro :where\(h2\)\s*\{[^}]*margin:\s*0;/s
@@ -1161,19 +1203,19 @@ describe("DocsPress block theme constraints", () => {
     expect(editor).toContain("CommandSearchEditorPreview");
     expect(editor).toContain("Preview search dialog");
     expect(editor).toContain("Click the search trigger or use the block toolbar");
-    expect(editor).toContain("docspress-command-search-editor-overlay");
+    expect(editor).toContain("autodocs-publish-command-search-editor-overlay");
     expect(editor).toContain("controlGroup: 'content'");
     expect(editor).toContain("( ! config.controlGroup || isSelected )");
     expect(editor).toContain("updateComponentNavigatorOptions");
-    expect(editor).toContain("docspress-quick-navigation-chevron");
+    expect(editor).toContain("autodocs-publish-quick-navigation-chevron");
     expect(editor).toContain("attributes.suggestedLabel");
-    expect(styles).toContain(".docspress-command-search-editor-overlay {");
+    expect(styles).toContain(".autodocs-publish-command-search-editor-overlay {");
     expect(styles).toContain(".search-dialog.is-editor-preview {");
     expect(editor).toContain("Breadcrumbs preview");
-    expect(editor).toContain("DocsPress documentation");
+    expect(editor).toContain("Autodocs Publish documentation");
     expect(editor).not.toContain("Breadcrumbs appear on child Pages.");
     expect(editor).toContain("Table of contents preview");
-    expect(editor).toContain("Install DocsPress");
+    expect(editor).toContain("Install Autodocs Publish");
     expect(editor).toContain("Configure publishing");
     expect(editor).not.toContain("Add headings to populate the table of contents.");
     expect(editor).toContain("Page actions preview");
@@ -1189,11 +1231,45 @@ describe("DocsPress block theme constraints", () => {
     expect(editor).toContain("Header");
     expect(editor).toContain("Comments");
     expect(editor).toContain("Footer");
-    expect(php).toContain("docspress_render_page_summary");
+    expect(php).toContain("autodocs_publish_render_page_summary");
     expect(php).toContain("'defaultMode'");
     expect(php).toContain("'width'             => array( 'type' => 'number', 'default' => 266 )");
     expect(php).toContain("'width'    => array( 'type' => 'number', 'default' => 226 )");
-    expect(php).toContain("docspress_component_supports()");
+    expect(php).toContain("autodocs_publish_component_supports()");
+  });
+
+  it("carries pre-rename theme state into Autodocs Publish without replacing new values", async () => {
+    const functions = await fs.readFile(path.join(root, "theme", "functions.php"), "utf8");
+    const blocks = await fs.readFile(path.join(root, "theme", "inc", "blocks.php"), "utf8");
+    const llms = await fs.readFile(path.join(root, "theme", "inc", "llms.php"), "utf8");
+    const runtime = await fs.readFile(
+      path.join(root, "theme", "assets", "js", "docs.js"),
+      "utf8"
+    );
+    const styles = await fs.readFile(path.join(root, "theme", "style.css"), "utf8");
+
+    expect(styles).toContain("Version: 0.11.0");
+    expect(functions).toContain("function autodocs_publish_migrate_legacy_theme_slug_data()");
+    expect(functions).toContain("$legacy_stylesheet  = 'docspress';");
+    expect(functions).toContain("array_replace( $legacy_mods");
+    expect(functions).toContain("array( 'wp_template', 'wp_template_part', 'wp_global_styles' )");
+    expect(functions).toContain("wp_set_object_terms( (int) $legacy_id");
+    expect(functions).toContain("$is_legacy_upgrade   = false !== $legacy_seeded_value;");
+    expect(functions).toContain("$replace_logo = $is_legacy_default");
+    expect(functions).toContain("$replace_icon = $is_legacy_default");
+    expect(runtime).toContain("'docspress-feedback:' + pageId");
+    expect(runtime).toContain("localStorage.getItem('docspress-color-mode')");
+    expect(blocks).toContain("var p='docspress-version-notice:'");
+
+    for (const [source, legacyName, replacement] of [
+      [functions, "docspress_markdown_source_path", "autodocs_publish_markdown_source_path"],
+      [blocks, "docspress_search_index", "autodocs_publish_search_index"],
+      [blocks, "docspress_page_feedback_recorded", "autodocs_publish_page_feedback_recorded"],
+      [llms, "docspress_llms_txt", "autodocs_publish_llms_txt"],
+    ]) {
+      expect(source).toContain(`'${legacyName}'`);
+      expect(source).toContain(`'${replacement}'`);
+    }
   });
 
   it("collects Page feedback above adjacent documentation navigation", async () => {
@@ -1216,38 +1292,39 @@ describe("DocsPress block theme constraints", () => {
       path.join(root, "theme", "templates", "page.html"),
       "utf8"
     );
-    const feedbackIndex = pageTemplate.indexOf("wp:docspress/was-this-helpful");
-    const adjacentIndex = pageTemplate.indexOf("wp:docspress/adjacent-navigation");
+    const feedbackIndex = pageTemplate.indexOf("wp:autodocs-publish/was-this-helpful");
+    const adjacentIndex = pageTemplate.indexOf("wp:autodocs-publish/adjacent-navigation");
 
     expect(feedbackIndex).toBeGreaterThan(-1);
     expect(feedbackIndex).toBeLessThan(adjacentIndex);
-    expect(php).toContain("function docspress_register_feedback_meta()");
-    expect(php).toContain("'docspress_helpful_votes'");
-    expect(php).toContain("'docspress_unhelpful_votes'");
-    expect(php).toContain("'docspress_feedback_enabled'");
-    expect(php).toContain("metadata_exists( 'post', $post_id, 'docspress_feedback_enabled' )");
+    expect(php).toContain("function autodocs_publish_register_feedback_meta()");
+    expect(php).toContain("'autodocs_publish_helpful_votes'");
+    expect(php).toContain("'autodocs_publish_unhelpful_votes'");
+    expect(php).toContain("'autodocs_publish_feedback_enabled'");
+    expect(php).toContain("metadata_exists( 'post', $post_id, 'autodocs_publish_feedback_enabled' )");
     expect(php).toContain("register_rest_route(");
-    expect(php).toContain("'permission_callback' => 'docspress_can_submit_page_feedback'");
+    expect(php).toContain("array( 'autodocs-publish/v1', 'docspress/v1' )");
+    expect(php).toContain("'permission_callback' => 'autodocs_publish_can_submit_page_feedback'");
     expect(php).toContain("'validate_callback' => static function ( $value )");
-    expect(php).toContain("'docspress_feedback_invalid_vote'");
-    expect(php).toContain("function docspress_render_was_this_helpful(");
+    expect(php).toContain("'autodocs_publish_feedback_invalid_vote'");
+    expect(php).toContain("function autodocs_publish_render_was_this_helpful(");
     expect(php).toContain("'enabled'        => array( 'type' => 'boolean', 'default' => true )");
     expect(editor).toContain("registerComponent( 'was-this-helpful'");
-    expect(editor).toContain("registerPlugin( 'docspress-page-feedback'");
+    expect(editor).toContain("registerPlugin( 'autodocs-publish-page-feedback'");
     expect(editor).toContain("PluginDocumentSettingPanel");
-    expect(editor).toContain("docspress_helpful_votes");
+    expect(editor).toContain("autodocs_publish_helpful_votes");
     expect(editor).toContain("Show feedback on this Page");
-    expect(editor).toContain("docspress_feedback_enabled: value");
+    expect(editor).toContain("autodocs_publish_feedback_enabled: value");
     expect(runtime).toContain("window.fetch(endpoint");
     expect(runtime).toContain(
       "window.localStorage.setItem(feedbackStorageKey(pageId), vote)"
     );
-    expect(styles).toContain(".docspress-feedback {");
-    expect(styles).toContain(".docspress-feedback:not(.has-background) {");
-    expect(styles).toContain(".docspress-feedback:not(.has-text-color) {");
-    expect(editorStyles).toContain(".docspress-feedback-summary {");
-    expect(editorStyles).toContain(".docspress-feedback-meter {");
-    expect(functions).toContain("function docspress_block_editor_ui_assets()");
+    expect(styles).toContain(".autodocs-publish-feedback {");
+    expect(styles).toContain(".autodocs-publish-feedback:not(.has-background) {");
+    expect(styles).toContain(".autodocs-publish-feedback:not(.has-text-color) {");
+    expect(editorStyles).toContain(".autodocs-publish-feedback-summary {");
+    expect(editorStyles).toContain(".autodocs-publish-feedback-meter {");
+    expect(functions).toContain("function autodocs_publish_block_editor_ui_assets()");
     expect(functions).toContain("'assets/css/block-editor.css'");
   });
 
@@ -1311,8 +1388,8 @@ describe("DocsPress block theme constraints", () => {
     expect(styles).not.toMatch(/^\.entry-content h[2-4][,{ ]/m);
     expect(styles).not.toMatch(/^\.entry-content \.wp-block-button__link\s*\{/m);
     expect(theme.styles.color).toEqual({
-      background: "var(--dp-paper)",
-      text: "var(--dp-copy)",
+      background: "var(--adp-paper)",
+      text: "var(--adp-copy)",
     });
     expect(theme.styles.typography).toMatchObject({
       fontFamily: "var:preset|font-family|ui",
@@ -1323,8 +1400,8 @@ describe("DocsPress block theme constraints", () => {
       "var(--wp--custom--heading-weight)"
     );
     expectCompleteThemePreset(theme);
-    expect(theme.styles.elements.heading.color.text).toBe("var(--dp-ink)");
-    expect(theme.styles.elements.link.color.text).toBe("var(--dp-blue-dark)");
+    expect(theme.styles.elements.heading.color.text).toBe("var(--adp-ink)");
+    expect(theme.styles.elements.link.color.text).toBe("var(--adp-blue-dark)");
 
     const bodyRule = styles.match(/\nbody\s*\{([^}]*)\}/)?.[1] ?? "";
     const linkRule = styles.match(/\na\s*\{([^}]*)\}/)?.[1] ?? "";
@@ -1381,10 +1458,10 @@ describe("DocsPress block theme constraints", () => {
     }
 
     for (const [css, selector] of [
-      [resultStyles, ".wp-block-docspress-result"],
-      [promptStyles, ".wp-block-docspress-prompt"],
-      [calloutStyles, ".docspress-callout"],
-      [fileTreeStyles, ".wp-block-docspress-file-tree"],
+      [resultStyles, ".wp-block-autodocs-publish-result"],
+      [promptStyles, ".wp-block-autodocs-publish-prompt"],
+      [calloutStyles, ".autodocs-publish-callout"],
+      [fileTreeStyles, ".wp-block-autodocs-publish-file-tree"],
     ]) {
       const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       const rule = css.match(new RegExp(`^${escapedSelector}\\s*\\{([^}]*)\\}`, "m"))?.[1] ?? "";
@@ -1393,52 +1470,52 @@ describe("DocsPress block theme constraints", () => {
     expect(php).toContain("page-action-wordpress wp-element-button");
     expect(php).toContain("page-action-github wp-element-button");
     expect(components).toContain("page-action ${ className } wp-element-button");
-    expect(heroRender).toContain("docspress-hero__button--primary wp-element-button");
-    expect(heroRender).toContain("docspress-hero__button--secondary wp-element-button");
-    expect(heroEditor).toContain("docspress-hero__button--primary wp-element-button");
-    expect(heroEditor).toContain("docspress-hero__button--secondary wp-element-button");
-    expect(heroRender).toContain("docspress_blocks_render_hero_sync_diagram");
-    expect(heroRender).toContain("docspress-hero-diagram__pipeline");
+    expect(heroRender).toContain("autodocs-publish-hero__button--primary wp-element-button");
+    expect(heroRender).toContain("autodocs-publish-hero__button--secondary wp-element-button");
+    expect(heroEditor).toContain("autodocs-publish-hero__button--primary wp-element-button");
+    expect(heroEditor).toContain("autodocs-publish-hero__button--secondary wp-element-button");
+    expect(heroRender).toContain("autodocs_publish_blocks_render_hero_sync_diagram");
+    expect(heroRender).toContain("autodocs-publish-hero-diagram__pipeline");
     expect(heroEditor).toContain("syncDiagramPreview");
     expect(heroEditor).toContain("GitHub sync diagram");
-    expect(heroStyles).toContain(":where(.docspress-hero__title) {");
-    expect(heroStyles).toContain(":where(.docspress-hero__button) {");
-    expect(heroStyles).toContain(".docspress-hero-diagram__pipeline {");
+    expect(heroStyles).toContain(":where(.autodocs-publish-hero__title) {");
+    expect(heroStyles).toContain(":where(.autodocs-publish-hero__button) {");
+    expect(heroStyles).toContain(".autodocs-publish-hero-diagram__pipeline {");
     expect(heroStyles).toContain("grid-template-columns: minmax(0, 1fr);");
     expect(heroStyles).toContain('content: "↓";');
     expect(heroRender).toContain('<span aria-hidden="true">↑</span>');
     expect(heroStyles).toContain(
-      ".docspress-hero__button--secondary.wp-element-button {"
+      ".autodocs-publish-hero__button--secondary.wp-element-button {"
     );
     expect(audienceStyles).toContain(
-      ":where(.docspress-audience-paths .docspress-audience-paths__title) {"
+      ":where(.autodocs-publish-audience-paths .autodocs-publish-audience-paths__title) {"
     );
     expect(audienceStyles).toContain(
-      ".docspress-audience-paths--compact .docspress-audience-paths__title {"
+      ".autodocs-publish-audience-paths--compact .autodocs-publish-audience-paths__title {"
     );
     expect(audienceStyles).toContain(
-      ".docspress-audience-paths.has-text-color :is("
+      ".autodocs-publish-audience-paths.has-text-color :is("
     );
     expect(audienceStyles).toContain("container-type: inline-size;");
     expect(audienceStyles).toContain("@container (max-width: 820px)");
     expect(audienceStyles).toMatch(
-      /\.docspress-audience-paths--compact \.docspress-audience-paths__card\s*\{[^}]*grid-template-areas:\s*"icon"\s*"copy"\s*"cta";[^}]*grid-template-columns:\s*minmax\(0, 1fr\);/s
+      /\.autodocs-publish-audience-paths--compact \.autodocs-publish-audience-paths__card\s*\{[^}]*grid-template-areas:\s*"icon"\s*"copy"\s*"cta";[^}]*grid-template-columns:\s*minmax\(0, 1fr\);/s
     );
     expect(audienceStyles).toMatch(
-      /@container \(max-width: 480px\)[\s\S]*?\.docspress-audience-paths--compact\.docspress-audience-paths--columns-3 \.docspress-audience-paths__grid\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\);/
+      /@container \(max-width: 480px\)[\s\S]*?\.autodocs-publish-audience-paths--compact\.autodocs-publish-audience-paths--columns-3 \.autodocs-publish-audience-paths__grid\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\);/
     );
     expect(audienceStyles).toMatch(
-      /\.docspress-audience-paths--compact\.docspress-audience-paths--no-icons \.docspress-audience-paths__card\s*\{[^}]*grid-template-areas:\s*"copy"\s*"cta";[^}]*grid-template-columns:\s*minmax\(0, 1fr\);/s
+      /\.autodocs-publish-audience-paths--compact\.autodocs-publish-audience-paths--no-icons \.autodocs-publish-audience-paths__card\s*\{[^}]*grid-template-areas:\s*"copy"\s*"cta";[^}]*grid-template-columns:\s*minmax\(0, 1fr\);/s
     );
     expect(audienceStyles).toMatch(
-      /\.docspress-audience-paths--compact\.docspress-audience-paths--no-links \.docspress-audience-paths__card\s*\{[^}]*grid-template-areas:\s*"icon"\s*"copy";/s
+      /\.autodocs-publish-audience-paths--compact\.autodocs-publish-audience-paths--no-links \.autodocs-publish-audience-paths__card\s*\{[^}]*grid-template-areas:\s*"icon"\s*"copy";/s
     );
     expect(audienceStyles).not.toContain('"icon copy"');
     for (const source of [audienceEditor, audienceRender]) {
       expect(source).toContain("showIcons");
       expect(source).toContain("showLinks");
-      expect(source).toContain("docspress-audience-paths--no-icons");
-      expect(source).toContain("docspress-audience-paths--no-links");
+      expect(source).toContain("autodocs-publish-audience-paths--no-icons");
+      expect(source).toContain("autodocs-publish-audience-paths--no-links");
     }
     expect(audienceEditor).toContain("Show icons");
     expect(audienceEditor).toContain("Show bottom links");
@@ -1447,16 +1524,16 @@ describe("DocsPress block theme constraints", () => {
     expect(audienceEditor).not.toContain("textColor:");
     expect(audienceRender).not.toContain("'textColor'");
     expect(functions).toContain(
-      "function docspress_inherit_post_title_typography_from_headings"
+      "function autodocs_publish_inherit_post_title_typography_from_headings"
     );
     expect(functions).toContain(
-      "function docspress_migrate_legacy_post_title_typography"
+      "function autodocs_publish_migrate_legacy_post_title_typography"
     );
     expect(functions).toContain(
       "WP_Theme_JSON_Resolver::get_user_global_styles_post_id()"
     );
     expect(functions).toContain(
-      "docspress_post_title_typography_migration"
+      "autodocs_publish_post_title_typography_migration"
     );
     expect(functions).toContain("wp_update_post(");
     expect(functions).toContain("'wp_theme_json_data_user'");
@@ -1512,7 +1589,7 @@ describe("DocsPress block theme constraints", () => {
       expect(cssRule(styles, selector)).not.toMatch(/(?:^|\s)background\s*:/);
     }
     for (const selector of [
-      ".brand-wordpress",
+      ".brand-title",
       ".result-card p",
       ".entry-meta",
       ".content-card-taxonomy",
@@ -1553,7 +1630,8 @@ describe("DocsPress block theme constraints", () => {
     );
     expect(cssRule(styles, ".entry-kicker")).not.toMatch(/(?:^|\s)color\s*:/);
     expect(styles).not.toContain(".site-footer a {");
-    expect(footer).toContain("<!-- wp:paragraph -->");
+    expect(footer).toContain('<!-- wp:paragraph {"className":"footer-publishing-note"} -->');
+    expect(footer).toContain('<!-- wp:paragraph {"className":"footer-automattic"} -->');
     expect(footer).not.toContain('"textColor"');
     expect(footer).not.toContain('"fontSize"');
     expect(footer).not.toContain('"backgroundColor"');
@@ -1562,11 +1640,11 @@ describe("DocsPress block theme constraints", () => {
     expect(footer).toContain("Markdown → Gutenberg → WordPress");
     expect(footer).toContain("An <strong>Automattic</strong> project");
     expect(footer).toContain(
-      "https://automattic.com/?utm_medium=automattic_referred&amp;utm_source=docspress_footer"
+      "https://automattic.com/?utm_medium=automattic_referred&amp;utm_source=autodocs_publish_footer"
     );
     expect(footer).toContain('"label":"Kitchen Sink"');
-    expect(cssRule(styles, ".site-footer")).toContain("background: var(--dp-canvas);");
-    expect(cssRule(styles, ".site-footer")).toContain("color: var(--dp-copy);");
+    expect(cssRule(styles, ".site-footer")).toContain("background: var(--adp-canvas);");
+    expect(cssRule(styles, ".site-footer")).toContain("color: var(--adp-copy);");
     expect(cssRule(styles, ".footer-inner")).toContain("max-width: none;");
     expect(cssRule(styles, ".footer-inner")).toContain("min-height: 62px;");
     expect(styles).toContain(".footer-automattic a:hover {");
@@ -1582,8 +1660,8 @@ describe("DocsPress block theme constraints", () => {
     expect(theme.styles.blocks?.["core/site-title"]).toBeUndefined();
 
     for (const [css, selector] of [
-      [heroStyles, ".docspress-hero"],
-      [audienceStyles, ".docspress-audience-paths"],
+      [heroStyles, ".autodocs-publish-hero"],
+      [audienceStyles, ".autodocs-publish-audience-paths"],
     ]) {
       const rule = cssRule(css, selector);
       expect(rule).not.toMatch(/(?:^|\s)background\s*:/);
@@ -1591,36 +1669,36 @@ describe("DocsPress block theme constraints", () => {
       expect(rule).not.toMatch(/(?:^|\s)font-family\s*:/);
     }
     for (const [css, selector] of [
-      [heroStyles, ".docspress-hero__eyebrow"],
-      [heroStyles, ".docspress-hero__description"],
-      [audienceStyles, ".docspress-audience-paths .docspress-audience-paths__eyebrow"],
-      [audienceStyles, ".docspress-audience-paths .docspress-audience-paths__description"],
-      [audienceStyles, ".docspress-audience-paths__card-description"],
+      [heroStyles, ".autodocs-publish-hero__eyebrow"],
+      [heroStyles, ".autodocs-publish-hero__description"],
+      [audienceStyles, ".autodocs-publish-audience-paths .autodocs-publish-audience-paths__eyebrow"],
+      [audienceStyles, ".autodocs-publish-audience-paths .autodocs-publish-audience-paths__description"],
+      [audienceStyles, ".autodocs-publish-audience-paths__card-description"],
     ]) {
       const rule = cssRule(css, selector);
       expect(rule).not.toMatch(/(?:^|\s)color\s*:/);
       expect(rule).not.toMatch(/(?:^|\s)font-family\s*:/);
     }
     expect(heroStyles).not.toMatch(
-      /:where\(\.docspress-hero__button--primary\)\s*\{[^}]*(?:background|color)\s*:/s
+      /:where\(\.autodocs-publish-hero__button--primary\)\s*\{[^}]*(?:background|color)\s*:/s
     );
     expect(heroStyles).toMatch(
-      /\.docspress-hero__button--secondary\.wp-element-button\s*\{[^}]*background:\s*transparent;[^}]*color:\s*inherit;/s
+      /\.autodocs-publish-hero__button--secondary\.wp-element-button\s*\{[^}]*background:\s*transparent;[^}]*color:\s*inherit;/s
     );
     for (const source of [heroEditor, heroRender]) {
-      expect(source).toContain("docspress-hero--has-panel-color");
-      expect(source).not.toContain("docspress-hero--has-text-color");
+      expect(source).toContain("autodocs-publish-hero--has-panel-color");
+      expect(source).not.toContain("autodocs-publish-hero--has-text-color");
       expect(source).not.toContain("textColor:");
       expect(source).not.toContain("'textColor'");
     }
     for (const source of [audienceEditor, audienceRender]) {
-      expect(source).toContain("docspress-audience-paths--has-panel-color");
-      expect(source).not.toContain("docspress-audience-paths--has-text-color");
+      expect(source).toContain("autodocs-publish-audience-paths--has-panel-color");
+      expect(source).not.toContain("autodocs-publish-audience-paths--has-text-color");
     }
     expect(audienceEditor).toContain("tagName: 'h3'");
     expect(audienceEditor).toContain("tagName: 'p'");
-    expect(audienceRender).toContain('<h3 class="docspress-audience-paths__card-title">');
-    expect(audienceRender).toContain('<p class="docspress-audience-paths__card-description">');
+    expect(audienceRender).toContain('<h3 class="autodocs-publish-audience-paths__card-title">');
+    expect(audienceRender).toContain('<p class="autodocs-publish-audience-paths__card-description">');
   });
 
   it("makes the documentation sidebar collapsible from block settings", async () => {
@@ -1670,20 +1748,20 @@ describe("DocsPress block theme constraints", () => {
     const functions = await fs.readFile(path.join(root, "theme", "functions.php"), "utf8");
     const php = await fs.readFile(path.join(root, "theme", "inc", "blocks.php"), "utf8");
     const plugin = await fs.readFile(
-      path.join(root, "plugins", "docspress-blocks", "includes", "versioning.php"),
+      path.join(root, "plugins", "autodocs-publish-blocks", "includes", "versioning.php"),
       "utf8"
     );
 
-    for (const metadataKey of ["_docspress_sidebar_id", "_docspress_sidebar_root"]) {
+    for (const metadataKey of ["_autodocs_publish_sidebar_id", "_autodocs_publish_sidebar_root"]) {
       expect(php).toContain(metadataKey);
       expect(plugin).toContain(metadataKey);
     }
-    expect(functions).toContain("function docspress_get_sidebar_metadata");
-    expect(functions).toContain("function docspress_get_sidebar_context");
-    expect(functions).toContain("function docspress_filter_pages_by_sidebar");
-    expect(php).toContain("'pages' === $source ? docspress_get_sidebar_context() : null");
-    expect(php).toContain("docspress_get_sidebar_context( $current_id )");
-    expect(php).toContain("docspress_filter_pages_by_sidebar( $pages, $sidebar_context['id'] )");
+    expect(functions).toContain("function autodocs_publish_get_sidebar_metadata");
+    expect(functions).toContain("function autodocs_publish_get_sidebar_context");
+    expect(functions).toContain("function autodocs_publish_filter_pages_by_sidebar");
+    expect(php).toContain("'pages' === $source ? autodocs_publish_get_sidebar_context() : null");
+    expect(php).toContain("autodocs_publish_get_sidebar_context( $current_id )");
+    expect(php).toContain("autodocs_publish_filter_pages_by_sidebar( $pages, $sidebar_context['id'] )");
   });
 
   it("keeps command-search data and controls available in rendered block templates", async () => {
@@ -1691,9 +1769,9 @@ describe("DocsPress block theme constraints", () => {
     const runtime = await fs.readFile(path.join(root, "theme", "assets", "js", "docs.js"), "utf8");
     const styles = await fs.readFile(path.join(root, "theme", "style.css"), "utf8");
 
-    expect(php).toContain('type="application/json" data-docspress-search-data');
+    expect(php).toContain('type="application/json" data-autodocs-publish-search-data');
     expect(php).toContain('data-docs-search-trigger aria-label="<?php echo esc_attr( $label ); ?>"');
-    expect(runtime).toContain("document.querySelector('[data-docspress-search-data]')");
+    expect(runtime).toContain("document.querySelector('[data-autodocs-publish-search-data]')");
     expect(styles).not.toMatch(/^\.align(?:full|wide)\s*\{/m);
   });
 
@@ -1701,12 +1779,12 @@ describe("DocsPress block theme constraints", () => {
     const llms = await fs.readFile(path.join(root, "theme", "inc", "llms.php"), "utf8");
     const blocks = await fs.readFile(path.join(root, "theme", "inc", "blocks.php"), "utf8");
     const markdownSourceFunction = llms.slice(
-      llms.indexOf("function docspress_get_markdown_source_content"),
-      llms.indexOf("function docspress_get_llms_pages")
+      llms.indexOf("function autodocs_publish_get_markdown_source_content"),
+      llms.indexOf("function autodocs_publish_get_llms_pages")
     );
     const searchIndexFunction = blocks.slice(
-      blocks.indexOf("function docspress_search_index"),
-      blocks.indexOf("function docspress_render_command_search")
+      blocks.indexOf("function autodocs_publish_search_index"),
+      blocks.indexOf("function autodocs_publish_render_command_search")
     );
 
     expect(markdownSourceFunction).toContain("post_password_required( $post_id )");
@@ -1715,7 +1793,7 @@ describe("DocsPress block theme constraints", () => {
     );
     expect(searchIndexFunction).toContain("post_password_required( $page )");
     expect(searchIndexFunction.indexOf("post_password_required( $page )")).toBeLessThan(
-      searchIndexFunction.indexOf("docspress_searchable_text( $page->post_content )")
+      searchIndexFunction.indexOf("autodocs_publish_searchable_text( $page->post_content )")
     );
   });
 
@@ -1730,9 +1808,9 @@ describe("DocsPress block theme constraints", () => {
       "utf8"
     );
 
-    expect(functions).toContain("function docspress_site_editor_preview_context()");
+    expect(functions).toContain("function autodocs_publish_site_editor_preview_context()");
     expect(functions).toContain(
-      "function docspress_redirect_site_editor_design_preview()"
+      "function autodocs_publish_redirect_site_editor_design_preview()"
     );
     expect(functions).toContain("get_stylesheet() . '//page'");
     expect(functions).toContain("get_stylesheet() . '//archive'");
@@ -1740,10 +1818,10 @@ describe("DocsPress block theme constraints", () => {
     expect(functions).not.toContain("'postType' => 'page',");
     expect(functions).toContain("'enqueue_block_editor_assets'");
     expect(functions).toContain(
-      "add_action( 'admin_init', 'docspress_redirect_site_editor_design_preview' )"
+      "add_action( 'admin_init', 'autodocs_publish_redirect_site_editor_design_preview' )"
     );
     expect(functions).toContain("wp_safe_redirect( $url )");
-    expect(functions).toContain("'docspress-site-editor-preview'");
+    expect(functions).toContain("'autodocs-publish-site-editor-preview'");
     expect(functions).toContain("array( 'wp-compose', 'wp-element', 'wp-hooks' )");
     expect(preview).toContain("const previewRoute = url.searchParams.get( 'p' )");
     expect(preview).toContain("previewRoute === null || previewRoute === '/'");
@@ -1755,12 +1833,12 @@ describe("DocsPress block theme constraints", () => {
     expect(preview).toContain("url.searchParams.set( 'postId', String( context.postId ) )");
     expect(preview).toContain("window.location.replace( url.toString() )");
     expect(preview).toContain("'editor.BlockEdit'");
-    expect(preview).toContain("'docspress/archive-query-preview'");
+    expect(preview).toContain("'autodocs-publish/archive-query-preview'");
     expect(preview).toContain("props.name !== 'core/query'");
     expect(preview).toContain("inherit: false");
     expect(docsTemplate).toContain('"slug":"header"');
-    expect(docsTemplate).toContain("wp:docspress/docs-navigation");
-    expect(docsTemplate).toContain("wp:docspress/table-of-contents");
+    expect(docsTemplate).toContain("wp:autodocs-publish/docs-navigation");
+    expect(docsTemplate).toContain("wp:autodocs-publish/table-of-contents");
     expect(docsTemplate).toContain('"slug":"footer"');
   });
 

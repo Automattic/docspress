@@ -3,7 +3,7 @@ title: Result
 sidebar_position: 120
 ---
 
-Use `docspress/result` to summarize the outcome of a procedure, validation, deployment, or diagnostic check. It combines semantic status, a heading, formatted explanation, and compact metadata.
+Use `autodocs-publish/result` to summarize the outcome of a procedure, validation, deployment, or diagnostic check. It combines semantic status, a heading, formatted explanation, and compact metadata.
 
 ## When to use it
 
@@ -11,13 +11,13 @@ Choose Result after readers perform an action and need to recognize the expected
 
 ## Attributes
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Result attributes",
-    "description": "Outcome content and status accepted by \u003ccode\u003edocspress/result\u003c/code\u003e.",
+    "description": "Outcome content and status accepted by \u003ccode\u003eautodocs-publish/result\u003c/code\u003e.",
     "fields": [
       {
         "name": "status",
@@ -63,7 +63,7 @@ Choose Result after readers perform an action and need to recognize the expected
 -->
 #### Result attributes
 
-Outcome content and status accepted by <code>docspress/result</code>.
+Outcome content and status accepted by <code>autodocs-publish/result</code>.
 
 | Field | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -71,7 +71,7 @@ Outcome content and status accepted by <code>docspress/result</code>.
 | `title` | string | No | Deployment completed | <p>Formatted result heading.</p> |
 | `content` | string | No | All documentation pages are up to date. | <p>Formatted explanation of the outcome and next step.</p> |
 | `meta` | string | No | 12 pages · 1.8s | <p>Compact plain-text evidence such as a command, count, or duration.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Status guide
 
@@ -86,10 +86,10 @@ Outcome content and status accepted by <code>docspress/result</code>.
 
 ### Completed package verification
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/result",
+  "name": "autodocs-publish/result",
   "attrs": {
     "status": "success",
     "title": "Package verified",
@@ -105,14 +105,14 @@ Outcome content and status accepted by <code>docspress/result</code>.
 > Lint, tests, and the Action bundle completed.
 >
 > _npm run package_
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Partial synchronization
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/result",
+  "name": "autodocs-publish/result",
   "attrs": {
     "status": "warning",
     "title": "Three Pages need editorial review",
@@ -128,14 +128,14 @@ Outcome content and status accepted by <code>docspress/result</code>.
 > The safe changes were published. Three Pages remain drafts because their source changed in WordPress and GitHub.
 >
 > _39 published · 3 conflicts_
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### No-op deployment
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/result",
+  "name": "autodocs-publish/result",
   "attrs": {
     "status": "neutral",
     "title": "Everything is already current",
@@ -151,7 +151,7 @@ Outcome content and status accepted by <code>docspress/result</code>.
 > The desired Markdown tree matches every managed WordPress Page, so no writes were necessary.
 >
 > _42 unchanged · 0 conflicts_
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Published behavior and accessibility
 

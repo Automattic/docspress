@@ -13,7 +13,7 @@ const pages = await collectDesiredPages({
   cwd: exampleDir,
   docsDir: "docs",
   rootSlug: "docs",
-  rootTitle: "DocsPress on stock WordPress",
+  rootTitle: "Autodocs Publish on stock WordPress",
   createH1: false,
   rewriteLinks: true,
   editLink: false,
@@ -78,12 +78,12 @@ foreach ( $generated['pages'] as $page ) {
 \tif ( 'docs' === $page['key'] ) {
 \t\trequire_once ABSPATH . 'wp-admin/includes/plugin.php';
 \t\t$active_theme = wp_get_theme();
-\t\t$theme_state = wp_get_theme( 'docspress' )->exists() ? 'Installed' : 'Not installed';
-\t\t$blocks_state = file_exists( WP_PLUGIN_DIR . '/docspress-blocks/docspress-blocks.php' ) ? 'Installed' : 'Not installed';
+\t\t$theme_state = wp_get_theme( 'autodocs-publish' )->exists() ? 'Installed' : 'Not installed';
+\t\t$blocks_state = file_exists( WP_PLUGIN_DIR . '/autodocs-publish-blocks/autodocs-publish-blocks.php' ) ? 'Installed' : 'Not installed';
 \t\t$proof = '<figure class="wp-block-table"><table><thead><tr><th>Runtime component</th><th>State</th></tr></thead><tbody>';
 \t\t$proof .= '<tr><td>Active theme</td><td>' . esc_html( $active_theme->get( 'Name' ) ) . '</td></tr>';
-\t\t$proof .= '<tr><td>DocsPress theme</td><td>' . esc_html( $theme_state ) . '</td></tr>';
-\t\t$proof .= '<tr><td>DocsPress Blocks plugin</td><td>' . esc_html( $blocks_state ) . '</td></tr>';
+\t\t$proof .= '<tr><td>Autodocs Publish theme</td><td>' . esc_html( $theme_state ) . '</td></tr>';
+\t\t$proof .= '<tr><td>Autodocs Publish Blocks plugin</td><td>' . esc_html( $blocks_state ) . '</td></tr>';
 \t\t$proof .= '<tr><td>Published content</td><td>Native core Gutenberg blocks</td></tr>';
 \t\t$proof .= '</tbody></table></figure>';
 \t\t$content .= "\\n\\n" . get_comment_delimited_block_content( 'core/heading', array( 'level' => 2 ), '<h2 class="wp-block-heading">Runtime proof</h2>' );
@@ -117,7 +117,7 @@ if ( ! $docs_id ) {
 \twp_die( 'The generated documentation does not contain the docs root Page.' );
 }
 
-update_option( 'blogname', 'DocsPress on stock WordPress' );
+update_option( 'blogname', 'Autodocs Publish on stock WordPress' );
 update_option( 'show_on_front', 'page' );
 update_option( 'page_on_front', $docs_id );
 update_option( 'permalink_structure', '/%postname%/' );
@@ -127,9 +127,9 @@ flush_rewrite_rules();
 const blueprint = {
   $schema: "https://playground.wordpress.net/blueprint-schema.json",
   meta: {
-    title: "DocsPress on stock WordPress",
+    title: "Autodocs Publish on stock WordPress",
     author: "Automattic",
-    description: "Markdown published as native Gutenberg Pages with no DocsPress theme or Blocks plugin installed."
+    description: "Markdown published as native Gutenberg Pages with no Autodocs Publish theme or Blocks plugin installed."
   },
   preferredVersions: {
     php: "8.3",

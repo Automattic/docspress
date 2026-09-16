@@ -1,4 +1,4 @@
-name: Sync DocsPress documentation
+name: Sync Autodocs Publish documentation
 
 on:
   push:
@@ -19,7 +19,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: docspress-sync
+  group: autodocs-publish-sync
   cancel-in-progress: false
 
 jobs:
@@ -30,7 +30,7 @@ jobs:
       github.event_name != 'push' ||
       !contains(
         github.event.head_commit.message,
-        format('from {0}/docspress/wordpress-sync', github.repository_owner)
+        format('from {0}/autodocs-publish/wordpress-sync', github.repository_owner)
       )
     runs-on: ubuntu-latest
     steps:
@@ -44,8 +44,9 @@ jobs:
           wordpress-site: docs.press
           wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}
           docs-dir: docs
+          redirects-file: docs/redirects.json
           root-slug: docs
-          root-title: DocsPress documentation
+          root-title: Autodocs Publish documentation
           create-h1: false
           rewrite-links: true
           edit-link: false

@@ -2,12 +2,12 @@
 title: Kitchen Sink
 ---
 
-This Page is the acceptance surface for the DocsPress theme and all fifteen DocsPress Blocks. Switch Global Style variations and light/dark mode while checking native color, typography, spacing, border, dimensions, interactions, and content controls.
+This Page is the acceptance surface for the Autodocs Publish theme and all fifteen Autodocs Publish Blocks. Switch Global Style variations and light/dark mode while checking native color, typography, spacing, border, dimensions, interactions, and content controls.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "note",
     "title": "Playground acceptance page",
@@ -21,14 +21,14 @@ This Page is the acceptance surface for the DocsPress theme and all fifteen Docs
 > **Playground acceptance page**
 >
 > The local Playground appends its live component inventory to this source-backed Page after seeding it.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Audience Paths
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/audience-paths",
+  "name": "autodocs-publish/audience-paths",
   "attrs": {
     "compact": true,
     "eyebrow": "Compact · three columns",
@@ -54,10 +54,10 @@ This Page is the acceptance surface for the DocsPress theme and all fifteen Docs
         "newTab": false
       },
       {
-        "title": "I'm evaluating DocsPress",
+        "title": "I'm evaluating Autodocs Publish",
         "description": "Review the product benefits and open a working preview before changing a repository.",
-        "url": "/docs/why-docspress/",
-        "cta": "Explore why DocsPress",
+        "url": "/docs/why-autodocs-publish/",
+        "cta": "Explore why Autodocs Publish",
         "icon": "compass",
         "accent": "green",
         "newTab": false
@@ -88,17 +88,17 @@ Generate source-grounded documentation with AI before publishing.
 
 [Create docs with AI](/docs/create-docs-with-ai/)
 
-### I'm evaluating DocsPress
+### I'm evaluating Autodocs Publish
 
 Review the product benefits and open a working preview before changing a repository.
 
-[Explore why DocsPress](/docs/why-docspress/)
-<!-- /docspress:block -->
+[Explore why Autodocs Publish](/docs/why-autodocs-publish/)
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/audience-paths",
+  "name": "autodocs-publish/audience-paths",
   "attrs": {
     "compact": true,
     "eyebrow": "Compact · one column",
@@ -133,12 +133,12 @@ A focused path keeps its icon, copy, and action on one shared left edge.
 Connect Markdown that already lives beside the code, preview the Page hierarchy, and publish when it is ready.
 
 [Publish existing docs](/docs/publish-existing-docs/)
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/audience-paths",
+  "name": "autodocs-publish/audience-paths",
   "attrs": {
     "compact": false,
     "eyebrow": "Standard · two columns",
@@ -188,18 +188,18 @@ Connect a reviewed docs folder and synchronize it with WordPress Pages.
 Use source-grounded agent skills to create a reviewable documentation tree.
 
 [Generate documentation](/docs/create-docs-with-ai/)
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Colorful Code
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/colorful-code",
+  "name": "autodocs-publish/colorful-code",
   "attrs": {
     "language": "yaml",
     "filename": ".github/workflows/sync-docs.yml",
-    "code": "name: Sync docs\non:\n  push:\n    paths: [\"docs/**\"]\nsteps:\n  - uses: Automattic/docspress@COMMIT_SHA",
+    "code": "name: Sync docs\non:\n  push:\n    paths: [\"docs/**\"]\nsteps:\n  - uses: Automattic/autodocs-publish@COMMIT_SHA",
     "highlightedLines": "2-4,6",
     "showLineNumbers": true,
     "caption": "Filename, language, line numbers, highlighted ranges, caption, and copy."
@@ -214,14 +214,14 @@ on:
   push:
     paths: ["docs/**"]
 steps:
-  - uses: Automattic/docspress@COMMIT_SHA
+  - uses: Automattic/autodocs-publish@COMMIT_SHA
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/colorful-code",
+  "name": "autodocs-publish/colorful-code",
   "attrs": {
     "language": "plaintext",
     "filename": "Without line numbers",
@@ -238,12 +238,12 @@ steps:
 Markdown in.
 WordPress out.
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/colorful-code",
+  "name": "autodocs-publish/colorful-code",
   "attrs": {
     "language": "json",
     "filename": "page-response.diff",
@@ -274,63 +274,63 @@ WordPress out.
 +  "status": "publish"
 +  "modified": "2026-07-27T07:40:00Z"
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Code Tabs
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/code-tabs",
+  "name": "autodocs-publish/code-tabs",
   "attrs": {
     "tabs": [
       {
         "label": "npm",
         "language": "bash",
         "filename": "Terminal",
-        "code": "npm install docspress"
+        "code": "npm install autodocs-publish"
       },
       {
         "label": "pnpm",
         "language": "bash",
         "filename": "Terminal",
-        "code": "pnpm add docspress"
+        "code": "pnpm add autodocs-publish"
       },
       {
         "label": "Yarn",
         "language": "bash",
         "filename": "Terminal",
-        "code": "yarn add docspress"
+        "code": "yarn add autodocs-publish"
       },
       {
         "label": "Bun",
         "language": "bash",
         "filename": "Terminal",
-        "code": "bun add docspress"
+        "code": "bun add autodocs-publish"
       },
       {
         "label": "JavaScript",
         "language": "javascript",
         "filename": "example.js",
-        "code": "console.log('DocsPress');"
+        "code": "console.log('Autodocs Publish');"
       },
       {
         "label": "PHP",
         "language": "php",
         "filename": "example.php",
-        "code": "\u003c?php echo 'DocsPress';"
+        "code": "\u003c?php echo 'Autodocs Publish';"
       },
       {
         "label": "Python",
         "language": "python",
         "filename": "example.py",
-        "code": "print('DocsPress')"
+        "code": "print('Autodocs Publish')"
       },
       {
         "label": "JSON",
         "language": "json",
         "filename": "example.json",
-        "code": "{ \"name\": \"DocsPress\" }"
+        "code": "{ \"name\": \"Autodocs Publish\" }"
       }
     ],
     "showLineNumbers": false,
@@ -341,60 +341,60 @@ WordPress out.
 #### npm — Terminal
 
 ```bash
-npm install docspress
+npm install autodocs-publish
 ```
 
 #### pnpm — Terminal
 
 ```bash
-pnpm add docspress
+pnpm add autodocs-publish
 ```
 
 #### Yarn — Terminal
 
 ```bash
-yarn add docspress
+yarn add autodocs-publish
 ```
 
 #### Bun — Terminal
 
 ```bash
-bun add docspress
+bun add autodocs-publish
 ```
 
 #### JavaScript — example.js
 
 ```javascript
-console.log('DocsPress');
+console.log('Autodocs Publish');
 ```
 
 #### PHP — example.php
 
 ```php
-<?php echo 'DocsPress';
+<?php echo 'Autodocs Publish';
 ```
 
 #### Python — example.py
 
 ```python
-print('DocsPress')
+print('Autodocs Publish')
 ```
 
 #### JSON — example.json
 
 ```json
-{ "name": "DocsPress" }
+{ "name": "Autodocs Publish" }
 ```
 
 _The maximum eight compact tabs with independent labels, languages, filenames, and code._
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Callouts
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "note",
     "title": "Note",
@@ -408,12 +408,12 @@ _The maximum eight compact tabs with independent labels, languages, filenames, a
 > **Note**
 >
 > Neutral context that belongs beside the current step.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "tip",
     "title": "Tip",
@@ -427,12 +427,12 @@ _The maximum eight compact tabs with independent labels, languages, filenames, a
 > **Tip**
 >
 > A useful shortcut or recommended practice.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "warning",
     "title": "Warning",
@@ -446,12 +446,12 @@ _The maximum eight compact tabs with independent labels, languages, filenames, a
 > **Warning**
 >
 > A condition readers should check before continuing.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "danger",
     "title": "Danger",
@@ -465,12 +465,12 @@ _The maximum eight compact tabs with independent labels, languages, filenames, a
 > **Danger**
 >
 > A destructive or security-sensitive action.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "success",
     "title": "Success",
@@ -484,12 +484,12 @@ _The maximum eight compact tabs with independent labels, languages, filenames, a
 > **Success**
 >
 > A confirmed positive state or completed milestone.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "note",
     "title": "Collapsible and open",
@@ -504,12 +504,12 @@ _The maximum eight compact tabs with independent labels, languages, filenames, a
 > **Collapsible and open**
 >
 > Readers can hide this longer explanation.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "tip",
     "title": "Collapsible and closed",
@@ -524,14 +524,14 @@ _The maximum eight compact tabs with independent labels, languages, filenames, a
 > **Collapsible and closed**
 >
 > This content begins hidden and remains keyboard accessible.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Flow
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/flow",
+  "name": "autodocs-publish/flow",
   "attrs": {
     "start": 1,
     "steps": [
@@ -562,18 +562,18 @@ _The maximum eight compact tabs with independent labels, languages, filenames, a
 3. **Install dependencies**
 
    Let the package manager finish, then verify the generated site.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Diagram
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/diagram",
+  "name": "autodocs-publish/diagram",
   "attrs": {
     "title": "Documentation publishing flow",
     "type": "flow",
-    "source": "Markdown -\u003e DocsPress: collect\nDocsPress -\u003e WordPress: publish\nWordPress -\u003e Reader: serve",
+    "source": "Markdown -\u003e Autodocs Publish: collect\nAutodocs Publish -\u003e WordPress: publish\nWordPress -\u003e Reader: serve",
     "caption": "A flow diagram rendered as accessible, theme-native SVG without a third-party runtime."
   }
 }
@@ -583,7 +583,7 @@ _The maximum eight compact tabs with independent labels, languages, filenames, a
 ```mermaid
 flowchart LR
   n1["Markdown"]
-  n2["DocsPress"]
+  n2["Autodocs Publish"]
   n3["WordPress"]
   n4["Reader"]
   n1 -->|"collect"| n2
@@ -592,12 +592,12 @@ flowchart LR
 ```
 
 _A flow diagram rendered as accessible, theme-native SVG without a third-party runtime._
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/diagram",
+  "name": "autodocs-publish/diagram",
   "attrs": {
     "title": "Runnable request lifecycle",
     "type": "sequence",
@@ -620,14 +620,14 @@ sequenceDiagram
 ```
 
 _Sequence mode uses the same compact, editable relationship syntax._
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## API Request / Response
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/api-request",
+  "name": "autodocs-publish/api-request",
   "attrs": {
     "method": "GET",
     "endpoint": "/wp-json/",
@@ -635,7 +635,7 @@ _Sequence mode uses the same compact, editable relationship syntax._
     "requestBody": "",
     "requestBodyFormat": "json",
     "responseStatus": "200 OK",
-    "responseBody": "{\n  \"name\": \"DocsPress\",\n  \"namespaces\": [\"wp/v2\"]\n}",
+    "responseBody": "{\n  \"name\": \"Autodocs Publish\",\n  \"namespaces\": [\"wp/v2\"]\n}",
     "responseBodyFormat": "json",
     "runnable": true,
     "editable": true,
@@ -664,18 +664,18 @@ Accept: application/json
 
 ```json
 {
-  "name": "DocsPress",
+  "name": "Autodocs Publish",
   "namespaces": ["wp/v2"]
 }
 ```
 
 </details>
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/api-request",
+  "name": "autodocs-publish/api-request",
   "attrs": {
     "method": "POST",
     "endpoint": "/wp-json/wp/v2/pages",
@@ -722,12 +722,12 @@ Authorization: Bearer $WP_ACCESS_TOKEN
 ```
 
 </details>
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/api-request",
+  "name": "autodocs-publish/api-request",
   "attrs": {
     "method": "PUT",
     "endpoint": "/wp-json/wp/v2/pages/43",
@@ -767,12 +767,12 @@ Updated page 43: REST API Reference
 ```
 
 </details>
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/api-request",
+  "name": "autodocs-publish/api-request",
   "attrs": {
     "method": "PATCH",
     "endpoint": "/wp-json/wp/v2/pages/43",
@@ -812,12 +812,12 @@ Content-Type: application/json
 ```
 
 </details>
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/api-request",
+  "name": "autodocs-publish/api-request",
   "attrs": {
     "method": "DELETE",
     "endpoint": "/wp-json/wp/v2/pages/43?force=true",
@@ -845,14 +845,14 @@ Authorization: Bearer $WP_ACCESS_TOKEN
 <summary><strong>Response:</strong> <code>204 No Content</code></summary>
 
 </details>
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Fields / Schema
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Publish options",
     "description": "Typed request fields, defaults, constraints, and lifecycle states remain scannable as the reference grows.",
@@ -909,14 +909,14 @@ Typed request fields, defaults, constraints, and lifecycle states remain scannab
 | `status` | enum | No | draft | Publication status for synchronized Pages. |
 | `dryRun` | boolean | No | false | Preview reconciliation without writing changes. |
 | `legacyMode` | boolean | No |  | Use the pre-block-theme publishing pipeline. |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Terminal Session
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/terminal-session",
+  "name": "autodocs-publish/terminal-session",
   "attrs": {
     "title": "Run package verification",
     "shell": "bash",
@@ -939,17 +939,17 @@ Lint passed
 Tests passed
 Action bundle rebuilt
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/terminal-session",
+  "name": "autodocs-publish/terminal-session",
   "attrs": {
     "title": "Inspect the site",
     "shell": "wp-cli",
     "prompt": "\u003e",
-    "command": "wp option get docspress_playground_runtime \u002d\u002dformat=json",
+    "command": "wp option get autodocs_publish_playground_runtime \u002d\u002dformat=json",
     "output": ""
   }
 }
@@ -957,16 +957,16 @@ Action bundle rebuilt
 #### Inspect the site
 
 ```wp-cli
-> wp option get docspress_playground_runtime --format=json
+> wp option get autodocs_publish_playground_runtime --format=json
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Live Code Playground
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/code-playground",
+  "name": "autodocs-publish/code-playground",
   "attrs": {
     "title": "Interactive publish button",
     "html": "\u003cbutton class=\"demo-button\"\u003ePublish docs\u003c/button\u003e\n\u003cp class=\"status\" aria-live=\"polite\"\u003eReady\u003c/p\u003e",
@@ -1011,14 +1011,14 @@ button.addEventListener( 'click', () => {
   console.log( 'Documentation published' );
 } );
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Result
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/result",
+  "name": "autodocs-publish/result",
   "attrs": {
     "status": "success",
     "title": "All checks passed",
@@ -1034,12 +1034,12 @@ button.addEventListener( 'click', () => {
 > The generated Pages match the repository tree.
 >
 > _20 pages_
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/result",
+  "name": "autodocs-publish/result",
   "attrs": {
     "status": "neutral",
     "title": "No changes required",
@@ -1055,12 +1055,12 @@ button.addEventListener( 'click', () => {
 > WordPress already matches the current commit.
 >
 > _0 updates_
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/result",
+  "name": "autodocs-publish/result",
   "attrs": {
     "status": "warning",
     "title": "Drafts need review",
@@ -1076,12 +1076,12 @@ button.addEventListener( 'click', () => {
 > Three new Pages are waiting for editorial approval.
 >
 > _3 drafts_
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/result",
+  "name": "autodocs-publish/result",
   "attrs": {
     "status": "error",
     "title": "Synchronization failed",
@@ -1097,24 +1097,24 @@ button.addEventListener( 'click', () => {
 > The access token cannot create Pages on this site.
 >
 > _HTTP 403_
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## File Tree
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/file-tree",
+  "name": "autodocs-publish/file-tree",
   "attrs": {
-    "root": "Automattic/docspress/",
-    "tree": ".claude/\n  skills/\ndocs/\n  index.md\n  publish-existing-docs/\n  create-docs-with-ai/\n  reference/\n    kitchen-sink.md\nplugins/\n  docspress-blocks/\ntheme/\npackage.json",
+    "root": "Automattic/autodocs-publish/",
+    "tree": ".claude/\n  skills/\ndocs/\n  index.md\n  publish-existing-docs/\n  create-docs-with-ai/\n  reference/\n    kitchen-sink.md\nplugins/\n  autodocs-publish-blocks/\ntheme/\npackage.json",
     "caption": "Nested folders, files, a custom root label, and caption.",
     "collapsible": true,
     "open": true
   }
 }
 -->
-#### Automattic/docspress/
+#### Automattic/autodocs-publish/
 
 ```text
 .claude/
@@ -1126,18 +1126,18 @@ docs/
   reference/
     kitchen-sink.md
 plugins/
-  docspress-blocks/
+  autodocs-publish-blocks/
 theme/
 package.json
 ```
 
 _Nested folders, files, a custom root label, and caption._
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/file-tree",
+  "name": "autodocs-publish/file-tree",
   "attrs": {
     "root": "docs/",
     "tree": "index.md\nguides/\n  continuous-sync.md\nreference/\n  gutenberg-blocks/\n    index.md\n    api-request.md\n    fields.md\ntroubleshooting.md",
@@ -1162,35 +1162,35 @@ troubleshooting.md
 ```
 
 _A compact tree that begins collapsed._
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Prompt
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/prompt",
+  "name": "autodocs-publish/prompt",
   "attrs": {
-    "prompt": "Explain DocsPress to a new contributor in three short paragraphs.",
+    "prompt": "Explain Autodocs Publish to a new contributor in three short paragraphs.",
     "model": "GPT-5",
     "mode": "chat",
     "thinking": false,
-    "context": "@documentation, https://github.com/Automattic/docspress",
+    "context": "@documentation, https://github.com/Automattic/autodocs-publish",
     "caption": "Contributor explainer"
   }
 }
 -->
 #### Contributor explainer
 
-> Explain DocsPress to a new contributor in three short paragraphs.
+> Explain Autodocs Publish to a new contributor in three short paragraphs.
 
-_Model: GPT-5 · Mode: chat · Thinking: off · Context: @documentation, https://github.com/Automattic/docspress_
-<!-- /docspress:block -->
+_Model: GPT-5 · Mode: chat · Thinking: off · Context: @documentation, https://github.com/Automattic/autodocs_publish_
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/prompt",
+  "name": "autodocs-publish/prompt",
   "attrs": {
     "prompt": "Review the synchronization function for race conditions. Return risks first, then the smallest safe patch.",
     "model": "Claude Sonnet",
@@ -1206,12 +1206,12 @@ _Model: GPT-5 · Mode: chat · Thinking: off · Context: @documentation, https:/
 > Review the synchronization function for race conditions. Return risks first, then the smallest safe patch.
 
 _Model: Claude Sonnet · Mode: code · Thinking: on · Context: @repository, src/sync.js, test/sync.test.js, #trace_
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/prompt",
+  "name": "autodocs-publish/prompt",
   "attrs": {
     "prompt": "Which Action inputs affect the generated WordPress Page hierarchy?",
     "model": "Gemini Pro",
@@ -1227,35 +1227,35 @@ _Model: Claude Sonnet · Mode: code · Thinking: on · Context: @repository, src
 > Which Action inputs affect the generated WordPress Page hierarchy?
 
 _Model: Gemini Pro · Mode: ask · Thinking: off · Context: action.yml, src/docs.js_
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/prompt",
+  "name": "autodocs-publish/prompt",
   "attrs": {
-    "prompt": "Use $docspress-install to create a phased migration plan from a static documentation site to DocsPress.",
+    "prompt": "Use $autodocs-publish-install to create a phased migration plan from a static documentation site to Autodocs Publish.",
     "model": "Planning agent",
     "mode": "plan",
     "thinking": true,
-    "context": "$docspress-install, docs/, #architecture, https://example.com/current-docs",
+    "context": "$autodocs-publish-install, docs/, #architecture, https://example.com/current-docs",
     "caption": "Migration plan with a skill reference"
   }
 }
 -->
 #### Migration plan with a skill reference
 
-> Use $docspress-install to create a phased migration plan from a static documentation site to DocsPress.
+> Use $autodocs-publish-install to create a phased migration plan from a static documentation site to Autodocs Publish.
 
-_Model: Planning agent · Mode: plan · Thinking: on · Context: $docspress-install, docs/, #architecture, https://example.com/current-docs_
-<!-- /docspress:block -->
+_Model: Planning agent · Mode: plan · Thinking: on · Context: $autodocs-publish-install, docs/, #architecture, https://example.com/current-docs_
+<!-- /autodocs-publish:block -->
 
 ## Interactive Troubleshooter
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/troubleshooter",
+  "name": "autodocs-publish/troubleshooter",
   "attrs": {
     "title": "Choose the right publishing workflow",
     "intro": "Answer two quick questions to reach a source-grounded next step.",
@@ -1283,7 +1283,7 @@ _Model: Planning agent · Mode: plan · Thinking: on · Context: $docspress-inst
         "id": "install",
         "status": "warning",
         "title": "Connect the publishing target",
-        "content": "\u003cp\u003eRun the DocsPress installer, add the WordPress access token, and verify the repository connection before publishing.\u003c/p\u003e"
+        "content": "\u003cp\u003eRun the Autodocs Publish installer, add the WordPress access token, and verify the repository connection before publishing.\u003c/p\u003e"
       },
       {
         "id": "sync",
@@ -1311,7 +1311,7 @@ Answer two quick questions to reach a source-grounded next step.
 
 ### Connect the publishing target
 
-Run the DocsPress installer, add the WordPress access token, and verify the repository connection before publishing.
+Run the Autodocs Publish installer, add the WordPress access token, and verify the repository connection before publishing.
 
 ### Publish the documentation
 
@@ -1320,16 +1320,16 @@ Run the sync command, review the proposed changes, and verify the rendered docum
 ### Generate a documentation starter
 
 Generate a small documentation tree from the source, then review every example against the implementation before publishing.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/result",
+  "name": "autodocs-publish/result",
   "attrs": {
     "status": "success",
     "title": "Kitchen Sink complete",
-    "content": "\u003cp\u003eEvery DocsPress documentation block, semantic variant, and meaningful option is represented on this Page. Hero and Audience Paths are the design-focused landing blocks.\u003c/p\u003e",
+    "content": "\u003cp\u003eEvery Autodocs Publish documentation block, semantic variant, and meaningful option is represented on this Page. Hero and Audience Paths are the design-focused landing blocks.\u003c/p\u003e",
     "meta": "13 documentation blocks · 2 landing blocks"
   }
 }
@@ -1338,10 +1338,10 @@ Generate a small documentation tree from the source, then review every example a
 >
 > **Kitchen Sink complete**
 >
-> Every DocsPress documentation block, semantic variant, and meaningful option is represented on this Page. Hero and Audience Paths are the design-focused landing blocks.
+> Every Autodocs Publish documentation block, semantic variant, and meaningful option is represented on this Page. Hero and Audience Paths are the design-focused landing blocks.
 >
 > _13 documentation blocks · 2 landing blocks_
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Playground runtime
 
@@ -1350,7 +1350,7 @@ This inventory is generated from the running WordPress installation.
 | Component | Type | Version | Status |
 | --- | --- | --- | --- |
 | WordPress | Core | 7.0.2 | Running |
-| DocsPress | Theme | 0.10.7 | Active |
+| Autodocs Publish | Theme | 0.11.0 | Active |
 | Akismet Anti-spam: Spam Protection | Plugin | 5.7 | Active |
-| DocsPress Blocks | Plugin | 0.10.7 | Active |
+| Autodocs Publish Blocks | Plugin | 0.11.0 | Active |
 | Jetpack | Plugin | 16.1-a.3 | Active |

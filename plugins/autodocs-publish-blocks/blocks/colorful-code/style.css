@@ -1,0 +1,4 @@
+/* Colorful Code owns its figure-level layout; the code surface is shared. */
+.wp-block-autodocs-publish-colorful-code > .autodocs-publish-code__surface {
+	width: 100%;
+}

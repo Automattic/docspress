@@ -6,23 +6,23 @@ import { blocksToMarkdown, mergeWordPressIntoSource, upgradeLegacyBlockSyntax } 
 import { prependSentinel } from "../src/sentinel.js";
 
 const customPreviewCases = [
-  ["docspress/api-request", { method: "POST", endpoint: "/v1/docs", responseStatus: "201 Created" }, "<summary><strong>Request:</strong> <code>POST /v1/docs</code></summary>"],
-  ["docspress/audience-paths", { eyebrow: "Start", title: "Choose", description: "Pick a path.", paths: [{ title: "Existing docs", description: "Use Markdown.", url: "/docs/", cta: "Open docs" }] }, "## Choose"],
-  ["docspress/callout", { tone: "warning", title: "Careful", content: "<p>Keep <strong>Markdown</strong> readable.</p>" }, "> [!WARNING]"],
-  ["docspress/code-tabs", { tabs: [{ label: "JavaScript", language: "js", filename: "index.js", code: "const docs = true;" }] }, "#### JavaScript — index.js"],
-  ["docspress/code-playground", { title: "Demo", html: "<button>Run</button>", css: "button { color: blue; }", javascript: "run();" }, "**HTML**"],
-  ["docspress/colorful-code", { language: "js", filename: "index.js", code: "const docs = true;", caption: "Example" }, "```js"],
-  ["docspress/diagram", { title: "Flow", type: "flow", source: "A -> B", caption: "Pipeline" }, "```mermaid"],
-  ["docspress/fields", { title: "Options", description: "Configuration.", fields: [{ name: "site", type: "string", required: true, defaultValue: "", description: "Site ID." }] }, "| Field | Type | Required | Default | Description |"],
-  ["docspress/file-tree", { root: "docs/", tree: "index.md\napi.md", caption: "Documentation tree." }, "#### docs/"],
-  ["docspress/flow", { start: 3, steps: [{ title: "Verify", content: "<p>Run the tests.</p>" }] }, "3. **Verify**"],
-  ["docspress/hero", { eyebrow: "Docs", title: "Ship better docs", description: "One source.", primaryLabel: "Read", primaryUrl: "/docs/" }, "## Ship better docs"],
-  ["docspress/prompt", { prompt: "Review the docs.", model: "GPT-5", mode: "code", thinking: true, context: "docs/", caption: "Review prompt" }, "> Review the docs."],
-  ["docspress/result", { status: "success", title: "Checks passed", content: "<p>Everything is current.</p>", meta: "42 tests" }, "> [!TIP]"],
-  ["docspress/terminal-session", { title: "Verify", shell: "bash", prompt: "$", command: "npm test", output: "42 passed" }, "$ npm test"],
-  ["docspress/troubleshooter", { title: "Choose a fix", intro: "Answer this.", questions: [{ id: "docs", question: "Do docs exist?", yesLabel: "Yes", noLabel: "No" }], outcomes: [] }, "- **Do docs exist?** — Yes / No"],
-  ["docspress/version-notice", { message: "You are viewing {current}.", latestLinkLabel: "Latest", showIcon: true, dismissible: false }, "> [!WARNING]"],
-  ["docspress/version-switcher", { label: "API version", showLabel: true, presentation: "links" }, "**API version:** _WordPress version switcher_"]
+  ["autodocs-publish/api-request", { method: "POST", endpoint: "/v1/docs", responseStatus: "201 Created" }, "<summary><strong>Request:</strong> <code>POST /v1/docs</code></summary>"],
+  ["autodocs-publish/audience-paths", { eyebrow: "Start", title: "Choose", description: "Pick a path.", paths: [{ title: "Existing docs", description: "Use Markdown.", url: "/docs/", cta: "Open docs" }] }, "## Choose"],
+  ["autodocs-publish/callout", { tone: "warning", title: "Careful", content: "<p>Keep <strong>Markdown</strong> readable.</p>" }, "> [!WARNING]"],
+  ["autodocs-publish/code-tabs", { tabs: [{ label: "JavaScript", language: "js", filename: "index.js", code: "const docs = true;" }] }, "#### JavaScript — index.js"],
+  ["autodocs-publish/code-playground", { title: "Demo", html: "<button>Run</button>", css: "button { color: blue; }", javascript: "run();" }, "**HTML**"],
+  ["autodocs-publish/colorful-code", { language: "js", filename: "index.js", code: "const docs = true;", caption: "Example" }, "```js"],
+  ["autodocs-publish/diagram", { title: "Flow", type: "flow", source: "A -> B", caption: "Pipeline" }, "```mermaid"],
+  ["autodocs-publish/fields", { title: "Options", description: "Configuration.", fields: [{ name: "site", type: "string", required: true, defaultValue: "", description: "Site ID." }] }, "| Field | Type | Required | Default | Description |"],
+  ["autodocs-publish/file-tree", { root: "docs/", tree: "index.md\napi.md", caption: "Documentation tree." }, "#### docs/"],
+  ["autodocs-publish/flow", { start: 3, steps: [{ title: "Verify", content: "<p>Run the tests.</p>" }] }, "3. **Verify**"],
+  ["autodocs-publish/hero", { eyebrow: "Docs", title: "Ship better docs", description: "One source.", primaryLabel: "Read", primaryUrl: "/docs/" }, "## Ship better docs"],
+  ["autodocs-publish/prompt", { prompt: "Review the docs.", model: "GPT-5", mode: "code", thinking: true, context: "docs/", caption: "Review prompt" }, "> Review the docs."],
+  ["autodocs-publish/result", { status: "success", title: "Checks passed", content: "<p>Everything is current.</p>", meta: "42 tests" }, "> [!TIP]"],
+  ["autodocs-publish/terminal-session", { title: "Verify", shell: "bash", prompt: "$", command: "npm test", output: "42 passed" }, "$ npm test"],
+  ["autodocs-publish/troubleshooter", { title: "Choose a fix", intro: "Answer this.", questions: [{ id: "docs", question: "Do docs exist?", yesLabel: "Yes", noLabel: "No" }], outcomes: [] }, "- **Do docs exist?** — Yes / No"],
+  ["autodocs-publish/version-notice", { message: "You are viewing {current}.", latestLinkLabel: "Latest", showIcon: true, dismissible: false }, "> [!WARNING]"],
+  ["autodocs-publish/version-switcher", { label: "API version", showLabel: true, presentation: "links" }, "**API version:** _WordPress version switcher_"]
 ];
 
 const baseCoreBlockNames = [
@@ -151,7 +151,38 @@ function pageFromBody(desired, body) {
   };
 }
 
-describe("readable DocsPress Markdown blocks", () => {
+describe("readable Autodocs Publish Markdown blocks", () => {
+  it("reads legacy DocsPress envelopes and normalizes their block names", () => {
+    const legacy = `<!-- docspress:block
+{"version":1,"name":"docspress/callout","attrs":{"tone":"warning","title":"Legacy"}}
+-->
+> Legacy preview.
+<!-- /docspress:block -->`;
+    const converted = markdownToBlocks(legacy, { fallbackTitle: "Docs" }).blocks;
+    const block = firstNamedBlock(converted);
+
+    expect(block?.blockName).toBe("autodocs-publish/callout");
+    expect(block?.attrs).toEqual({ tone: "warning", title: "Legacy" });
+    expect(converted).not.toContain("docspress");
+  });
+
+  it("normalizes legacy block names inside lossless serialized payloads", () => {
+    const config = JSON.stringify({
+      version: 1,
+      name: "docspress/callout",
+      serialized: '<!-- wp:docspress/callout {"tone":"tip"} /-->'
+    }, null, 2).replace(/--/g, "\\u002d\\u002d");
+    const legacy = `<!-- docspress:block
+${config}
+-->
+> Legacy preview.
+<!-- /docspress:block -->`;
+    const converted = markdownToBlocks(legacy, { fallbackTitle: "Docs" }).blocks;
+
+    expect(converted).toContain('<!-- wp:autodocs-publish/callout {"tone":"tip"} /-->');
+    expect(converted).not.toContain("docspress");
+  });
+
   it.each(customPreviewCases)("renders %s as semantic Markdown and round-trips its attributes", (name, attrs, preview) => {
     const raw = rawCustomBlock(name, attrs);
     const markdown = blocksToMarkdown(raw);
@@ -165,7 +196,7 @@ describe("readable DocsPress Markdown blocks", () => {
     expect(roundTripped?.attrs).toEqual(attrs);
   });
 
-  it("covers every registered DocsPress block with defaults and a readable preview", () => {
+  it("covers every registered Autodocs Publish block with defaults and a readable preview", () => {
     expect(Object.keys(CUSTOM_BLOCK_DEFAULTS).sort()).toEqual(
       customPreviewCases.map(([name]) => name).sort()
     );
@@ -197,7 +228,7 @@ describe("readable DocsPress Markdown blocks", () => {
       showIcons: false,
       showLinks: false
     };
-    const markdown = blocksToMarkdown(rawCustomBlock("docspress/audience-paths", attrs));
+    const markdown = blocksToMarkdown(rawCustomBlock("autodocs-publish/audience-paths", attrs));
     const roundTripped = firstNamedBlock(markdownToBlocks(markdown, { fallbackTitle: "Docs" }).blocks);
 
     expect(markdown).toContain('"showIcons": false');
@@ -214,7 +245,7 @@ describe("readable DocsPress Markdown blocks", () => {
       collapsible: true,
       open: false
     };
-    const markdown = blocksToMarkdown(rawCustomBlock("docspress/callout", attrs));
+    const markdown = blocksToMarkdown(rawCustomBlock("autodocs-publish/callout", attrs));
 
     expect(markdown).toContain("> [!WARNING]");
     expect(markdown).toContain("> **Do not skip review**");
@@ -240,7 +271,7 @@ describe("readable DocsPress Markdown blocks", () => {
       allowedOrigins: "https://example.com",
       timeout: 30000
     };
-    const markdown = blocksToMarkdown(rawCustomBlock("docspress/api-request", attrs));
+    const markdown = blocksToMarkdown(rawCustomBlock("autodocs-publish/api-request", attrs));
 
     expect(markdown.match(/<details>/g)).toHaveLength(2);
     expect(markdown.match(/<\/details>/g)).toHaveLength(2);
@@ -252,7 +283,7 @@ describe("readable DocsPress Markdown blocks", () => {
     expect(markdown).not.toContain("#### POST");
 
     const roundTripped = firstNamedBlock(markdownToBlocks(markdown, { fallbackTitle: "Docs" }).blocks);
-    expect(roundTripped?.blockName).toBe("docspress/api-request");
+    expect(roundTripped?.blockName).toBe("autodocs-publish/api-request");
     expect(roundTripped?.attrs).toEqual(attrs);
   });
 
@@ -265,7 +296,7 @@ describe("readable DocsPress Markdown blocks", () => {
       responseStatus: "204 No Content",
       responseBody: ""
     };
-    const markdown = blocksToMarkdown(rawCustomBlock("docspress/api-request", attrs));
+    const markdown = blocksToMarkdown(rawCustomBlock("autodocs-publish/api-request", attrs));
 
     expect(markdown).toContain([
       "<details>",
@@ -287,7 +318,7 @@ describe("readable DocsPress Markdown blocks", () => {
   });
 
   it("projects omitted API attributes with Gutenberg defaults without adding them to config", () => {
-    const markdown = blocksToMarkdown(rawCustomBlock("docspress/api-request", {}));
+    const markdown = blocksToMarkdown(rawCustomBlock("autodocs-publish/api-request", {}));
     const block = firstNamedBlock(markdownToBlocks(markdown, { fallbackTitle: "Docs" }).blocks);
 
     expect(markdown).toContain("<code>GET /wp-json/wp/v2/pages</code>");
@@ -309,8 +340,8 @@ describe("readable DocsPress Markdown blocks", () => {
       responseBody: "`````\n</details>",
       responseBodyFormat: "RAW"
     };
-    const markdown = blocksToMarkdown(rawCustomBlock("docspress/api-request", attrs));
-    const visible = markdown.slice(markdown.indexOf("-->\n") + 4, markdown.lastIndexOf("<!-- /docspress:block -->"));
+    const markdown = blocksToMarkdown(rawCustomBlock("autodocs-publish/api-request", attrs));
+    const visible = markdown.slice(markdown.indexOf("-->\n") + 4, markdown.lastIndexOf("<!-- /autodocs-publish:block -->"));
 
     expect(visible).toContain("<code>GET /items?&lt;tag&gt;&amp;q=&quot;quoted&quot; next</code>");
     expect(visible).toContain("<code>200 &lt;/summary&gt;&lt;script&gt;alert(1)&lt;/script&gt;</code>");
@@ -333,7 +364,7 @@ describe("readable DocsPress Markdown blocks", () => {
       responseBody: "line one\r\n\r\nline two",
       responseBodyFormat: "raw"
     };
-    const markdown = blocksToMarkdown(rawCustomBlock("docspress/api-request", attrs));
+    const markdown = blocksToMarkdown(rawCustomBlock("autodocs-publish/api-request", attrs));
 
     expect(markdown).toContain("<summary><strong>Response</strong></summary>");
     expect(markdown).toContain("```http\nAccept: application/json\r\n\r\nX-Trace: one\n```");
@@ -364,13 +395,13 @@ describe("readable DocsPress Markdown blocks", () => {
 title: API
 ---
 
-${blocksToMarkdown(rawCustomBlock("docspress/api-request", originalAttrs)).trim()}
+${blocksToMarkdown(rawCustomBlock("autodocs-publish/api-request", originalAttrs)).trim()}
 `;
     const desired = desiredFromMarkdown(existing);
     const merged = mergeWordPressIntoSource({
       existing,
       desired,
-      page: pageFromBody(desired, rawCustomBlock("docspress/api-request", editedAttrs))
+      page: pageFromBody(desired, rawCustomBlock("autodocs-publish/api-request", editedAttrs))
     });
     const roundTripped = firstNamedBlock(markdownToBlocks(merged, { fallbackTitle: "Docs" }).blocks);
 
@@ -386,19 +417,19 @@ ${blocksToMarkdown(rawCustomBlock("docspress/api-request", originalAttrs)).trim(
       title: "Publishing flow",
       type: "flow",
       source: [
-        "Markdown -> DocsPress: collect",
-        "DocsPress --> WordPress: publish",
+        "Markdown -> Autodocs Publish: collect",
+        "Autodocs Publish --> WordPress: publish",
         "WordPress -> Reader"
       ].join("\n"),
       caption: "The publishing path."
     };
-    const markdown = blocksToMarkdown(rawCustomBlock("docspress/diagram", attrs));
+    const markdown = blocksToMarkdown(rawCustomBlock("autodocs-publish/diagram", attrs));
 
     expect(markdown).toContain([
       "```mermaid",
       "flowchart LR",
       '  n1["Markdown"]',
-      '  n2["DocsPress"]',
+      '  n2["Autodocs Publish"]',
       '  n3["WordPress"]',
       '  n4["Reader"]',
       '  n1 -->|"collect"| n2',
@@ -406,7 +437,7 @@ ${blocksToMarkdown(rawCustomBlock("docspress/api-request", originalAttrs)).trim(
       "  n3 --> n4",
       "```"
     ].join("\n"));
-    expect(markdown).not.toContain("```text\nMarkdown -> DocsPress");
+    expect(markdown).not.toContain("```text\nMarkdown -> Autodocs Publish");
 
     const roundTripped = firstNamedBlock(markdownToBlocks(markdown, { fallbackTitle: "Docs" }).blocks);
     expect(roundTripped?.attrs).toEqual(attrs);
@@ -419,7 +450,7 @@ ${blocksToMarkdown(rawCustomBlock("docspress/api-request", originalAttrs)).trim(
       source: "Browser -> API: GET /pages\nAPI -> Browser",
       caption: ""
     };
-    const markdown = blocksToMarkdown(rawCustomBlock("docspress/diagram", attrs));
+    const markdown = blocksToMarkdown(rawCustomBlock("autodocs-publish/diagram", attrs));
 
     expect(markdown).toContain([
       "```mermaid",
@@ -443,7 +474,7 @@ ${blocksToMarkdown(rawCustomBlock("docspress/api-request", originalAttrs)).trim(
     const repeatedEdges = Array.from({ length: 25 }, (_value, index) => (
       `${actors[index % actors.length]} -> ${actors[(index + 1) % actors.length]}: label ${index}`
     ));
-    const markdown = blocksToMarkdown(rawCustomBlock("docspress/diagram", {
+    const markdown = blocksToMarkdown(rawCustomBlock("autodocs-publish/diagram", {
       type: "flow",
       source: [
         "# ignored",
@@ -462,7 +493,7 @@ ${blocksToMarkdown(rawCustomBlock("docspress/api-request", originalAttrs)).trim(
   });
 
   it("keeps invalid diagram source readable instead of emitting broken Mermaid", () => {
-    const markdown = blocksToMarkdown(rawCustomBlock("docspress/diagram", {
+    const markdown = blocksToMarkdown(rawCustomBlock("autodocs-publish/diagram", {
       type: "flow",
       source: "# Notes\nNo relationship here"
     }));
@@ -472,7 +503,7 @@ ${blocksToMarkdown(rawCustomBlock("docspress/api-request", originalAttrs)).trim(
   });
 
   it("keeps procedural Flow blocks as semantic ordered Markdown", () => {
-    const markdown = blocksToMarkdown(rawCustomBlock("docspress/flow", {
+    const markdown = blocksToMarkdown(rawCustomBlock("autodocs-publish/flow", {
       start: 2,
       steps: [
         { title: "Configure", content: "<p>Set the values.</p>" },
@@ -486,7 +517,7 @@ ${blocksToMarkdown(rawCustomBlock("docspress/api-request", originalAttrs)).trim(
   });
 
   it("treats config as authoritative and the visible preview as a Markdown projection", () => {
-    const markdown = blocksToMarkdown(rawCustomBlock("docspress/callout", {
+    const markdown = blocksToMarkdown(rawCustomBlock("autodocs-publish/callout", {
       tone: "warning",
       title: "Config title",
       content: "<p>Config content.</p>"
@@ -500,7 +531,7 @@ ${blocksToMarkdown(rawCustomBlock("docspress/api-request", originalAttrs)).trim(
   });
 
   it("applies config edits in the Markdown-to-Gutenberg direction", () => {
-    const markdown = blocksToMarkdown(rawCustomBlock("docspress/callout", {
+    const markdown = blocksToMarkdown(rawCustomBlock("autodocs-publish/callout", {
       tone: "warning",
       title: "Careful",
       content: "<p>Review first.</p>"
@@ -512,7 +543,7 @@ ${blocksToMarkdown(rawCustomBlock("docspress/api-request", originalAttrs)).trim(
 
   it("fails closed for malformed config and mismatched lossless blocks", () => {
     expect(() => markdownToBlocks(
-      "<!-- docspress:block\n{not json}\n-->\nVisible.\n<!-- /docspress:block -->",
+      "<!-- autodocs-publish:block\n{not json}\n-->\nVisible.\n<!-- /autodocs-publish:block -->",
       { fallbackTitle: "Docs" }
     )).toThrow(/invalid JSON/);
 
@@ -522,29 +553,29 @@ ${blocksToMarkdown(rawCustomBlock("docspress/api-request", originalAttrs)).trim(
       attrs: {},
       serialized: "<!-- wp:heading --><h2>Wrong</h2><!-- /wp:heading -->"
     }, null, 2).replace(/--/g, "\\u002d\\u002d");
-    const mismatched = `<!-- docspress:block
+    const mismatched = `<!-- autodocs-publish:block
 ${mismatchedConfig}
 -->
 Visible.
-<!-- /docspress:block -->`;
+<!-- /autodocs-publish:block -->`;
     expect(() => markdownToBlocks(mismatched, { fallbackTitle: "Docs" })).toThrow(/exactly one core\/paragraph/);
   });
 
-  it("does not interpret DocsPress boundaries inside fenced or inline code", () => {
+  it("does not interpret Autodocs Publish boundaries inside fenced or inline code", () => {
     const source = `\`\`\`html
-<!-- docspress:block
-{"version":1,"name":"docspress/callout","attrs":{}}
+<!-- autodocs-publish:block
+{"version":1,"name":"autodocs-publish/callout","attrs":{}}
 -->
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 \`\`\`
 
-\`<!-- docspress:block -->\`
+\`<!-- autodocs-publish:block -->\`
 `;
     const converted = markdownToBlocks(source, { fallbackTitle: "Docs" });
     const names = parse(converted.blocks).map((block) => block.blockName).filter(Boolean);
 
     expect(names).toEqual(["core/code", "core/paragraph"]);
-    expect(converted.blocks).not.toContain("wp:docspress/callout");
+    expect(converted.blocks).not.toContain("wp:autodocs-publish/callout");
   });
 });
 
@@ -554,7 +585,7 @@ describe("comprehensive core block conversion", () => {
     const markdown = blocksToMarkdown(raw);
 
     expect(markdown).toBe("Hello **Markdown**.\n");
-    expect(markdown).not.toContain("docspress:block");
+    expect(markdown).not.toContain("autodocs-publish:block");
     expect(markdownToBlocks(markdown, { fallbackTitle: "Docs" }).blocks).toBe(raw);
   });
 
@@ -638,36 +669,36 @@ title: Migration
 <p>Readable <strong>paragraph</strong>.</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:docspress/callout {"tone":"warning","title":"Review","content":"<p>Check the diff.</p>"} /-->
+<!-- wp:autodocs-publish/callout {"tone":"warning","title":"Review","content":"<p>Check the diff.</p>"} /-->
 
 \`\`\`html
-<!-- wp:docspress/callout {"tone":"note"} /-->
+<!-- wp:autodocs-publish/callout {"tone":"note"} /-->
 \`\`\`
 `;
     const upgraded = upgradeLegacyBlockSyntax(source);
 
     expect(upgraded).toContain("Readable **paragraph**.");
     expect(upgraded).toContain("> [!WARNING]");
-    expect(upgraded).toContain('"name": "docspress/callout"');
-    expect(upgraded).toContain('```html\n<!-- wp:docspress/callout {"tone":"note"} /-->\n```');
+    expect(upgraded).toContain('"name": "autodocs-publish/callout"');
+    expect(upgraded).toContain('```html\n<!-- wp:autodocs-publish/callout {"tone":"note"} /-->\n```');
     expect(markdownToBlocks(upgraded, { fallbackTitle: "Docs" }).blocks)
       .toBe(markdownToBlocks(source, { fallbackTitle: "Docs" }).blocks);
   });
 
   it("migrates a self-closing custom block whose JSON contains block-comment examples", () => {
-    const source = String.raw`<!-- wp:docspress/api-request {"method":"POST","endpoint":"/pages","responseBody":"{\n  \"content\": \"<!-- docspress:{...} -->\\n<!-- wp:paragraph -->...\"\n}","responseBodyFormat":"json"} /-->`;
+    const source = String.raw`<!-- wp:autodocs-publish/api-request {"method":"POST","endpoint":"/pages","responseBody":"{\n  \"content\": \"<!-- autodocs-publish:{...} -->\\n<!-- wp:paragraph -->...\"\n}","responseBodyFormat":"json"} /-->`;
     const upgraded = upgradeLegacyBlockSyntax(source);
 
-    expect(upgraded).toContain('"name": "docspress/api-request"');
+    expect(upgraded).toContain('"name": "autodocs-publish/api-request"');
     expect(upgraded).toContain("<summary><strong>Request:</strong> <code>POST /pages</code></summary>");
     expect(upgraded).toContain("<summary><strong>Response:</strong> <code>200 OK</code></summary>");
-    expect(upgraded).not.toContain("<!-- wp:docspress/api-request");
+    expect(upgraded).not.toContain("<!-- wp:autodocs-publish/api-request");
     expect(firstNamedBlock(markdownToBlocks(upgraded, { fallbackTitle: "Docs" }).blocks)?.attrs.responseBody)
       .toContain("<!-- wp:paragraph -->");
   });
 
   it("refreshes an existing API envelope from headings to details without changing Gutenberg", () => {
-    const current = blocksToMarkdown(rawCustomBlock("docspress/api-request", {
+    const current = blocksToMarkdown(rawCustomBlock("autodocs-publish/api-request", {
       method: "GET",
       endpoint: "/v1/docs",
       headers: "Accept: application/json",
@@ -703,7 +734,7 @@ Accept: application/json
   });
 
   it("refreshes an existing diagram envelope with its generated Mermaid preview", () => {
-    const current = blocksToMarkdown(rawCustomBlock("docspress/diagram", {
+    const current = blocksToMarkdown(rawCustomBlock("autodocs-publish/diagram", {
       title: "Publishing flow",
       type: "flow",
       source: "Markdown -> WordPress: publish"

@@ -34,7 +34,7 @@ const payload = {
   override: "",
   github: {
     serverUrl: "https://github.com",
-    repository: "Automattic/docspress",
+    repository: "Automattic/autodocs-publish",
     ref: "main"
   },
   terms: versionsRegistry.versions.map((version) => ({

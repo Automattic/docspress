@@ -3,7 +3,7 @@ title: Fields / Schema
 sidebar_position: 90
 ---
 
-Use `docspress/fields` for structured reference data: API parameters, object properties, configuration keys, environment variables, command options, or response fields.
+Use `autodocs-publish/fields` for structured reference data: API parameters, object properties, configuration keys, environment variables, command options, or response fields.
 
 ## When to use it
 
@@ -15,13 +15,13 @@ Set the title and formatted description, then add up to 40 fields. Keep names ex
 
 ## Attributes
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Fields block attributes",
-    "description": "Reference content and display behavior accepted by \u003ccode\u003edocspress/fields\u003c/code\u003e.",
+    "description": "Reference content and display behavior accepted by \u003ccode\u003eautodocs-publish/fields\u003c/code\u003e.",
     "fields": [
       {
         "name": "title",
@@ -76,7 +76,7 @@ Set the title and formatted description, then add up to 40 fields. Keep names ex
 -->
 #### Fields block attributes
 
-Reference content and display behavior accepted by <code>docspress/fields</code>.
+Reference content and display behavior accepted by <code>autodocs-publish/fields</code>.
 
 | Field | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -85,14 +85,14 @@ Reference content and display behavior accepted by <code>docspress/fields</code>
 | `fields` | array | Yes | Starter fields | <p>Up to 40 field objects. Items with blank names are discarded.</p> |
 | `searchable` | boolean | No | true | <p>Adds a client-side filter when more than three fields render.</p> |
 | `compact` | boolean | No | false | <p>Reduces row spacing.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 Each item in `fields` accepts:
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Field object",
     "description": "Schema for one documented field.",
@@ -179,16 +179,16 @@ Schema for one documented field.
 | `description` | string | No |  | <p>Formatted explanation and constraints.</p> |
 | `values` | string | No |  | <p>Comma-separated allowed or representative values.</p> |
 | `deprecated` | boolean | No | false | <p>Marks an option readers should stop using.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Creative examples
 
 ### Publishing command options
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Publish options",
     "description": "Typed values accepted by the publishing command.",
@@ -225,14 +225,14 @@ Typed values accepted by the publishing command.
 | --- | --- | --- | --- | --- |
 | `site` | string | Yes |  | WordPress site domain or numeric site ID. |
 | `status` | enum | No | draft | Publication status for synchronized Pages. |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Webhook event envelope
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Webhook event",
     "description": "Properties delivered when a documentation Page changes.",
@@ -289,14 +289,14 @@ Properties delivered when a documentation Page changes.
 | `type` | enum | Yes |  | <p>Event that produced the delivery.</p> |
 | `createdAt` | date | Yes |  | <p>ISO 8601 creation time.</p> |
 | `data` | object | Yes |  | <p>Event-specific Page payload.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Configuration migration
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Navigation settings",
     "description": "Current settings beside one retired option and its replacement.",
@@ -353,7 +353,7 @@ Current settings beside one retired option and its replacement.
 | `showSearch` | boolean | No | true | <p>Shows the documentation filter above the tree.</p> |
 | `legacyMenuId` | number | No |  | <p>Retired menu identifier. Use <code>navigationSource</code> instead.</p> |
 | `navigationSource` | enum | No | hierarchy | <p>Source used to build documentation navigation.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Published behavior and accessibility
 

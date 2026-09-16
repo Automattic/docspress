@@ -3,7 +3,7 @@ title: API Request / Response
 sidebar_position: 80
 ---
 
-Use `docspress/api-request` to teach one HTTP exchange. It can remain a static request and example response, or become a guarded browser runner with editable inputs, live status, timing, headers, and response body.
+Use `autodocs-publish/api-request` to teach one HTTP exchange. It can remain a static request and example response, or become a guarded browser runner with editable inputs, live status, timing, headers, and response body.
 
 ## Choose static or runnable
 
@@ -15,17 +15,17 @@ Use `editable: false` to offer a fixed runnable request. Relative endpoints reso
 
 The readable Markdown envelope projects the request and response into separate collapsed `<details>` groups. Each summary exposes the method, endpoint, or response status before expansion, while headers and bodies remain syntax-highlighted fenced code inside the group.
 
-This presentation exists only in Markdown. The hidden config remains authoritative and reconstructs the native `docspress/api-request` block in Gutenberg; DocsPress never sends the generated `<details>` markup to WordPress.
+This presentation exists only in Markdown. The hidden config remains authoritative and reconstructs the native `autodocs-publish/api-request` block in Gutenberg; Autodocs Publish never sends the generated `<details>` markup to WordPress.
 
 ## Attributes
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "API Request / Response attributes",
-    "description": "Request, example response, and runner policy accepted by \u003ccode\u003edocspress/api-request\u003c/code\u003e.",
+    "description": "Request, example response, and runner policy accepted by \u003ccode\u003eautodocs-publish/api-request\u003c/code\u003e.",
     "fields": [
       {
         "name": "method",
@@ -161,7 +161,7 @@ This presentation exists only in Markdown. The hidden config remains authoritati
 -->
 #### API Request / Response attributes
 
-Request, example response, and runner policy accepted by <code>docspress/api-request</code>.
+Request, example response, and runner policy accepted by <code>autodocs-publish/api-request</code>.
 
 | Field | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -179,14 +179,14 @@ Request, example response, and runner policy accepted by <code>docspress/api-req
 | `baseUrl` | url | No |  | <p>Base used to resolve relative endpoints.</p> |
 | `allowedOrigins` | string | No |  | <p>Comma-separated exact origins permitted for cross-origin requests.</p> |
 | `timeout` | number | No | 10000 | <p>Runner timeout in milliseconds, clamped to 1000–30000.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Static example
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/api-request",
+  "name": "autodocs-publish/api-request",
   "attrs": {
     "method": "GET",
     "endpoint": "/wp-json/wp/v2/pages?context=edit",
@@ -224,14 +224,14 @@ Authorization: Bearer $WP_ACCESS_TOKEN
 ```
 
 </details>
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Runnable example
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/api-request",
+  "name": "autodocs-publish/api-request",
   "attrs": {
     "method": "GET",
     "endpoint": "/wp-json/",
@@ -273,14 +273,14 @@ Accept: application/json
 ```
 
 </details>
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Static validation-error example
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/api-request",
+  "name": "autodocs-publish/api-request",
   "attrs": {
     "method": "POST",
     "endpoint": "/wp-json/wp/v2/pages",
@@ -337,7 +337,7 @@ Authorization: Bearer $WP_ACCESS_TOKEN
 ```
 
 </details>
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Runner safety
 
@@ -345,10 +345,10 @@ The runner sends requests with browser credentials omitted. It blocks Cookie, Ho
 
 `POST`, `PUT`, `PATCH`, and `DELETE` remain disabled unless the author enables `allowUnsafe`. Even then, the reader must complete a two-step confirmation immediately before execution. Run can be cancelled, Reset restores the authored request, and Copy as cURL excludes blocked headers.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "danger",
     "title": "Never publish a real credential",
@@ -363,7 +363,7 @@ The runner sends requests with browser credentials omitted. It blocks Cookie, Ho
 > **Never publish a real credential**
 >
 > A runnable block executes in every reader’s browser. Use placeholders such as `$WP_ACCESS_TOKEN`, and keep privileged or destructive requests in a controlled development environment.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Live output and accessibility
 

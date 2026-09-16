@@ -1,0 +1,813 @@
+.autodocs-publish-hero {
+	--adpb-hero-accent: var(--adp-blue, #3858e9);
+	--adpb-hero-copy: var(--adp-copy, #4f5666);
+	--adpb-hero-heading: var(--adp-ink, #171a22);
+	--adpb-hero-panel: var(--adp-paper, #fff);
+	--adpb-hero-visual: transparent;
+	--adpb-hero-media-width: 44%;
+	--adpb-hero-image-scale: 100%;
+	position: relative;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(280px, var(--adpb-hero-media-width));
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 460px;
+	margin-block: clamp(1.5rem, 4vw, 3rem);
+	overflow: hidden;
+	border: 1px solid var(--adp-line, #dcdcde);
+	border-radius: var(--adp-radius, 10px);
+	box-shadow: none;
+}
+
+.autodocs-publish-hero--midnight {
+	--adpb-hero-copy: #d6dced;
+	--adpb-hero-heading: #fff;
+	--adpb-hero-panel: #141d34;
+}
+
+.autodocs-publish-hero--brand {
+	--adpb-hero-copy: color-mix(in srgb, #fff 82%, var(--adp-blue, #3858e9));
+	--adpb-hero-heading: #fff;
+	--adpb-hero-panel: var(--adp-blue, #3858e9);
+	--adpb-hero-visual: color-mix(in srgb, var(--adp-blue, #3858e9) 86%, #000);
+}
+
+.autodocs-publish-hero--paper:not(.has-background),
+.autodocs-publish-hero--midnight:not(.has-background),
+.autodocs-publish-hero--brand:not(.has-background),
+.autodocs-publish-hero--has-panel-color:not(.has-background) {
+	background: var(--adpb-hero-panel);
+}
+
+.autodocs-publish-hero--midnight:not(.has-text-color),
+.autodocs-publish-hero--brand:not(.has-text-color) {
+	color: var(--adpb-hero-copy);
+}
+
+.autodocs-publish-hero--midnight:not(.has-text-color) :where(.autodocs-publish-hero__eyebrow, .autodocs-publish-hero__description),
+.autodocs-publish-hero--brand:not(.has-text-color) :where(.autodocs-publish-hero__eyebrow, .autodocs-publish-hero__description) {
+	color: var(--adpb-hero-copy);
+}
+
+.autodocs-publish-hero--midnight:not(.has-text-color) .autodocs-publish-hero__title,
+.autodocs-publish-hero--brand:not(.has-text-color) .autodocs-publish-hero__title {
+	color: var(--adpb-hero-heading);
+}
+
+.autodocs-publish-hero--height-compact {
+	min-height: 380px;
+}
+
+.autodocs-publish-hero--height-tall {
+	min-height: 560px;
+}
+
+.autodocs-publish-hero__copy {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	box-sizing: border-box;
+	min-width: 0;
+	padding: clamp(38px, 5vw, 60px);
+}
+
+.autodocs-publish-hero__eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	width: fit-content;
+	margin: 0 0 18px;
+}
+
+.autodocs-publish-hero__eyebrow::before {
+	width: 20px;
+	height: 2px;
+	background: var(--adpb-hero-accent);
+	content: "";
+}
+
+:where(.autodocs-publish-hero__title) {
+	max-width: 680px;
+	margin: 0;
+	font-size: clamp(40px, 5vw, 62px);
+	font-weight: var(--adp-heading-weight, 750);
+	letter-spacing: -0.045em;
+	line-height: 1;
+	text-wrap: balance;
+}
+
+.autodocs-publish-hero__description {
+	max-width: 580px;
+	margin: clamp(28px, 2.5vw, 34px) 0 0;
+}
+
+.autodocs-publish-preset-wordpress .autodocs-publish-hero__description,
+.autodocs-publish-preset-wordpress-com .autodocs-publish-hero__description,
+.autodocs-publish-preset-jetpack .autodocs-publish-hero__description,
+.autodocs-publish-blocks--preset-wordpress.autodocs-publish-hero .autodocs-publish-hero__description,
+.autodocs-publish-blocks--preset-wordpress-com.autodocs-publish-hero .autodocs-publish-hero__description,
+.autodocs-publish-blocks--preset-jetpack.autodocs-publish-hero .autodocs-publish-hero__description {
+	margin-top: clamp(38px, 3vw, 44px);
+}
+
+.autodocs-publish-hero__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 28px;
+}
+
+:where(.autodocs-publish-hero__button) {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	min-height: 44px;
+	text-decoration: none;
+	transition: border-color 150ms ease, background 150ms ease, transform 150ms ease;
+}
+
+:where(a.autodocs-publish-hero__button:hover) {
+	text-decoration: none;
+	transform: translateY(-1px);
+}
+
+.autodocs-publish-hero__button--secondary.wp-element-button {
+	border-color: currentColor;
+	background: transparent;
+	color: inherit;
+}
+
+a.autodocs-publish-hero__button--secondary.wp-element-button:hover {
+	border-color: currentColor;
+	background: color-mix(in srgb, currentColor 8%, transparent);
+	color: inherit;
+}
+
+.autodocs-publish-hero__visual {
+	position: relative;
+	display: grid;
+	place-items: center;
+	box-sizing: border-box;
+	min-width: 0;
+	padding: clamp(36px, 4vw, 52px);
+	overflow: hidden;
+	border-left: 1px solid var(--adp-line, #dcdcde);
+}
+
+.autodocs-publish-hero--brand .autodocs-publish-hero__visual,
+.autodocs-publish-hero--has-visual-color .autodocs-publish-hero__visual {
+	background-color: var(--adpb-hero-visual);
+}
+
+.autodocs-publish-hero:not(.autodocs-publish-hero--no-grid) .autodocs-publish-hero__visual {
+	outline: 1px solid color-mix(in srgb, var(--adpb-hero-heading) 10%, transparent);
+	outline-offset: -16px;
+}
+
+.autodocs-publish-hero__visual::before {
+	position: absolute;
+	width: min(74%, 340px);
+	aspect-ratio: 1;
+	border: 1px solid color-mix(in srgb, var(--adpb-hero-heading) 16%, transparent);
+	border-radius: 50%;
+	content: "";
+	pointer-events: none;
+}
+
+.autodocs-publish-hero--no-orbit .autodocs-publish-hero__visual::before {
+	display: none;
+}
+
+.autodocs-publish-hero__media {
+	position: relative;
+	z-index: 1;
+	width: var(--adpb-hero-image-scale);
+	max-width: 430px;
+	margin: 0;
+}
+
+.autodocs-publish-hero__image {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.autodocs-publish-hero-diagram {
+	position: relative;
+	z-index: 1;
+	box-sizing: border-box;
+	width: min(100%, 420px);
+	padding: 18px;
+	border: 1px solid var(--adp-line, #dcdcde);
+	border-radius: 16px;
+	background: var(--adp-paper, #fff);
+	box-shadow: 0 16px 42px color-mix(in srgb, var(--adpb-hero-heading) 9%, transparent);
+	color: var(--adpb-hero-heading);
+	font-family: var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.autodocs-publish-hero-diagram__pipeline {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 24px;
+}
+
+.autodocs-publish-hero-diagram__source,
+.autodocs-publish-hero-diagram__surface {
+	box-sizing: border-box;
+	border: 1px solid var(--adp-line, #dcdcde);
+	border-radius: 11px;
+	background: var(--adp-canvas, #f6f7f7);
+}
+
+.autodocs-publish-hero-diagram__source {
+	position: relative;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 7px;
+	padding: 42px 12px 13px;
+	overflow: hidden;
+}
+
+.autodocs-publish-hero-diagram__bar {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	min-height: 30px;
+	padding: 0 10px;
+	background: var(--adpb-hero-heading);
+	color: var(--adp-paper, #fff);
+	font: 720 9px/1 var(--adp-font-mono, "SFMono-Regular", Consolas, monospace);
+}
+
+.autodocs-publish-hero-diagram__dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--adp-highlight, #ffb900);
+}
+
+.autodocs-publish-hero-diagram__folder,
+.autodocs-publish-hero-diagram__file {
+	display: block;
+	padding: 5px 7px;
+	border-radius: 5px;
+	font: 650 9px/1.2 var(--adp-font-mono, "SFMono-Regular", Consolas, monospace);
+}
+
+.autodocs-publish-hero-diagram__folder {
+	grid-column: 1 / -1;
+	border: 1px solid color-mix(in srgb, var(--adpb-hero-accent) 28%, var(--adp-line, #dcdcde));
+	background: color-mix(in srgb, var(--adpb-hero-accent) 8%, var(--adp-paper, #fff));
+	color: var(--adpb-hero-accent);
+}
+
+.autodocs-publish-hero-diagram__file {
+	position: relative;
+	padding-left: 17px;
+	background: var(--adp-paper, #fff);
+	color: var(--adpb-hero-copy);
+}
+
+.autodocs-publish-hero-diagram__file::before {
+	position: absolute;
+	top: 50%;
+	left: 7px;
+	width: 5px;
+	height: 7px;
+	border: 1px solid currentColor;
+	border-radius: 1px;
+	content: "";
+	opacity: 0.55;
+	transform: translateY(-50%);
+}
+
+.autodocs-publish-hero-diagram__hub {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-width: 0;
+	padding: 2px 4px;
+	text-align: center;
+}
+
+.autodocs-publish-hero-diagram__hub::before,
+.autodocs-publish-hero-diagram__hub::after {
+	position: absolute;
+	left: 50%;
+	color: var(--adp-line-strong, #c3c4c7);
+	content: "↓";
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1;
+	transform: translateX(-50%);
+}
+
+.autodocs-publish-hero-diagram__hub::before {
+	top: -21px;
+}
+
+.autodocs-publish-hero-diagram__hub::after {
+	bottom: -21px;
+}
+
+.autodocs-publish-hero-diagram__mascot {
+	display: grid;
+	width: 100%;
+	height: 112px;
+	place-items: center;
+	overflow: visible;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+}
+
+.autodocs-publish-hero-diagram__mascot .autodocs-publish-hero__image {
+	width: min(100%, 190px);
+	max-width: none;
+	filter: drop-shadow(0 8px 10px color-mix(in srgb, var(--adpb-hero-heading) 16%, transparent));
+	transform: translateY(-34px);
+}
+
+.autodocs-publish-hero-diagram__fallback {
+	color: var(--adpb-hero-accent);
+	font-size: 20px;
+	font-weight: 850;
+	letter-spacing: -0.05em;
+}
+
+.autodocs-publish-hero-diagram__hub > strong {
+	margin-top: 2px;
+	font-size: 12px;
+	line-height: 1.1;
+}
+
+.autodocs-publish-hero-diagram__hub > span {
+	margin-top: 3px;
+	color: var(--adpb-hero-copy);
+	font-size: 9px;
+	line-height: 1.25;
+}
+
+.autodocs-publish-hero-diagram__outputs {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 9px;
+}
+
+.autodocs-publish-hero-diagram__surface {
+	display: grid;
+	gap: 4px;
+	padding: 10px 10px 11px;
+}
+
+.autodocs-publish-hero-diagram__surface-label {
+	color: var(--adpb-hero-copy);
+	font-size: 8px;
+	font-weight: 780;
+	letter-spacing: 0.08em;
+	line-height: 1;
+	text-transform: uppercase;
+}
+
+.autodocs-publish-hero-diagram__surface > strong {
+	font-size: 11px;
+	line-height: 1.2;
+}
+
+.autodocs-publish-hero-diagram__surface > span:last-child {
+	color: var(--adpb-hero-copy);
+	font-size: 9px;
+	line-height: 1.3;
+}
+
+.autodocs-publish-hero-diagram__return {
+	display: grid;
+	grid-template-columns: auto auto minmax(0, 1fr);
+	gap: 7px;
+	align-items: center;
+	margin-top: 15px;
+	padding-top: 13px;
+	border-top: 1px solid var(--adp-line, #dcdcde);
+	color: var(--adpb-hero-copy);
+	font-size: 9px;
+	line-height: 1.3;
+}
+
+.autodocs-publish-hero-diagram__return > span:first-child {
+	color: var(--adp-highlight-dark, #b26200);
+	font-size: 16px;
+	line-height: 1;
+}
+
+.autodocs-publish-hero-diagram__return strong {
+	color: var(--adpb-hero-heading);
+	font-size: 9px;
+}
+
+.autodocs-publish-hero--media-left {
+	grid-template-columns: minmax(280px, var(--adpb-hero-media-width)) minmax(0, 1fr);
+}
+
+.autodocs-publish-hero--media-left .autodocs-publish-hero__visual {
+	order: -1;
+	border-right: 1px solid var(--adp-line, #dcdcde);
+	border-left: 0;
+}
+
+.autodocs-publish-hero--align-center .autodocs-publish-hero__copy {
+	align-items: center;
+	text-align: center;
+}
+
+.autodocs-publish-hero--align-center .autodocs-publish-hero__actions {
+	justify-content: center;
+}
+
+.autodocs-publish-hero--no-visual {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.autodocs-publish-hero--no-visual .autodocs-publish-hero__copy {
+	align-items: flex-start;
+}
+
+.autodocs-publish-hero--no-visual.autodocs-publish-hero--align-center .autodocs-publish-hero__copy {
+	align-items: center;
+}
+
+.autodocs-publish-hero__visual-label {
+	display: none;
+}
+
+.autodocs-publish-hero--layout-editorial {
+	--adpb-hero-visual: transparent;
+	isolation: isolate;
+	grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.55fr);
+	min-height: 500px;
+	border-color: color-mix(in srgb, var(--adpb-hero-heading) 14%, transparent);
+	box-shadow: 0 28px 80px color-mix(in srgb, #000 20%, transparent);
+}
+
+.autodocs-publish-hero--layout-editorial.autodocs-publish-hero--paper {
+	--adpb-hero-visual: transparent;
+	border-color: #d8dfd4;
+	box-shadow: 0 24px 64px color-mix(in srgb, #182319 10%, transparent);
+}
+
+.autodocs-publish-preset-jetpack .autodocs-publish-hero--layout-editorial.autodocs-publish-hero--paper,
+.autodocs-publish-blocks--preset-jetpack.autodocs-publish-hero--layout-editorial.autodocs-publish-hero--paper {
+	--adpb-hero-accent: #008710;
+	--adpb-hero-panel: transparent;
+	border: 0;
+	border-radius: 0;
+	background-image: none;
+	box-shadow: none;
+}
+
+.autodocs-publish-preset-jetpack .autodocs-publish-hero--layout-editorial.autodocs-publish-hero--paper::before,
+.autodocs-publish-blocks--preset-jetpack.autodocs-publish-hero--layout-editorial.autodocs-publish-hero--paper::before {
+	display: none;
+}
+
+.autodocs-publish-hero--layout-editorial:not(.autodocs-publish-hero--no-grid)::before {
+	position: absolute;
+	z-index: 0;
+	inset: 18px;
+	border: 1px solid color-mix(in srgb, var(--adpb-hero-heading) 8%, transparent);
+	content: "";
+	pointer-events: none;
+}
+
+.autodocs-publish-hero--layout-editorial.autodocs-publish-hero--height-compact {
+	min-height: 430px;
+}
+
+.autodocs-publish-hero--layout-editorial.autodocs-publish-hero--height-tall {
+	min-height: 620px;
+}
+
+.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__copy {
+	z-index: 2;
+	padding: clamp(48px, 6.2vw, 76px);
+}
+
+.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__eyebrow {
+	margin-bottom: clamp(24px, 3vw, 36px);
+}
+
+.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__eyebrow::before {
+	width: 34px;
+}
+
+:where(.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__title) {
+	max-width: 760px;
+	font-size: clamp(52px, 6.5vw, 82px);
+	letter-spacing: -0.06em;
+	line-height: 0.94;
+}
+
+:where(.autodocs-publish-preset-jetpack .autodocs-publish-hero--layout-editorial.autodocs-publish-hero--paper .autodocs-publish-hero__title),
+:where(.autodocs-publish-blocks--preset-jetpack.autodocs-publish-hero--layout-editorial.autodocs-publish-hero--paper .autodocs-publish-hero__title) {
+	font-size: clamp(50px, 6vw, 76px);
+	font-weight: 700;
+	letter-spacing: -0.055em;
+	line-height: 0.97;
+}
+
+.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__description,
+.autodocs-publish-preset-wordpress .autodocs-publish-hero--layout-editorial .autodocs-publish-hero__description,
+.autodocs-publish-preset-wordpress-com .autodocs-publish-hero--layout-editorial .autodocs-publish-hero__description,
+.autodocs-publish-preset-jetpack .autodocs-publish-hero--layout-editorial .autodocs-publish-hero__description,
+.autodocs-publish-blocks--preset-wordpress.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__description,
+.autodocs-publish-blocks--preset-wordpress-com.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__description,
+.autodocs-publish-blocks--preset-jetpack.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__description {
+	max-width: 610px;
+	margin-top: 26px;
+}
+
+.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__actions {
+	gap: 18px;
+	margin-top: 34px;
+}
+
+:where(.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__button) {
+	min-height: 46px;
+}
+
+:where(.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__button--primary) {
+	box-shadow: 0 10px 28px color-mix(in srgb, var(--adpb-hero-accent) 24%, transparent);
+}
+
+:where(.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__button--secondary) {
+	border-color: transparent;
+}
+
+:where(.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__button--secondary)::after {
+	margin-left: 10px;
+	content: "↗";
+	transition: transform 150ms ease;
+}
+
+:where(.autodocs-publish-hero--layout-editorial a.autodocs-publish-hero__button--secondary:hover) {
+	border-color: transparent;
+	background: transparent;
+}
+
+:where(.autodocs-publish-hero--layout-editorial a.autodocs-publish-hero__button--secondary:hover)::after {
+	transform: translate(2px, -2px);
+}
+
+.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__visual,
+.autodocs-publish-hero--layout-editorial.autodocs-publish-hero--media-left .autodocs-publish-hero__visual {
+	z-index: 1;
+	min-height: 100%;
+	padding: clamp(40px, 5vw, 68px);
+	border: 0;
+	background: transparent;
+}
+
+.autodocs-publish-preset-jetpack .autodocs-publish-hero--layout-editorial.autodocs-publish-hero--paper .autodocs-publish-hero__visual,
+.autodocs-publish-blocks--preset-jetpack.autodocs-publish-hero--layout-editorial.autodocs-publish-hero--paper .autodocs-publish-hero__visual {
+	background-image: none;
+}
+
+.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__visual::before {
+	width: min(110%, 430px);
+	border: 1px dashed color-mix(in srgb, var(--adpb-hero-heading) 16%, transparent);
+	background: transparent;
+}
+
+.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__visual::after {
+	position: absolute;
+	top: 14%;
+	bottom: 14%;
+	left: 0;
+	border-left: 1px solid color-mix(in srgb, var(--adpb-hero-heading) 13%, transparent);
+	content: "";
+}
+
+.autodocs-publish-hero--layout-editorial.autodocs-publish-hero--media-left .autodocs-publish-hero__visual::after {
+	right: 0;
+	left: auto;
+}
+
+.autodocs-publish-preset-jetpack .autodocs-publish-hero--layout-editorial.autodocs-publish-hero--paper .autodocs-publish-hero__visual::after,
+.autodocs-publish-blocks--preset-jetpack.autodocs-publish-hero--layout-editorial.autodocs-publish-hero--paper .autodocs-publish-hero__visual::after {
+	display: none;
+}
+
+.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__visual-label {
+	position: absolute;
+	z-index: 0;
+	top: 50%;
+	right: clamp(14px, 2vw, 28px);
+	display: block;
+	color: transparent;
+	font-size: clamp(72px, 9vw, 118px);
+	font-weight: 850;
+	letter-spacing: 0.08em;
+	line-height: 0.72;
+	text-transform: uppercase;
+	transform: translateY(-50%) rotate(180deg);
+	writing-mode: vertical-rl;
+	-webkit-text-stroke: 1px color-mix(in srgb, var(--adpb-hero-heading) 18%, transparent);
+}
+
+.autodocs-publish-preset-jetpack .autodocs-publish-hero--layout-editorial.autodocs-publish-hero--paper .autodocs-publish-hero__visual-label,
+.autodocs-publish-blocks--preset-jetpack.autodocs-publish-hero--layout-editorial.autodocs-publish-hero--paper .autodocs-publish-hero__visual-label {
+	display: none;
+}
+
+.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__media {
+	z-index: 2;
+	transform: translateX(-8%) rotate(-5deg);
+	filter: drop-shadow(0 28px 36px color-mix(in srgb, #000 34%, transparent));
+	transition: transform 420ms cubic-bezier(0.2, 0.75, 0.2, 1);
+}
+
+.autodocs-publish-hero--layout-editorial.autodocs-publish-hero--paper .autodocs-publish-hero__media {
+	filter: drop-shadow(0 24px 30px color-mix(in srgb, #173318 20%, transparent));
+}
+
+.autodocs-publish-preset-jetpack .autodocs-publish-hero--layout-editorial.autodocs-publish-hero--paper .autodocs-publish-hero__media,
+.autodocs-publish-blocks--preset-jetpack.autodocs-publish-hero--layout-editorial.autodocs-publish-hero--paper .autodocs-publish-hero__media {
+	transform: none;
+	filter: none;
+}
+
+.autodocs-publish-hero--layout-editorial:hover .autodocs-publish-hero__media {
+	transform: translateX(-8%) rotate(-2deg) scale(1.025);
+}
+
+.autodocs-publish-preset-jetpack .autodocs-publish-hero--layout-editorial.autodocs-publish-hero--paper:hover .autodocs-publish-hero__media,
+.autodocs-publish-blocks--preset-jetpack.autodocs-publish-hero--layout-editorial.autodocs-publish-hero--paper:hover .autodocs-publish-hero__media {
+	transform: scale(1.015);
+}
+
+@media (max-width: 860px) {
+	.autodocs-publish-hero,
+	.autodocs-publish-hero--media-left {
+		grid-template-columns: minmax(0, 1fr);
+		min-height: auto;
+	}
+
+	.autodocs-publish-hero__copy {
+		padding: 44px 34px;
+	}
+
+	.autodocs-publish-hero__visual,
+	.autodocs-publish-hero--media-left .autodocs-publish-hero__visual {
+		order: 0;
+		min-height: 380px;
+		padding: 44px;
+		border-top: 1px solid var(--adp-line, #dcdcde);
+		border-right: 0;
+		border-left: 0;
+	}
+
+	.autodocs-publish-hero__media {
+		width: min(var(--adpb-hero-image-scale), 380px);
+	}
+
+	.autodocs-publish-hero--layout-editorial,
+	.autodocs-publish-hero--layout-editorial.autodocs-publish-hero--media-left {
+		grid-template-columns: minmax(0, 1fr) minmax(220px, 0.55fr);
+		min-height: 470px;
+	}
+
+	.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__copy {
+		padding: 48px 38px;
+	}
+
+	.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__visual,
+	.autodocs-publish-hero--layout-editorial.autodocs-publish-hero--media-left .autodocs-publish-hero__visual {
+		order: 0;
+		min-height: 100%;
+		padding: 32px;
+		border-top: 0;
+	}
+}
+
+@media (max-width: 600px) {
+	.autodocs-publish-hero__copy {
+		padding: 36px 24px 40px;
+	}
+
+	.autodocs-publish-hero__visual,
+	.autodocs-publish-hero--media-left .autodocs-publish-hero__visual {
+		min-height: 320px;
+		padding: 42px 26px;
+	}
+
+	:where(.autodocs-publish-hero__title) {
+		font-size: clamp(38px, 12vw, 52px);
+	}
+
+	.autodocs-publish-hero__actions {
+		display: grid;
+		width: 100%;
+	}
+
+	:where(.autodocs-publish-hero__button) {
+		width: 100%;
+	}
+
+	.autodocs-publish-hero--layout-editorial,
+	.autodocs-publish-hero--layout-editorial.autodocs-publish-hero--media-left {
+		grid-template-columns: minmax(0, 1fr);
+		min-height: auto;
+	}
+
+	.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__copy {
+		padding: 42px 24px 38px;
+	}
+
+	:where(.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__title) {
+		font-size: clamp(44px, 14vw, 62px);
+	}
+
+	.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__visual,
+	.autodocs-publish-hero--layout-editorial.autodocs-publish-hero--media-left .autodocs-publish-hero__visual {
+		min-height: 245px;
+		padding: 28px;
+		border-top: 1px solid color-mix(in srgb, var(--adpb-hero-heading) 13%, transparent);
+	}
+
+	.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__visual::after {
+		display: none;
+	}
+
+	.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__visual-label {
+		top: auto;
+		right: 20px;
+		bottom: 18px;
+		font-size: clamp(44px, 16vw, 66px);
+		line-height: 1;
+		transform: none;
+		writing-mode: horizontal-tb;
+	}
+
+	.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__media {
+		width: min(var(--adpb-hero-image-scale), 190px);
+		transform: rotate(-5deg);
+	}
+
+	.autodocs-publish-hero--layout-editorial:hover .autodocs-publish-hero__media {
+		transform: rotate(-2deg) scale(1.025);
+	}
+
+	.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__actions {
+		gap: 8px;
+	}
+
+	.autodocs-publish-hero-diagram {
+		padding: 16px;
+	}
+
+	.autodocs-publish-hero-diagram__pipeline {
+		gap: 24px;
+	}
+
+	.autodocs-publish-hero-diagram__outputs {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.autodocs-publish-hero-diagram__return {
+		grid-template-columns: auto minmax(0, 1fr);
+	}
+
+	.autodocs-publish-hero-diagram__return > span:last-child {
+		grid-column: 2;
+	}
+
+	:where(.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__button--secondary) {
+		padding-block: 10px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.autodocs-publish-hero__button,
+	.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__media,
+	.autodocs-publish-hero--layout-editorial .autodocs-publish-hero__button--secondary::after {
+		transition: none;
+	}
+}
+
+@media print {
+	.autodocs-publish-hero {
+		box-shadow: none;
+	}
+
+	.autodocs-publish-hero__actions {
+		display: none !important;
+	}
+}

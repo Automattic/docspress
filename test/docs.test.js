@@ -7,7 +7,7 @@ import { readSentinel } from "../src/sentinel.js";
 
 describe("collectDesiredPages", () => {
   it("maps nested docs into a WordPress page hierarchy with placeholders", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-"));
     await fs.mkdir(path.join(cwd, "docs", "guides"), { recursive: true });
     await fs.writeFile(path.join(cwd, "docs", "index.md"), "# Product Docs\n\nWelcome.");
     await fs.writeFile(path.join(cwd, "docs", "guides", "install.md"), "---\ntitle: Install Guide\n---\n\nUse it.");
@@ -36,7 +36,7 @@ describe("collectDesiredPages", () => {
   });
 
   it("stores the exact Markdown source for theme endpoints", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-"));
     const source = "---\ntitle: Exact source\ncustom: preserved\n---\n\n# Heading\n\nBody.\n";
     await fs.mkdir(path.join(cwd, "docs"), { recursive: true });
     await fs.writeFile(path.join(cwd, "docs", "index.md"), source);
@@ -54,7 +54,7 @@ describe("collectDesiredPages", () => {
   });
 
   it("adds title h1 blocks to files and placeholders when requested", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-"));
     await fs.mkdir(path.join(cwd, "docs", "guides"), { recursive: true });
     await fs.writeFile(path.join(cwd, "docs", "index.md"), "# Product Docs\n\nWelcome.");
     await fs.writeFile(path.join(cwd, "docs", "guides", "install.md"), "# Install\n\nUse it.");
@@ -74,7 +74,7 @@ describe("collectDesiredPages", () => {
   });
 
   it("reads sidebar position and collapse defaults from frontmatter", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-"));
     await fs.mkdir(path.join(cwd, "docs", "guides"), { recursive: true });
     await fs.writeFile(path.join(cwd, "docs", "index.md"), [
       "---",
@@ -110,7 +110,7 @@ describe("collectDesiredPages", () => {
   });
 
   it("keeps one automatic sidebar by default and opts into contextual sidebars", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-"));
     await fs.mkdir(path.join(cwd, "docs", "guides"), { recursive: true });
     await fs.mkdir(path.join(cwd, "docs", "apis", "rest"), { recursive: true });
     await fs.writeFile(path.join(cwd, "docs", "index.md"), "# Docs");
@@ -155,7 +155,7 @@ describe("collectDesiredPages", () => {
   });
 
   it("rejects invalid sidebar frontmatter with the source path", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-"));
     await fs.mkdir(path.join(cwd, "docs"), { recursive: true });
     await fs.writeFile(path.join(cwd, "docs", "index.md"), "---\nsidebar_position: 1.5\n---\n\n# Docs");
 
@@ -179,7 +179,7 @@ describe("collectDesiredPages", () => {
   });
 
   it("rejects files that map to the same page", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-"));
     await fs.mkdir(path.join(cwd, "docs"), { recursive: true });
     await fs.writeFile(path.join(cwd, "docs", "index.md"), "# Index");
     await fs.writeFile(path.join(cwd, "docs", "README.md"), "# Readme");
@@ -194,7 +194,7 @@ describe("collectDesiredPages", () => {
   });
 
   it("rewrites local Markdown links and appends edit links", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-"));
     await fs.mkdir(path.join(cwd, "docs", "guides"), { recursive: true });
     await fs.mkdir(path.join(cwd, "docs", "reference"), { recursive: true });
     await fs.writeFile(path.join(cwd, "docs", "index.md"), [
@@ -212,7 +212,7 @@ describe("collectDesiredPages", () => {
       rootTitle: "Docs",
       status: "draft",
       editLink: true,
-      githubRepository: "f/docspress-demo",
+      githubRepository: "f/autodocs-publish-demo",
       githubRef: "main"
     });
     const root = pages.find((page) => page.key === "docs");
@@ -220,11 +220,11 @@ describe("collectDesiredPages", () => {
     expect(root.content).toContain('href="/docs/guides/getting-started/"');
     expect(root.content).toContain('href="/docs/reference/action-inputs/"');
     expect(root.content).toContain('href="https://example.com"');
-    expect(root.content).toContain("https://github.com/f/docspress-demo/edit/main/docs/index.md");
+    expect(root.content).toContain("https://github.com/f/autodocs-publish-demo/edit/main/docs/index.md");
   });
 
   it("uses an optional manifest for stable titles, slugs, parents, and sources", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-"));
     await fs.mkdir(path.join(cwd, "docs", "guides"), { recursive: true });
     await fs.writeFile(path.join(cwd, "docs", "index.md"), "# Source Root\n\nWelcome.");
     await fs.writeFile(path.join(cwd, "docs", "guides", "start.md"), "# Source Start\n\nStart here.");
@@ -256,7 +256,7 @@ describe("collectDesiredPages", () => {
   });
 
   it("assigns manifest Pages to sidebars by their logical routes", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-"));
     await fs.mkdir(path.join(cwd, "docs", "source"), { recursive: true });
     await fs.writeFile(path.join(cwd, "docs", "source", "api.md"), "# Source API");
     await fs.writeFile(path.join(cwd, "docs", "manifest.json"), JSON.stringify({
@@ -299,7 +299,7 @@ describe("collectDesiredPages", () => {
     ["parent segments", () => "../outside.md"],
     ["colons", () => "guide:secret.md"]
   ])("rejects manifest sources with %s", async (_label, sourceFor) => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-"));
     await fs.mkdir(path.join(cwd, "docs"), { recursive: true });
     await fs.writeFile(path.join(cwd, "docs", "index.md"), "# Docs");
     await fs.writeFile(path.join(cwd, "outside.md"), "# Outside");
@@ -317,11 +317,11 @@ describe("collectDesiredPages", () => {
       rootSlug: "docs",
       rootTitle: "Docs",
       status: "draft"
-    })).rejects.toThrow(/Invalid Docspress manifest source/);
+    })).rejects.toThrow(/Invalid Autodocs Publish manifest source/);
   });
 
   it("rejects manifest source symlinks that leave the repository", async () => {
-    const parent = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-parent-"));
+    const parent = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-parent-"));
     const cwd = path.join(parent, "checkout");
     await fs.mkdir(path.join(cwd, "docs"), { recursive: true });
     await fs.writeFile(path.join(parent, "outside.md"), "# Outside");
@@ -343,7 +343,7 @@ describe("collectDesiredPages", () => {
   });
 
   it("creates managed moved-page placeholders from a redirects file", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "docspress-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "autodocs-publish-"));
     await fs.mkdir(path.join(cwd, "docs", "guides"), { recursive: true });
     await fs.writeFile(path.join(cwd, "docs", "index.md"), "# Docs");
     await fs.writeFile(path.join(cwd, "docs", "guides", "getting-started.md"), "# Getting Started");

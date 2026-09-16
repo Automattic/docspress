@@ -3,7 +3,7 @@ title: Terminal Session
 sidebar_position: 100
 ---
 
-Use `docspress/terminal-session` for one copyable command with optional read-only output. It looks like a terminal transcript but never executes code.
+Use `autodocs-publish/terminal-session` for one copyable command with optional read-only output. It looks like a terminal transcript but never executes code.
 
 ## When to use it
 
@@ -11,13 +11,13 @@ Choose Terminal Session when the command and its expected output belong together
 
 ## Attributes
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/fields",
+  "name": "autodocs-publish/fields",
   "attrs": {
     "title": "Terminal Session attributes",
-    "description": "Terminal labels, command, and output accepted by \u003ccode\u003edocspress/terminal-session\u003c/code\u003e.",
+    "description": "Terminal labels, command, and output accepted by \u003ccode\u003eautodocs-publish/terminal-session\u003c/code\u003e.",
     "fields": [
       {
         "name": "title",
@@ -50,7 +50,7 @@ Choose Terminal Session when the command and its expected output belong together
         "name": "command",
         "type": "string",
         "required": true,
-        "defaultValue": "npx docspress publish ./docs",
+        "defaultValue": "npx autodocs-publish publish ./docs",
         "description": "\u003cp\u003ePlain command copied by the reader.\u003c/p\u003e",
         "values": "",
         "deprecated": false
@@ -72,25 +72,25 @@ Choose Terminal Session when the command and its expected output belong together
 -->
 #### Terminal Session attributes
 
-Terminal labels, command, and output accepted by <code>docspress/terminal-session</code>.
+Terminal labels, command, and output accepted by <code>autodocs-publish/terminal-session</code>.
 
 | Field | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `title` | string | No | Terminal | <p>Plain-text session heading.</p> |
 | `shell` | string | No | bash | <p>Shell or runtime label.</p> |
 | `prompt` | string | No | $ | <p>Prompt displayed before the command.</p> |
-| `command` | string | Yes | npx docspress publish ./docs | <p>Plain command copied by the reader.</p> |
+| `command` | string | Yes | npx autodocs-publish publish ./docs | <p>Plain command copied by the reader.</p> |
 | `output` | string | No | Example publish result | <p>Optional read-only expected output.</p> |
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Creative examples
 
 ### Run the package checks
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/terminal-session",
+  "name": "autodocs-publish/terminal-session",
   "attrs": {
     "title": "Run the package checks",
     "shell": "bash",
@@ -112,19 +112,19 @@ $ npm run package
 Tests passed
 Bundle rebuilt
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Preview a safe reconciliation
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/terminal-session",
+  "name": "autodocs-publish/terminal-session",
   "attrs": {
     "title": "Preview WordPress changes",
     "shell": "bash",
     "prompt": "$",
-    "command": "npx docspress publish ./docs \u002d\u002ddry-run",
+    "command": "npx autodocs-publish publish ./docs \u002d\u002ddry-run",
     "output": "Found 42 desired pages\nWould create 0\nWould update 3\nWould trash 1\nConflicts 0"
   }
 }
@@ -132,7 +132,7 @@ Bundle rebuilt
 #### Preview WordPress changes
 
 ```bash
-$ npx docspress publish ./docs --dry-run
+$ npx autodocs-publish publish ./docs --dry-run
 ```
 
 **Output**
@@ -144,20 +144,20 @@ Would update 3
 Would trash 1
 Conflicts 0
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ### Inspect one response in PowerShell
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/terminal-session",
+  "name": "autodocs-publish/terminal-session",
   "attrs": {
     "title": "Read the public API index",
     "shell": "PowerShell",
     "prompt": "PS\u003e",
     "command": "Invoke-RestMethod https://example.test/wp-json/ | Select-Object name, url",
-    "output": "name       url\n\u002d\u002d\u002d\u002d       \u002d\u002d-\nDocsPress  https://example.test"
+    "output": "name       url\n\u002d\u002d\u002d\u002d       \u002d\u002d-\nAutodocs Publish  https://example.test"
   }
 }
 -->
@@ -172,9 +172,9 @@ PS> Invoke-RestMethod https://example.test/wp-json/ | Select-Object name, url
 ```text
 name       url
 ----       ---
-DocsPress  https://example.test
+Autodocs Publish  https://example.test
 ```
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->
 
 ## Published behavior and accessibility
 
@@ -182,10 +182,10 @@ Copy copies only `command`, never the prompt or output. The output has an access
 
 Show only the output needed to recognize success. Do not include volatile timestamps, personal paths, secrets, or pages of logs.
 
-<!-- docspress:block
+<!-- autodocs-publish:block
 {
   "version": 1,
-  "name": "docspress/callout",
+  "name": "autodocs-publish/callout",
   "attrs": {
     "tone": "note",
     "title": "This block does not run commands",
@@ -200,4 +200,4 @@ Show only the output needed to recognize success. Do not include volatile timest
 > **This block does not run commands**
 >
 > Terminal Session is a documentation surface. Readers copy its command and run it in their own trusted terminal.
-<!-- /docspress:block -->
+<!-- /autodocs-publish:block -->

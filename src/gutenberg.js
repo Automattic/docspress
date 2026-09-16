@@ -85,7 +85,7 @@ export function tableBlock(html) {
 export function sourceLinkBlock(url, label = "Edit this page on GitHub") {
   return serializeBlock(
     "core/paragraph",
-    { className: "docspress-source-link" },
-    `<p class="docspress-source-link"><a href="${escapeAttribute(url)}">${escapeHtml(label)}</a></p>`
+    { className: "autodocs-publish-source-link" },
+    `<p class="autodocs-publish-source-link"><a href="${escapeAttribute(url)}">${escapeHtml(label)}</a></p>`
   );
 }

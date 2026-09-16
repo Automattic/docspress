@@ -1,0 +1,464 @@
+.wp-block-autodocs-publish-api-request {
+	--adpb-api-accent: var(--adp-blue, #3858e9);
+	--adpb-api-surface: color-mix(in srgb, var(--adpb-api-accent) 2%, var(--adp-paper, #fff));
+	--adpb-api-panel: color-mix(in srgb, var(--adp-canvas, #f6f7f9) 78%, var(--adp-paper, #fff));
+	--adpb-api-border: var(--adp-line-strong, #cfd4dc);
+	--adpb-api-muted: var(--adp-muted, #6f7685);
+	--adpb-api-string: #19733f;
+	--adpb-api-number: #bd5400;
+	--adpb-api-literal: #8a3ffc;
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 0;
+	margin-block: clamp(1.5rem, 3vw, 2.25rem);
+	overflow: hidden;
+	border: 1px solid var(--adpb-api-border);
+	border-radius: var(--adp-radius, 10px);
+	background: var(--adpb-api-surface);
+	box-shadow: none;
+	color: var(--adp-ink, #171a22);
+}
+
+.autodocs-publish-preset-autodocs-publish .wp-block-autodocs-publish-api-request,
+.autodocs-publish-blocks--preset-autodocs-publish.wp-block-autodocs-publish-api-request {
+	--adpb-api-accent: #005cb3;
+}
+
+.autodocs-publish-preset-jetpack .wp-block-autodocs-publish-api-request,
+.autodocs-publish-blocks--preset-jetpack.wp-block-autodocs-publish-api-request {
+	--adpb-api-accent: #069e08;
+}
+
+.autodocs-publish-api__request-line,
+.autodocs-publish-api__response-line {
+	display: grid;
+	min-height: 46px;
+	grid-template-columns: auto auto minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 10px;
+	box-sizing: border-box;
+	padding: 8px 10px 8px 14px;
+	border-bottom: 1px solid var(--adpb-api-border);
+	background: color-mix(in srgb, var(--adpb-api-accent) 4%, var(--adp-paper, #fff));
+}
+
+.autodocs-publish-api__response-line {
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	border-top: 1px solid var(--adpb-api-border);
+}
+
+.autodocs-publish-api__eyebrow,
+.autodocs-publish-api__payload-label {
+	color: var(--adpb-api-muted);
+	font: 680 0.68rem/1.2 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	letter-spacing: 0.07em;
+	text-transform: uppercase;
+}
+
+.autodocs-publish-api__method,
+.autodocs-publish-api__status {
+	display: inline-flex;
+	min-height: 25px;
+	align-items: center;
+	justify-content: center;
+	padding: 0 8px;
+	border-radius: var(--adp-radius, 10px);
+	background: color-mix(in srgb, var(--adpb-api-accent) 11%, transparent);
+	box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--adpb-api-accent) 22%, transparent);
+	color: color-mix(in srgb, var(--adpb-api-accent) 80%, var(--adp-ink, #171a22));
+	font: 760 0.7rem/1 var(--adp-font-mono, "SFMono-Regular", Consolas, monospace);
+}
+
+.autodocs-publish-api__status {
+	justify-self: end;
+}
+
+.autodocs-publish-api__response-meta {
+	justify-self: end;
+	color: var(--adpb-api-muted);
+	font: 580 0.68rem/1.2 var(--adp-font-mono, "SFMono-Regular", Consolas, monospace);
+}
+
+.autodocs-publish-api__endpoint,
+.entry-content .autodocs-publish-api__endpoint {
+	min-width: 0;
+	overflow: hidden;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--adp-ink, #171a22);
+	font: 590 0.82rem/1.35 var(--adp-font-mono, "SFMono-Regular", Consolas, monospace);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.autodocs-publish-api__copy {
+	display: inline-flex;
+	min-height: 29px;
+	align-items: center;
+	gap: 5px;
+	margin: 0;
+	padding: 3px 8px;
+	border: 1px solid var(--adpb-api-border);
+	border-radius: var(--adp-radius, 10px);
+	background: var(--adp-paper, #fff);
+	color: var(--adp-ink, #171a22);
+	cursor: pointer;
+	font: 650 0.68rem/1 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.autodocs-publish-api__copy svg {
+	width: 14px;
+	height: 14px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.6;
+}
+
+.autodocs-publish-api__copy:hover,
+.autodocs-publish-api__copy:focus-visible,
+.autodocs-publish-api__copy.is-copied {
+	border-color: var(--adpb-api-accent);
+	color: var(--adpb-api-accent);
+}
+
+.autodocs-publish-api__payload {
+	padding: 13px 16px 15px;
+	background: var(--adpb-api-panel);
+}
+
+.autodocs-publish-api__payload + .autodocs-publish-api__payload {
+	border-top: 1px solid var(--adpb-api-border);
+}
+
+.autodocs-publish-api__payload-label {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 7px;
+}
+
+.autodocs-publish-api__format {
+	display: inline-flex;
+	min-height: 20px;
+	align-items: center;
+	padding: 0 6px;
+	border: 1px solid color-mix(in srgb, var(--adpb-api-accent) 18%, var(--adpb-api-border));
+	border-radius: var(--adp-radius, 10px);
+	background: color-mix(in srgb, var(--adpb-api-accent) 5%, var(--adp-paper, #fff));
+	color: color-mix(in srgb, var(--adpb-api-accent) 70%, var(--adpb-api-muted));
+	font-size: 0.6rem;
+	font-weight: 720;
+	letter-spacing: 0.04em;
+	text-transform: none;
+}
+
+.autodocs-publish-api__payload pre,
+.entry-content .autodocs-publish-api__payload pre {
+	max-width: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: auto;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--adp-copy, #2c3338);
+	font: 500 0.82rem/1.65 var(--adp-font-mono, "SFMono-Regular", Consolas, monospace);
+	white-space: pre;
+}
+
+.wp-block-autodocs-publish-api-request.is-runnable [data-autodocs-publish-api-response-body] .autodocs-publish-api__payload--response pre {
+	max-height: clamp(16rem, 42vh, 26rem);
+	padding-inline-end: 0.75rem;
+	overflow: auto;
+	overscroll-behavior: contain;
+	scroll-padding-block: 1rem;
+	scrollbar-color: color-mix(in srgb, var(--adpb-api-accent) 48%, var(--adpb-api-border)) transparent;
+	scrollbar-gutter: stable;
+	scrollbar-width: thin;
+	-webkit-overflow-scrolling: touch;
+}
+
+.wp-block-autodocs-publish-api-request.is-runnable [data-autodocs-publish-api-response-body] .autodocs-publish-api__payload--response pre:focus-visible {
+	outline: 2px solid var(--adpb-api-accent);
+	outline-offset: 4px;
+}
+
+.autodocs-publish-api__payload code,
+.entry-content .autodocs-publish-api__payload code {
+	display: block;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	color: inherit;
+	font: inherit;
+}
+
+.autodocs-publish-api__header-line {
+	display: block;
+	min-height: 1.65em;
+}
+
+.autodocs-publish-api__header-name {
+	color: color-mix(in srgb, var(--adpb-api-accent) 84%, var(--adp-ink, #171a22));
+	font-weight: 760;
+}
+
+.autodocs-publish-api__header-value {
+	color: var(--adpb-api-muted);
+	font-weight: 430;
+}
+
+.autodocs-publish-api__token--property {
+	color: color-mix(in srgb, var(--adpb-api-accent) 84%, var(--adp-ink, #171a22));
+	font-weight: 680;
+}
+
+.autodocs-publish-api__token--string {
+	color: var(--adpb-api-string);
+}
+
+.autodocs-publish-api__token--number {
+	color: var(--adpb-api-number);
+}
+
+.autodocs-publish-api__token--literal {
+	color: var(--adpb-api-literal);
+	font-weight: 650;
+}
+
+.autodocs-publish-api__runner {
+	padding: clamp(14px, 2.4vw, 20px);
+	border-top: 1px solid var(--adpb-api-border);
+	background: var(--adp-paper, #fff);
+}
+
+.autodocs-publish-api__runner-heading {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 18px;
+	margin-bottom: 14px;
+}
+
+.autodocs-publish-api__runner-heading > div {
+	display: grid;
+	gap: 3px;
+}
+
+.autodocs-publish-api__runner-heading strong {
+	color: var(--adp-ink, #171a22);
+	font: 760 0.94rem/1.2 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.autodocs-publish-api__runner-policy {
+	padding: 4px 7px;
+	border: 1px solid color-mix(in srgb, var(--adpb-api-accent) 28%, var(--adpb-api-border));
+	border-radius: var(--adp-radius, 10px);
+	background: color-mix(in srgb, var(--adpb-api-accent) 6%, var(--adp-paper, #fff));
+	color: var(--adpb-api-muted);
+	font: 650 0.64rem/1.2 var(--adp-font-mono, "SFMono-Regular", Consolas, monospace);
+	white-space: nowrap;
+}
+
+.autodocs-publish-api__runner-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+}
+
+.autodocs-publish-api__field {
+	display: grid;
+	min-width: 0;
+	gap: 6px;
+}
+
+.autodocs-publish-api__field--endpoint {
+	grid-column: 1 / -1;
+}
+
+.autodocs-publish-api__field > span {
+	color: var(--adpb-api-muted);
+	font: 680 0.66rem/1.2 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.autodocs-publish-api__field input,
+.autodocs-publish-api__field textarea {
+	box-sizing: border-box;
+	width: 100%;
+	margin: 0;
+	padding: 9px 10px;
+	resize: vertical;
+	border: 1px solid var(--adpb-api-border);
+	border-radius: var(--adp-radius, 10px);
+	outline: 0;
+	background: var(--adpb-api-panel);
+	box-shadow: none;
+	color: var(--adp-copy, #2c3338);
+	font: 500 0.76rem/1.55 var(--adp-font-mono, "SFMono-Regular", Consolas, monospace);
+}
+
+.autodocs-publish-api__field input:focus,
+.autodocs-publish-api__field textarea:focus {
+	border-color: var(--adpb-api-accent);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--adpb-api-accent) 12%, transparent);
+}
+
+.autodocs-publish-api__field input[readonly],
+.autodocs-publish-api__field textarea[readonly] {
+	cursor: default;
+	opacity: 0.78;
+}
+
+.autodocs-publish-api__runner-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 12px;
+}
+
+.autodocs-publish-api__run,
+.autodocs-publish-api__runner-button {
+	display: inline-flex;
+	min-height: 34px;
+	align-items: center;
+	justify-content: center;
+	gap: 7px;
+	margin: 0;
+	padding: 5px 11px;
+	border: 1px solid var(--adpb-api-border);
+	border-radius: var(--adp-radius, 10px);
+	background: var(--adp-paper, #fff);
+	box-shadow: none;
+	color: var(--adp-ink, #171a22);
+	cursor: pointer;
+	font: 680 0.72rem/1 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	transition: border-color 140ms ease, background 140ms ease, color 140ms ease, transform 140ms ease;
+}
+
+.autodocs-publish-api__run {
+	border-color: var(--adpb-api-accent);
+	background: var(--adpb-api-accent);
+	color: var(--adp-paper, #fff);
+}
+
+.autodocs-publish-api__run:hover,
+.autodocs-publish-api__run:focus-visible {
+	background: color-mix(in srgb, var(--adpb-api-accent) 86%, var(--adp-ink, #171a22));
+}
+
+.autodocs-publish-api__runner-button:hover,
+.autodocs-publish-api__runner-button:focus-visible {
+	border-color: var(--adpb-api-accent);
+	color: var(--adpb-api-accent);
+}
+
+.autodocs-publish-api__run:active,
+.autodocs-publish-api__runner-button:active {
+	transform: translateY(1px);
+}
+
+.autodocs-publish-api__run-dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: currentColor;
+	box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 18%, transparent);
+}
+
+.autodocs-publish-api__run.is-running .autodocs-publish-api__run-dot {
+	animation: autodocs-publish-api-pulse 900ms ease-in-out infinite;
+}
+
+.autodocs-publish-api__runner-status {
+	min-width: 0;
+	margin-left: auto;
+	color: var(--adpb-api-muted);
+	font: 580 0.68rem/1.35 var(--adp-font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	text-align: right;
+}
+
+.autodocs-publish-api__runner-status[data-state="success"] {
+	color: color-mix(in srgb, #16883d 80%, var(--adp-ink, #171a22));
+}
+
+.autodocs-publish-api__runner-status[data-state="warning"] {
+	color: color-mix(in srgb, #b35c00 82%, var(--adp-ink, #171a22));
+}
+
+.autodocs-publish-api__runner-status[data-state="error"] {
+	color: color-mix(in srgb, #c9352b 82%, var(--adp-ink, #171a22));
+}
+
+.autodocs-publish-api__runner--preview .autodocs-publish-api__run {
+	opacity: 0.78;
+}
+
+@keyframes autodocs-publish-api-pulse {
+	50% {
+		opacity: 0.36;
+		transform: scale(0.78);
+	}
+}
+
+html[data-theme="dark"] .wp-block-autodocs-publish-api-request {
+	--adpb-api-panel: color-mix(in srgb, var(--adp-canvas, #11141b) 82%, #000);
+	--adpb-api-string: #a7e48d;
+	--adpb-api-number: #ffd078;
+	--adpb-api-literal: #c7a8ff;
+	box-shadow: none;
+}
+
+@media (max-width: 620px) {
+	.autodocs-publish-api__request-line {
+		grid-template-columns: auto minmax(0, 1fr) auto;
+	}
+
+	.autodocs-publish-api__request-line .autodocs-publish-api__eyebrow {
+		display: none;
+	}
+
+	.autodocs-publish-api__copy b {
+		display: none;
+	}
+
+	.autodocs-publish-api__runner-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.autodocs-publish-api__field--endpoint {
+		grid-column: auto;
+	}
+
+	.autodocs-publish-api__runner-actions {
+		align-items: stretch;
+		flex-wrap: wrap;
+	}
+
+	.autodocs-publish-api__runner-status {
+		flex-basis: 100%;
+		margin-left: 0;
+		text-align: left;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.autodocs-publish-api__run,
+	.autodocs-publish-api__runner-button {
+		transition: none;
+	}
+
+	.autodocs-publish-api__run.is-running .autodocs-publish-api__run-dot {
+		animation: none;
+	}
+}

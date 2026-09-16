@@ -171,7 +171,7 @@ function formatApiError(data, method, requestUrl, status) {
   const message = data?.message || data?.error || `${method} ${requestUrl} failed with HTTP ${status}`;
 
   if (String(message).includes("Required scope: `global`")) {
-    return `${message} Regenerate WP_ACCESS_TOKEN with the Docspress token helper so it requests the WordPress.com "global" OAuth scope.`;
+    return `${message} Regenerate WP_ACCESS_TOKEN with the Autodocs Publish token helper so it requests the WordPress.com "global" OAuth scope.`;
   }
 
   return message;
